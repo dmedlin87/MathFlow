@@ -27,7 +27,7 @@ export interface Item {
   question: string; // The formatted question text (Markdown/LaTeX support implied)
   answer: string | number; // The canonical correct answer
   steps?: Step[]; // Optional step-by-step breakdown
-  config: Record<string, any>; // The parameters used to generate this item
+  config: Record<string, unknown>; // The parameters used to generate this item
   misconceptionMatchers?: MisconceptionMatcher[];
 }
 

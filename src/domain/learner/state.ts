@@ -87,7 +87,7 @@ export function updateLearnerState(state: LearnerState, attempt: Attempt): Learn
   return newState;
 }
 
-export function recommendNextItem(state: LearnerState): Item {
+export function recommendNextItem(state: LearnerState, rng: () => number = Math.random): Item {
     const now = new Date();
     const candidateSkills = ALL_SKILLS.map(skill => {
         // Fallback if new skill added and state is old
@@ -134,17 +134,17 @@ export function recommendNextItem(state: LearnerState): Item {
     
     // Mix strategy: 30% Review, 70% New Learning (if available)
     let targetSkill;
-    const roll = Math.random();
+    const roll = rng();
 
     if (reviewDue.length > 0 && roll < 0.3) {
         // Pick random review item
-        targetSkill = reviewDue[Math.floor(Math.random() * reviewDue.length)].skill;
+        targetSkill = reviewDue[Math.floor(rng() * reviewDue.length)].skill;
     } else if (learningQueue.length > 0) {
         // Pick lowest mastery
         targetSkill = learningQueue.sort((a, b) => a.state.masteryProb - b.state.masteryProb)[0].skill;
     } else {
         // Fallback: Just random skill
-        targetSkill = candidateSkills[Math.floor(Math.random() * candidateSkills.length)].skill;
+        targetSkill = candidateSkills[Math.floor(rng() * candidateSkills.length)].skill;
     }
 
     // Determine difficulty based on mastery

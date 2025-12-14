@@ -77,7 +77,7 @@ export const Dashboard: React.FC<DashboardProps> = ({ learnerState, onClose }) =
                         <h3 className="text-xl font-semibold mb-4 text-gray-700">Needs Attention</h3>
                          <div className="space-y-4">
                             {Object.entries(learnerState.skillState)
-                                .filter(([_, s]) => s.misconceptions && s.misconceptions.length > 0)
+                                .filter(([, s]) => s.misconceptions && s.misconceptions.length > 0)
                                 .map(([skillId, s]) => (
                                 <div key={skillId} className="bg-orange-50 p-3 rounded-lg border border-orange-100">
                                     <div className="text-sm font-semibold text-orange-800 mb-1">{skillId}</div>
