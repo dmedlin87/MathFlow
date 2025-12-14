@@ -8,6 +8,12 @@ export interface Skill {
   misconceptions: string[]; // keys for common misconceptions
   templates: string[]; // template IDs
   description?: string;
+  // Adaptation Parameters (optional overrides)
+  bktParams?: {
+    learningRate?: number;
+    slip?: number;
+    guess?: number;
+  };
 }
 
 export interface SkillMap {
@@ -32,7 +38,11 @@ export interface Step {
   id: string;
   text: string;
   explanation?: string;
-  isHint?: boolean;
+  // If defined, this step requires user input
+  answer?: string | number;
+  inputFormat?: 'text' | 'number';
+  // If true, this is just a static hint displayed on demand, not a required step
+  isHint?: boolean; 
 }
 
 export interface Attempt {

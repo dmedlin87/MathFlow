@@ -41,31 +41,44 @@ export function updateLearnerState(state: LearnerState, attempt: Attempt): Learn
   };
   const newSkillState = { ...skillState };
 
-  // Very simple BKT-like update
-  // P(L) = P(L|Obs)
-  const learningRate = 0.1;
-  const slip = 0.1;
-  const guess = 0.2;
+  // BKT Parameters (Default vs Skill Override)
+  // Ideally we need to look up the skill object.
+  // For now, let's look it up from ALL_SKILLS which is imported in this file.
+  const skillDef = ALL_SKILLS.find(s => s.id === attempt.skillId);
+  
+  const learningRate = skillDef?.bktParams?.learningRate ?? 0.1;
+  const slip = skillDef?.bktParams?.slip ?? 0.1;
+  const guess = skillDef?.bktParams?.guess ?? 0.2;
   
   const currentP = skillState.masteryProb;
+  let newP = currentP;
   
   if (attempt.isCorrect) {
     // P(L|Correct) = (P(L) * (1-s)) / (P(L)*(1-s) + (1-P(L))*g)
     const numerator = currentP * (1 - slip);
     const denominator = (currentP * (1 - slip)) + ((1 - currentP) * guess);
-    newSkillState.masteryProb = numerator / denominator;
+    newP = denominator > 0 ? numerator / denominator : currentP;
+
+    // Stability Increase: If masterful, increase intervals
+    // Simple additive for now: +1 day if high mastery
+    if (newP > 0.8) {
+        newSkillState.stability = (newSkillState.stability || 0) + 1; 
+    }
   } else {
     // P(L|Incorrect) = (P(L) * s) / (P(L)*s + (1-P(L))*(1-g))
     const numerator = currentP * slip;
     const denominator = (currentP * slip) + ((1 - currentP) * (1 - guess));
-    newSkillState.masteryProb = numerator / denominator;
+    newP = denominator > 0 ? numerator / denominator : currentP;
+    
+    // Stability Reset: If they got it wrong, trust drops
+    newSkillState.stability = Math.max(0, (newSkillState.stability || 0) - 0.5);
   }
   
   // Add learning gain (transit)
-  newSkillState.masteryProb = newSkillState.masteryProb + ((1 - newSkillState.masteryProb) * learningRate);
+  newP = newP + ((1 - newP) * learningRate);
 
   // Clamp
-  newSkillState.masteryProb = Math.min(0.99, Math.max(0.01, newSkillState.masteryProb));
+  newSkillState.masteryProb = Math.min(0.99, Math.max(0.01, newP));
   
   newSkillState.lastPracticed = attempt.timestamp;
 
@@ -90,10 +103,17 @@ export function recommendNextItem(state: LearnerState): Item {
     // 1. Identify "Review Due" items
     // Simple logic: if mastery > 0.8 but not practiced in 1 day (mock logic), it's due
     const reviewDue = candidateSkills.filter(c => {
-        if (c.state.masteryProb < 0.8) return false;
+        if (c.state.masteryProb < 0.8) return false; // Only review reinforced items
+        
         const lastPracticed = new Date(c.state.lastPracticed);
         const hoursSince = (now.getTime() - lastPracticed.getTime()) / (1000 * 60 * 60);
-        return hoursSince > 24; // Review every 24h
+        
+        // Base interval is 24h
+        // If stability is high, extend interval: 24h * (1 + stability)
+        // e.g. stability 0 -> 24h, stability 2 -> 72h
+        const requiredIntervalHours = 24 * (1 + (c.state.stability || 0));
+        
+        return hoursSince > requiredIntervalHours;
     });
 
     // 2. Identify "Learning Queue" (mastery < 0.8)
