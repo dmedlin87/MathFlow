@@ -21,6 +21,7 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
     const [feedback, setFeedback] = useState<'correct' | 'incorrect' | null>(null);
     const [diagnosis, setDiagnosis] = useState<string | null>(null);
     const [startTime, setStartTime] = useState<number>(0);
+    const [attempts, setAttempts] = useState<number>(0);
     
     // Session State
     const [sessionStats, setSessionStats] = useState({ total: 0, correct: 0, masteredSkills: [] as string[] });
@@ -47,6 +48,16 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
     // Persistence moved to App
 
 
+  const loadNextItem = (state: LearnerState) => {
+    const next = recommendNextItem(state);
+    setCurrentItem(next);
+    setUserAnswer('');
+    setFeedback(null);
+    setDiagnosis(null);
+    setStartTime(Date.now());
+    setAttempts(0);
+  };
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!currentItem || !learnerState) return;
@@ -72,6 +83,11 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
     }
     setDiagnosis(diagnosisMsg);
 
+    // Track attempt count. attempts is the number of PREVIOUS attempts.
+    // So current attempt number is attempts + 1.
+    const currentAttemptCount = attempts + 1;
+    setAttempts(currentAttemptCount);
+
     const attempt: Attempt = {
         id: `att_${Date.now()}`,
         userId: learnerState.userId,
@@ -80,7 +96,7 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
         timestamp: new Date().toISOString(),
         isCorrect,
         timeTakenMs: Date.now() - startTime,
-        attemptsCount: 1, // simplified
+        attemptsCount: currentAttemptCount,
         hintsUsed: 0,
         errorTags
     };
@@ -88,15 +104,26 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
     const newState = updateLearnerState(learnerState, attempt);
     
     // Update session stats
-    setSessionStats(prev => ({
-        ...prev,
-        total: prev.total + 1,
-        correct: prev.correct + (isCorrect ? 1 : 0),
-        // Simple mock mastery check: if prob > 0.85 add to list if not there
-        masteredSkills: newState.skillState[currentItem.skillId].masteryProb > 0.85 
-            ? Array.from(new Set([...prev.masteredSkills, currentItem.skillId])) 
-            : prev.masteredSkills
-    }));
+    // Only count the item in stats on the first attempt to avoid double counting
+    if (attempts === 0) {
+        setSessionStats(prev => ({
+            ...prev,
+            total: prev.total + 1,
+            correct: prev.correct + (isCorrect ? 1 : 0),
+            // Simple mock mastery check: if prob > 0.85 add to list if not there
+            masteredSkills: newState.skillState[currentItem.skillId].masteryProb > 0.85
+                ? Array.from(new Set([...prev.masteredSkills, currentItem.skillId]))
+                : prev.masteredSkills
+        }));
+    } else {
+        // If subsequent attempts lead to mastery, we should still update masteredSkills
+        if (newState.skillState[currentItem.skillId].masteryProb > 0.85) {
+             setSessionStats(prev => ({
+                ...prev,
+                masteredSkills: Array.from(new Set([...prev.masteredSkills, currentItem.skillId]))
+             }));
+        }
+    }
 
     setLearnerState(newState);
   };
@@ -151,8 +178,8 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
                     <div className="mt-8 flex gap-12 items-center justify-center">
                         <div className="text-center">
                             <FractionVisualizer 
-                                numerator={fracEquivConfig.baseNum} 
-                                denominator={fracEquivConfig.baseDen} 
+                                numerator={currentItem.config.baseNum as number}
+                                denominator={currentItem.config.baseDen as number}
                                 size={120}
                                 color="#60a5fa" 
                             />
@@ -167,33 +194,46 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
                     <input
                         type="text"
                         value={userAnswer}
-                        onChange={(e) => setUserAnswer(e.target.value)}
-                        className="w-full text-lg p-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 outline-none transition-colors"
+                        onChange={(e) => {
+                            setUserAnswer(e.target.value);
+                            // Clear feedback when user types so they can try again
+                            if (feedback === 'incorrect') {
+                                setFeedback(null);
+                            }
+                        }}
+                        className={`w-full text-lg p-3 border-2 rounded-lg outline-none transition-colors ${
+                            feedback === 'incorrect' ? 'border-red-300 bg-red-50' : 'border-gray-200 focus:border-blue-500'
+                        }`}
                         placeholder="Enter your answer"
-                        disabled={feedback !== null}
+                        disabled={feedback === 'correct'}
                         autoFocus
                     />
                 </div>
 
-                {feedback === null ? (
+                {/* Show Submit button unless correctly answered */}
+                {feedback !== 'correct' && (
                     <button
                         type="submit"
                         className="w-full py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
                     >
-                        Check Answer
+                        {feedback === 'incorrect' ? 'Try Again' : 'Check Answer'}
                     </button>
-                ) : (
+                )}
+
+                {/* Feedback Messages */}
+                {feedback && (
                     <motion.div 
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
                         className={`p-4 rounded-lg text-center font-medium ${feedback === 'correct' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
                     >
-                        {feedback === 'correct' ? 'Correct! 🎉' : (diagnosis ? `⚠️ ${diagnosis}` : `Not quite. The answer is ${currentItem.answer}.`)}
+                        {feedback === 'correct' ? 'Correct! 🎉' : (diagnosis ? `⚠️ ${diagnosis}` : `Not quite. Try again.`)}
                     </motion.div>
                 )}
             </form>
 
-            {feedback && (
+            {/* Next Problem Button - Only show if Correct (or we could add a skip button later) */}
+            {feedback === 'correct' && (
                 <motion.div 
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -205,10 +245,17 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
                     >
                         Next Problem →
                     </button>
-                    
-                    {currentItem.steps && feedback === 'incorrect' && (
-                        <InteractiveSteps steps={currentItem.steps} />
-                    )}
+                </motion.div>
+            )}
+
+            {/* Steps/Hints on incorrect */}
+            {feedback === 'incorrect' && currentItem.steps && (
+                 <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="mt-6"
+                >
+                    <InteractiveSteps steps={currentItem.steps} />
                 </motion.div>
             )}
         </motion.div>
