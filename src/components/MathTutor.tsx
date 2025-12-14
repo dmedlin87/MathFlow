@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import type { Item, Attempt, LearnerState } from '../domain/types';
-import { updateLearnerState, recommendNextItem } from '../domain/learner/state'; // createInitialState removed
+import { updateLearnerState, recommendNextItem, isMastered } from '../domain/learner/state'; // createInitialState removed
 
 import { MathRenderer } from './MathRenderer';
 import { FractionVisualizer } from './FractionVisualizer';
@@ -92,8 +92,7 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
         ...prev,
         total: prev.total + 1,
         correct: prev.correct + (isCorrect ? 1 : 0),
-        // Simple mock mastery check: if prob > 0.85 add to list if not there
-        masteredSkills: newState.skillState[currentItem.skillId].masteryProb > 0.85 
+        masteredSkills: isMastered(newState.skillState[currentItem.skillId])
             ? Array.from(new Set([...prev.masteredSkills, currentItem.skillId])) 
             : prev.masteredSkills
     }));

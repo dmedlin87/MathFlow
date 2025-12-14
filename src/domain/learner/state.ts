@@ -1,6 +1,13 @@
-import type { LearnerState, Attempt, Item } from '../types';
+import type { LearnerState, Attempt, Item, SkillState } from '../types';
 import { engine } from '../generator/engine';
 import { SKILL_EQUIV_FRACTIONS, SKILL_ADD_LIKE_FRACTIONS } from '../skills/grade4-fractions';
+
+// Mastery Threshold
+export const MASTERY_THRESHOLD = 0.85;
+
+export function isMastered(skillState: SkillState): boolean {
+    return skillState.masteryProb > MASTERY_THRESHOLD;
+}
 
 // Temporary simpler scheduler: Just focus on fractions for now
 const ALL_SKILLS = [SKILL_EQUIV_FRACTIONS, SKILL_ADD_LIKE_FRACTIONS];
