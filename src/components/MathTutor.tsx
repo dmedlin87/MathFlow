@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import type { Item, Attempt, LearnerState } from '../domain/types';
 import { updateLearnerState, recommendNextItem } from '../domain/learner/state'; // createInitialState removed
 
@@ -25,27 +25,27 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
     // Session State
     const [sessionStats, setSessionStats] = useState({ total: 0, correct: 0, masteredSkills: [] as string[] });
     const [isSessionDone, setIsSessionDone] = useState(false);
-  
-    useEffect(() => {
-        // Load Next Item on mount if state exists
-        if (learnerState) {
-            loadNextItem(learnerState);
-        }
-    }, []); // Run once on mount (managed by parent mostly now)
-    
-    // Effect to reload item if state changes externally? No, we don't want to reset item if state updates.
 
-    // Persistence moved to App
-
-
-  const loadNextItem = (state: LearnerState) => {
+  const loadNextItem = useCallback((state: LearnerState) => {
     const next = recommendNextItem(state);
     setCurrentItem(next);
     setUserAnswer('');
     setFeedback(null);
     setDiagnosis(null);
     setStartTime(Date.now());
-  };
+  }, []);
+
+    useEffect(() => {
+        // Load Next Item on mount if state exists
+        if (!currentItem && learnerState) {
+            loadNextItem(learnerState);
+        }
+    }, [currentItem, learnerState, loadNextItem]); // Run once on mount (managed by parent mostly now)
+    
+    // Effect to reload item if state changes externally? No, we don't want to reset item if state updates.
+
+    // Persistence moved to App
+
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -125,6 +125,10 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
 
   if (!currentItem) return <div className="p-8 text-center">Loading...</div>;
 
+  const fracEquivConfig = currentItem.skillId === 'frac_equiv_01'
+    ? (currentItem.config as { baseNum: number; baseDen: number })
+    : null;
+
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white rounded-xl shadow-lg mt-10">
       <div className="mb-4 flex justify-between items-center text-sm text-gray-500">
@@ -143,12 +147,12 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
             <div className="text-2xl font-medium mb-8 text-gray-800 flex flex-col items-center">
                 <MathRenderer text={currentItem.question} />
                 
-                {currentItem.config && currentItem.skillId === 'frac_equiv_01' && (
+                {fracEquivConfig && (
                     <div className="mt-8 flex gap-12 items-center justify-center">
                         <div className="text-center">
                             <FractionVisualizer 
-                                numerator={currentItem.config.baseNum} 
-                                denominator={currentItem.config.baseDen} 
+                                numerator={fracEquivConfig.baseNum} 
+                                denominator={fracEquivConfig.baseDen} 
                                 size={120}
                                 color="#60a5fa" 
                             />

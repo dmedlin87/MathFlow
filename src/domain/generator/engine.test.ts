@@ -5,15 +5,16 @@ import { EquivFractionGenerator, AddLikeFractionGenerator, SKILL_EQUIV_FRACTIONS
 describe('Fraction Generator', () => {
     it('generates valid equivalent fraction problems', () => {
         const item = EquivFractionGenerator.generate(0.1);
+        const config = item.config as { baseNum: number; baseDen: number; multiplier: number };
         
         expect(item.skillId).toBe(SKILL_EQUIV_FRACTIONS.id);
         expect(item.templateId).toBe('T_EQUIV_FRACTION_FIND');
         
         // Config checks
-        expect(item.config.baseNum).toBeGreaterThanOrEqual(1);
-        expect(item.config.baseDen).toBeGreaterThan(item.config.baseNum); // Proper fraction
+        expect(config.baseNum).toBeGreaterThanOrEqual(1);
+        expect(config.baseDen).toBeGreaterThan(config.baseNum); // Proper fraction
         
-        const { baseNum, baseDen, multiplier } = item.config;
+        const { baseNum, baseDen, multiplier } = config;
         const targetNum = item.answer as number;
         const targetDen = baseDen * multiplier;
         
@@ -25,15 +26,16 @@ describe('Fraction Generator', () => {
         // Mock random potentially or just check range
         // Difficulty 1.0 SHOULD produce higher multipliers
         const hardItem = EquivFractionGenerator.generate(1.0);
+        const hardConfig = hardItem.config as { multiplier: number };
         // We can't deterministic check random without mocking, but we can check constraints if we exported them
-        expect(hardItem.config.multiplier).toBeGreaterThanOrEqual(2);
+        expect(hardConfig.multiplier).toBeGreaterThanOrEqual(2);
     });
 
     it('identifies additive misconception', () => {
         const item = EquivFractionGenerator.generate(0.5);
         // e.g. 1/2 = ?/4 (diff is +2)
         // Additive wrong answer would be 1+2 = 3.
-        const { baseNum, baseDen, multiplier } = item.config;
+        const { baseNum, baseDen, multiplier } = item.config as { baseNum: number; baseDen: number; multiplier: number };
         const targetDen = baseDen * multiplier;
         const diff = targetDen - baseDen;
         const wrongAns = baseNum + diff;
@@ -55,14 +57,14 @@ describe('Fraction Generator', () => {
          if (!item) return;
 
          expect(item.skillId).toBe('frac_add_like_01');
-         const { num1, num2, den } = item.config;
+         const { num1, num2, den } = item.config as { num1: number; num2: number; den: number };
          expect(num1 + num2).toBe(item.answer);
          // Ensure we don't exceed denominator (for this specific generator logic)
          expect(num1 + num2).toBeLessThanOrEqual(den);
     });
     it('identifies add_denominators misconception', () => {
          const item = AddLikeFractionGenerator.generate(0.5);
-         const { den } = item.config;
+         const { den } = item.config as { den: number };
          
          // Misconception: The student adds the denominators.
          // Since the question asks "?/den", if they answer "den + den", it implies they think the bottom should change.
