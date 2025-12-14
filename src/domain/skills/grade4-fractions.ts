@@ -96,9 +96,10 @@ export const SKILL_ADD_LIKE_FRACTIONS: Skill = {
 export const AddLikeFractionGenerator: Generator = {
     templateId: 'T_ADD_LIKE_FRACTION',
     skillId: SKILL_ADD_LIKE_FRACTIONS.id,
-    generate: (_difficulty: number): Item => {
+    generate: (difficulty: number): Item => {
         // e.g. 1/5 + 2/5
-        const den = randomInt(3, 12);
+        const maxDen = difficulty < 0.5 ? 12 : 20;
+        const den = randomInt(3, maxDen);
         const num1 = randomInt(1, den - 2);
         const num2 = randomInt(1, den - num1); // Ensure sum <= den
         
@@ -161,11 +162,9 @@ export const SKILL_SUB_LIKE_FRACTIONS: Skill = {
 };
 
 export const SubLikeFractionGenerator: Generator = {
-    id: 'gen_sub_like_fractions',
-    name: 'Subtract Like Fractions Generator',
     skillId: SKILL_SUB_LIKE_FRACTIONS.id,
     templateId: 'T_SUB_LIKE_FRACTIONS',
-    generate: (difficulty: number) => {
+    generate: (difficulty: number): Item => {
         // Difficulty 0-0.5: Simple numbers (<10)
         // Difficulty 0.5-1: Larger numbers (<20)
         const max = difficulty < 0.5 ? 10 : 20;
@@ -178,14 +177,9 @@ export const SubLikeFractionGenerator: Generator = {
             id: `sub_like_${Date.now()}_${Math.random()}`,
             skillId: SKILL_SUB_LIKE_FRACTIONS.id,
             templateId: 'T_SUB_LIKE_FRACTIONS',
-            question: {
-                text: `Subtract: \\(\\frac{${num1}}{${den}} - \\frac{${num2}}{${den}} = ?\\)`,
-                format: 'tex'
-            },
-            answer: {
-                value: `${targetNum}/${den}`,
-                format: 'fraction'
-            },
+            question: `Subtract: \\(\\frac{${num1}}{${den}} - \\frac{${num2}}{${den}} = ?\\)`,
+            answer: `${targetNum}/${den}`,
+            config: { num1, num2, den, targetNum },
             steps: [
                 {
                     id: 's1',
@@ -204,11 +198,11 @@ export const SubLikeFractionGenerator: Generator = {
             ],
             misconceptionMatchers: [
                 (ans) => {
-                    const diff = targetNum;
+                    const ansStr = String(ans);
                     // Regex for "num/0" if they did den-den
-                    if (ans === `${targetNum}/0`) return 'sub_num_sub_den';
+                    if (ansStr === `${targetNum}/0`) return 'sub_num_sub_den';
                     // If they added den
-                    if (ans === `${targetNum}/${den + den}`) return 'sub_num_add_den';
+                    if (ansStr === `${targetNum}/${den + den}`) return 'sub_num_add_den';
                     return null;
                 }
             ]
@@ -237,11 +231,9 @@ export const SKILL_SIMPLIFY_FRACTIONS: Skill = {
 };
 
 export const SimplifyFractionGenerator: Generator = {
-    id: 'gen_simplify_fraction',
-    name: 'Simplify Fraction Generator',
      skillId: SKILL_SIMPLIFY_FRACTIONS.id,
     templateId: 'T_SIMPLIFY_FRACTION',
-    generate: (difficulty: number) => {
+    generate: (difficulty: number): Item => {
         // Generate a simplified fraction, then scale it up
         const maxBase = difficulty < 0.5 ? 5 : 10;
         const numBase = randomInt(1, maxBase);
@@ -260,14 +252,9 @@ export const SimplifyFractionGenerator: Generator = {
             id: `simp_${Date.now()}_${Math.random()}`,
             skillId: SKILL_SIMPLIFY_FRACTIONS.id,
             templateId: 'T_SIMPLIFY_FRACTION',
-            question: {
-                text: `Simplify \\(\\frac{${questionNum}}{${questionDen}}\\) to its lowest terms.`,
-                format: 'tex'
-            },
-            answer: {
-                value: `${simpleNum}/${simpleDen}`,
-                format: 'fraction'
-            },
+            question: `Simplify \\(\\frac{${questionNum}}{${questionDen}}\\) to its lowest terms.`,
+            answer: `${simpleNum}/${simpleDen}`,
+            config: { questionNum, questionDen, simpleNum, simpleDen, multiplier },
              steps: [
                 {
                     id: 's1',
@@ -286,7 +273,7 @@ export const SimplifyFractionGenerator: Generator = {
             ],
             misconceptionMatchers: [
                (ans) => {
-                    if (ans === `${questionNum}/${questionDen}`) return 'no_simplify';
+                    if (String(ans) === `${questionNum}/${questionDen}`) return 'no_simplify';
                     return null;
                }
             ]
