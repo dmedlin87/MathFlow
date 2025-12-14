@@ -1,0 +1,56 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/dmedl/Projects/MathFlow[39m
+
+[90mstdout[2m | src/domain/learner/state.behavior.test.ts[2m > [22m[2mlearner/state behavior[2m > [22m[2mrecommendNextItem[2m > [22m[2mshould select review items when due (>24h) and random roll < 0.3
+[22m[39mChecking prereq frac_equiv_01 for frac_add_like_01. State: {
+  masteryProb: [33m0.95[39m,
+  stability: [33m0[39m,
+  lastPracticed: [32m'2023-12-30T12:00:00.000Z'[39m,
+  misconceptions: []
+}
+Skill frac_add_like_01 prereqs met: true
+
+[90mstdout[2m | src/domain/learner/state.behavior.test.ts[2m > [22m[2mlearner/state behavior[2m > [22m[2mrecommendNextItem[2m > [22m[2mshould select learning queue items when random roll > 0.3
+[22m[39mChecking prereq frac_equiv_01 for frac_add_like_01. State: {
+  masteryProb: [33m0.95[39m,
+  stability: [33m0[39m,
+  lastPracticed: [32m'2023-12-30T12:00:00.000Z'[39m,
+  misconceptions: []
+}
+Skill frac_add_like_01 prereqs met: true
+
+[90mstdout[2m | src/domain/learner/state.behavior.test.ts[2m > [22m[2mlearner/state behavior[2m > [22m[2mrecommendNextItem[2m > [22m[2mshould pick lowest mastery item from learning queue
+[22m[39mChecking prereq frac_equiv_01 for frac_add_like_01. State: {
+  masteryProb: [33m0.4[39m,
+  stability: [33m0[39m,
+  lastPracticed: [32m'2024-01-01T12:00:00.000Z'[39m,
+  misconceptions: []
+}
+Skill frac_add_like_01 prereqs met: false
+
+[90mstdout[2m | src/domain/learner/state.behavior.test.ts[2m > [22m[2mlearner/state behavior[2m > [22m[2mrecommendNextItem[2m > [22m[2mshould skip skill if prerequisites are not met
+[22m[39mChecking prereq frac_equiv_01 for frac_add_like_01. State: {
+  masteryProb: [33m0.5[39m,
+  stability: [33m0[39m,
+  lastPracticed: [32m'2024-01-01T12:00:00.000Z'[39m,
+  misconceptions: []
+}
+Skill frac_add_like_01 prereqs met: false
+
+ [31mΓ¥»[39m src/domain/learner/state.behavior.test.ts [2m([22m[2m10 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 16[2mms[22m[39m
+       [32mΓ£ô[39m should return a zeroed state for a new user[32m 3[2mms[22m[39m
+       [32mΓ£ô[39m should increase mastery when attempt is correct[32m 1[2mms[22m[39m
+       [32mΓ£ô[39m should decrease mastery when attempt is incorrect[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m should clamp mastery between 0.01 and 0.99[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m should initialize state for a new skill if missing[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m should select review items when due (>24h) and random roll < 0.3[32m 3[2mms[22m[39m
+       [32mΓ£ô[39m should select learning queue items when random roll > 0.3[32m 1[2mms[22m[39m
+[31m       [31m├ù[31m should pick lowest mastery item from learning queue[39m[32m 5[2mms[22m[39m
+       [32mΓ£ô[39m should fallback to random skill when no review or learning candidates exist[32m 1[2mms[22m[39m
+       [32mΓ£ô[39m should skip skill if prerequisites are not met[32m 1[2mms[22m[39m
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m9 passed[39m[22m[90m (10)[39m
+[2m   Start at [22m 01:04:13
+[2m   Duration [22m 714ms[2m (transform 93ms, setup 153ms, import 89ms, tests 16ms, environment 0ms)[22m
+

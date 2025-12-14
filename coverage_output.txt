@@ -1,0 +1,29 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/dmedl/Projects/MathFlow[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+ [32mΓ£ô[39m src/domain/generator/engine.behavior.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32mΓ£ô[39m src/domain/learner/scheduler.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32mΓ£ô[39m src/domain/generator/engine.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32mΓ£ô[39m src/domain/learner/state.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32mΓ£ô[39m src/domain/learner/state.behavior.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m5 passed[39m[22m[90m (5)[39m
+[2m      Tests [22m [1m[32m27 passed[39m[22m[90m (27)[39m
+[2m   Start at [22m 01:00:55
+[2m   Duration [22m 486ms[2m (transform 330ms, setup 776ms, import 335ms, tests 26ms, environment 1ms)[22m
+
+[34m % [39m[2mCoverage report from [22m[33mv8[39m
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   98.05 |    94.73 |      95 |   98.94 |                   
+ domain/generator  |     100 |      100 |     100 |     100 |                   
+  engine.ts        |     100 |      100 |     100 |     100 |                   
+ domain/learner    |   96.61 |    92.85 |   88.88 |   98.18 |                   
+  state.ts         |   96.61 |    92.85 |   88.88 |   98.18 | 127               
+ domain/skills     |     100 |      100 |     100 |     100 |                   
+  ...-fractions.ts |     100 |      100 |     100 |     100 |                   
+ test              |     100 |      100 |     100 |     100 |                   
+  testHelpers.ts   |     100 |      100 |     100 |     100 |                   
+-------------------|---------|----------|---------|---------|-------------------
