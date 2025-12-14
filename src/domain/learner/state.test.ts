@@ -126,6 +126,70 @@ describe('Learner State Behavior', () => {
              expect(newStateHigh.skillState[skillId].masteryProb).toBeLessThanOrEqual(0.99);
         });
 
+        it('keeps mastery unchanged when correct-update denominator is zero', () => {
+            const originalBktParams = SKILL_EQUIV_FRACTIONS.bktParams;
+            SKILL_EQUIV_FRACTIONS.bktParams = {
+                learningRate: 0,
+                slip: 1,
+                guess: 0
+            };
+
+            try {
+                const state = createInitialState('u1');
+                state.skillState[skillId] = { ...state.skillState[skillId], masteryProb: 0.5 };
+
+                const attempt: Attempt = {
+                    id: 'a_den0_correct',
+                    userId: 'u1',
+                    itemId: 'i1',
+                    skillId,
+                    isCorrect: true,
+                    timestamp: new Date().toISOString(),
+                    timeTakenMs: 1000,
+                    attemptsCount: 1,
+                    hintsUsed: 0,
+                    errorTags: []
+                };
+
+                const newState = updateLearnerState(state, attempt);
+                expect(newState.skillState[skillId].masteryProb).toBe(0.5);
+            } finally {
+                SKILL_EQUIV_FRACTIONS.bktParams = originalBktParams;
+            }
+        });
+
+        it('keeps mastery unchanged when incorrect-update denominator is zero', () => {
+            const originalBktParams = SKILL_EQUIV_FRACTIONS.bktParams;
+            SKILL_EQUIV_FRACTIONS.bktParams = {
+                learningRate: 0,
+                slip: 0,
+                guess: 1
+            };
+
+            try {
+                const state = createInitialState('u1');
+                state.skillState[skillId] = { ...state.skillState[skillId], masteryProb: 0.5 };
+
+                const attempt: Attempt = {
+                    id: 'a_den0_incorrect',
+                    userId: 'u1',
+                    itemId: 'i1',
+                    skillId,
+                    isCorrect: false,
+                    timestamp: new Date().toISOString(),
+                    timeTakenMs: 1000,
+                    attemptsCount: 1,
+                    hintsUsed: 0,
+                    errorTags: []
+                };
+
+                const newState = updateLearnerState(state, attempt);
+                expect(newState.skillState[skillId].masteryProb).toBe(0.5);
+            } finally {
+                SKILL_EQUIV_FRACTIONS.bktParams = originalBktParams;
+            }
+        });
+
         it('initializes missing skill state on fly (Safe Falback)', () => {
             // If attempt comes in for a skill NOT in the state
             const attempt: Attempt = {
