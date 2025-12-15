@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import type { MathProblemItem, Attempt, LearnerState } from '../domain/types';
+import { checkAnswer } from '../domain/math-utils';
 import { LocalLearnerService } from '../services/LearnerService'; // Architecture Upgrade: Use Service
 // Removed MisconceptionEvaluator import
 
@@ -61,7 +62,7 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
 
     // Check answer (use override if provided, otherwise state)
     const answerToCheck = overrideAnswer !== undefined ? overrideAnswer : userAnswer;
-    const isCorrect = String(answerToCheck).trim() === currentItem.solution_logic.final_answer_canonical;
+    const isCorrect = checkAnswer(answerToCheck, currentItem);
     setFeedback(isCorrect ? 'correct' : 'incorrect');
 
     const errorTags: string[] = [];
