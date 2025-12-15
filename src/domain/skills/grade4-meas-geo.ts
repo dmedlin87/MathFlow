@@ -280,10 +280,6 @@ export const GeometryGenerator: Generator = {
       else if (deg > 90) classification = "Obtuse";
       else classification = "Acute";
 
-      // Override to ensure even distribution if needed, but random is okay.
-      // Let's force specific types based on sub-range logic to ensure coverage?
-      // Nah, random is fine.
-
       return {
         meta: createMockProvenance(SKILL_GEO_LINES_ANGLES.id, difficulty),
         problem_content: {
@@ -415,3 +411,400 @@ export const SymmetryGenerator: Generator = {
 };
 
 engine.register(SymmetryGenerator);
+
+// --- 5. Geometric Measurement: Angles (4.MD.C.5-7) ---
+
+export const SKILL_ANGLES_MEASURE: Skill = {
+  id: "meas_angles",
+  name: "Angle Measurement and Properties",
+  gradeBand: "3-5",
+  prereqs: ["geo_lines_angles"],
+  misconceptions: ["confuse_angle_turn"],
+  templates: ["T_ANGLE_ADDITIVE"],
+  description:
+    "Recognize angles as geometric shapes that are formed wherever two rays share a common endpoint. Understand angle measure as additive.",
+  bktParams: { learningRate: 0.15, slip: 0.1, guess: 0.1 },
+};
+
+export const AngleMeasureGenerator: Generator = {
+  templateId: "T_ANGLE_ADDITIVE",
+  skillId: SKILL_ANGLES_MEASURE.id,
+  generate: (difficulty: number, rng?: () => number): MathProblemItem => {
+    // Mode A: Additive Angles (Part + Part = Total)
+    // Mode B: Degrees in circles/turns (1/4 turn = 90 deg)
+
+    const mode = (rng ?? Math.random)() > 0.4 ? "ADDITIVE" : "TURNS";
+
+    if (mode === "ADDITIVE") {
+      // Two adjacent angles sum to a larger angle.
+      // Ask for the missing part or the total.
+      const angle1 = randomInt(20, 60, rng);
+      const angle2 = randomInt(15, 50, rng);
+      const total = angle1 + angle2;
+
+      // Question type: Find Total (A+B) or Find Part (Total - A)
+      const findTotal = (rng ?? Math.random)() > 0.5;
+
+      if (findTotal) {
+        return {
+          meta: createMockProvenance(SKILL_ANGLES_MEASURE.id, difficulty),
+          problem_content: {
+            stem: `Angle $ABD$ measures $${angle1}^\\circ$.
+Angle $DBC$ measures $${angle2}^\\circ$.
+Angle $ABD$ and $DBC$ are adjacent and form Angle $ABC$.
+What is the measure of Angle $ABC$?`,
+            format: "latex",
+            variables: { angle1, angle2 },
+          },
+          answer_spec: {
+            answer_mode: "final_only",
+            input_type: "integer",
+          },
+          solution_logic: {
+            final_answer_canonical: String(total),
+            final_answer_type: "numeric",
+            steps: [
+              {
+                step_index: 1,
+                explanation: `Since the angles are adjacent, add their measures to find the total.`,
+                math: `${angle1} + ${angle2} = ${total}`,
+                answer: String(total),
+              },
+            ],
+          },
+          misconceptions: [],
+        };
+      } else {
+        return {
+          meta: createMockProvenance(SKILL_ANGLES_MEASURE.id, difficulty),
+          problem_content: {
+            stem: `Angle $ABC$ measures $${total}^\\circ$.
+It is split into two smaller angles, $ABD$ and $DBC$.
+If angle $ABD$ is $${angle1}^\\circ$, what is the measure of angle $DBC$?`,
+            format: "latex",
+            variables: { total, angle1 },
+          },
+          answer_spec: {
+            answer_mode: "final_only",
+            input_type: "integer",
+          },
+          solution_logic: {
+            final_answer_canonical: String(angle2),
+            final_answer_type: "numeric",
+            steps: [
+              {
+                step_index: 1,
+                explanation: `Subtract the known part from the total angle.`,
+                math: `${total} - ${angle1} = ${angle2}`,
+                answer: String(angle2),
+              },
+            ],
+          },
+          misconceptions: [],
+        };
+      }
+    } else {
+      // Turns and Circles
+      // 1 full turn = 360, 1/2 = 180, 1/4 = 90
+      const fracs = [
+        { num: 1, den: 4, deg: 90 },
+        { num: 1, den: 2, deg: 180 },
+        { num: 3, den: 4, deg: 270 },
+        { num: 1, den: 1, deg: 360 },
+      ];
+      const choice = fracs[randomInt(0, fracs.length - 1, rng)];
+
+      return {
+        meta: createMockProvenance(SKILL_ANGLES_MEASURE.id, difficulty),
+        problem_content: {
+          stem: `A circle measures $360^\\circ$.
+How many degrees are in a **${choice.num}/${choice.den}** turn?`,
+          format: "text",
+          variables: { n: choice.num, d: choice.den },
+        },
+        answer_spec: {
+          answer_mode: "final_only",
+          input_type: "integer",
+        },
+        solution_logic: {
+          final_answer_canonical: String(choice.deg),
+          final_answer_type: "numeric",
+          steps: [
+            {
+              step_index: 1,
+              explanation: `Multiply the fraction of the turn by 360.`,
+              math: `\\frac{${choice.num}}{${choice.den}} \\times 360 = ${choice.deg}`,
+              answer: String(choice.deg),
+            },
+          ],
+        },
+        misconceptions: [],
+      };
+    }
+  },
+};
+
+engine.register(AngleMeasureGenerator);
+
+// --- 6. Data Representation: Line Plots (4.MD.B.4) ---
+
+export const SKILL_LINE_PLOTS: Skill = {
+  id: "meas_data_line_plots",
+  name: "Interpret Line Plots",
+  gradeBand: "3-5",
+  prereqs: ["frac_add_like_01"], // Often involves adding fractions
+  misconceptions: ["count_vs_value"],
+  templates: ["T_LINE_PLOT"],
+  description:
+    "Make a line plot to display a data set of measurements in fractions of a unit (1/2, 1/4, 1/8). Solve problems involving addition and subtraction of fractions by using information presented in line plots.",
+  bktParams: { learningRate: 0.1, slip: 0.1, guess: 0.1 },
+};
+
+export const LinePlotGenerator: Generator = {
+  templateId: "T_LINE_PLOT",
+  skillId: SKILL_LINE_PLOTS.id,
+  generate: (difficulty: number, rng?: () => number): MathProblemItem => {
+    // Generates a list of data points (e.g. lengths of insects in inches)
+    // Fractions: 1/2, 1/4, 3/4, maybe 1/8s for harder difficulty.
+    // We will provide the list textually as a "Line Plot Data" block.
+
+    const den = 4; // Use 4ths for simplicity
+    const values = ["1/4", "1/2", "3/4", "1"]; // 1/2 is 2/4, 1 is 4/4
+    // Generate random counts for each value
+    const counts = [
+      randomInt(1, 4, rng),
+      randomInt(2, 5, rng),
+      randomInt(1, 4, rng),
+      randomInt(0, 3, rng),
+    ];
+
+    // Create a flat list for the problem stem
+    const dataList: string[] = [];
+    counts.forEach((count, i) => {
+      for (let k = 0; k < count; k++) dataList.push(values[i]);
+    });
+    // Shuffle roughly? No need for exact line plot visual, just data.
+    // "Here is the data from a line plot:"
+
+    // Question types:
+    // 1. "How many items are length X?" (Reading)
+    // 2. "What is the total length of all items of size X?" (Mult/Add)
+    // 3. "Difference between longest and shortest?" (Range)
+
+    const qType = randomInt(1, 3, rng);
+
+    if (qType === 1) {
+      // Reading count
+      const targetIdx = randomInt(0, 3, rng);
+      const targetVal = values[targetIdx];
+      const ans = counts[targetIdx];
+
+      return {
+        meta: createMockProvenance(SKILL_LINE_PLOTS.id, difficulty),
+        problem_content: {
+          stem: `A science class measured the length of several leaves (in inches):
+**${dataList.join(", ")}**
+
+How many leaves were **${targetVal}** inch long?`,
+          format: "text",
+          variables: { targetVal },
+        },
+        answer_spec: {
+          answer_mode: "final_only",
+          input_type: "integer",
+        },
+        solution_logic: {
+          final_answer_canonical: String(ans),
+          final_answer_type: "numeric",
+          steps: [
+            {
+              step_index: 1,
+              explanation: `Count the number of times ${targetVal} appears in the list.`,
+              math: `Count = ${ans}`,
+              answer: String(ans),
+            },
+          ],
+        },
+        misconceptions: [],
+      };
+    } else if (qType === 2) {
+      // Total length of specific size
+      // "What is the total length of all the leaves that are 1/2 inch long?"
+      const targetIdx = 1; // 1/2 is index 1
+      const targetVal = values[targetIdx]; // "1/2"
+      const count = counts[targetIdx];
+      // 1/2 * count = count/2
+      // Simplify if possible.
+      const totalNum = count;
+      const totalDen = 2;
+      // We'll ask for mixed number or improper fraction? Let's just ask for improper for simplicity or decimal?
+      // "Enter as a fraction"
+      // actually 1/2 * count. If count is even, integer.
+      const isInt = count % 2 === 0;
+      const ans = isInt ? String(count / 2) : `${count}/2`;
+
+      return {
+        meta: createMockProvenance(SKILL_LINE_PLOTS.id, difficulty),
+        problem_content: {
+          stem: `Data (inches): **${dataList.join(", ")}**
+
+What is the **total length** of all the leaves that are exactly **${targetVal}** inch long?
+(Add them all together)`,
+          format: "text",
+        },
+        answer_spec: {
+          answer_mode: "final_only",
+          input_type: "fraction", // accepts integer too usually
+        },
+        solution_logic: {
+          final_answer_canonical: ans,
+          final_answer_type: "numeric",
+          steps: [
+            {
+              step_index: 1,
+              explanation: `There are ${count} leaves of size ${targetVal}. Multiply or add them.`,
+              math: `${count} \\times \\frac{1}{2} = \\frac{${count}}{2}`,
+              answer: ans,
+            },
+          ],
+        },
+        misconceptions: [],
+      };
+    } else {
+      // Range (Longest - Shortest)
+      // Assuming we have at least one of each extreme or check actual list
+      // Find actual min/max in generated list
+      let minVal = 10;
+      let maxVal = 0;
+      const valMap: Record<string, number> = {
+        "1/4": 0.25,
+        "1/2": 0.5,
+        "3/4": 0.75,
+        "1": 1.0,
+      };
+
+      dataList.forEach((v) => {
+        const num = valMap[v];
+        if (num < minVal) minVal = num;
+        if (num > maxVal) maxVal = num;
+      });
+
+      const diff = maxVal - minVal;
+      // Convert back to fraction string (0.25, 0.5, 0.75)
+      let ansStr = String(diff);
+      if (diff === 0.75) ansStr = "3/4";
+      if (diff === 0.5) ansStr = "1/2"; // or 2/4
+      if (diff === 0.25) ansStr = "1/4";
+      if (diff === 0) ansStr = "0";
+
+      return {
+        meta: createMockProvenance(SKILL_LINE_PLOTS.id, difficulty),
+        problem_content: {
+          stem: `Data (inches): **${dataList.join(", ")}**
+
+What is the difference between the **longest** and **shortest** leaf?`,
+          format: "text",
+        },
+        answer_spec: {
+          answer_mode: "final_only",
+          input_type: "fraction",
+        },
+        solution_logic: {
+          final_answer_canonical: ansStr,
+          final_answer_type: "numeric",
+          steps: [
+            {
+              step_index: 1,
+              explanation: `Find max and min values in the list and subtract.`,
+              math: `${maxVal} - ${minVal} = ${diff}`,
+              answer: ansStr,
+            },
+          ],
+        },
+        misconceptions: [],
+      };
+    }
+  },
+};
+
+engine.register(LinePlotGenerator);
+
+// --- 7. Shape Classification (4.G.A.2) ---
+
+export const SKILL_SHAPE_CLASSIFICATION: Skill = {
+  id: "geo_shape_class",
+  name: "Classify 2D Shapes",
+  gradeBand: "3-5",
+  prereqs: ["geo_lines_angles"],
+  misconceptions: ["square_rect_confusion"],
+  templates: ["T_SHAPE_CLASS"],
+  description:
+    "Classify two-dimensional figures based on the presence or absence of parallel or perpendicular lines, or the presence or absence of angles of a specified size. Recognize right triangles as a category, and identify right triangles.",
+  bktParams: { learningRate: 0.15, slip: 0.1, guess: 0.25 },
+};
+
+export const ShapeClassificationGenerator: Generator = {
+  templateId: "T_SHAPE_CLASS",
+  skillId: SKILL_SHAPE_CLASSIFICATION.id,
+  generate: (difficulty: number, rng?: () => number): MathProblemItem => {
+    // Riddles / Property checks
+    const questions = [
+      {
+        clues: "I have 4 sides. Opposite sides are parallel. All 4 angles are right angles. I am not a square (my sides are not all equal).",
+        ans: "Rectangle",
+        choices: ["Trapezoid", "Rhombus", "Rectangle", "Square"],
+      },
+      {
+        clues: "I have 3 sides. One of my angles is a right angle (90 degrees).",
+        ans: "Right Triangle",
+        choices: [
+          "Acute Triangle",
+          "Obtuse Triangle",
+          "Right Triangle",
+          "Equilateral Triangle",
+        ],
+      },
+      {
+        clues: "I have 4 sides. I have exactly one pair of parallel sides.",
+        ans: "Trapezoid",
+        choices: ["Parallelogram", "Trapezoid", "Rectangle", "Square"],
+      },
+      {
+        clues: "I have 4 sides. All my sides are the same length. Opposite sides are parallel. I do not necessarily have right angles.",
+        ans: "Rhombus",
+        choices: ["Square", "Rhombus", "Rectangle", "Trapezoid"],
+      },
+    ];
+
+    const q = questions[randomInt(0, questions.length - 1, rng)];
+
+    return {
+      meta: createMockProvenance(SKILL_SHAPE_CLASSIFICATION.id, difficulty),
+      problem_content: {
+        stem: `Identify the shape based on the clues:
+"${q.clues}"`,
+        format: "text",
+      },
+      answer_spec: {
+        answer_mode: "final_only",
+        input_type: "multiple_choice",
+        choices: q.choices,
+      },
+      solution_logic: {
+        final_answer_canonical: q.ans,
+        final_answer_type: "string",
+        steps: [
+          {
+            step_index: 1,
+            explanation: `Match properties to the definition.`,
+            math: `Answer: ${q.ans}`,
+            answer: q.ans,
+          },
+        ],
+      },
+      misconceptions: [],
+    };
+  },
+};
+
+engine.register(ShapeClassificationGenerator);

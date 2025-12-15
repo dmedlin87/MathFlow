@@ -3,9 +3,11 @@ import {
   FactorsMultiplesGenerator,
   PatternGenerator,
   MultCompareGenerator,
+  MultiStepWordGen,
   SKILL_FACTORS_MULTIPLES,
   SKILL_PATTERNS,
   SKILL_MULT_COMPARE,
+  SKILL_MULTI_STEP_WORD_PROBLEMS,
 } from "./grade4-oa";
 
 describe("grade4-oa generator", () => {
@@ -90,6 +92,39 @@ describe("grade4-oa generator", () => {
       expect(parseInt(item.solution_logic.final_answer_canonical)).toBe(
         expected
       );
+    });
+  });
+
+  describe("MultiStepWordGen", () => {
+    it("generates arithmetic mode problems", () => {
+      const rng = createMockRng([0.6]); // > 0.5 -> ARITHMETIC
+      const item = MultiStepWordGen.generate(0.5, rng);
+
+      expect(item.meta.skill_id).toBe(SKILL_MULTI_STEP_WORD_PROBLEMS.id);
+      expect(item.problem_content.stem).toContain("stickers");
+
+      const vars = item.problem_content.variables as {
+        start: number;
+        subtract: number;
+        divisor: number;
+      };
+
+      const expected = (vars.start - vars.subtract) / vars.divisor;
+      expect(Number(item.solution_logic.final_answer_canonical)).toBe(expected);
+    });
+
+    it("generates remainder interpretation problems", () => {
+       const rng = createMockRng([0.2]); // < 0.5 -> REMAINDER
+       const item = MultiStepWordGen.generate(0.5, rng);
+
+       expect(item.problem_content.stem).toContain("vans needed");
+       const vars = item.problem_content.variables as {
+        total: number;
+        perGroup: number;
+       };
+
+       const expected = Math.ceil(vars.total / vars.perGroup);
+       expect(Number(item.solution_logic.final_answer_canonical)).toBe(expected);
     });
   });
 });
