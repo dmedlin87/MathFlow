@@ -4,22 +4,16 @@
   version_scope: "main"
   source_of_truth: "package.json"
   checks:
-    - type: "script-check"
-      command: "npm run dev"
-  status: "broken"
-  evidence:
-    - "EVIDENCE: file_ref | README.md:1-55 (Generic Vite Template)"
-    - "EVIDENCE: cmd_output | npm run dev (Exists in package.json but not in README)"
-
-- path: "docs/ARCHITECTURE_SPEC.md"
-  owner: "@UNASSIGNED"
-  type: "manual"
-  version_scope: "main"
-  source_of_truth: "src/domain/types.ts"
-  checks:
+    - type: "link-check"
+      command: "npm run docs:check:links"
     - type: "snippet-validation"
-  status: "drifted"
+      command: "npm run docs:check:snippets"
+  status: "verified"
   evidence:
     - "EVIDENCE: file_ref | docs/ARCHITECTURE_SPEC.md"
-    - "EVIDENCE: git_grep_hit | src/domain/types.ts:Found MathProblemItem"
-    - "EVIDENCE: code_check | src/domain/skills/grade4-fractions.ts:createMockProvenance (Simulates Offline Pipeline)"
+    - "EVIDENCE: cmd_output | npm run dev -> verified in package.json"
+    - "EVIDENCE: cmd_output | npm run test -> verified in package.json"
+    - "EVIDENCE: cmd_output | npm run test:coverage -> verified in package.json"
+    - "EVIDENCE: grep_hit | 3002 -> server/src/index.ts"
+    - "EVIDENCE: grep_hit | 5173 -> README.md (implicit Vite default)"
+    - "EVIDENCE: date | 2024-05-24"
