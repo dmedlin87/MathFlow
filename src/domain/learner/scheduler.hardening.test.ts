@@ -1,7 +1,12 @@
-import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeEach } from "vitest";
 import { recommendNextItem } from "./state";
 import { engine } from "../generator/engine";
-import type { Skill, LearnerState, SkillState } from "../types";
+import type {
+  Skill,
+  LearnerState,
+  SkillState,
+  MathProblemItem,
+} from "../types";
 
 // Mock engine to avoid real generation logic
 vi.mock("../generator/engine", () => ({
@@ -43,7 +48,9 @@ describe("Scheduler Hardening (Edge Cases)", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     // Default mock return to avoid unrelated crashes
-    (engine.generate as any).mockResolvedValue({ meta: { id: "mock_item" } });
+    vi.mocked(engine.generate).mockResolvedValue({
+      meta: { id: "mock_item" },
+    } as unknown as MathProblemItem);
   });
 
   it("should NOT crash when skill list is empty", async () => {
@@ -72,7 +79,7 @@ describe("Scheduler Hardening (Edge Cases)", () => {
     await recommendNextItem(state, Math.random, skills);
 
     expect(engine.generate).toHaveBeenCalled();
-    const callArgs = (engine.generate as any).mock.calls[0];
+    const callArgs = vi.mocked(engine.generate).mock.calls[0];
     // Must be A or B
     expect(["A", "B"]).toContain(callArgs[0]);
   });

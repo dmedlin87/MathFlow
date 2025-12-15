@@ -1,8 +1,12 @@
-import express from 'express';
-import cors from 'cors';
-import { problemBank } from './store/ProblemBank.js';
-import { ContentPipeline } from './factory/pipeline.js';
-import { MockFractionsGenerator, MockCritic, MockJudge } from './factory/generators/fractions.js';
+import express from "express";
+import cors from "cors";
+import { problemBank } from "./store/ProblemBank.js";
+import { ContentPipeline } from "./factory/pipeline.js";
+import {
+  MockFractionsGenerator,
+  MockCritic,
+  MockJudge,
+} from "./factory/generators/fractions.js";
 
 // Initialize App
 const app = express();
@@ -14,9 +18,9 @@ app.use(express.json());
 
 // Initialize Pipeline (Mock for now)
 const pipeline = new ContentPipeline(
-    new MockFractionsGenerator(),
-    new MockCritic(),
-    new MockJudge()
+  new MockFractionsGenerator(),
+  new MockCritic(),
+  new MockJudge()
 );
 
 // Routes
@@ -26,38 +30,38 @@ const pipeline = new ContentPipeline(
  * Fetch verified problems for a skill.
  * Query: skillId (required), limit (optional)
  */
-app.get('/api/problems', async (req, res) => {
-    const { skillId, limit } = req.query;
-    
-    if (!skillId || typeof skillId !== 'string') {
-        res.status(400).json({ error: "Missing or invalid skillId" });
-        return;
+app.get("/api/problems", async (req, res) => {
+  const { skillId, limit } = req.query;
+
+  if (!skillId || typeof skillId !== "string") {
+    res.status(400).json({ error: "Missing or invalid skillId" });
+    return;
+  }
+
+  // Input validation: Limit max items to 50 to prevent DoS
+  let max = limit ? parseInt(limit as string) : 1;
+  if (isNaN(max) || max < 1) max = 1;
+  if (max > 50) max = 50;
+
+  const problems = await problemBank.fetch(skillId, max);
+
+  // If no problems found, try to generate one on the fly (Just-in-Time for V0 Prototype)
+  if (problems.length === 0) {
+    // Fallback: Generate one using the pipeline (simulated offline factory running online)
+    try {
+      // Hack: Use Mock Generator skillId just to make it work for demo
+      // In real app, we'd lookup generator by skillId
+      const newItem = await pipeline.run(0.5);
+      if (newItem) {
+        await problemBank.save(newItem);
+        problems.push(newItem);
+      }
+    } catch (e) {
+      console.error("Failed to fallback generate:", e);
     }
+  }
 
-    // Input validation: Limit max items to 50 to prevent DoS
-    let max = limit ? parseInt(limit as string) : 1;
-    if (isNaN(max) || max < 1) max = 1;
-    if (max > 50) max = 50;
-
-    const problems = await problemBank.fetch(skillId, max);
-    
-    // If no problems found, try to generate one on the fly (Just-in-Time for V0 Prototype)
-    if (problems.length === 0) {
-        // Fallback: Generate one using the pipeline (simulated offline factory running online)
-        try {
-           // Hack: Use Mock Generator skillId just to make it work for demo
-           // In real app, we'd lookup generator by skillId
-           const newItem = await pipeline.run(0.5); 
-           if (newItem) {
-               await problemBank.save(newItem);
-               problems.push(newItem);
-           }
-        } catch (e) {
-            console.error("Failed to fallback generate:", e);
-        }
-    }
-
-    res.json(problems);
+  res.json(problems);
 });
 
 /**
@@ -65,33 +69,33 @@ app.get('/api/problems', async (req, res) => {
  * Manually trigger the offline factory to generate items.
  * Body: { skillId, count, difficulty }
  */
-app.post('/api/factory/run', async (req, res) => {
-    let { skillId, count = 1, difficulty = 0.5 } = req.body;
-    
-    // Security: Input validation
-    if (typeof count !== 'number' || count < 1) count = 1;
-    if (count > 50) count = 50; // Cap at 50 to prevent DoS
-    if (typeof difficulty !== 'number') difficulty = 0.5;
-    difficulty = Math.max(0, Math.min(1, difficulty)); // Clamp 0-1
+app.post("/api/factory/run", async (req, res) => {
+  let { count = 1, difficulty = 0.5 } = req.body;
 
-    const generated = [];
-    
-    for (let i = 0; i < count; i++) {
-        const item = await pipeline.run(difficulty);
-        if (item) {
-            await problemBank.save(item);
-            generated.push(item);
-        }
+  // Security: Input validation
+  if (typeof count !== "number" || count < 1) count = 1;
+  if (count > 50) count = 50; // Cap at 50 to prevent DoS
+  if (typeof difficulty !== "number") difficulty = 0.5;
+  difficulty = Math.max(0, Math.min(1, difficulty)); // Clamp 0-1
+
+  const generated = [];
+
+  for (let i = 0; i < count; i++) {
+    const item = await pipeline.run(difficulty);
+    if (item) {
+      await problemBank.save(item);
+      generated.push(item);
     }
-    
-    res.json({
-        success: true,
-        count: generated.length,
-        items: generated
-    });
+  }
+
+  res.json({
+    success: true,
+    count: generated.length,
+    items: generated,
+  });
 });
 
 // Start Server
 app.listen(port, () => {
-    console.log(`MathFlow Server running at http://localhost:${port}`);
+  console.log(`MathFlow Server running at http://localhost:${port}`);
 });

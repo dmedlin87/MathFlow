@@ -11,6 +11,7 @@ export function validateMathProblemItem(data: unknown): MathProblemItem {
     throw new Error("Invalid MathProblemItem: must be an object");
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const item = data as any; // Safe cast for property checking
 
   // 1. Meta check
