@@ -458,7 +458,7 @@ export const FracCompareUnlikeGenerator: Generator = {
     // Harder: Close values
 
     let den1 = randomInt(3, 8, rng);
-    let num1 = randomInt(1, den1 - 1, rng);
+    const num1 = randomInt(1, den1 - 1, rng);
     let den2 = randomInt(3, 8, rng);
 
     // Ensure den2 != den1 for "Unlike" skill
@@ -487,11 +487,13 @@ Choose <, >, or =.`,
       answer_spec: {
         answer_mode: "final_only",
         input_type: "multiple_choice",
-        choices: ["<", ">", "="],
+        ui: {
+          choices: ["<", ">", "="],
+        },
       },
       solution_logic: {
         final_answer_canonical: symbol,
-        final_answer_type: "string",
+        final_answer_type: "multiple_choice",
         steps: [
           {
             step_index: 1,
@@ -508,7 +510,7 @@ Choose <, >, or =.`,
           // This triggers if they think bigger denominator = bigger number (when nums are same or expected logic fails)
           // Hard to detect in Multiple Choice without more specific distractors or reasoning capture.
           // We'll leave the trigger generic or manual for now.
-          trigger: { kind: "manual", value: "false" },
+          trigger: { kind: "predicate", value: "false" },
           hint_ladder: ["Remember, a larger denominator means smaller pieces."],
         },
       ],

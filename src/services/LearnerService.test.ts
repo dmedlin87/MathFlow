@@ -8,25 +8,42 @@ import type {
 } from "../domain/types";
 import { MisconceptionEvaluator } from "../domain/learner/misconceptionEvaluator";
 
+vi.mock("../domain/learner/state", () => ({
+  createInitialState: vi.fn((userId) => ({ userId, skillState: {} })),
+  updateLearnerState: vi.fn((state) => ({ ...state })),
+  recommendNextItem: vi.fn().mockResolvedValue({
+    meta: { id: "mock_item", skill_id: "mock_skill" },
+    problem_content: { stem: "mock" },
+  }),
+}));
+
 describe("LocalLearnerService", () => {
+  // useRealTimers default
+
   it("should simulate network latency", async () => {
     const service = new LocalLearnerService();
     const start = Date.now();
-    await service.loadState("user123");
+    const promise = service.loadState("user123");
+
+    await promise;
     const end = Date.now();
-    expect(end - start).toBeGreaterThanOrEqual(300); // Expecting ~400ms
+    expect(end - start).toBeGreaterThanOrEqual(300); // Expecting ~400ms mocked time
   });
 
   it("should return valid initial state", async () => {
     const service = new LocalLearnerService();
-    const state = await service.loadState("user_test");
+    const promise = service.loadState("user_test");
+
+    const state = await promise;
     expect(state.userId).toBe("user_test");
     expect(state.skillState).toBeDefined();
   });
 
   it("should submit attempt and return updated state", async () => {
     const service = new LocalLearnerService();
-    const state = await service.loadState("user_test");
+    const p1 = service.loadState("user_test");
+
+    const state = await p1;
 
     const attempt: Attempt = {
       id: "123",
@@ -41,12 +58,17 @@ describe("LocalLearnerService", () => {
       errorTags: [],
     };
 
-    const newState = await service.submitAttempt(state, attempt);
+    const p2 = service.submitAttempt(state, attempt);
+
+    const newState = await p2;
     // We expect some update logic to run (though without valid skillId in domain it might just default)
     expect(newState).toBeDefined();
+
     // Latency check again
     const start = Date.now();
-    await service.submitAttempt(state, attempt);
+    const p3 = service.submitAttempt(state, attempt);
+
+    await p3;
     expect(Date.now() - start).toBeGreaterThanOrEqual(300);
   });
 
@@ -72,7 +94,9 @@ describe("LocalLearnerService", () => {
     const item = { misconceptions: [1] } as any; // Dummy item to pass check
 
     try {
-      await expect(service.diagnose(item, "bad_input")).rejects.toThrow(
+      const p = service.diagnose(item, "bad_input");
+
+      await expect(p).rejects.toThrow(
         "Data could not be serialized (Architecture Violation)"
       );
 
@@ -117,7 +141,9 @@ describe("LocalLearnerService", () => {
     };
 
     // User gives correct answer '2' - no misconception triggers
-    const diagnosis = await service.diagnose(item, "2");
+    const p = service.diagnose(item, "2");
+
+    const diagnosis = await p;
     expect(diagnosis).toBeNull();
   });
 
@@ -151,7 +177,9 @@ describe("LocalLearnerService", () => {
       ],
     };
 
-    const diagnosis = await service.diagnose(item, "3");
+    const p = service.diagnose(item, "3");
+
+    const diagnosis = await p;
     expect(diagnosis).not.toBeNull();
     expect(diagnosis?.error_category).toBe("test_error");
     expect(diagnosis?.hint_ladder).toContain("Hint");
@@ -159,12 +187,16 @@ describe("LocalLearnerService", () => {
 
   it("should get recommendation from domain logic", async () => {
     const service = new LocalLearnerService();
-    const state = await service.loadState("user_reco");
+    const p1 = service.loadState("user_reco");
+
+    const state = await p1;
 
     // Use the service to get a recommendation
     // Note: The actual recommendation logic is probabilistic/domain-dependent,
     // but the Service wrapper just needs to ensure it calls down and returns *something*.
-    const item = await service.getRecommendation(state);
+    const p2 = service.getRecommendation(state);
+
+    const item = await p2;
 
     expect(item).toBeDefined();
     expect(item.meta).toBeDefined();
@@ -172,7 +204,9 @@ describe("LocalLearnerService", () => {
     expect(item.problem_content).toBeDefined();
     // Latency check
     const start = Date.now();
-    await service.getRecommendation(state);
+    const p3 = service.getRecommendation(state);
+
+    await p3;
     expect(Date.now() - start).toBeGreaterThanOrEqual(300);
   });
 });

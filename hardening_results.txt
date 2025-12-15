@@ -288,3 +288,405 @@
 
 [1m[42m PASS [49m[22m [32mWaiting for file changes...[39m
        [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m
+c[3J[1m[44m RERUN [49m[22m [34m[2msrc/domain/learner/state.ts [22m[34mx23 [34m[39m
+       [2m Filename pattern: [22m[34msrc/domain/learner/scheduler.hardening.test.ts[39m
+
+ [32mΓ£ô[39m src/domain/learner/scheduler.hardening.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m4 passed[39m[22m[90m (4)[39m
+[2m   Start at [22m 07:07:41
+[2m   Duration [22m 343ms
+
+[1m[42m PASS [49m[22m [32mWaiting for file changes...[39m
+       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m
+c[3J[1m[44m RERUN [49m[22m [34m[2msrc/domain/learner/state.ts [22m[34mx24 [34m[39m
+       [2m Filename pattern: [22m[34msrc/domain/learner/scheduler.hardening.test.ts[39m
+
+[90mstdout[2m | src/domain/learner/scheduler.hardening.test.ts[2m > [22m[2mScheduler Hardening (Edge Cases)[2m > [22m[2mshould handle circular dependencies by falling back (Fail Open)
+[22m[39mDEBUG: recommendNextItem {
+  candidates: [33m2[39m,
+  reviewDue: [],
+  learningQueue: [],
+  roll: [33m0.9709524651143231[39m,
+  actualRoll: [33m0.6169361167941783[39m
+}
+
+[90mstdout[2m | src/domain/learner/scheduler.hardening.test.ts[2m > [22m[2mScheduler Hardening (Edge Cases)[2m > [22m[2mshould fall back to random skill when ALL skills are mastered and recently practiced (Review saturated)
+[22m[39mDEBUG: recommendNextItem {
+  candidates: [33m1[39m,
+  reviewDue: [],
+  learningQueue: [],
+  roll: [33m0.19977328060093402[39m,
+  actualRoll: [33m0.43703406621645846[39m
+}
+
+[90mstdout[2m | src/domain/learner/scheduler.hardening.test.ts[2m > [22m[2mScheduler Hardening (Edge Cases)[2m > [22m[2mshould handle missing state for passed skills (Graceful Initialization)
+[22m[39mDEBUG: recommendNextItem {
+  candidates: [33m1[39m,
+  reviewDue: [],
+  learningQueue: [ [32m'A'[39m ],
+  roll: [33m0.5492072131278527[39m,
+  actualRoll: [33m0.5899305018585754[39m
+}
+
+ [32mΓ£ô[39m src/domain/learner/scheduler.hardening.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m4 passed[39m[22m[90m (4)[39m
+[2m   Start at [22m 07:10:09
+[2m   Duration [22m 451ms
+
+[1m[42m PASS [49m[22m [32mWaiting for file changes...[39m
+       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m
+c[3J[1m[44m RERUN [49m[22m [34m[2msrc/domain/skills/grade4-oa.ts [22m[34mx25 [34m[39m
+       [2m Filename pattern: [22m[34msrc/domain/learner/scheduler.hardening.test.ts[39m
+
+[90mstdout[2m | src/domain/learner/scheduler.hardening.test.ts[2m > [22m[2mScheduler Hardening (Edge Cases)[2m > [22m[2mshould handle circular dependencies by falling back (Fail Open)
+[22m[39mDEBUG: recommendNextItem {
+  candidates: [33m2[39m,
+  reviewDue: [],
+  learningQueue: [],
+  roll: [33m0.6092030679240403[39m,
+  actualRoll: [33m0.9753211953241863[39m
+}
+
+[90mstdout[2m | src/domain/learner/scheduler.hardening.test.ts[2m > [22m[2mScheduler Hardening (Edge Cases)[2m > [22m[2mshould fall back to random skill when ALL skills are mastered and recently practiced (Review saturated)
+[22m[39mDEBUG: recommendNextItem {
+  candidates: [33m1[39m,
+  reviewDue: [],
+  learningQueue: [],
+  roll: [33m0.883575381998781[39m,
+  actualRoll: [33m0.1680538642017375[39m
+}
+
+[90mstdout[2m | src/domain/learner/scheduler.hardening.test.ts[2m > [22m[2mScheduler Hardening (Edge Cases)[2m > [22m[2mshould handle missing state for passed skills (Graceful Initialization)
+[22m[39mDEBUG: recommendNextItem {
+  candidates: [33m1[39m,
+  reviewDue: [],
+  learningQueue: [ [32m'A'[39m ],
+  roll: [33m0.6460059864014476[39m,
+  actualRoll: [33m0.4023334659282043[39m
+}
+
+ [32mΓ£ô[39m src/domain/learner/scheduler.hardening.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m4 passed[39m[22m[90m (4)[39m
+[2m   Start at [22m 07:21:26
+[2m   Duration [22m 492ms
+
+[1m[42m PASS [49m[22m [32mWaiting for file changes...[39m
+       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m
+c[3J[1m[44m RERUN [49m[22m [34m[2msrc/domain/skills/grade4-oa.ts [22m[34mx26 [34m[39m
+       [2m Filename pattern: [22m[34msrc/domain/learner/scheduler.hardening.test.ts[39m
+
+[90mstdout[2m | src/domain/learner/scheduler.hardening.test.ts[2m > [22m[2mScheduler Hardening (Edge Cases)[2m > [22m[2mshould handle circular dependencies by falling back (Fail Open)
+[22m[39mDEBUG: recommendNextItem {
+  candidates: [33m2[39m,
+  reviewDue: [],
+  learningQueue: [],
+  roll: [33m0.15376804548979428[39m,
+  actualRoll: [33m0.3070313775616482[39m
+}
+
+[90mstdout[2m | src/domain/learner/scheduler.hardening.test.ts[2m > [22m[2mScheduler Hardening (Edge Cases)[2m > [22m[2mshould fall back to random skill when ALL skills are mastered and recently practiced (Review saturated)
+[22m[39mDEBUG: recommendNextItem {
+  candidates: [33m1[39m,
+  reviewDue: [],
+  learningQueue: [],
+  roll: [33m0.0040304425673385325[39m,
+  actualRoll: [33m0.49423192992383713[39m
+}
+
+[90mstdout[2m | src/domain/learner/scheduler.hardening.test.ts[2m > [22m[2mScheduler Hardening (Edge Cases)[2m > [22m[2mshould handle missing state for passed skills (Graceful Initialization)
+[22m[39mDEBUG: recommendNextItem {
+  candidates: [33m1[39m,
+  reviewDue: [],
+  learningQueue: [ [32m'A'[39m ],
+  roll: [33m0.7875676759911847[39m,
+  actualRoll: [33m0.9427088841116011[39m
+}
+
+ [32mΓ£ô[39m src/domain/learner/scheduler.hardening.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m4 passed[39m[22m[90m (4)[39m
+[2m   Start at [22m 07:21:53
+[2m   Duration [22m 516ms
+
+[1m[42m PASS [49m[22m [32mWaiting for file changes...[39m
+       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m
+c[3J[1m[44m RERUN [49m[22m [34m[2msrc/domain/skills/grade4-nbt.ts [22m[34mx27 [34m[39m
+       [2m Filename pattern: [22m[34msrc/domain/learner/scheduler.hardening.test.ts[39m
+
+[90mstdout[2m | src/domain/learner/scheduler.hardening.test.ts[2m > [22m[2mScheduler Hardening (Edge Cases)[2m > [22m[2mshould handle circular dependencies by falling back (Fail Open)
+[22m[39mDEBUG: recommendNextItem {
+  candidates: [33m2[39m,
+  reviewDue: [],
+  learningQueue: [],
+  roll: [33m0.9211457651467923[39m,
+  actualRoll: [33m0.9048155750047686[39m
+}
+
+[90mstdout[2m | src/domain/learner/scheduler.hardening.test.ts[2m > [22m[2mScheduler Hardening (Edge Cases)[2m > [22m[2mshould fall back to random skill when ALL skills are mastered and recently practiced (Review saturated)
+[22m[39mDEBUG: recommendNextItem {
+  candidates: [33m1[39m,
+  reviewDue: [],
+  learningQueue: [],
+  roll: [33m0.4159197269504342[39m,
+  actualRoll: [33m0.15885890142878667[39m
+}
+
+[90mstdout[2m | src/domain/learner/scheduler.hardening.test.ts[2m > [22m[2mScheduler Hardening (Edge Cases)[2m > [22m[2mshould handle missing state for passed skills (Graceful Initialization)
+[22m[39mDEBUG: recommendNextItem {
+  candidates: [33m1[39m,
+  reviewDue: [],
+  learningQueue: [ [32m'A'[39m ],
+  roll: [33m0.28806932638575233[39m,
+  actualRoll: [33m0.0964949746270991[39m
+}
+
+ [32mΓ£ô[39m src/domain/learner/scheduler.hardening.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m4 passed[39m[22m[90m (4)[39m
+[2m   Start at [22m 07:22:34
+[2m   Duration [22m 471ms
+
+[1m[42m PASS [49m[22m [32mWaiting for file changes...[39m
+       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m
+c[3J[1m[44m RERUN [49m[22m [34m[2msrc/domain/skills/grade4-nbt.ts [22m[34mx28 [34m[39m
+       [2m Filename pattern: [22m[34msrc/domain/learner/scheduler.hardening.test.ts[39m
+
+[90mstdout[2m | src/domain/learner/scheduler.hardening.test.ts[2m > [22m[2mScheduler Hardening (Edge Cases)[2m > [22m[2mshould handle circular dependencies by falling back (Fail Open)
+[22m[39mDEBUG: recommendNextItem {
+  candidates: [33m2[39m,
+  reviewDue: [],
+  learningQueue: [],
+  roll: [33m0.2640479002251803[39m,
+  actualRoll: [33m0.22169004794277458[39m
+}
+
+[90mstdout[2m | src/domain/learner/scheduler.hardening.test.ts[2m > [22m[2mScheduler Hardening (Edge Cases)[2m > [22m[2mshould fall back to random skill when ALL skills are mastered and recently practiced (Review saturated)
+[22m[39mDEBUG: recommendNextItem {
+  candidates: [33m1[39m,
+  reviewDue: [],
+  learningQueue: [],
+  roll: [33m0.2873303374926415[39m,
+  actualRoll: [33m0.06366617756439497[39m
+}
+
+[90mstdout[2m | src/domain/learner/scheduler.hardening.test.ts[2m > [22m[2mScheduler Hardening (Edge Cases)[2m > [22m[2mshould handle missing state for passed skills (Graceful Initialization)
+[22m[39mDEBUG: recommendNextItem {
+  candidates: [33m1[39m,
+  reviewDue: [],
+  learningQueue: [ [32m'A'[39m ],
+  roll: [33m0.5473759738576343[39m,
+  actualRoll: [33m0.6732675714957432[39m
+}
+
+ [32mΓ£ô[39m src/domain/learner/scheduler.hardening.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m4 passed[39m[22m[90m (4)[39m
+[2m   Start at [22m 07:23:25
+[2m   Duration [22m 425ms
+
+[1m[42m PASS [49m[22m [32mWaiting for file changes...[39m
+       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m
+c[3J[1m[44m RERUN [49m[22m [34m[2msrc/domain/skills/grade4-nbt.ts [22m[34mx29 [34m[39m
+       [2m Filename pattern: [22m[34msrc/domain/learner/scheduler.hardening.test.ts[39m
+
+[90mstdout[2m | src/domain/learner/scheduler.hardening.test.ts[2m > [22m[2mScheduler Hardening (Edge Cases)[2m > [22m[2mshould handle circular dependencies by falling back (Fail Open)
+[22m[39mDEBUG: recommendNextItem {
+  candidates: [33m2[39m,
+  reviewDue: [],
+  learningQueue: [],
+  roll: [33m0.592093639175264[39m,
+  actualRoll: [33m0.06735798658271164[39m
+}
+
+[90mstdout[2m | src/domain/learner/scheduler.hardening.test.ts[2m > [22m[2mScheduler Hardening (Edge Cases)[2m > [22m[2mshould fall back to random skill when ALL skills are mastered and recently practiced (Review saturated)
+[22m[39mDEBUG: recommendNextItem {
+  candidates: [33m1[39m,
+  reviewDue: [],
+  learningQueue: [],
+  roll: [33m0.7976433387391841[39m,
+  actualRoll: [33m0.5555697759878226[39m
+}
+
+[90mstdout[2m | src/domain/learner/scheduler.hardening.test.ts[2m > [22m[2mScheduler Hardening (Edge Cases)[2m > [22m[2mshould handle missing state for passed skills (Graceful Initialization)
+[22m[39mDEBUG: recommendNextItem {
+  candidates: [33m1[39m,
+  reviewDue: [],
+  learningQueue: [ [32m'A'[39m ],
+  roll: [33m0.39943659788216745[39m,
+  actualRoll: [33m0.20462746926570086[39m
+}
+
+ [32mΓ£ô[39m src/domain/learner/scheduler.hardening.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m4 passed[39m[22m[90m (4)[39m
+[2m   Start at [22m 07:23:44
+[2m   Duration [22m 547ms
+
+[1m[42m PASS [49m[22m [32mWaiting for file changes...[39m
+       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m
+c[3J[1m[44m RERUN [49m[22m [34m[2msrc/domain/skills/grade4-fractions.ts [22m[34mx30 [34m[39m
+       [2m Filename pattern: [22m[34msrc/domain/learner/scheduler.hardening.test.ts[39m
+
+[90mstdout[2m | src/domain/learner/scheduler.hardening.test.ts[2m > [22m[2mScheduler Hardening (Edge Cases)[2m > [22m[2mshould handle circular dependencies by falling back (Fail Open)
+[22m[39mDEBUG: recommendNextItem {
+  candidates: [33m2[39m,
+  reviewDue: [],
+  learningQueue: [],
+  roll: [33m0.1454912044561485[39m,
+  actualRoll: [33m0.36529099034757406[39m
+}
+
+[90mstdout[2m | src/domain/learner/scheduler.hardening.test.ts[2m > [22m[2mScheduler Hardening (Edge Cases)[2m > [22m[2mshould fall back to random skill when ALL skills are mastered and recently practiced (Review saturated)
+[22m[39mDEBUG: recommendNextItem {
+  candidates: [33m1[39m,
+  reviewDue: [],
+  learningQueue: [],
+  roll: [33m0.42456675274752476[39m,
+  actualRoll: [33m0.6908301443550868[39m
+}
+
+[90mstdout[2m | src/domain/learner/scheduler.hardening.test.ts[2m > [22m[2mScheduler Hardening (Edge Cases)[2m > [22m[2mshould handle missing state for passed skills (Graceful Initialization)
+[22m[39mDEBUG: recommendNextItem {
+  candidates: [33m1[39m,
+  reviewDue: [],
+  learningQueue: [ [32m'A'[39m ],
+  roll: [33m0.6090782139161577[39m,
+  actualRoll: [33m0.5384834519945472[39m
+}
+
+ [32mΓ£ô[39m src/domain/learner/scheduler.hardening.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m4 passed[39m[22m[90m (4)[39m
+[2m   Start at [22m 07:23:47
+[2m   Duration [22m 217ms
+
+[1m[42m PASS [49m[22m [32mWaiting for file changes...[39m
+       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m
+c[3J[1m[44m RERUN [49m[22m [34m[2msrc/domain/skills/grade4-fractions.ts [22m[34mx31 [34m[39m
+       [2m Filename pattern: [22m[34msrc/domain/learner/scheduler.hardening.test.ts[39m
+
+[90mstdout[2m | src/domain/learner/scheduler.hardening.test.ts[2m > [22m[2mScheduler Hardening (Edge Cases)[2m > [22m[2mshould handle circular dependencies by falling back (Fail Open)
+[22m[39mDEBUG: recommendNextItem {
+  candidates: [33m2[39m,
+  reviewDue: [],
+  learningQueue: [],
+  roll: [33m0.49324707683155267[39m,
+  actualRoll: [33m0.2643074565585357[39m
+}
+
+[90mstdout[2m | src/domain/learner/scheduler.hardening.test.ts[2m > [22m[2mScheduler Hardening (Edge Cases)[2m > [22m[2mshould fall back to random skill when ALL skills are mastered and recently practiced (Review saturated)
+[22m[39mDEBUG: recommendNextItem {
+  candidates: [33m1[39m,
+  reviewDue: [],
+  learningQueue: [],
+  roll: [33m0.17659408252929887[39m,
+  actualRoll: [33m0.1307819913502688[39m
+}
+
+[90mstdout[2m | src/domain/learner/scheduler.hardening.test.ts[2m > [22m[2mScheduler Hardening (Edge Cases)[2m > [22m[2mshould handle missing state for passed skills (Graceful Initialization)
+[22m[39mDEBUG: recommendNextItem {
+  candidates: [33m1[39m,
+  reviewDue: [],
+  learningQueue: [ [32m'A'[39m ],
+  roll: [33m0.9402222577959614[39m,
+  actualRoll: [33m0.373765964812498[39m
+}
+
+ [32mΓ£ô[39m src/domain/learner/scheduler.hardening.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m4 passed[39m[22m[90m (4)[39m
+[2m   Start at [22m 07:28:21
+[2m   Duration [22m 599ms
+
+[1m[42m PASS [49m[22m [32mWaiting for file changes...[39m
+       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m
+c[3J[1m[44m RERUN [49m[22m [34m[2msrc/domain/skills/grade4-fractions.ts [22m[34mx32 [34m[39m
+       [2m Filename pattern: [22m[34msrc/domain/learner/scheduler.hardening.test.ts[39m
+
+[90mstdout[2m | src/domain/learner/scheduler.hardening.test.ts[2m > [22m[2mScheduler Hardening (Edge Cases)[2m > [22m[2mshould handle circular dependencies by falling back (Fail Open)
+[22m[39mDEBUG: recommendNextItem {
+  candidates: [33m2[39m,
+  reviewDue: [],
+  learningQueue: [],
+  roll: [33m0.8968575619342773[39m,
+  actualRoll: [33m0.7653430037062676[39m
+}
+
+[90mstdout[2m | src/domain/learner/scheduler.hardening.test.ts[2m > [22m[2mScheduler Hardening (Edge Cases)[2m > [22m[2mshould fall back to random skill when ALL skills are mastered and recently practiced (Review saturated)
+[22m[39mDEBUG: recommendNextItem {
+  candidates: [33m1[39m,
+  reviewDue: [],
+  learningQueue: [],
+  roll: [33m0.03436714070157887[39m,
+  actualRoll: [33m0.5059899790129061[39m
+}
+
+[90mstdout[2m | src/domain/learner/scheduler.hardening.test.ts[2m > [22m[2mScheduler Hardening (Edge Cases)[2m > [22m[2mshould handle missing state for passed skills (Graceful Initialization)
+[22m[39mDEBUG: recommendNextItem {
+  candidates: [33m1[39m,
+  reviewDue: [],
+  learningQueue: [ [32m'A'[39m ],
+  roll: [33m0.7102500323840797[39m,
+  actualRoll: [33m0.7244600838015169[39m
+}
+
+ [32mΓ£ô[39m src/domain/learner/scheduler.hardening.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m4 passed[39m[22m[90m (4)[39m
+[2m   Start at [22m 07:28:24
+[2m   Duration [22m 206ms
+
+[1m[42m PASS [49m[22m [32mWaiting for file changes...[39m
+       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m
+c[3J[1m[44m RERUN [49m[22m [34m[2msrc/domain/skills/grade4-fractions.ts [22m[34mx33 [34m[39m
+       [2m Filename pattern: [22m[34msrc/domain/learner/scheduler.hardening.test.ts[39m
+
+[90mstdout[2m | src/domain/learner/scheduler.hardening.test.ts[2m > [22m[2mScheduler Hardening (Edge Cases)[2m > [22m[2mshould handle circular dependencies by falling back (Fail Open)
+[22m[39mDEBUG: recommendNextItem {
+  candidates: [33m2[39m,
+  reviewDue: [],
+  learningQueue: [],
+  roll: [33m0.3053831117131871[39m,
+  actualRoll: [33m0.1050612891131979[39m
+}
+
+[90mstdout[2m | src/domain/learner/scheduler.hardening.test.ts[2m > [22m[2mScheduler Hardening (Edge Cases)[2m > [22m[2mshould fall back to random skill when ALL skills are mastered and recently practiced (Review saturated)
+[22m[39mDEBUG: recommendNextItem {
+  candidates: [33m1[39m,
+  reviewDue: [],
+  learningQueue: [],
+  roll: [33m0.20961594533791694[39m,
+  actualRoll: [33m0.13995141046670367[39m
+}
+
+[90mstdout[2m | src/domain/learner/scheduler.hardening.test.ts[2m > [22m[2mScheduler Hardening (Edge Cases)[2m > [22m[2mshould handle missing state for passed skills (Graceful Initialization)
+[22m[39mDEBUG: recommendNextItem {
+  candidates: [33m1[39m,
+  reviewDue: [],
+  learningQueue: [ [32m'A'[39m ],
+  roll: [33m0.4350667002612194[39m,
+  actualRoll: [33m0.9230422202093342[39m
+}
+
+ [32mΓ£ô[39m src/domain/learner/scheduler.hardening.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m4 passed[39m[22m[90m (4)[39m
+[2m   Start at [22m 07:35:31
+[2m   Duration [22m 683ms
+
+[1m[42m PASS [49m[22m [32mWaiting for file changes...[39m
+       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m

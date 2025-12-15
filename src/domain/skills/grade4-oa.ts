@@ -94,7 +94,7 @@ Enter them separated by commas (e.g. 1, 2, 4).`,
         },
         solution_logic: {
           final_answer_canonical: factors.join(", "),
-          final_answer_type: "string",
+          final_answer_type: "set",
           steps: [
             {
               step_index: 1,
@@ -145,11 +145,13 @@ Enter them separated by commas (e.g. 1, 2, 4).`,
         answer_spec: {
           answer_mode: "final_only",
           input_type: "multiple_choice",
-          choices: ["Prime", "Composite"],
+          ui: {
+            choices: ["Prime", "Composite"],
+          },
         },
         solution_logic: {
           final_answer_canonical: ans,
-          final_answer_type: "string",
+          final_answer_type: "multiple_choice",
           steps: [
             {
               step_index: 1,
@@ -329,13 +331,13 @@ export const MultCompareGenerator: Generator = {
     // Structure: "A blue hat costs $X. A red hat costs N times as much as the blue hat. How much does the red hat cost?"
     // OR "X is N times as many as Y."
 
-    const items = [
-      { small: "a rubber band", big: "a coil" },
-      { small: "a marble", big: "a baseball" },
-      { small: "Alice", big: "Bob" }, // generic names for "Alice has X apples, Bob has..."
-    ];
+    // const items = [
+    //   { small: "a rubber band", big: "a coil" },
+    //   { small: "a marble", big: "a baseball" },
+    //   { small: "Alice", big: "Bob" }, // generic names for "Alice has X apples, Bob has..."
+    // ];
 
-    const choice = items[randomInt(0, items.length - 1, rng)];
+    // const choice = items[randomInt(0, items.length - 1, rng)];
 
     const factor = randomInt(2, 9, rng);
     const baseVal = randomInt(3, 12, rng);

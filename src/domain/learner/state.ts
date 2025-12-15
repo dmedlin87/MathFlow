@@ -145,6 +145,18 @@ export async function recommendNextItem(
     throw new Error("No skills available to recommend");
   }
 
+  /* DEBUG LOGGING */
+  console.log("DEBUG: recommendNextItem", {
+    candidates: candidateSkills.length,
+    reviewDue: reviewDue.map((c) => c.skill.id),
+    learningQueue: learningQueue.map((c) => c.skill.id),
+    roll: rng(), // CAREFUL: calling rng() here consumes a random number!
+    // But wait, we already called rng above: const roll = rng();
+    // Let's log 'roll' variable.
+    actualRoll: roll,
+  });
+  /* END DEBUG */
+
   if (reviewDue.length > 0 && roll < 0.3) {
     // Pick random review item
     targetSkill = reviewDue[Math.floor(rng() * reviewDue.length)].skill;

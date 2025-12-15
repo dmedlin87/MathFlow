@@ -29,12 +29,15 @@ describe("grade4-nbt generator", () => {
       const rng = createMockRng([0.5, 0.5, 0.5]);
       const item = DivisionGenerator.generate(0.5, rng);
       expect(item.meta.skill_id).toBe(SKILL_DIV_REMAINDERS.id);
-      expect(item.solution_logic.final_answer_canonical).toMatch(/^\d+ R \d+$/);
+      expect(item.solution_logic.final_answer_canonical).toMatch(/^\d+, \d+$/);
 
-      const vars = item.problem_content.variables as any;
+      const vars = item.problem_content.variables as {
+        dividend: number;
+        divisor: number;
+      };
       const q = Math.floor(vars.dividend / vars.divisor);
       const r = vars.dividend % vars.divisor;
-      expect(item.solution_logic.final_answer_canonical).toBe(`${q} R ${r}`);
+      expect(item.solution_logic.final_answer_canonical).toBe(`${q}, ${r}`);
     });
   });
 
@@ -45,7 +48,7 @@ describe("grade4-nbt generator", () => {
       const item = Mult1DigitGen.generate(0.9, rng);
       expect(item.meta.skill_id).toBe(SKILL_MULT_1DIGIT.id);
       expect(item.problem_content.stem).toContain("\\times");
-      const vars = item.problem_content.variables as any;
+      const vars = item.problem_content.variables as { n1: number; n2: number };
       expect(vars.n1 * vars.n2).toBe(
         parseInt(item.solution_logic.final_answer_canonical)
       );
@@ -55,7 +58,7 @@ describe("grade4-nbt generator", () => {
       const rng = createMockRng([0.5, 0.5]);
       const item = Mult2DigitGen.generate(0.5, rng);
       expect(item.meta.skill_id).toBe(SKILL_MULT_2DIGIT.id);
-      const vars = item.problem_content.variables as any;
+      const vars = item.problem_content.variables as { n1: number; n2: number };
       expect(vars.n1).toBeGreaterThanOrEqual(10);
       expect(vars.n2).toBeGreaterThanOrEqual(10);
       expect(vars.n1 * vars.n2).toBe(
@@ -73,7 +76,10 @@ describe("grade4-nbt generator", () => {
       expect(item.problem_content.stem).toContain("+");
 
       // Check math correctness
-      const vars = item.problem_content.variables as any;
+      const vars = item.problem_content.variables as {
+        num1: number;
+        num2: number;
+      };
       const expected = vars.num1 + vars.num2;
       expect(parseInt(item.solution_logic.final_answer_canonical)).toBe(
         expected
@@ -86,7 +92,10 @@ describe("grade4-nbt generator", () => {
       const item = AddSubMultiGenerator.generate(0.5, rng);
       expect(item.problem_content.stem).toContain("-");
 
-      const vars = item.problem_content.variables as any;
+      const vars = item.problem_content.variables as {
+        num1: number;
+        num2: number;
+      };
       const expected = vars.num1 - vars.num2; // Variables are already ordered max, min
       expect(parseInt(item.solution_logic.final_answer_canonical)).toBe(
         expected
@@ -106,20 +115,14 @@ describe("grade4-nbt generator", () => {
         0.2, // targetPosIndex (low)
       ]);
 
-      // Note: randomInt logic relies on floor(rng * range).
-      // We might not hit exact numbers without tracing the exact calls.
-      // Better to check invariants of the output item.
-
-      const item = PlaceValueGenerator.generate(0.5);
+      const item = PlaceValueGenerator.generate(0.5, rng);
       expect(item.meta.skill_id).toBe(SKILL_PLACE_VALUE.id);
 
       if (item.problem_content.stem.includes("What is the value")) {
         const ans = parseInt(item.solution_logic.final_answer_canonical);
         // Answer should be digit * 10^k
         // e.g. 300, 4000
-        const firstDigit = parseInt(
-          item.solution_logic.final_answer_canonical[0]
-        );
+        // const firstDigit = ... // Unused
         const zeros = item.solution_logic.final_answer_canonical.substring(1);
         expect(ans).toBeGreaterThan(0);
         expect(zeros.replace(/0/g, "")).toBe("");
@@ -128,7 +131,7 @@ describe("grade4-nbt generator", () => {
 
     it('generates "Digit In" problems correctly', () => {
       // mode < 0.5 -> DIGIT_IN
-      const rng = createMockRng([0.1]);
+      // const rng = createMockRng([0.1]); // Unused
       // We just need to ensure the mode selection works
 
       // Actually, 'randomInt' also consumes RNG calls.
@@ -157,7 +160,7 @@ describe("grade4-nbt generator", () => {
       expect(item.meta.skill_id).toBe(SKILL_ROUNDING.id);
 
       // Extract number and rounding place from text or variables
-      const num = (item.problem_content.variables as any).number as number;
+      const num = (item.problem_content.variables as { number: number }).number;
       const rounded = parseInt(item.solution_logic.final_answer_canonical);
 
       // The answer must be a multiple of 10
@@ -173,7 +176,10 @@ describe("grade4-nbt generator", () => {
       // Instead, let's verify the solution logic matches the question vars.
 
       const item = RoundingGenerator.generate(0.5);
-      const { number, place } = item.problem_content.variables as any;
+      const { number, place } = item.problem_content.variables as {
+        number: number;
+        place: string;
+      };
       const answer = parseInt(item.solution_logic.final_answer_canonical);
 
       let mod = 10;

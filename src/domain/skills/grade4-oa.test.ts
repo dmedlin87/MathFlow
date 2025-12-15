@@ -27,7 +27,7 @@ describe("grade4-oa generator", () => {
       expect(item.meta.skill_id).toBe(SKILL_FACTORS_MULTIPLES.id);
       expect(item.problem_content.stem).toContain("List all factors");
 
-      const vars = item.problem_content.variables as any;
+      const vars = item.problem_content.variables as { number: number };
       const number = vars.number;
       const answerStr = item.solution_logic.final_answer_canonical;
       const factors = answerStr.split(", ").map(Number);
@@ -55,12 +55,16 @@ describe("grade4-oa generator", () => {
       const item = PatternGenerator.generate(0.5, rng);
       expect(item.meta.skill_id).toBe(SKILL_PATTERNS.id);
 
-      const vars = item.problem_content.variables as any;
+      const vars = item.problem_content.variables as {
+        rule: string;
+        start: number;
+        step: number;
+      };
       expect(vars.rule).toBe("ADD");
 
       const expected = parseInt(item.solution_logic.final_answer_canonical);
       const start = vars.start;
-      const step = vars.step;
+      // const step = vars.step; // Unused
       // 6 steps total loops in generator, stem shows 6 terms?
       // Loop: i=0 to 5. sequence pushes 6 terms.
       // step 1: current = start. push start. current+=step.
@@ -78,7 +82,10 @@ describe("grade4-oa generator", () => {
       expect(item.meta.skill_id).toBe(SKILL_MULT_COMPARE.id);
       expect(item.problem_content.stem).toContain("times as many");
 
-      const vars = item.problem_content.variables as any;
+      const vars = item.problem_content.variables as {
+        baseVal: number;
+        factor: number;
+      };
       const expected = vars.baseVal * vars.factor;
       expect(parseInt(item.solution_logic.final_answer_canonical)).toBe(
         expected

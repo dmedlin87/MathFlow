@@ -349,7 +349,7 @@ export const AddSubMultiGenerator: Generator = {
     if (!isAddition) {
       const s1 = num1.toString().split("").reverse();
       const s2 = num2.toString().split("").reverse();
-      let resDigits: number[] = [];
+      const resDigits: number[] = [];
       for (let i = 0; i < Math.max(s1.length, s2.length); i++) {
         const d1 = parseInt(s1[i] || "0");
         const d2 = parseInt(s2[i] || "0");
@@ -448,7 +448,7 @@ export const MultiplicationGenerator: Generator = {
   // So distinct objects or register same object with different ID property?
   // Let's make a factory or just handle the logic inside specific objects if they differ.
   // They share a lot. Let's define the logic function and reuse.
-  generate: (difficulty: number, rng?: () => number): MathProblemItem => {
+  generate: (): MathProblemItem => {
     // This is a placeholder.
     // We will register specific instances below.
     throw new Error("Abstract generator called");
@@ -588,27 +588,17 @@ export const DivisionGenerator: Generator = {
       meta: createMockProvenance(SKILL_DIV_REMAINDERS.id, difficulty),
       problem_content: {
         stem: `Divide: $${dividend} \\div ${divisor}$
-Enter the Quotient and Remainder.`,
+Enter the Quotient, then the Remainder (separated by a comma).`,
         format: "latex",
         variables: { dividend, divisor },
       },
       answer_spec: {
         answer_mode: "final_only",
-        input_type: "number_pair", // Special type needed? Or just text 'Q R'
-        // Let's use multi-part format or just ask for them in separate fields if supported?
-        // Our system currently supports 'final_only'.
-        // Ideally, we'd have a custom input for "Q, R".
-        // For now, let's just ask for "Quotient R Remainder" format or separate specific questions.
-        // Let's simplify: "What is the quotient? (Ignore remainder)" or "What is the remainder?"
-        // Ideally cover 4.NBT.B.6 which is "Find whole-number quotients and remainders".
-        // Let's output a structured answer field or simply ask the user to format "Q R".
-        // We'll trust the unstructured input parser or make it specific.
-        // Let's use format: "X R Y" e.g. "12 R 3"
-        calculator: false,
+        input_type: "set",
       },
       solution_logic: {
-        final_answer_canonical: `${quotient} R ${remainder}`,
-        final_answer_type: "string", // special format
+        final_answer_canonical: `${quotient}, ${remainder}`,
+        final_answer_type: "set",
         steps: [
           {
             step_index: 1,

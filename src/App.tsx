@@ -1,8 +1,9 @@
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { MathTutor } from './components/MathTutor';
 import { Dashboard } from './components/Dashboard';
 import { PersistenceService } from './services/persistence';
+import { LocalLearnerService } from './services/LearnerService';
 import { createInitialState } from './domain/learner/state';
 
 function App() {
@@ -15,6 +16,8 @@ function App() {
   const [learnerState, setLearnerState] = useState(() => {
      return PersistenceService.loadState() || createInitialState('user_1');
   });
+
+  const learnerService = useMemo(() => new LocalLearnerService(), []);
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans text-gray-900">
@@ -36,7 +39,7 @@ function App() {
       </header>
       <main>
         {view === 'tutor' ? (
-            <MathTutor learnerState={learnerState} setLearnerState={setLearnerState} />
+            <MathTutor learnerState={learnerState} setLearnerState={setLearnerState} learnerService={learnerService} />
         ) : (
             <Dashboard learnerState={learnerState} onClose={() => setView('tutor')} />
         )}

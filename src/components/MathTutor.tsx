@@ -1,7 +1,7 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import type { MathProblemItem, Attempt, LearnerState } from '../domain/types';
 import { checkAnswer } from '../domain/math-utils';
-import { LocalLearnerService } from '../services/LearnerService'; // Architecture Upgrade: Use Service
+// LocalLearnerService removed (injected)
 // Removed MisconceptionEvaluator import
 
 import { MathRenderer } from './MathRenderer';
@@ -12,14 +12,17 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { SessionSummary } from './SessionSummary';
 import { DeveloperControls } from './DeveloperControls';
 
+import type { ILearnerService } from '../services/LearnerService';
+
 interface MathTutorProps {
     learnerState: LearnerState;
     setLearnerState: (state: LearnerState) => void;
+    learnerService: ILearnerService;
 }
 
-export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerState }) => {
-    // Architecture Fix: Instantiate Service (In real app, use Context/DI)
-    const learnerService = useMemo(() => new LocalLearnerService(), []);
+export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerState, learnerService }) => {
+    // Service is now injected via props
+
 
     const [currentItem, setCurrentItem] = useState<MathProblemItem | null>(null);
     const [userAnswer, setUserAnswer] = useState('');
