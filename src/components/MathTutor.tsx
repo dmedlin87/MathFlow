@@ -102,15 +102,13 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
   };
 
   const handleNext = () => {
-    // End session after 5 items for demo (or add button)
-    if (sessionStats.total >= 5) {
-        setIsSessionDone(true);
-        return;
-    }
-
     if (learnerState) {
         loadNextItem(learnerState);
     }
+  };
+
+  const handleEndSession = () => {
+    setIsSessionDone(true);
   };
 
   const handleRestart = () => {
@@ -195,12 +193,20 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
                     animate={{ opacity: 1 }}
                     className="mt-6"
                 >
-                    <button
-                        onClick={handleNext}
-                        className="w-full py-3 bg-gray-900 text-white rounded-lg font-semibold hover:bg-black transition-colors"
-                    >
-                        Next Problem →
-                    </button>
+                    <div className="flex gap-4">
+                        <button
+                            onClick={handleNext}
+                            className="flex-1 py-3 bg-gray-900 text-white rounded-lg font-semibold hover:bg-black transition-colors"
+                        >
+                            Next Problem →
+                        </button>
+                        <button
+                            onClick={handleEndSession}
+                            className="flex-1 py-3 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+                        >
+                            End Session
+                        </button>
+                    </div>
                     
                     {currentItem.steps && feedback === 'incorrect' && (
                         <InteractiveSteps steps={currentItem.steps} />
