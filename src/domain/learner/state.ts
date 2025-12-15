@@ -1,14 +1,9 @@
 import type { LearnerState, Attempt, MathProblemItem } from '../types';
 import { engine } from '../generator/engine';
-import { SKILL_EQUIV_FRACTIONS, SKILL_ADD_LIKE_FRACTIONS, SKILL_SUB_LIKE_FRACTIONS, SKILL_SIMPLIFY_FRACTIONS } from '../skills/grade4-fractions';
+import { ALL_SKILLS_LIST } from '../skills/registry';
 
-// Temporary simpler scheduler: Just focus on fractions for now
-const ALL_SKILLS = [
-    SKILL_EQUIV_FRACTIONS, 
-    SKILL_ADD_LIKE_FRACTIONS, 
-    SKILL_SUB_LIKE_FRACTIONS, 
-    SKILL_SIMPLIFY_FRACTIONS
-];
+// Scheduler uses the central registry
+const ALL_SKILLS = ALL_SKILLS_LIST;
 
 export function createInitialState(userId: string): LearnerState {
   const state: LearnerState = {
