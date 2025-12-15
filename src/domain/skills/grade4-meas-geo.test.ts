@@ -4,10 +4,16 @@ import {
   UnitConversionGenerator,
   GeometryGenerator,
   SymmetryGenerator,
+  AngleMeasureGenerator,
+  LinePlotGenerator,
+  ShapeClassificationGenerator,
   SKILL_AREA_PERIMETER,
   SKILL_UNIT_CONVERSION,
   SKILL_GEO_LINES_ANGLES,
   SKILL_SYMMETRY,
+  SKILL_ANGLES_MEASURE,
+  SKILL_LINE_PLOTS,
+  SKILL_SHAPE_CLASSIFICATION,
 } from "./grade4-meas-geo";
 
 describe("grade4-meas-geo generator", () => {
@@ -88,6 +94,53 @@ describe("grade4-meas-geo generator", () => {
 
       const ans = item.solution_logic.final_answer_canonical;
       if (vars.shape === "Square") expect(ans).toBe("4");
+    });
+  });
+
+  describe("AngleMeasureGenerator", () => {
+    it("generates additive angle problems", () => {
+        const rng = createMockRng([0.5]); // > 0.4 -> ADDITIVE
+        const item = AngleMeasureGenerator.generate(0.5, rng);
+        expect(item.meta.skill_id).toBe(SKILL_ANGLES_MEASURE.id);
+
+        // It's either sum or diff
+        const vars = item.problem_content.variables as any;
+        if (vars.total) {
+            // Finding part
+            expect(Number(item.solution_logic.final_answer_canonical)).toBe(vars.total - vars.angle1);
+        } else {
+            // Finding total
+            expect(Number(item.solution_logic.final_answer_canonical)).toBe(vars.angle1 + vars.angle2);
+        }
+    });
+
+    it("generates turn/circle problems", () => {
+        const rng = createMockRng([0.1]); // < 0.4 -> TURNS
+        const item = AngleMeasureGenerator.generate(0.5, rng);
+        expect(item.problem_content.stem).toContain("turn");
+    });
+  });
+
+  describe("LinePlotGenerator", () => {
+    it("generates line plot interpretation problems", () => {
+        const item = LinePlotGenerator.generate(0.5);
+        expect(item.meta.skill_id).toBe(SKILL_LINE_PLOTS.id);
+        expect(item.problem_content.stem).toContain("Data (inches)");
+
+        // Basic sanity check on answer
+        expect(item.solution_logic.final_answer_canonical).toBeTruthy();
+    });
+  });
+
+  describe("ShapeClassificationGenerator", () => {
+    it("generates shape riddles", () => {
+        const item = ShapeClassificationGenerator.generate(0.5);
+        expect(item.meta.skill_id).toBe(SKILL_SHAPE_CLASSIFICATION.id);
+        expect(item.problem_content.stem).toContain("Identify the shape");
+
+        const ans = item.solution_logic.final_answer_canonical;
+        // Verify answer is one of the choices
+        expect(item.answer_spec.choices).toContain(ans);
     });
   });
 });

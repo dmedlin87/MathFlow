@@ -384,3 +384,149 @@ How many marbles does Bob have?`, // hardcoded context for now for simplicity
 };
 
 engine.register(MultCompareGenerator);
+
+// --- 4. Multi-Step Word Problems (4.OA.A.3) ---
+
+export const SKILL_MULTI_STEP_WORD_PROBLEMS: Skill = {
+  id: "oa_multi_step_word",
+  name: "Multi-Step Word Problems",
+  gradeBand: "3-5",
+  prereqs: ["nbt_add_sub_multi", "nbt_mult_1digit", "nbt_div_remainders"],
+  misconceptions: [
+    "wrong_order_operations",
+    "ignore_remainder",
+    "wrong_remainder_handling",
+  ],
+  templates: ["T_MULTI_STEP_WORD"],
+  description:
+    "Solve multistep word problems posed with whole numbers and having whole-number answers using the four operations, including problems in which remainders must be interpreted.",
+  bktParams: { learningRate: 0.1, slip: 0.1, guess: 0.1 },
+};
+
+export const MultiStepWordGen: Generator = {
+  templateId: "T_MULTI_STEP_WORD",
+  skillId: SKILL_MULTI_STEP_WORD_PROBLEMS.id,
+  generate: (difficulty: number, rng?: () => number): MathProblemItem => {
+    // Mode:
+    // A) Two-step arithmetic (Add/Sub + Mult/Div)
+    // B) Remainder interpretation (Ceil/Floor cases)
+
+    const mode = (rng ?? Math.random)() > 0.5 ? "ARITHMETIC" : "REMAINDER";
+
+    if (mode === "ARITHMETIC") {
+      // Example: Alice had X, bought Y more packs of Z. How many total?
+      // Or: Alice had X, gave Y to friend, split rest among Z bags.
+
+      const start = randomInt(20, 100, rng);
+      const subtract = randomInt(5, 15, rng);
+      const divisor = randomInt(3, 8, rng);
+
+      // Construct so it divides evenly
+      // (start - subtract) must be divisible by divisor
+      const adjustedStart =
+        Math.floor((start - subtract) / divisor) * divisor + subtract;
+      const finalAns = (adjustedStart - subtract) / divisor;
+
+      // Misconception: Ignore subtraction (start / divisor)? or Add subtraction?
+      // (adjustedStart + subtract) / divisor ?
+
+      return {
+        meta: createMockProvenance(SKILL_MULTI_STEP_WORD_PROBLEMS.id, difficulty),
+        problem_content: {
+          stem: `Alice had **${adjustedStart}** stickers. She gave **${subtract}** stickers to her sister.
+Then she divided the rest equally into **${divisor}** albums.
+How many stickers did she put in each album?`,
+          format: "text",
+          variables: { start: adjustedStart, subtract, divisor },
+        },
+        answer_spec: {
+          answer_mode: "final_only",
+          input_type: "integer",
+        },
+        solution_logic: {
+          final_answer_canonical: String(finalAns),
+          final_answer_type: "numeric",
+          steps: [
+            {
+              step_index: 1,
+              explanation: `First, subtract the stickers she gave away.`,
+              math: `${adjustedStart} - ${subtract} = ${adjustedStart - subtract}`,
+              answer: String(adjustedStart - subtract),
+            },
+            {
+              step_index: 2,
+              explanation: `Then divide the remaining stickers by ${divisor}.`,
+              math: `${adjustedStart - subtract} \\div ${divisor} = ${finalAns}`,
+              answer: String(finalAns),
+            },
+          ],
+        },
+        misconceptions: [
+          {
+            id: "misc_order_ops",
+            error_tag: "wrong_order_operations",
+            trigger: { kind: "manual", value: "check logic" }, // Hard to genericize
+            hint_ladder: [
+              "Did you subtract the stickers she gave away first?",
+            ],
+          },
+        ],
+      };
+    } else {
+      // Remainder interpretation
+      // "X students, Y per bus. How many buses?" (Round Up)
+      const perGroup = randomInt(4, 9, rng);
+      const numGroups = randomInt(5, 12, rng);
+      const remainder = randomInt(1, perGroup - 1, rng);
+      const total = numGroups * perGroup + remainder;
+
+      const ans = numGroups + 1; // Need one more bus
+
+      return {
+        meta: createMockProvenance(SKILL_MULTI_STEP_WORD_PROBLEMS.id, difficulty),
+        problem_content: {
+          stem: `There are **${total}** students going on a field trip.
+Each van can hold **${perGroup}** students.
+What is the fewest number of vans needed to carry **everyone**?`,
+          format: "text",
+          variables: { total, perGroup },
+        },
+        answer_spec: {
+          answer_mode: "final_only",
+          input_type: "integer",
+        },
+        solution_logic: {
+          final_answer_canonical: String(ans),
+          final_answer_type: "numeric",
+          steps: [
+            {
+              step_index: 1,
+              explanation: `Divide the total students by the van capacity.`,
+              math: `${total} \\div ${perGroup} = ${numGroups} \\text{ R } ${remainder}`,
+              answer: `${numGroups} R ${remainder}`,
+            },
+            {
+              step_index: 2,
+              explanation: `Since there is a remainder of ${remainder}, we need an extra van for them.`,
+              math: `${numGroups} + 1 = ${ans}`,
+              answer: String(ans),
+            },
+          ],
+        },
+        misconceptions: [
+          {
+            id: "misc_ignore_rem",
+            error_tag: "ignore_remainder",
+            trigger: { kind: "exact_answer", value: String(numGroups) },
+            hint_ladder: [
+              `You calculated the full vans, but what about the ${remainder} leftover students?`,
+              "We need another van for the remaining students.",
+            ],
+          },
+        ],
+      };
+    }
+  },
+};
+
+engine.register(MultiStepWordGen);
