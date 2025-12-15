@@ -34,7 +34,11 @@ app.get('/api/problems', async (req, res) => {
         return;
     }
 
-    const max = limit ? parseInt(limit as string) : 1;
+    // Input validation: Limit max items to 50 to prevent DoS
+    let max = limit ? parseInt(limit as string) : 1;
+    if (isNaN(max) || max < 1) max = 1;
+    if (max > 50) max = 50;
+
     const problems = await problemBank.fetch(skillId, max);
     
     // If no problems found, try to generate one on the fly (Just-in-Time for V0 Prototype)
@@ -62,8 +66,14 @@ app.get('/api/problems', async (req, res) => {
  * Body: { skillId, count, difficulty }
  */
 app.post('/api/factory/run', async (req, res) => {
-    const { skillId, count = 1, difficulty = 0.5 } = req.body;
+    let { skillId, count = 1, difficulty = 0.5 } = req.body;
     
+    // Security: Input validation
+    if (typeof count !== 'number' || count < 1) count = 1;
+    if (count > 50) count = 50; // Cap at 50 to prevent DoS
+    if (typeof difficulty !== 'number') difficulty = 0.5;
+    difficulty = Math.max(0, Math.min(1, difficulty)); // Clamp 0-1
+
     const generated = [];
     
     for (let i = 0; i < count; i++) {
