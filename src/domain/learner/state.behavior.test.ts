@@ -160,7 +160,8 @@ describe('learner/state behavior', () => {
                     [SKILL_ID_1]: createSkillState({ masteryProb: 0.95, lastPracticed: oldDate }), 
                     'frac_add_like_01': createSkillState({ masteryProb: 0.2 }),
                     'fractions_simplify': createSkillState({ masteryProb: 0.5 }),
-                    'fractions_sub_like': createSkillState({ masteryProb: 0.5 })
+                    'fractions_sub_like': createSkillState({ masteryProb: 0.5 }),
+                    'dec_notation_01': createSkillState({ masteryProb: 0.5 })
                 }
             });
 
@@ -179,7 +180,8 @@ describe('learner/state behavior', () => {
                     'frac_equiv_01': createSkillState({ masteryProb: 0.75 }),
                     'frac_add_like_01': createSkillState({ masteryProb: 0.2 }),
                     'fractions_simplify': createSkillState({ masteryProb: 0.5 }),
-                    'fractions_sub_like': createSkillState({ masteryProb: 0.5 }) 
+                    'fractions_sub_like': createSkillState({ masteryProb: 0.5 }),
+                    'dec_notation_01': createSkillState({ masteryProb: 0.5 }) 
                 }
             });
             
@@ -245,7 +247,8 @@ describe('learner/state behavior', () => {
              const state = createTestState({
                  skillState: {
                      'frac_equiv_01': createSkillState({ masteryProb: 0.95 }), // Prereq Mastered
-                     'frac_add_like_01': createSkillState({ masteryProb: 0.1 }) // Dependent Unmastered
+                     'frac_add_like_01': createSkillState({ masteryProb: 0.1 }), // Dependent Unmastered
+                     'dec_notation_01': createSkillState({ masteryProb: 0.5 })
                  }
              });
 

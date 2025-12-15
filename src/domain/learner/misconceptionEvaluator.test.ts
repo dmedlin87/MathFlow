@@ -107,4 +107,19 @@ describe('MisconceptionEvaluator', () => {
 
         consoleSpy.mockRestore();
     });
+    it('ignores unknown trigger kinds', () => {
+        const item: MathProblemItem = {
+            misconceptions: [
+                {
+                    id: 'misc_unknown',
+                    error_tag: 'unknown_error',
+                    trigger: { kind: 'UNKNOWN_TYPE' as any, value: 'test' },
+                    hint_ladder: ['hint']
+                }
+            ]
+        } as unknown as MathProblemItem;
+
+        const result = MisconceptionEvaluator.evaluate(item, 'test');
+        expect(result).toBeNull();
+    });
 });

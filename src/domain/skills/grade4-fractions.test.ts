@@ -14,6 +14,33 @@ describe('grade4-fractions generators', () => {
       };
   };
 
+  describe('AddLikeFractionGenerator', () => {
+    it('generates valid problems for low difficulty', () => {
+        // Mock: den -> 0.1 (min approx), num1 -> 0.1, num2 -> 0.1
+        const rng = createMockRng([0.1, 0.1, 0.1]);
+        const item = AddLikeFractionGenerator.generate(0.1, rng);
+        
+        expect(item.meta.skill_id).toBe('frac_add_like_01');
+        const qText = item.problem_content.stem;
+        expect(qText).toContain('+');
+        
+        const [ansNum, ansDen] = item.solution_logic.final_answer_canonical.split('/').map(Number);
+        const vars = item.problem_content.variables as any;
+        expect(vars.num1 + vars.num2).toBe(ansNum);
+        expect(vars.den).toBe(ansDen);
+    });
+
+    it('generates misconceptions for adding denominators', () => {
+        const item = AddLikeFractionGenerator.generate(0.1);
+        const misc = item.misconceptions?.find(m => m.error_tag === 'add_denominators');
+        expect(misc).toBeDefined();
+        
+        const vars = item.problem_content.variables as any;
+        // Trigger is sum of denominators
+        expect(misc?.trigger.value).toBe(String(vars.den + vars.den));
+    });
+  });
+
   describe('SubLikeFractionGenerator', () => {
     it('uses smaller ranges when difficulty < 0.5', () => {
       // Mock sequence: 
@@ -161,6 +188,15 @@ describe('grade4-fractions generators', () => {
         
         expect(item.meta.skill_id).toBe(SKILL_EQUIV_FRACTIONS.id);
         expect(vars.baseNum).toBeGreaterThanOrEqual(1);
+    });
+
+    it('uses larger multipliers for high difficulty', () => {
+        const rng = createMockRng([0, 0, 0.999]); // multiplier -> max
+        const item = EquivFractionGenerator.generate(0.9, rng);
+        const vars = item.problem_content.variables as { multiplier: number };
+        
+        // At high diff, multiplier is 3-9
+        expect(vars.multiplier).toBeGreaterThanOrEqual(3);
     });
 
     it('identifies additive misconception', () => {

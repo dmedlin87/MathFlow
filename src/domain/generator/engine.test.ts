@@ -66,6 +66,25 @@ describe('Generator Engine', () => {
             expect(mockFetch).toHaveBeenCalledTimes(2); // Problem fetch + Factory trigger
             expect(item).toBeDefined();
         });
+
+        it('uses factory item if bank is empty but factory returns item', async () => {
+            const factoryItem = {
+                meta: { id: 'factory_item_1', skill_id: 'frac_equiv_01' },
+                problem_content: { stem: 'Factory Problem' }
+            };
+
+            mockFetch
+                .mockResolvedValueOnce({ ok: true, json: async () => [] }) // Bank empty
+                .mockResolvedValueOnce({ 
+                    ok: true, 
+                    json: async () => ({ items: [factoryItem] }) 
+                }); // Factory returns item
+
+            const item = await engine.generate('frac_equiv_01', 0.5);
+            
+            expect(mockFetch).toHaveBeenCalledTimes(2);
+            expect(item.meta.id).toBe('factory_item_1');
+        });
         
         it('throws error when skill not found locally and API fails', async () => {
              mockFetch.mockRejectedValue(new Error("Network Error"));
