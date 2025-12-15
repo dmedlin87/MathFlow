@@ -1,6 +1,7 @@
 import type { Generator, MathProblemItem } from "../types";
 import { validateMathProblemItem } from "../validation";
 
+// Fix: Eliminate Hardcoded API URL (Architecture Review 2025-12-14)
 export interface EngineConfig {
   apiBaseUrl?: string | null;
 }
