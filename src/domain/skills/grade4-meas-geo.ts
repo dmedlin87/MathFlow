@@ -602,7 +602,7 @@ export const LinePlotGenerator: Generator = {
       return {
         meta: createMockProvenance(SKILL_LINE_PLOTS.id, difficulty),
         problem_content: {
-          stem: `A science class measured the length of several leaves (in inches):
+          stem: `A science class measured the length of several leaves. Data (inches):
 **${dataList.join(", ")}**
 
 How many leaves were **${targetVal}** inch long?`,
