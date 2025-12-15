@@ -2,7 +2,8 @@ import React from 'react';
 
 // Simple parser for our specific format
 // Converts "**3/5 = ?/15**" into bold + fraction layout
-export const MathRenderer: React.FC<{ text: string }> = ({ text }) => {
+// Optimized with React.memo to prevent unnecessary re-renders when parent state changes (e.g. typing answer)
+export const MathRenderer = React.memo(({ text }: { text: string }) => {
   // Regex to find fractions: number/number or ?/number or number/?
   // and wrapped in bold if present
   const parts = text.split(/(\*\*.*?\*\*)/g);
@@ -23,7 +24,7 @@ export const MathRenderer: React.FC<{ text: string }> = ({ text }) => {
       })}
     </span>
   );
-};
+});
 
 const ParsedMath: React.FC<{ text: string }> = ({ text }) => {
   // Split by spaces to handle operators
