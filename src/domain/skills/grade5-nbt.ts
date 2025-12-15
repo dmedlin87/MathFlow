@@ -1,790 +1,789 @@
-import { Skill, Generator, Problem, ProblemType } from "../types";
+import type { Skill, Generator, MathProblemItem } from "../types";
+import { engine } from "../generator/engine";
 
-/**
- * MODULE 1: Place Value and Decimal Operations
- * Standards: 5.NBT.A.1, 5.NBT.A.2, 5.NBT.A.3, 5.NBT.A.4
- */
+// Helper to get random integer between min and max (inclusive)
+const randomInt = (min: number, max: number, rng: () => number = Math.random) =>
+  Math.floor(rng() * (max - min + 1)) + min;
+
+// Mock provenance helper
+const createMockProvenance = (
+  skillId: string,
+  diff: number
+): MathProblemItem["meta"] => ({
+  id: `it_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+  version: 1,
+  skill_id: skillId,
+  difficulty: Math.ceil(diff * 5) || 1,
+  created_at: new Date().toISOString(),
+  verified_at: new Date().toISOString(),
+  status: "VERIFIED",
+  provenance: {
+    generator_model: "v0-rule-based-engine",
+    critic_model: "v0-simulation",
+    judge_model: "v0-simulation",
+    verifier: { type: "numeric", passed: true },
+    attempt: 1,
+  },
+  verification_report: {
+    rubric_scores: {
+      solvability: 1,
+      ambiguity: 0,
+      procedural_correctness: 1,
+      pedagogical_alignment: 1,
+    },
+    underspecified: false,
+    issues: [],
+  },
+});
+
+// Helper for robust rounding
+const robustRound = (n: number, scale: number) => {
+  return Math.round((n + Number.EPSILON) * scale) / scale;
+};
 
 // ----------------------------------------------------------------------
 // 1. Powers of 10 (5.NBT.A.1, 5.NBT.A.2)
 // ----------------------------------------------------------------------
-// Recognizing that a digit in one place represents 10 times as much as it represents
-// in the place to its right and 1/10 of what it represents in the place to its left.
-// Using whole-number exponents to denote powers of 10.
 
-const genPowersOf10: Generator = {
-  generate: (): Problem => {
-    // Determine the type of problem:
-    // 1. Shift relation (e.g., 300 is 10 times as much as ?)
-    // 2. Exponent evaluation (e.g., 10^3 = ?)
-    // 3. Multiplication by power of 10 (e.g., 5.2 x 100 = ?)
-    // 4. Division by power of 10 (e.g., 450 / 10 = ?)
+export const SKILL_5_NBT_POWERS_10: Skill = {
+  id: "5.nbt.powers_10",
+  name: "Powers of 10 and Place Value",
+  gradeBand: "3-5",
+  prereqs: ["nbt_place_value"],
+  misconceptions: ["count_zeros", "direction_error"],
+  templates: ["T_POWERS_OF_10"],
+  description: "Understand powers of 10 and patterns in multiplication/division",
+  bktParams: { learningRate: 0.2, slip: 0.1, guess: 0.1 },
+};
 
-    const type = Math.floor(Math.random() * 4);
+export const PowersOf10Generator: Generator = {
+  skillId: SKILL_5_NBT_POWERS_10.id,
+  templateId: "T_POWERS_OF_10",
+  generate: (difficulty: number, rng?: () => number): MathProblemItem => {
+    // Types:
+    // 0: Shift relation (300 is 10x ?)
+    // 1: Exponent evaluation (10^3 = ?)
+    // 2: Mult by power of 10 (5.2 x 100)
+    // 3: Div by power of 10 (450 / 10)
 
-    // Type 0: Shift relation
+    const type = Math.floor((rng ?? Math.random)() * 4);
+
     if (type === 0) {
-      const base = Math.floor(Math.random() * 9) + 1; // 1-9
-      const power = Math.floor(Math.random() * 4) + 1; // 1-4
+      const base = randomInt(1, 9, rng);
+      const power = randomInt(1, 4, rng);
       const val1 = base * Math.pow(10, power);
-
-      const isMultiplication = Math.random() < 0.5;
+      const isMultiplication = (rng ?? Math.random)() < 0.5;
 
       if (isMultiplication) {
-        // "val1 is 10 times as much as what?"
         const val2 = base * Math.pow(10, power - 1);
         return {
-          type: 'fill_in_blank',
-          stem: `${val1} is 10 times as much as ?`,
-          items: [{
-            id: 'ans',
-            type: 'math',
-            answer_spec: { input_type: 'integer', accepted_forms: [String(val2)] },
-            solution_logic: { final_answer_canonical: String(val2) }
-          }]
+          meta: createMockProvenance(SKILL_5_NBT_POWERS_10.id, difficulty),
+          problem_content: {
+            stem: `${val1} is 10 times as much as ?`,
+            format: "text",
+          },
+          answer_spec: {
+            answer_mode: "final_only",
+            input_type: "integer",
+          },
+          solution_logic: {
+            final_answer_canonical: String(val2),
+            final_answer_type: "numeric",
+            steps: [
+              {
+                step_index: 1,
+                explanation: `To find the number that is 10 times less, divide by 10.`,
+                math: `${val1} \\div 10 = ${val2}`,
+                answer: String(val2),
+              },
+            ],
+          },
+          misconceptions: [],
         };
       } else {
-        // "val2 is 1/10 of what?"
         const val2 = base * Math.pow(10, power - 1);
         return {
-          type: 'fill_in_blank',
-          stem: `${val2} is 1/10 of ?`,
-          items: [{
-            id: 'ans',
-            type: 'math',
-            answer_spec: { input_type: 'integer', accepted_forms: [String(val1)] },
-            solution_logic: { final_answer_canonical: String(val1) }
-          }]
+          meta: createMockProvenance(SKILL_5_NBT_POWERS_10.id, difficulty),
+          problem_content: {
+            stem: `${val2} is 1/10 of ?`,
+            format: "text",
+          },
+          answer_spec: {
+            answer_mode: "final_only",
+            input_type: "integer",
+          },
+          solution_logic: {
+            final_answer_canonical: String(val1),
+            final_answer_type: "numeric",
+            steps: [
+              {
+                step_index: 1,
+                explanation: `To find the number that ${val2} is 1/10 of, multiply by 10.`,
+                math: `${val2} \\times 10 = ${val1}`,
+                answer: String(val1),
+              },
+            ],
+          },
+          misconceptions: [],
         };
       }
-    }
-
-    // Type 1: Exponent evaluation
-    else if (type === 1) {
-      const exponent = Math.floor(Math.random() * 4) + 1; // 1-4
-      // Sometimes just 10^e, sometimes 10 x 10 x ...
-      const showExpanded = Math.random() < 0.5;
-
-      if (showExpanded) {
-        const factors = Array(exponent).fill(10).join(' × ');
-        const answer = Math.pow(10, exponent);
-        return {
-          type: 'fill_in_blank',
-          stem: `${factors} = 10^?`,
-          items: [{
-            id: 'ans',
-            type: 'math',
-            answer_spec: { input_type: 'integer', accepted_forms: [String(exponent)] },
-            solution_logic: { final_answer_canonical: String(exponent) }
-          }]
-        };
-      } else {
-        const answer = Math.pow(10, exponent);
-        return {
-          type: 'fill_in_blank',
-          stem: `10^${exponent} = ?`,
-          items: [{
-            id: 'ans',
-            type: 'math',
-            answer_spec: { input_type: 'integer', accepted_forms: [String(answer)] },
-            solution_logic: { final_answer_canonical: String(answer) }
-          }]
-        };
-      }
-    }
-
-    // Type 2: Multiplication by power of 10
-    else if (type === 2) {
-      const isDecimal = Math.random() < 0.7;
+    } else if (type === 1) {
+      const exponent = randomInt(1, 4, rng);
+      const answer = Math.pow(10, exponent);
+      return {
+        meta: createMockProvenance(SKILL_5_NBT_POWERS_10.id, difficulty),
+        problem_content: {
+          stem: `Evaluate: $10^${exponent} = ?$`,
+          format: "latex",
+        },
+        answer_spec: {
+          answer_mode: "final_only",
+          input_type: "integer",
+        },
+        solution_logic: {
+          final_answer_canonical: String(answer),
+          final_answer_type: "numeric",
+          steps: [
+            {
+              step_index: 1,
+              explanation: `The exponent ${exponent} tells us to multiply 10 by itself ${exponent} times.`,
+              math: `10^${exponent} = ${answer}`,
+              answer: String(answer),
+            },
+          ],
+        },
+        misconceptions: [],
+      };
+    } else if (type === 2) {
+      const isDecimal = (rng ?? Math.random)() < 0.7;
       let num: number;
       if (isDecimal) {
-        num = parseFloat((Math.random() * 10).toFixed(3)); // e.g. 3.456
+        num = parseFloat(((rng ?? Math.random)() * 10).toFixed(3));
       } else {
-        num = Math.floor(Math.random() * 100) + 1;
+        num = randomInt(1, 100, rng);
       }
-
-      const exponent = Math.floor(Math.random() * 3) + 1; // 1-3
+      const exponent = randomInt(1, 3, rng);
       const multiplier = Math.pow(10, exponent);
-
-      // We want to format the question sometimes as x 100, sometimes x 10^2
-      const useExponent = Math.random() < 0.5;
+      const useExponent = (rng ?? Math.random)() < 0.5;
       const questionPart = useExponent ? `10^${exponent}` : String(multiplier);
-
-      // Calculate precise answer to avoid floating point weirdness
-      // String manipulation is safer for shifts
-      const answer = (num * multiplier);
-      // Fix potential floating point errors like 3.4 * 10 = 34.00000004
-      // Max decimals was 3, multiplying by max 1000 shifts it to integer or less decimals.
+      const answer = num * multiplier;
       const canonical = parseFloat(answer.toFixed(4)).toString();
 
       return {
-        type: 'fill_in_blank',
-        stem: `${num} × ${questionPart} = ?`,
-        items: [{
-          id: 'ans',
-          type: 'math',
-          answer_spec: { input_type: 'decimal', accepted_forms: [canonical] },
-          solution_logic: { final_answer_canonical: canonical }
-        }]
+        meta: createMockProvenance(SKILL_5_NBT_POWERS_10.id, difficulty),
+        problem_content: {
+          stem: `Calculate: $${num} \\times ${questionPart} = ?$`,
+          format: "latex",
+        },
+        answer_spec: {
+          answer_mode: "final_only",
+          input_type: "decimal",
+        },
+        solution_logic: {
+          final_answer_canonical: canonical,
+          final_answer_type: "numeric",
+          steps: [
+            {
+              step_index: 1,
+              explanation: `When multiplying by $10^${exponent}$, move the decimal point ${exponent} places to the right.`,
+              math: `${num} \\times ${multiplier} = ${canonical}`,
+              answer: canonical,
+            },
+          ],
+        },
+        misconceptions: [
+          {
+            id: "misc_count_zeros",
+            error_tag: "count_zeros",
+            trigger: {
+              kind: "exact_answer",
+              value: `${num}${Array(exponent).fill(0).join("")}`,
+            },
+            hint_ladder: [
+              "When multiplying decimals by 10, don't just add zeros. Move the decimal point.",
+            ],
+          },
+        ],
       };
-    }
-
-    // Type 3: Division by power of 10
-    else {
-      // Start with a number that results in a clean decimal
-      const targetDecimalPlaces = Math.floor(Math.random() * 3); // 0, 1, 2
-      const exponent = Math.floor(Math.random() * 3) + 1; // 1, 2, 3
-
-      // Working backwards: result * 10^exp = dividend
-      // result should be something like 4.5
-      // dividend would be 450
-
-      const baseNum = Math.floor(Math.random() * 1000);
-      const dividend = baseNum;
+    } else {
+      // Type 3: Division
+      const exponent = randomInt(1, 3, rng);
       const divisor = Math.pow(10, exponent);
-
-      const useExponent = Math.random() < 0.5;
+      const baseNum = randomInt(1, 1000, rng);
+      const dividend = baseNum;
+      const useExponent = (rng ?? Math.random)() < 0.5;
       const questionPart = useExponent ? `10^${exponent}` : String(divisor);
-
       const answer = dividend / divisor;
       const canonical = parseFloat(answer.toFixed(5)).toString();
 
       return {
-        type: 'fill_in_blank',
-        stem: `${dividend} ÷ ${questionPart} = ?`,
-        items: [{
-          id: 'ans',
-          type: 'math',
-          answer_spec: { input_type: 'decimal', accepted_forms: [canonical] },
-          solution_logic: { final_answer_canonical: canonical }
-        }]
+        meta: createMockProvenance(SKILL_5_NBT_POWERS_10.id, difficulty),
+        problem_content: {
+          stem: `Calculate: $${dividend} \\div ${questionPart} = ?$`,
+          format: "latex",
+        },
+        answer_spec: {
+          answer_mode: "final_only",
+          input_type: "decimal",
+        },
+        solution_logic: {
+          final_answer_canonical: canonical,
+          final_answer_type: "numeric",
+          steps: [
+            {
+              step_index: 1,
+              explanation: `When dividing by $10^${exponent}$, move the decimal point ${exponent} places to the left.`,
+              math: `${dividend} \\div ${divisor} = ${canonical}`,
+              answer: canonical,
+            },
+          ],
+        },
+        misconceptions: [
+          {
+            id: "misc_direction",
+            error_tag: "direction_error",
+            trigger: { kind: "exact_answer", value: String(dividend * divisor) },
+            hint_ladder: [
+              "Division makes the number smaller. Move the decimal to the left.",
+            ],
+          },
+        ],
       };
     }
-  }
+  },
 };
 
-export const SKILL_5_NBT_POWERS_10: Skill = {
-  id: '5.nbt.powers_10',
-  name: 'Powers of 10 and Place Value',
-  description: 'Understand powers of 10 and patterns in multiplication/division',
-  generator: genPowersOf10,
-  misconceptions: {
-    'count_zeros': 'When multiplying by 10^n, you move the decimal point n places to the right. Do not just add zeros if there is a decimal.',
-    'direction_error': 'Multiplication moves the decimal to the right (making the number bigger), division moves it to the left (making it smaller).'
-  }
-};
-
+engine.register(PowersOf10Generator);
 
 // ----------------------------------------------------------------------
 // 2. Decimal Forms (5.NBT.A.3.a)
 // ----------------------------------------------------------------------
-// Read and write decimals to thousandths using base-ten numerals, number names, and expanded form.
-
-const genDecimalForms: Generator = {
-  generate: (): Problem => {
-    // Generate a decimal up to thousandths
-    const whole = Math.floor(Math.random() * 100);
-    const decimalPart = Math.floor(Math.random() * 999) + 1;
-    // Format to 3 decimal places string e.g., "005"
-    const decimalStr = String(decimalPart).padStart(3, '0');
-    // Remove trailing zeros for the canonical number
-    const numStr = `${whole}.${decimalStr}`.replace(/\.?0+$/, '');
-    const numVal = parseFloat(numStr);
-
-    const type = Math.random() < 0.5 ? 'expanded_to_standard' : 'standard_to_expanded_part';
-
-    if (type === 'expanded_to_standard') {
-      // e.g. 3 x 10 + 4 x 1 + 5 x (1/10) + ...
-      const parts: string[] = [];
-
-      // Whole part decomposition
-      const wholeStr = String(whole);
-      for (let i = 0; i < wholeStr.length; i++) {
-        const digit = parseInt(wholeStr[i]);
-        if (digit === 0) continue;
-        const placeVal = Math.pow(10, wholeStr.length - 1 - i);
-        parts.push(`${digit} × ${placeVal}`);
-      }
-
-      // Decimal part decomposition
-      // Using fractions 1/10, 1/100, 1/1000
-      // We can also use decimals 0.1, 0.01 but standard often uses fractions for expanded form in 5th grade
-      const decStrActual = numStr.split('.')[1] || "";
-      for (let i = 0; i < decStrActual.length; i++) {
-        const digit = parseInt(decStrActual[i]);
-        if (digit === 0) continue;
-        const denom = Math.pow(10, i + 1);
-        parts.push(`${digit} × (1/${denom})`);
-      }
-
-      const expandedForm = parts.join(' + ');
-
-      return {
-        type: 'fill_in_blank',
-        stem: `Write the standard form number for: ${expandedForm}`,
-        items: [{
-          id: 'ans',
-          type: 'math',
-          answer_spec: { input_type: 'decimal', accepted_forms: [numStr] },
-          solution_logic: { final_answer_canonical: numStr }
-        }]
-      };
-    } else {
-        // Find a missing part of expanded form
-        // e.g. 45.67 = 4 x 10 + ? x 1 + ...
-        // Let's keep it simple and ask for the value of a specific digit
-        // "What is the value of the digit 7 in 45.67?"
-        // Or expanded form fill in blank
-
-        // Let's do: 45.602 = 4 x 10 + 5 x 1 + 6 x (1/10) + 2 x (?)
-
-        // Pick a non-zero digit to hide
-        // Ensure we have at least one decimal digit
-        const s = numStr; // e.g. "45.602"
-        const dotIndex = s.indexOf('.');
-        if (dotIndex === -1) {
-           // fallback if somehow integer (should be rare due to random generation logic)
-           return {
-             type: 'fill_in_blank',
-             stem: `Write ${s} in expanded form`,
-             items: [{ id: 'ans', type: 'math', answer_spec: {input_type:'text'}, solution_logic: {final_answer_canonical: s} }] // Placeholder
-           };
-        }
-
-        // Find digits suitable for hiding (non-zero)
-        const candidates: {digit: string, placeValStr: string, placeValNum: number}[] = [];
-
-        const [w, d] = s.split('.');
-
-        for(let i=0; i<w.length; i++) {
-            if(w[i] !== '0') {
-                const pv = Math.pow(10, w.length - 1 - i);
-                candidates.push({digit: w[i], placeValStr: String(pv), placeValNum: pv});
-            }
-        }
-        for(let i=0; i<d.length; i++) {
-            if(d[i] !== '0') {
-                const pv = Math.pow(10, i + 1);
-                candidates.push({digit: d[i], placeValStr: `1/${pv}`, placeValNum: 1/pv});
-            }
-        }
-
-        if (candidates.length === 0) return genDecimalForms.generate(); // retry
-
-        const hiddenIndex = Math.floor(Math.random() * candidates.length);
-        const hidden = candidates[hiddenIndex];
-
-        // Construct the string with a ?
-        const parts: string[] = [];
-        for (let i = 0; i < w.length; i++) {
-            const digit = w[i];
-            if (digit === '0') continue;
-            const pv = Math.pow(10, w.length - 1 - i);
-            const partStr = `${digit} × ${pv}`;
-            if (digit === hidden.digit && pv === hidden.placeValNum && hidden.placeValStr.indexOf('/') === -1) {
-                 parts.push(`?`);
-            } else if (digit === hidden.digit && pv === hidden.placeValNum) {
-                 // Should ideally not happen if we differentiate well, but let's just match objects
-                 // Re-doing the loop is messy. Let's just build the parts list first then replace.
-            }
-        }
-        // Actually, let's just rebuild carefully.
-
-        const allParts: string[] = [];
-        candidates.forEach((c, idx) => {
-            if (idx === hiddenIndex) {
-                 allParts.push(`${c.digit} × ?`);
-            } else {
-                 allParts.push(`${c.digit} × ${c.placeValStr.includes('/') ? `(${c.placeValStr})` : c.placeValStr}`);
-            }
-        });
-
-        const problemStr = `${numStr} = ${allParts.join(' + ')}`;
-
-        // The answer is the place value (e.g., 100 or 1/10)
-        // If it's a fraction, we accept "1/10" or "0.1"
-        const accepted = [hidden.placeValStr];
-        if (hidden.placeValStr.includes('/')) {
-            accepted.push(String(hidden.placeValNum)); // decimal form
-        }
-
-        return {
-            type: 'fill_in_blank',
-            stem: `Fill in the missing value: ${problemStr}`,
-            items: [{
-                id: 'ans',
-                type: 'math',
-                answer_spec: { input_type: 'text', accepted_forms: accepted },
-                solution_logic: { final_answer_canonical: hidden.placeValStr }
-            }]
-        };
-    }
-  }
-};
 
 export const SKILL_5_NBT_DECIMAL_FORMS: Skill = {
-  id: '5.nbt.decimal_forms',
-  name: 'Decimal Forms',
-  description: 'Read and write decimals in standard and expanded forms',
-  generator: genDecimalForms,
-  misconceptions: {
-    'place_value': 'Remember that the first place to the right of the decimal is tenths (1/10), then hundredths (1/100).',
-    'decimal_point': 'The decimal point separates the whole number part from the fractional part.'
-  }
+  id: "5.nbt.decimal_forms",
+  name: "Decimal Forms",
+  gradeBand: "3-5",
+  prereqs: ["5.nbt.powers_10"],
+  misconceptions: ["place_value", "decimal_point"],
+  templates: ["T_DECIMAL_FORMS"],
+  description: "Read and write decimals in standard and expanded forms",
+  bktParams: { learningRate: 0.2, slip: 0.1, guess: 0.1 },
 };
 
+export const DecimalFormsGenerator: Generator = {
+  skillId: SKILL_5_NBT_DECIMAL_FORMS.id,
+  templateId: "T_DECIMAL_FORMS",
+  generate: (difficulty: number, rng?: () => number): MathProblemItem => {
+    const whole = randomInt(0, 99, rng);
+    const decimalPart = randomInt(1, 999, rng);
+    const decimalStr = String(decimalPart).padStart(3, "0");
+    const numStr = `${whole}.${decimalStr}`.replace(/\.?0+$/, "");
+
+    // Expanded to Standard
+    const parts: string[] = [];
+    const wholeStr = String(whole);
+    for (let i = 0; i < wholeStr.length; i++) {
+      const digit = parseInt(wholeStr[i]);
+      if (digit === 0) continue;
+      const placeVal = Math.pow(10, wholeStr.length - 1 - i);
+      parts.push(`${digit} \\times ${placeVal}`);
+    }
+    const decStrActual = numStr.split(".")[1] || "";
+    for (let i = 0; i < decStrActual.length; i++) {
+      const digit = parseInt(decStrActual[i]);
+      if (digit === 0) continue;
+      const denom = Math.pow(10, i + 1);
+      parts.push(`${digit} \\times \\frac{1}{${denom}}`);
+    }
+    const expandedForm = parts.join(" + ");
+
+    return {
+      meta: createMockProvenance(SKILL_5_NBT_DECIMAL_FORMS.id, difficulty),
+      problem_content: {
+        stem: `Write the standard form number for:
+$$${expandedForm}$$`,
+        format: "latex",
+      },
+      answer_spec: {
+        answer_mode: "final_only",
+        input_type: "decimal",
+      },
+      solution_logic: {
+        final_answer_canonical: numStr,
+        final_answer_type: "numeric",
+        steps: [
+          {
+            step_index: 1,
+            explanation: `Combine the whole number parts and the decimal parts based on place value.`,
+            math: `\\text{Sum} = ${numStr}`,
+            answer: numStr,
+          },
+        ],
+      },
+      misconceptions: [],
+    };
+  },
+};
+
+engine.register(DecimalFormsGenerator);
 
 // ----------------------------------------------------------------------
 // 3. Comparing Decimals (5.NBT.A.3.b)
 // ----------------------------------------------------------------------
-// Comparing two decimals to thousandths based on meanings of the digits in each place, using >, =, and < symbols.
 
-const genCompareDecimals: Generator = {
-  generate: (): Problem => {
-    // Generate two decimals that are tricky to compare
-    // e.g. 0.4 and 0.45 (longer is larger?)
-    // e.g. 0.3 and 0.30 (same)
-    // e.g. 0.3 and 0.03 (tenths vs hundredths)
+export const SKILL_5_NBT_COMPARE_DECIMALS: Skill = {
+  id: "5.nbt.compare_decimals",
+  name: "Comparing Decimals",
+  gradeBand: "3-5",
+  prereqs: ["5.nbt.decimal_forms"],
+  misconceptions: ["longer_is_larger", "shorter_is_larger"],
+  templates: ["T_COMPARE_DECIMALS"],
+  description: "Compare two decimals to thousandths",
+  bktParams: { learningRate: 0.2, slip: 0.1, guess: 0.33 },
+};
 
-    const type = Math.random();
+export const CompareDecimalsGenerator: Generator = {
+  skillId: SKILL_5_NBT_COMPARE_DECIMALS.id,
+  templateId: "T_COMPARE_DECIMALS",
+  generate: (difficulty: number, rng?: () => number): MathProblemItem => {
+    const type = (rng ?? Math.random)();
     let n1: number, n2: number;
-    let s1: string, s2: string;
+    let s1: string | undefined, s2: string | undefined;
 
     if (type < 0.3) {
-      // Different lengths, "longer is larger" misconception
-      // e.g. 0.5 vs 0.456
-      const base = Math.floor(Math.random() * 9) + 1; // 1-9
-      n1 = base / 10; // 0.x
-
-      // make n2 smaller but longer: e.g., if n1=0.5, n2=0.499
-      n2 = (base * 100 - (Math.floor(Math.random()*10)+1)) / 1000;
-
-      // Or make n2 larger but shorter? (less common)
-      // Let's randomize which is which
-      if (Math.random() < 0.5) {
-        // Swap to make n1 the longer one sometimes
-        [n1, n2] = [n2, n1];
-      }
+      // Longer is larger trap
+      const base = randomInt(1, 9, rng);
+      n1 = base / 10;
+      n2 = (base * 100 - randomInt(1, 10, rng)) / 1000;
+      if ((rng ?? Math.random)() < 0.5) [n1, n2] = [n2, n1];
     } else if (type < 0.6) {
       // Equivalence with zeros
-      // 0.4 vs 0.40
-      const base = Math.floor(Math.random() * 99) + 1;
+      const base = randomInt(1, 99, rng);
       n1 = base / 100;
       s1 = n1.toString();
       s2 = s1 + "0";
       n2 = n1;
     } else {
       // Close numbers
-      // 3.456 vs 3.457
-      const base = Math.floor(Math.random() * 1000);
+      const base = randomInt(1, 999, rng);
       n1 = base / 1000;
-      n2 = (base + (Math.random() < 0.5 ? 1 : -1)) / 1000;
-      // boundary check
+      n2 = (base + ((rng ?? Math.random)() < 0.5 ? 1 : -1)) / 1000;
       if (n2 < 0) n2 = 0.001;
     }
 
-    // Ensure strings
-    s1 = s1 || n1.toString();
-    s2 = s2 || n2.toString();
+    s1 = s1! || n1.toString();
+    s2 = s2! || n2.toString();
 
-    let expected = '=';
-    if (n1 > n2) expected = '>';
-    if (n1 < n2) expected = '<';
+    let expected = "=";
+    if (n1 > n2) expected = ">";
+    if (n1 < n2) expected = "<";
 
     return {
-      type: 'multiple_choice',
-      stem: `Compare the two decimals: ${s1} ? ${s2}`,
-      options: ['>', '<', '='],
-      items: [{
-        id: 'ans',
-        type: 'text', // using text for symbol selection
-        answer_spec: { input_type: 'text', accepted_forms: [expected] },
-        solution_logic: { final_answer_canonical: expected }
-      }]
+      meta: createMockProvenance(SKILL_5_NBT_COMPARE_DECIMALS.id, difficulty),
+      problem_content: {
+        stem: `Compare: $${s1} \\text{ ? } ${s2}$`,
+        format: "latex",
+        variables: { s1, s2 },
+      },
+      answer_spec: {
+        answer_mode: "final_only",
+        input_type: "multiple_choice",
+        ui: { choices: [">", "<", "="] },
+      },
+      solution_logic: {
+        final_answer_canonical: expected,
+        final_answer_type: "multiple_choice",
+        steps: [
+          {
+            step_index: 1,
+            explanation: `Compare digits from left to right.`,
+            math: `${s1} ${expected} ${s2}`,
+            answer: expected,
+          },
+        ],
+      },
+      misconceptions: [
+        {
+          id: "misc_longer",
+          error_tag: "longer_is_larger",
+          trigger: { kind: "predicate", value: "false" }, // Difficult to trigger in MC without knowing which they picked
+          hint_ladder: ["Compare place by place."],
+        },
+      ],
     };
-  }
+  },
 };
 
-export const SKILL_5_NBT_COMPARE_DECIMALS: Skill = {
-  id: '5.nbt.compare_decimals',
-  name: 'Comparing Decimals',
-  description: 'Compare two decimals to thousandths',
-  generator: genCompareDecimals,
-  misconceptions: {
-    'longer_is_larger': 'A number with more digits is not necessarily larger. Compare place by place starting from the left.',
-    'shorter_is_larger': 'Tenths are larger than hundredths. 0.3 > 0.03 even though 3 is the same digit.'
-  }
-};
-
+engine.register(CompareDecimalsGenerator);
 
 // ----------------------------------------------------------------------
 // 4. Rounding Decimals (5.NBT.A.4)
 // ----------------------------------------------------------------------
-// Use place value understanding to round decimals to any place.
 
-const genRoundingDecimals: Generator = {
-  generate: (): Problem => {
-    // Round to whole, tenth, or hundredth
-    const places = ['whole number', 'tenth', 'hundredth'];
-    const placeIdx = Math.floor(Math.random() * 3);
+export const SKILL_5_NBT_ROUND_DECIMALS: Skill = {
+  id: "5.nbt.round_decimals",
+  name: "Rounding Decimals",
+  gradeBand: "3-5",
+  prereqs: ["5.nbt.compare_decimals"],
+  misconceptions: ["truncation", "place_confusion"],
+  templates: ["T_ROUND_DECIMALS"],
+  description: "Round decimals to any place",
+  bktParams: { learningRate: 0.15, slip: 0.05, guess: 0.1 },
+};
+
+export const RoundDecimalsGenerator: Generator = {
+  skillId: SKILL_5_NBT_ROUND_DECIMALS.id,
+  templateId: "T_ROUND_DECIMALS",
+  generate: (difficulty: number, rng?: () => number): MathProblemItem => {
+    const places = ["whole number", "tenth", "hundredth"];
+    const placeIdx = Math.floor((rng ?? Math.random)() * 3);
     const targetPlace = places[placeIdx];
 
-    // Generate a number with 3 decimal places
-    const whole = Math.floor(Math.random() * 100);
-    const dec = Math.floor(Math.random() * 900) + 100; // 100-999 to ensure 3 digits
+    const whole = randomInt(0, 99, rng);
+    const dec = randomInt(100, 999, rng);
     const num = parseFloat(`${whole}.${dec}`);
 
     let rounded: number;
-    let placeValueStr = "";
-
-    // Helper for robust rounding to avoid floating point issues (1.235 -> 1.24)
-    const robustRound = (n: number, scale: number) => {
-        return Math.round((n + Number.EPSILON) * scale) / scale;
-    };
-
-    if (placeIdx === 0) {
-      // Whole number
-      rounded = robustRound(num, 1);
-      placeValueStr = "ones place";
-    } else if (placeIdx === 1) {
-      // Tenth
-      // 3.456 -> 3.5
-      rounded = robustRound(num, 10);
-      placeValueStr = "tenths place";
-    } else {
-      // Hundredth
-      // 3.456 -> 3.46
-      rounded = robustRound(num, 100);
-      placeValueStr = "hundredths place";
-    }
+    if (placeIdx === 0) rounded = robustRound(num, 1);
+    else if (placeIdx === 1) rounded = robustRound(num, 10);
+    else rounded = robustRound(num, 100);
 
     return {
-      type: 'fill_in_blank',
-      stem: `Round ${num} to the nearest ${targetPlace}.`,
-      items: [{
-        id: 'ans',
-        type: 'math',
-        answer_spec: { input_type: 'decimal', accepted_forms: [String(rounded)] },
-        solution_logic: { final_answer_canonical: String(rounded) }
-      }]
+      meta: createMockProvenance(SKILL_5_NBT_ROUND_DECIMALS.id, difficulty),
+      problem_content: {
+        stem: `Round **${num}** to the nearest **${targetPlace}**.`,
+        format: "text",
+      },
+      answer_spec: {
+        answer_mode: "final_only",
+        input_type: "decimal",
+      },
+      solution_logic: {
+        final_answer_canonical: String(rounded),
+        final_answer_type: "numeric",
+        steps: [
+          {
+            step_index: 1,
+            explanation: `Identify the rounding place and look at the digit to its right.`,
+            math: `\\text{Result: } ${rounded}`,
+            answer: String(rounded),
+          },
+        ],
+      },
+      misconceptions: [],
     };
-  }
+  },
 };
 
-export const SKILL_5_NBT_ROUND_DECIMALS: Skill = {
-  id: '5.nbt.round_decimals',
-  name: 'Rounding Decimals',
-  description: 'Round decimals to any place',
-  generator: genRoundingDecimals,
-  misconceptions: {
-    'truncation': 'Rounding is not just cutting off the numbers. If the next digit is 5 or more, you must round up.',
-    'place_confusion': 'Identify the correct place value first before looking at the neighbor digit.'
-  }
-};
-
-/**
- * MODULE 2 & 3 Additions: Operations with Decimals and Multi-Digit
- * Standards: 5.NBT.B.5, 5.NBT.B.6, 5.NBT.B.7
- */
+engine.register(RoundDecimalsGenerator);
 
 // ----------------------------------------------------------------------
-// 5. Add/Subtract Decimals (5.NBT.B.7 - partial)
+// 5. Add/Subtract Decimals (5.NBT.B.7)
 // ----------------------------------------------------------------------
-
-const genAddSubDecimals: Generator = {
-  generate: (): Problem => {
-    const isAddition = Math.random() < 0.5;
-
-    // Generate decimals with varying lengths to force alignment issues
-    // e.g. 3.5 + 4.25
-    const d1 = Math.floor(Math.random() * 2) + 1; // 1 or 2 decimal places
-    const d2 = Math.floor(Math.random() * 2) + 1; // 1 or 2 decimal places
-
-    // Ensure at least one has 2 places for richness, or mismatch
-    // If d1=1 and d2=1, maybe make one 3? Standard says "to hundredths", so max 2 usually, but thousandths is also 5th grade (5.NBT.A.1)
-
-    const n1 = parseFloat((Math.random() * 50 + 1).toFixed(d1));
-    const n2 = parseFloat((Math.random() * 50 + 1).toFixed(d2));
-
-    let result = isAddition ? n1 + n2 : n1 - n2;
-    // Formatting: 2 decimal places max for result usually
-    // JavaScript float precision fix
-    result = parseFloat(result.toFixed(3));
-
-    // For subtraction, ensure n1 > n2 or handle negative? Grade 5 usually positive only?
-    // Grade 6 is negative numbers. We should swap if negative.
-    let finalN1 = n1;
-    let finalN2 = n2;
-    if (!isAddition && n1 < n2) {
-      finalN1 = n2;
-      finalN2 = n1;
-      result = parseFloat((finalN1 - finalN2).toFixed(3));
-    }
-
-    const op = isAddition ? '+' : '-';
-
-    return {
-      type: 'fill_in_blank',
-      stem: `Compute: ${finalN1} ${op} ${finalN2} = ?`,
-      items: [{
-        id: 'ans',
-        type: 'math',
-        answer_spec: { input_type: 'decimal', accepted_forms: [String(result)] },
-        solution_logic: { final_answer_canonical: String(result) }
-      }]
-    };
-  }
-};
 
 export const SKILL_5_NBT_ADD_SUB_DECIMALS: Skill = {
-  id: '5.nbt.add_sub_decimals',
-  name: 'Add and Subtract Decimals',
-  description: 'Add and subtract decimals to hundredths',
-  generator: genAddSubDecimals,
-  misconceptions: {
-    'alignment': 'You must line up the decimal points before adding or subtracting.',
-    'place_drift': 'Do not add tenths to hundredths. Use zeros as placeholders to help line up the numbers.'
-  }
+  id: "5.nbt.add_sub_decimals",
+  name: "Add and Subtract Decimals",
+  gradeBand: "3-5",
+  prereqs: ["5.nbt.compare_decimals"],
+  misconceptions: ["alignment", "place_drift"],
+  templates: ["T_ADD_SUB_DECIMALS"],
+  description: "Add and subtract decimals to hundredths",
+  bktParams: { learningRate: 0.1, slip: 0.1, guess: 0.05 },
 };
+
+export const AddSubDecimalsGenerator: Generator = {
+  skillId: SKILL_5_NBT_ADD_SUB_DECIMALS.id,
+  templateId: "T_ADD_SUB_DECIMALS",
+  generate: (difficulty: number, rng?: () => number): MathProblemItem => {
+    const isAddition = (rng ?? Math.random)() < 0.5;
+    const d1 = randomInt(1, 2, rng);
+    const d2 = randomInt(1, 2, rng);
+    let n1 = parseFloat(((rng ?? Math.random)() * 50 + 1).toFixed(d1));
+    let n2 = parseFloat(((rng ?? Math.random)() * 50 + 1).toFixed(d2));
+
+    if (!isAddition && n1 < n2) [n1, n2] = [n2, n1];
+
+    let result = isAddition ? n1 + n2 : n1 - n2;
+    result = parseFloat(result.toFixed(3));
+    const op = isAddition ? "+" : "-";
+
+    return {
+      meta: createMockProvenance(SKILL_5_NBT_ADD_SUB_DECIMALS.id, difficulty),
+      problem_content: {
+        stem: `Compute: $${n1} ${op} ${n2} = ?$`,
+        format: "latex",
+      },
+      answer_spec: {
+        answer_mode: "final_only",
+        input_type: "decimal",
+      },
+      solution_logic: {
+        final_answer_canonical: String(result),
+        final_answer_type: "numeric",
+        steps: [
+          {
+            step_index: 1,
+            explanation: `Align the decimal points and ${
+              isAddition ? "add" : "subtract"
+            }.`,
+            math: `${n1} ${op} ${n2} = ${result}`,
+            answer: String(result),
+          },
+        ],
+      },
+      misconceptions: [
+        {
+          id: "misc_align",
+          error_tag: "alignment",
+          trigger: { kind: "predicate", value: "false" }, // Requires analyzing if they added tenths to hundredths
+          hint_ladder: ["Did you line up the decimal points?"],
+        },
+      ],
+    };
+  },
+};
+
+engine.register(AddSubDecimalsGenerator);
 
 // ----------------------------------------------------------------------
 // 6. Multi-Digit Multiplication (5.NBT.B.5)
 // ----------------------------------------------------------------------
-// Fluently multiply multi-digit whole numbers using the standard algorithm.
-
-const genMultWhole: Generator = {
-  generate: (): Problem => {
-    // 3-digit x 2-digit, 4-digit x 2-digit, etc.
-    // Grade 5 expectation: Standard Algorithm
-
-    const type = Math.random();
-    let n1: number, n2: number;
-
-    if (type < 0.5) {
-      // 3 x 2
-      n1 = Math.floor(Math.random() * 900) + 100; // 100-999
-      n2 = Math.floor(Math.random() * 90) + 10;   // 10-99
-    } else {
-      // 4 x 2 (or 3 x 3? Standard usually says "multi-digit", but 4x2 is common max)
-      n1 = Math.floor(Math.random() * 9000) + 1000; // 1000-9999
-      n2 = Math.floor(Math.random() * 90) + 10;     // 10-99
-    }
-
-    const result = n1 * n2;
-
-    return {
-      type: 'fill_in_blank',
-      stem: `Multiply: ${n1} × ${n2} = ?`,
-      items: [{
-        id: 'ans',
-        type: 'math',
-        answer_spec: { input_type: 'integer', accepted_forms: [String(result)] },
-        solution_logic: { final_answer_canonical: String(result) }
-      }]
-    };
-  }
-};
 
 export const SKILL_5_NBT_MULT_WHOLE: Skill = {
-  id: '5.nbt.mult_whole',
-  name: 'Multi-Digit Multiplication',
-  description: 'Multiply multi-digit whole numbers',
-  generator: genMultWhole,
-  misconceptions: {
-    'zero_placeholder': 'When moving to the next line (tens place), don\'t forget to put a zero placeholder.',
-    'column_alignment': 'Keep your columns straight to add the partial products correctly.'
-  }
+  id: "5.nbt.mult_whole",
+  name: "Multi-Digit Multiplication",
+  gradeBand: "3-5",
+  prereqs: ["nbt_mult_2digit"],
+  misconceptions: ["zero_placeholder", "column_alignment"],
+  templates: ["T_MULT_WHOLE_5"],
+  description: "Multiply multi-digit whole numbers",
+  bktParams: { learningRate: 0.1, slip: 0.1, guess: 0.05 },
 };
 
-// ----------------------------------------------------------------------
-// 7. Decimal Multiplication (5.NBT.B.7 - partial)
-// ----------------------------------------------------------------------
-
-const genMultDecimals: Generator = {
-  generate: (): Problem => {
-    // Decimal x Whole or Decimal x Decimal
-    const isDecDec = Math.random() < 0.6;
-
-    let n1: number, n2: number;
-    let n1Str: string, n2Str: string;
-
-    if (isDecDec) {
-      // e.g. 3.4 x 0.5
-      n1 = parseFloat((Math.random() * 10).toFixed(1));
-      n2 = parseFloat((Math.random() * 5).toFixed(1));
-    } else {
-      // e.g. 4.52 x 4
-      const d = Math.random() < 0.5 ? 1 : 2;
-      n1 = parseFloat((Math.random() * 20).toFixed(d));
-      n2 = Math.floor(Math.random() * 9) + 2; // 2-10
-    }
-
+export const MultWholeGenerator: Generator = {
+  skillId: SKILL_5_NBT_MULT_WHOLE.id,
+  templateId: "T_MULT_WHOLE_5",
+  generate: (difficulty: number, rng?: () => number): MathProblemItem => {
+    // 3x2 or 4x2
+    const n1 =
+      (rng ?? Math.random)() < 0.5
+        ? randomInt(100, 999, rng)
+        : randomInt(1000, 9999, rng);
+    const n2 = randomInt(10, 99, rng);
     const result = n1 * n2;
-    // Fix float precision
-    const canonical = parseFloat(result.toFixed(4)).toString();
 
     return {
-      type: 'fill_in_blank',
-      stem: `Multiply: ${n1} × ${n2} = ?`,
-      items: [{
-        id: 'ans',
-        type: 'math',
-        answer_spec: { input_type: 'decimal', accepted_forms: [canonical] },
-        solution_logic: { final_answer_canonical: canonical }
-      }]
+      meta: createMockProvenance(SKILL_5_NBT_MULT_WHOLE.id, difficulty),
+      problem_content: {
+        stem: `Multiply: $${n1} \\times ${n2} = ?$`,
+        format: "latex",
+      },
+      answer_spec: {
+        answer_mode: "final_only",
+        input_type: "integer",
+      },
+      solution_logic: {
+        final_answer_canonical: String(result),
+        final_answer_type: "numeric",
+        steps: [
+          {
+            step_index: 1,
+            explanation: `Use standard algorithm or area model.`,
+            math: `${n1} \\times ${n2} = ${result}`,
+            answer: String(result),
+          },
+        ],
+      },
+      misconceptions: [],
     };
-  }
+  },
 };
 
+engine.register(MultWholeGenerator);
+
+// ----------------------------------------------------------------------
+// 7. Decimal Multiplication (5.NBT.B.7)
+// ----------------------------------------------------------------------
+
 export const SKILL_5_NBT_MULT_DECIMALS: Skill = {
-  id: '5.nbt.mult_decimals',
-  name: 'Decimal Multiplication',
-  description: 'Multiply decimals to hundredths',
-  generator: genMultDecimals,
-  misconceptions: {
-    'decimal_placement': 'Ignore the decimal points while multiplying, then place the decimal in the answer. The number of decimal places in the answer is the sum of decimal places in the factors.',
-    'line_up_error': 'You do not need to line up the decimal points for multiplication.'
-  }
+  id: "5.nbt.mult_decimals",
+  name: "Decimal Multiplication",
+  gradeBand: "3-5",
+  prereqs: ["5.nbt.mult_whole"],
+  misconceptions: ["decimal_placement", "line_up_error"],
+  templates: ["T_MULT_DECIMALS"],
+  description: "Multiply decimals to hundredths",
+  bktParams: { learningRate: 0.1, slip: 0.1, guess: 0.05 },
 };
+
+export const MultDecimalsGenerator: Generator = {
+  skillId: SKILL_5_NBT_MULT_DECIMALS.id,
+  templateId: "T_MULT_DECIMALS",
+  generate: (difficulty: number, rng?: () => number): MathProblemItem => {
+    const isDecDec = (rng ?? Math.random)() < 0.6;
+    let n1: number, n2: number;
+
+    if (isDecDec) {
+      n1 = parseFloat(((rng ?? Math.random)() * 10).toFixed(1));
+      n2 = parseFloat(((rng ?? Math.random)() * 5).toFixed(1));
+    } else {
+      const d = (rng ?? Math.random)() < 0.5 ? 1 : 2;
+      n1 = parseFloat(((rng ?? Math.random)() * 20).toFixed(d));
+      n2 = randomInt(2, 10, rng);
+    }
+    const result = parseFloat((n1 * n2).toFixed(4));
+    const canonical = String(result);
+
+    return {
+      meta: createMockProvenance(SKILL_5_NBT_MULT_DECIMALS.id, difficulty),
+      problem_content: {
+        stem: `Multiply: $${n1} \\times ${n2} = ?$`,
+        format: "latex",
+      },
+      answer_spec: {
+        answer_mode: "final_only",
+        input_type: "decimal",
+      },
+      solution_logic: {
+        final_answer_canonical: canonical,
+        final_answer_type: "numeric",
+        steps: [
+          {
+            step_index: 1,
+            explanation: `Multiply as whole numbers, then place decimal so total decimal places match sum of factors.`,
+            math: `${n1} \\times ${n2} = ${canonical}`,
+            answer: canonical,
+          },
+        ],
+      },
+      misconceptions: [],
+    };
+  },
+};
+
+engine.register(MultDecimalsGenerator);
 
 // ----------------------------------------------------------------------
 // 8. Multi-Digit Division (5.NBT.B.6)
 // ----------------------------------------------------------------------
-// Find whole-number quotients of whole numbers with up to four-digit dividends and two-digit divisors.
 
-const genDivWhole: Generator = {
-  generate: (): Problem => {
-    // 3-digit / 1-digit, 4-digit / 1-digit, 3-digit / 2-digit, 4-digit / 2-digit
-    // We should bias towards 2-digit divisors as that's the new 5th grade skill
+export const SKILL_5_NBT_DIV_WHOLE: Skill = {
+  id: "5.nbt.div_whole",
+  name: "Multi-Digit Division",
+  gradeBand: "3-5",
+  prereqs: ["nbt_div_remainders"],
+  misconceptions: ["estimation", "remainder_size"],
+  templates: ["T_DIV_WHOLE_5"],
+  description: "Divide multi-digit numbers (up to 4-digit dividend, 2-digit divisor)",
+  bktParams: { learningRate: 0.1, slip: 0.1, guess: 0.05 },
+};
 
-    const divisorDigits = Math.random() < 0.7 ? 2 : 1;
-    let divisor: number;
-    if (divisorDigits === 1) {
-        divisor = Math.floor(Math.random() * 8) + 2; // 2-9
-    } else {
-        divisor = Math.floor(Math.random() * 90) + 10; // 10-99
-    }
-
-    // Construct dividend to be a multiple of divisor for clean division?
-    // 5.NBT.B.6 says "Find whole-number quotients...". It doesn't explicitly say "without remainder", but "using strategies...".
-    // Usually starts with no remainders, then remainders.
-    // Let's do 50/50 clean vs remainder
-    const isClean = Math.random() < 0.6;
-
-    const quotient = Math.floor(Math.random() * 100) + 10; // 2 or 3 digit quotient
+export const DivWholeGenerator: Generator = {
+  skillId: SKILL_5_NBT_DIV_WHOLE.id,
+  templateId: "T_DIV_WHOLE_5",
+  generate: (difficulty: number, rng?: () => number): MathProblemItem => {
+    const divisor = randomInt(10, 99, rng);
+    const quotient = randomInt(10, 200, rng);
+    const isClean = (rng ?? Math.random)() < 0.6;
     let dividend = quotient * divisor;
     let remainder = 0;
 
     if (!isClean) {
-        remainder = Math.floor(Math.random() * (divisor - 1)) + 1;
-        dividend += remainder;
+      remainder = randomInt(1, divisor - 1, rng);
+      dividend += remainder;
     }
 
-    // We need to decide how to ask for the answer. "Quotient and Remainder"? or just "Evaluate"?
-    // If we use 'integer' input, it expects a single number.
-    // If remainder exists, maybe ask "What is the quotient?" and "What is the remainder?" separately?
-    // Or "54 / 4 = ? R ?"
+    const answer = remainder === 0 ? String(quotient) : `${quotient} R ${remainder}`;
 
-    if (remainder === 0) {
-        return {
-            type: 'fill_in_blank',
-            stem: `Divide: ${dividend} ÷ ${divisor} = ?`,
-            items: [{
-                id: 'ans',
-                type: 'math',
-                answer_spec: { input_type: 'integer', accepted_forms: [String(quotient)] },
-                solution_logic: { final_answer_canonical: String(quotient) }
-            }]
-        };
-    } else {
-        return {
-            type: 'fill_in_blank',
-            stem: `Divide: ${dividend} ÷ ${divisor} = ? R ?`,
-            items: [
-                {
-                    id: 'quotient',
-                    type: 'math',
-                    answer_spec: { input_type: 'integer', accepted_forms: [String(quotient)] },
-                    solution_logic: { final_answer_canonical: String(quotient) }
-                },
-                {
-                    id: 'remainder',
-                    type: 'math',
-                    answer_spec: { input_type: 'integer', accepted_forms: [String(remainder)] },
-                    solution_logic: { final_answer_canonical: String(remainder) }
-                }
-            ]
-        };
-    }
-  }
+    return {
+      meta: createMockProvenance(SKILL_5_NBT_DIV_WHOLE.id, difficulty),
+      problem_content: {
+        stem: `Divide: $${dividend} \\div ${divisor}$
+${remainder > 0 ? "(Format: Quotient R Remainder, e.g. 5 R 2)" : ""}`,
+        format: "latex",
+      },
+      answer_spec: {
+        answer_mode: "final_only",
+        input_type: "text", // using text for "Q R R" format handling
+        accepted_forms: [answer, remainder === 0 ? String(quotient) : ""],
+      },
+      solution_logic: {
+        final_answer_canonical: answer,
+        final_answer_type: "numeric",
+        steps: [
+          {
+            step_index: 1,
+            explanation: `Divide ${dividend} by ${divisor}.`,
+            math: `${dividend} \\div ${divisor} = ${quotient} \\text{ R } ${remainder}`,
+            answer: answer,
+          },
+        ],
+      },
+      misconceptions: [],
+    };
+  },
 };
 
-export const SKILL_5_NBT_DIV_WHOLE: Skill = {
-  id: '5.nbt.div_whole',
-  name: 'Multi-Digit Division',
-  description: 'Divide multi-digit numbers (up to 4-digit dividend, 2-digit divisor)',
-  generator: genDivWhole,
-  misconceptions: {
-    'estimation': 'Use estimation to help find the quotient digit. e.g., think "How many 20s in 80?"',
-    'remainder_size': 'The remainder must always be smaller than the divisor.'
-  }
+engine.register(DivWholeGenerator);
+
+// ----------------------------------------------------------------------
+// 9. Decimal Division (5.NBT.B.7)
+// ----------------------------------------------------------------------
+
+export const SKILL_5_NBT_DIV_DECIMALS: Skill = {
+  id: "5.nbt.div_decimals",
+  name: "Decimal Division",
+  gradeBand: "3-5",
+  prereqs: ["5.nbt.div_whole"],
+  misconceptions: ["move_decimal", "position"],
+  templates: ["T_DIV_DECIMALS"],
+  description: "Divide decimals to hundredths",
+  bktParams: { learningRate: 0.1, slip: 0.1, guess: 0.05 },
 };
 
-// ----------------------------------------------------------------------
-// 9. Decimal Division (5.NBT.B.7 - partial)
-// ----------------------------------------------------------------------
-
-const genDivDecimals: Generator = {
-  generate: (): Problem => {
-    // Decimal / Whole, Whole / Decimal, Decimal / Decimal
-    // Usually constructed to have clean terminating decimal answers
-
-    const type = Math.floor(Math.random() * 3);
+export const DivDecimalsGenerator: Generator = {
+  skillId: SKILL_5_NBT_DIV_DECIMALS.id,
+  templateId: "T_DIV_DECIMALS",
+  generate: (difficulty: number, rng?: () => number): MathProblemItem => {
+    const type = Math.floor((rng ?? Math.random)() * 3);
     let dividend: number, divisor: number;
-
-    // Helper to get clean division
-    // quotient * divisor = dividend
-    // choose quotient and divisor, compute dividend
-
-    const quotient = parseFloat((Math.random() * 20 + 0.1).toFixed(2));
+    const quotient = parseFloat(((rng ?? Math.random)() * 20 + 0.1).toFixed(2));
 
     if (type === 0) {
-       // Decimal / Whole
-       // dividend is decimal, divisor is whole
-       divisor = Math.floor(Math.random() * 10) + 2;
+      divisor = randomInt(2, 12, rng);
     } else if (type === 1) {
-       // Whole / Decimal
-       // dividend is whole, divisor is decimal
-       // Harder to generate randomly without getting complex dividends
-       // Let's stick to simple ones.
-       divisor = parseFloat((Math.random() * 5 + 0.1).toFixed(1));
+      divisor = parseFloat(((rng ?? Math.random)() * 5 + 0.1).toFixed(1));
     } else {
-       // Decimal / Decimal
-       divisor = parseFloat((Math.random() * 5 + 0.1).toFixed(1));
+      divisor = parseFloat(((rng ?? Math.random)() * 5 + 0.1).toFixed(1));
     }
-
     dividend = parseFloat((quotient * divisor).toFixed(4));
 
     return {
-        type: 'fill_in_blank',
-        stem: `Divide: ${dividend} ÷ ${divisor} = ?`,
-        items: [{
-            id: 'ans',
-            type: 'math',
-            answer_spec: { input_type: 'decimal', accepted_forms: [String(quotient)] },
-            solution_logic: { final_answer_canonical: String(quotient) }
-        }]
+      meta: createMockProvenance(SKILL_5_NBT_DIV_DECIMALS.id, difficulty),
+      problem_content: {
+        stem: `Divide: $${dividend} \\div ${divisor} = ?$`,
+        format: "latex",
+      },
+      answer_spec: {
+        answer_mode: "final_only",
+        input_type: "decimal",
+      },
+      solution_logic: {
+        final_answer_canonical: String(quotient),
+        final_answer_type: "numeric",
+        steps: [
+          {
+            step_index: 1,
+            explanation: `If divisor is decimal, shift decimal points until divisor is whole.`,
+            math: `${dividend} \\div ${divisor} = ${quotient}`,
+            answer: String(quotient),
+          },
+        ],
+      },
+      misconceptions: [],
     };
-  }
+  },
 };
 
-export const SKILL_5_NBT_DIV_DECIMALS: Skill = {
-  id: '5.nbt.div_decimals',
-  name: 'Decimal Division',
-  description: 'Divide decimals to hundredths',
-  generator: genDivDecimals,
-  misconceptions: {
-    'move_decimal': 'If the divisor is a decimal, move the decimal point to the right to make it a whole number. Then move the dividend\'s decimal point the same amount.',
-    'position': 'Place the decimal point in the quotient directly above the decimal point in the dividend (after adjustment).'
-  }
-};
+engine.register(DivDecimalsGenerator);
