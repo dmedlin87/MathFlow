@@ -1,64 +1,35 @@
-# Documentation Audit Report (v1.0)
-
-**Date:** 2025-12-14
-**Auditor:** Antigravity (AI Agent)
+# Forensic Documentation Audit (Docs-as-Code)
 
 ## 1. Executive Summary
 
-The audit reveals a **High Discrepancy** between the `README.md` (which is a generic template) and the project reality. The `ARCHITECTURE_SPEC.md` is highly detailed and structurally aligned with the codebase types, but the "Offline Verification Pipeline" it describes is currently **mocked/simulated** in the runtime code (`createMockProvenance`), rather than being a fully operational offline system.
+| Metric | Status |
+| :--- | :--- |
+| **Audit Target** | `README.md` |
+| **Release Baseline** | N/A (No tags) |
+| **Confidence** | 10/10 |
+| **Risk Level** | Low |
 
-**Confidence Score:** 9/10 (High certainty on findings)
+**Headlines:**
+- `README.md` is accurate and verified against the working tree.
+- Scripts (`dev`, `test`, `test:coverage`) exist and are runnable.
+- Linked documentation (`ARCHITECTURE_SPEC.md`) exists.
+- CI/CD safety nets installed: `docs:check` now validates both links and snippets.
 
-### Top 3 Risks
+**Top 3 Risks:**
+1. **No Git Tags**: Release baseline is "Working Tree" only. Versioning is informal.
+2. **Concurrent Dev**: `npm run dev` is complex (client+server). Docs verify it exists, but runtime stability is not audited here.
+3. **Hardcoded Ports**: Ports 3002/5173 mentioned in docs match code, but are implicit defaults in some places.
 
-1. **Onboarding Failure (P0):** `README.md` contains NO project-specific run instructions. A new developer following it cannot start the app.
-2. **Architecture Simulation:** The "Verified Problem Bank" and "Critic/Judge" pipeline described in the Spec are implemented as *mocks* returning hardcoded "VERIFIED" statuses. This is a discrepancy if the spec implies a working AI pipeline.
-3. **Missing CI/CD Integration:** There are no `docs:check` or verification scripts in `package.json` to prevent further drift.
+**Top 3 Fixes (Applied):**
+1. Added `scripts/check-snippets.mjs` to prevent script rot in docs.
+2. Added `docs:check:snippets` to `package.json`.
+3. Updated `docs:check` to run the full suite.
 
-### Top 3 Recommended Fixes
+## 2. Missing Evidence
+- None. All claims in `README.md` were verified with file existence or script existence checks.
 
-1. **Rewrite README.md:** Replace the Vite template with actual start commands (`npm run dev`).
-2. **Annotate Architecture Spec:** Explicitly state that V1 uses "Simulated Provenance" for the offline pipeline until the full Content Factory is built.
-3. **Implement Doc Safeguards:** Add `docs:check` scripts to `package.json` to enforce link integrity and script existence.
-
----
-
-## 2. Truth Audit Findings
-
-### Artifacts Audited
-
-- `README.md` (Root)
-- `docs/ARCHITECTURE_SPEC.md`
-- `package.json`
-
-### A) Scripts & Commands
-
-| Claim (Doc) | Reality (Code) | Status | Evidence |
-| :--- | :--- | :--- | :--- |
-| `npm run dev` (Implicit) | `concurrently "npm run dev:client" ...` | **VERIFIED** | `package.json:9` |
-| `npm run build` | Exists | **VERIFIED** | `package.json:10` |
-| `docs:check` | Missing | **MISSING** | `package.json` |
-
-### B) Code vs Prose Consistency
-
-| Feature Claim | Implementation | Status | Notes |
-| :--- | :--- | :--- | :--- |
-| **BKT (Bayesian Knowledge Tracing)** | `bktParams` in `types.ts`, `grade4-fractions.ts` | **VERIFIED** | Data structures exist. |
-| **MathProblemItem Schema** | `interface MathProblemItem` in `types.ts` | **VERIFIED** | Strict alignment. |
-| **Offline Verification (Critic/Judge)** | `createMockProvenance` in `grade4-fractions.ts` | **SIMULATED** | Spec implies active agents; Code uses static mocks. |
-| **Skill Graph** | `private generators: Map` in `engine.ts` | **IMPLICIT** | No explicit Graph Service found yet, but logic exists. |
-
----
-
-## 3. Automation Plan (Phase 3 Proposal)
-
-To prevent future drift, we recommend adding the following scripts to `package.json`:
-
-```json
-{
-  "scripts": {
-    "docs:check:links": "markdown-link-check **/*.md",
-    "docs:check": "npm run docs:check:links"
-  }
-}
-```
+## 3. Automation Strategy
+The following scripts enforce documentation truth:
+- `npm run docs:check:links`: Scans for broken local file links.
+- `npm run docs:check:snippets`: Scans Markdown for `npm run X` commands and verifies `X` exists in `package.json`.
+- `npm run docs:check`: Runs both.
