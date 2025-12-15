@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { engine } from './engine';
+import { engine, Engine } from './engine';
 import { EquivFractionGenerator } from '../skills/grade4-fractions';
 import type { Generator, MathProblemItem } from '../types';
 
@@ -20,9 +20,12 @@ describe('Generator Engine', () => {
     });
 
     describe('Client Integration (Network & Fallback)', () => {
+        let testEngine: Engine;
+
         beforeEach(() => {
-             // Explicitly register to ensure fallback works
-             engine.register(EquivFractionGenerator);
+             // Create test engine with API configured (to enable network tests)
+             testEngine = new Engine({ apiBaseUrl: 'http://localhost:3002/api' });
+             testEngine.register(EquivFractionGenerator);
         });
 
         it('tries to fetch from API and successfully returns verifying item', async () => {
@@ -36,7 +39,7 @@ describe('Generator Engine', () => {
                 json: async () => [mockItem]
             });
 
-            const item = await engine.generate('frac_equiv_01', 0.5);
+            const item = await testEngine.generate('frac_equiv_01', 0.5);
             
             expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('/api/problems?skillId=frac_equiv_01'));
             expect(item.meta.id).toBe('api_item_1');
@@ -46,7 +49,7 @@ describe('Generator Engine', () => {
             mockFetch.mockRejectedValueOnce(new Error("Network Error"));
             
             // Should catch error and fall back to local EquivGenerator
-            const item = await engine.generate('frac_equiv_01', 0.5);
+            const item = await testEngine.generate('frac_equiv_01', 0.5);
             
             expect(item).toBeDefined();
             expect(item.meta.skill_id).toBe('frac_equiv_01');
@@ -61,7 +64,7 @@ describe('Generator Engine', () => {
                 .mockResolvedValueOnce({ ok: true, json: async () => [] }) 
                 .mockResolvedValueOnce({ ok: true, json: async () => ({ items: [] }) }); 
 
-            const item = await engine.generate('frac_equiv_01', 0.5);
+            const item = await testEngine.generate('frac_equiv_01', 0.5);
             
             expect(mockFetch).toHaveBeenCalledTimes(2); // Problem fetch + Factory trigger
             expect(item).toBeDefined();
@@ -80,7 +83,7 @@ describe('Generator Engine', () => {
                     json: async () => ({ items: [factoryItem] }) 
                 }); // Factory returns item
 
-            const item = await engine.generate('frac_equiv_01', 0.5);
+            const item = await testEngine.generate('frac_equiv_01', 0.5);
             
             expect(mockFetch).toHaveBeenCalledTimes(2);
             expect(item.meta.id).toBe('factory_item_1');
@@ -89,7 +92,7 @@ describe('Generator Engine', () => {
         it('throws error when skill not found locally and API fails', async () => {
              mockFetch.mockRejectedValue(new Error("Network Error"));
 
-             await expect(engine.generate('NON_EXISTENT_SKILL', 0.5)).rejects.toThrow(/No generator found/);
+             await expect(testEngine.generate('NON_EXISTENT_SKILL', 0.5)).rejects.toThrow(/No generator found/);
         });
     });
 
@@ -133,3 +136,4 @@ describe('Generator Engine', () => {
         });
     });
 });
+
