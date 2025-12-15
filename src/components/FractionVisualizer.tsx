@@ -9,14 +9,15 @@ interface FractionVisualizerProps {
   className?: string;
 }
 
-export const FractionVisualizer: React.FC<FractionVisualizerProps> = ({ 
+// Optimized with React.memo to prevent unnecessary re-renders during interaction
+export const FractionVisualizer = React.memo(({
   numerator, 
   denominator, 
   type = 'pie', 
   size = 100,
   color = '#3b82f6', // blue-500
   className = ''
-}) => {
+}: FractionVisualizerProps) => { // Explicitly type props here
   if (type === 'pie') {
     const radius = size / 2;
     const center = size / 2;
@@ -65,7 +66,7 @@ export const FractionVisualizer: React.FC<FractionVisualizerProps> = ({
 
   // Bar type fallback or implementation later
   return null;
-};
+});
 
 // Helper: check SO or generated code for arc math
 function polarToCartesian(centerX: number, centerY: number, radius: number, angleInDegrees: number) {
