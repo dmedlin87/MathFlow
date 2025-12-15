@@ -1,6 +1,7 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { LocalLearnerService } from './LearnerService';
 import type { Attempt, MathProblemItem } from '../domain/types';
+import { MisconceptionEvaluator } from '../domain/learner/misconceptionEvaluator';
 
 describe('LocalLearnerService', () => {
     it('should simulate network latency', async () => {
@@ -46,27 +47,56 @@ describe('LocalLearnerService', () => {
 
     it('should reject non-serializable data (Architecture Violation)', async () => {
         const service = new LocalLearnerService();
-        const state = await service.loadState('user_test');
+        
+        // Create a circular array
+        const circularArray: any[] = [];
+        circularArray.push(circularArray);
 
-        const circular: any = {};
-        circular.self = circular;
+        // Spy on MisconceptionEvaluator to return circular data
+        const spy = vi.spyOn(MisconceptionEvaluator, 'evaluate').mockReturnValue({
+            tag: 'circular_error',
+            hintLadder: circularArray,
+            description: 'test'
+        });
+        
+        // Silence expected error log
+        const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
 
-        const attempt: Attempt = {
-            id: '123',
-            userId: 'user_test',
-            itemId: 'item1',
-            skillId: 'any',
-            timestamp: new Date().toISOString(),
-            isCorrect: true,
-            timeTakenMs: 1000,
-            attemptsCount: 1,
-            hintsUsed: 0,
-            errorTags: [circular] // Circular reference embedded
+        const item = { misconceptions: [1] } as any; // Dummy item to pass check
+
+        try {
+            await expect(service.diagnose(item, 'bad_input'))
+                .rejects
+                .toThrow("Data could not be serialized (Architecture Violation)");
+            
+            expect(consoleSpy).toHaveBeenCalledWith(expect.stringContaining("Serialization Violation"), expect.anything());
+        } finally {
+            spy.mockRestore();
+            consoleSpy.mockRestore();
+        }
+    });
+
+    it('should return null when answer matches no misconception', async () => {
+        const service = new LocalLearnerService();
+        const item: MathProblemItem = {
+            meta: { 
+                id: '1', skill_id: 'test', difficulty: 1, version: 1, 
+                created_at: '', status: 'VERIFIED',
+                provenance: {} as any, verification_report: {} as any
+            },
+            problem_content: { stem: '1+1', format: 'text' },
+            answer_spec: { input_type: 'integer', answer_mode: 'final_only', ui: {} },
+            solution_logic: { final_answer_canonical: '2', final_answer_type: 'numeric', steps: [] },
+            misconceptions: [{
+                id: 'm1', error_tag: 'test_error',
+                trigger: { kind: 'exact_answer', value: '3' }, // Triggers on wrong answer
+                hint_ladder: ['Hint']
+            }]
         };
 
-        await expect(service.submitAttempt(state, attempt))
-            .rejects
-            .toThrow("Data could not be serialized (Architecture Violation)");
+        // User gives correct answer '2' - no misconception triggers
+        const diagnosis = await service.diagnose(item, '2');
+        expect(diagnosis).toBeNull();
     });
 
     it('should diagnose known misconceptions', async () => {

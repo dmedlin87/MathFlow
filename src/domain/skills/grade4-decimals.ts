@@ -182,6 +182,11 @@ export const DecimalComparisonGenerator: Generator = {
             s1 = (num1 / 10).toFixed(1); // "0.2"
             s2 = (num2 / 100).toFixed(2); // "0.19"
             
+            // Randomly swap order to make both trap branches reachable
+            if ((rng ?? Math.random)() > 0.5) {
+                [s1, s2] = [s2, s1];
+            }
+            
             // Should properly parse back to numbers for comparison
         }
 

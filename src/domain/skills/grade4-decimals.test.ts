@@ -90,12 +90,28 @@ describe('grade4-decimals generator', () => {
              // Case: 0.2 vs 0.19. (0.2 > 0.19).
              // User thinks 0.19 is bigger because 19 > 2.
              // User selects '<' (0.2 < 0.19).
-             const rng = createMockRng([0.2, 0.19]);
+             const rng = createMockRng([0.2, 0.19, 0.4]); // No swap
              const item = DecimalComparisonGenerator.generate(0.9, rng);
              
              const misc = item.misconceptions.find(m => m.error_tag === 'longer_is_larger');
              expect(misc).toBeDefined();
              expect(misc?.trigger.value).toBe('<');
+        });
+
+        it('detects longer_is_larger with swapped order (s1 longer)', () => {
+             // After swap: s1=0.19 (4 chars), s2=0.2 (3 chars)
+             // 0.19 < 0.2, so correct answer is '<'
+             // Trap: user thinks 0.19 > 0.2 because 19 > 2, answers '>'
+             const rng = createMockRng([0.2, 0.19, 0.6]); // Swap triggered
+             const item = DecimalComparisonGenerator.generate(0.9, rng);
+             
+             // s1 should now be the hundredths (0.19)
+             expect(item.problem_content.stem).toContain('0.19');
+             expect(item.problem_content.stem).toContain('0.2');
+             
+             const misc = item.misconceptions.find(m => m.error_tag === 'longer_is_larger');
+             expect(misc).toBeDefined();
+             expect(misc?.trigger.value).toBe('>');
         });
     });
 });

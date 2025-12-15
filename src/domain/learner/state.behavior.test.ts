@@ -193,18 +193,27 @@ describe('learner/state behavior', () => {
             );
         });
 
-        it('should fallback to random skill when no review or learning candidates exist', () => {
-            vi.spyOn(Math, 'random').mockReturnValue(0.9);
+        it('should fallback to random skill when no review or learning candidates exist', async () => {
             const recentDate = new Date().toISOString();
             
+            // All skills mastered (>0.8) and recently practiced = 
+            // reviewDue empty (not enough time passed), learningQueue empty (all mastered)
+            // => fallback L144 executes, picks random skill
             const state = createTestState({
                skillState: {
                    'frac_equiv_01': createSkillState({ masteryProb: 0.9, lastPracticed: recentDate }),
-                   'frac_add_like_01': createSkillState({ masteryProb: 0.95, lastPracticed: recentDate })
+                   'frac_add_like_01': createSkillState({ masteryProb: 0.95, lastPracticed: recentDate }),
+                   'fractions_sub_like': createSkillState({ masteryProb: 0.85, lastPracticed: recentDate }),
+                   'fractions_simplify': createSkillState({ masteryProb: 0.88, lastPracticed: recentDate }),
+                   'dec_notation_01': createSkillState({ masteryProb: 0.92, lastPracticed: recentDate }),
+                   'dec_compare_01': createSkillState({ masteryProb: 0.91, lastPracticed: recentDate })
                }
            });
 
-           recommendNextItem(state);
+           // rng returns 0.9 which skips review (roll > 0.3), and learning queue is empty
+           // so fallback at L144 is triggered
+           const rng = () => 0.9;
+           await recommendNextItem(state, rng);
            expect(engine.generate).toHaveBeenCalled();
        });
 

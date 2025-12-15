@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { SubLikeFractionGenerator, SimplifyFractionGenerator, EquivFractionGenerator, SKILL_EQUIV_FRACTIONS } from './grade4-fractions';
+import { SubLikeFractionGenerator, SimplifyFractionGenerator, EquivFractionGenerator, AddLikeFractionGenerator, SKILL_EQUIV_FRACTIONS } from './grade4-fractions';
 import { gcd } from '../math-utils';
 
 describe('grade4-fractions generators', () => {
@@ -24,10 +24,10 @@ describe('grade4-fractions generators', () => {
         const qText = item.problem_content.stem;
         expect(qText).toContain('+');
         
-        const [ansNum, ansDen] = item.solution_logic.final_answer_canonical.split('/').map(Number);
+        const ansNum = Number(item.solution_logic.final_answer_canonical);
         const vars = item.problem_content.variables as any;
         expect(vars.num1 + vars.num2).toBe(ansNum);
-        expect(vars.den).toBe(ansDen);
+        // ansDen is not part of the canon answer because the stem includes the denominator
     });
 
     it('generates misconceptions for adding denominators', () => {
@@ -182,6 +182,12 @@ describe('grade4-fractions generators', () => {
   });
 
   describe('EquivFractionGenerator', () => {
+    it('handles difficulty=0 by defaulting to difficulty level 1', () => {
+        const item = EquivFractionGenerator.generate(0);
+        // Math.ceil(0 * 5) = 0, so || 1 fallback kicks in
+        expect(item.meta.difficulty).toBe(1);
+    });
+
     it('generates valid equivalent fraction problems', () => {
         const item = EquivFractionGenerator.generate(0.1);
         const vars = item.problem_content.variables as { baseNum: number; baseDen: number; multiplier: number };
