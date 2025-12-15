@@ -1,0 +1,67 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/dmedl/Projects/MathFlow[39m
+
+[90mstderr[2m | src/domain/generator/engine.behavior.test.ts[2m > [22m[2mgenerator/engine behavior[2m > [22m[2mshould register and retrieve a generator
+[22m[39mNetwork fetch failed, falling back to local generator (Dev Mode) Error: Network offline (Test)
+    at C:/Users/dmedl/Projects/MathFlow/src/domain/generator/engine.behavior.test.ts:8:58
+    at [90mfile:///C:/Users/dmedl/Projects/MathFlow/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:145:11
+    at [90mfile:///C:/Users/dmedl/Projects/MathFlow/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1240:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///C:/Users/dmedl/Projects/MathFlow/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1206:10[90m)[39m
+    at runHook [90m(file:///C:/Users/dmedl/Projects/MathFlow/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1511:51[90m)[39m
+    at callSuiteHook [90m(file:///C:/Users/dmedl/Projects/MathFlow/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1517:25[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:105:5)[39m
+    at runTest [90m(file:///C:/Users/dmedl/Projects/MathFlow/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1642:26[90m)[39m
+    at runSuite [90m(file:///C:/Users/dmedl/Projects/MathFlow/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1814:8[90m)[39m
+
+[90mstderr[2m | src/domain/generator/engine.behavior.test.ts[2m > [22m[2mgenerator/engine behavior[2m > [22m[2mshould generate an item when generator exists
+[22m[39mNetwork fetch failed, falling back to local generator (Dev Mode) Error: Network offline (Test)
+    at C:/Users/dmedl/Projects/MathFlow/src/domain/generator/engine.behavior.test.ts:8:58
+    at [90mfile:///C:/Users/dmedl/Projects/MathFlow/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:145:11
+    at [90mfile:///C:/Users/dmedl/Projects/MathFlow/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1240:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///C:/Users/dmedl/Projects/MathFlow/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1206:10[90m)[39m
+    at runHook [90m(file:///C:/Users/dmedl/Projects/MathFlow/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1511:51[90m)[39m
+    at callSuiteHook [90m(file:///C:/Users/dmedl/Projects/MathFlow/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1517:25[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:105:5)[39m
+    at runTest [90m(file:///C:/Users/dmedl/Projects/MathFlow/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1642:26[90m)[39m
+    at runSuite [90m(file:///C:/Users/dmedl/Projects/MathFlow/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1814:8[90m)[39m
+
+[90mstderr[2m | src/domain/generator/engine.behavior.test.ts[2m > [22m[2mgenerator/engine behavior[2m > [22m[2mshould throw strict error when generator is missing
+[22m[39mNetwork fetch failed, falling back to local generator (Dev Mode) Error: Network offline (Test)
+    at C:/Users/dmedl/Projects/MathFlow/src/domain/generator/engine.behavior.test.ts:8:58
+    at [90mfile:///C:/Users/dmedl/Projects/MathFlow/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:145:11
+    at [90mfile:///C:/Users/dmedl/Projects/MathFlow/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1240:20
+    at new Promise (<anonymous>)
+    at runWithTimeout [90m(file:///C:/Users/dmedl/Projects/MathFlow/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1206:10[90m)[39m
+    at runHook [90m(file:///C:/Users/dmedl/Projects/MathFlow/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1511:51[90m)[39m
+    at callSuiteHook [90m(file:///C:/Users/dmedl/Projects/MathFlow/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1517:25[90m)[39m
+[90m    at processTicksAndRejections (node:internal/process/task_queues:105:5)[39m
+    at runTest [90m(file:///C:/Users/dmedl/Projects/MathFlow/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1642:26[90m)[39m
+    at runSuite [90m(file:///C:/Users/dmedl/Projects/MathFlow/[39mnode_modules/[4m@vitest[24m/runner/dist/index.js:1814:8[90m)[39m
+
+ [31m×[39m src/domain/generator/engine.behavior.test.ts[2m > [22mgenerator/engine behavior[2m > [22mshould register and retrieve a generator[32m 5[2mms[22m[39m
+[31m   → expected undefined to be defined[39m
+ [32m✓[39m src/domain/generator/engine.behavior.test.ts[2m > [22mgenerator/engine behavior[2m > [22mshould generate an item when generator exists[32m 1[2mms[22m[39m
+ [32m✓[39m src/domain/generator/engine.behavior.test.ts[2m > [22mgenerator/engine behavior[2m > [22mshould throw strict error when generator is missing[32m 1[2mms[22m[39m
+
+[31m⎯⎯⎯⎯⎯⎯⎯[39m[1m[41m Failed Tests 1 [49m[22m[31m⎯⎯⎯⎯⎯⎯⎯[39m
+
+[41m[1m FAIL [22m[49m src/domain/generator/engine.behavior.test.ts[2m > [22mgenerator/engine behavior[2m > [22mshould register and retrieve a generator
+[31m[1mAssertionError[22m: expected undefined to be defined[39m
+[36m [2m❯[22m src/domain/generator/engine.behavior.test.ts:[2m29:9[22m[39m
+    [90m 27| [39m        [90m// We will test behavior: register then generate succeeds.[39m
+    [90m 28| [39m        
+    [90m 29| [39m        await expect(engine.generate('skill_test_1', 0.5)).resolves.to…
+    [90m   | [39m        [31m^[39m
+    [90m 30| [39m    })[33m;[39m
+    [90m 31| [39m
+
+[31m[2m⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯[22m[39m
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m2 passed[39m[22m[90m (3)[39m
+[2m   Start at [22m 18:20:42
+[2m   Duration [22m 742ms[2m (transform 40ms, setup 129ms, import 31ms, tests 8ms, environment 0ms)[22m
+

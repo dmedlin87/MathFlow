@@ -1,0 +1,25 @@
+- path: "README.md"
+  owner: "@UNASSIGNED"
+  type: "manual"
+  version_scope: "main"
+  source_of_truth: "package.json"
+  checks:
+    - type: "script-check"
+      command: "npm run dev"
+  status: "broken"
+  evidence:
+    - "EVIDENCE: file_ref | README.md:1-55 (Generic Vite Template)"
+    - "EVIDENCE: cmd_output | npm run dev (Exists in package.json but not in README)"
+
+- path: "docs/ARCHITECTURE_SPEC.md"
+  owner: "@UNASSIGNED"
+  type: "manual"
+  version_scope: "main"
+  source_of_truth: "src/domain/types.ts"
+  checks:
+    - type: "snippet-validation"
+  status: "drifted"
+  evidence:
+    - "EVIDENCE: file_ref | docs/ARCHITECTURE_SPEC.md"
+    - "EVIDENCE: git_grep_hit | src/domain/types.ts:Found MathProblemItem"
+    - "EVIDENCE: code_check | src/domain/skills/grade4-fractions.ts:createMockProvenance (Simulates Offline Pipeline)"

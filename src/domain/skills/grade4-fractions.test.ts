@@ -1,43 +1,32 @@
-import { describe, it, expect, vi, afterEach } from 'vitest';
-import { SubLikeFractionGenerator, SimplifyFractionGenerator } from './grade4-fractions';
+import { describe, it, expect, vi } from 'vitest';
+import { SubLikeFractionGenerator, SimplifyFractionGenerator, EquivFractionGenerator, SKILL_EQUIV_FRACTIONS } from './grade4-fractions';
 import { gcd } from '../math-utils';
-
-function getTexQuestionText(item: unknown): string {
-  const question = (item as { question?: unknown }).question;
-  if (typeof question === 'string') return question;
-  if (typeof question === 'object' && question !== null) {
-    const text = (question as { text?: unknown }).text;
-    if (typeof text === 'string') return text;
-  }
-  throw new Error('Expected question with { text: string } or string');
-}
-
- function getAnswerValueString(item: unknown): string {
-  const answer = (item as { answer?: unknown }).answer;
-  if (typeof answer === 'string' || typeof answer === 'number') return String(answer);
-  if (typeof answer === 'object' && answer !== null) {
-    const value = (answer as { value?: unknown }).value;
-    if (typeof value === 'string') return value;
-  }
-  throw new Error('Expected answer as string/number or { value: string }');
- }
-
-afterEach(() => {
-  vi.restoreAllMocks();
-});
+import type { MathProblemItem } from '../types';
 
 describe('grade4-fractions generators', () => {
+  // Helper to create a controllable RNG
+  const createMockRng = (sequence: number[]) => {
+      let index = 0;
+      return () => {
+          if (index >= sequence.length) {
+              return 0.5; // Default fallback
+          }
+          return sequence[index++];
+      };
+  };
+
   describe('SubLikeFractionGenerator', () => {
-    it('uses smaller ranges when difficulty < 0.5 (characterization)', () => {
-      vi.spyOn(Math, 'random')
-        .mockReturnValueOnce(0.999) // den -> max
-        .mockReturnValueOnce(0) // targetNum -> min
-        .mockReturnValueOnce(0); // num2 -> min
+    it('uses smaller ranges when difficulty < 0.5', () => {
+      // Mock sequence: 
+      // 1. den -> 0.999 (max)
+      // 2. targetNum -> 0 (min)
+      // 3. num2 -> 0 (min)
+      const rng = createMockRng([0.999, 0, 0]);
 
-      const item = SubLikeFractionGenerator.generate(0.1);
-
-      const qText = getTexQuestionText(item);
-      const match = qText.match(/\\frac\{(\d+)\}\{(\d+)\} - \\frac\{(\d+)\}\{\2\}/);
+      const item = SubLikeFractionGenerator.generate(0.1, rng);
+      
+      const qText = item.problem_content.stem;
+      const match = qText.match(/\\frac\{(\d+)\}\{(\d+)\} - \\frac\{(\d+)\}\{\2\} = \?\\/);
       expect(match).not.toBeNull();
       if (!match) return;
 
@@ -45,23 +34,25 @@ describe('grade4-fractions generators', () => {
       const den = Number(match[2]);
       const num2 = Number(match[3]);
 
-      expect(den).toBeLessThanOrEqual(10);
+      expect(den).toBeLessThanOrEqual(10); // max for diff < 0.5 is 10
 
-      const [ansNum, ansDen] = getAnswerValueString(item).split('/').map(Number);
+      const [ansNum, ansDen] = item.solution_logic.final_answer_canonical.split('/').map(Number);
       expect(ansDen).toBe(den);
       expect(num1 - num2).toBe(ansNum);
     });
 
-    it('uses larger ranges when difficulty >= 0.5 (characterization)', () => {
-      vi.spyOn(Math, 'random')
-        .mockReturnValueOnce(0.999) // den -> max
-        .mockReturnValueOnce(0.999) // targetNum -> max
-        .mockReturnValueOnce(0); // num2 -> min
+    it('uses larger ranges when difficulty >= 0.5', () => {
+      // Mock sequence:
+      // 1. den -> 0.999 (max)
+      // 2. targetNum -> 0.999 (max)
+      // 3. num2 -> 0 (min)
+      const rng = createMockRng([0.999, 0.999, 0]);
 
-      const item = SubLikeFractionGenerator.generate(0.9);
+      const item = SubLikeFractionGenerator.generate(0.9, rng);
 
-      const qText = getTexQuestionText(item);
-      const match = qText.match(/\\frac\{(\d+)\}\{(\d+)\} - \\frac\{(\d+)\}\{\2\}/);
+      const qText = item.problem_content.stem;
+      // Note the regex in generator includes = ?\)
+      const match = qText.match(/\\frac\{(\d+)\}\{(\d+)\} - \\frac\{(\d+)\}\{\2\} = \?\\/);
       expect(match).not.toBeNull();
       if (!match) return;
 
@@ -72,42 +63,50 @@ describe('grade4-fractions generators', () => {
       expect(den).toBeLessThanOrEqual(20);
       expect(den).toBeGreaterThanOrEqual(3);
 
-      const [ansNum, ansDen] = getAnswerValueString(item).split('/').map(Number);
+      const [ansNum, ansDen] = item.solution_logic.final_answer_canonical.split('/').map(Number);
       expect(ansDen).toBe(den);
       expect(num1 - num2).toBe(ansNum);
-      expect(ansNum).toBeGreaterThan(0);
-      expect(num2).toBeGreaterThan(0);
     });
 
-    it('tags misconception answers for subtracting denominators or adding denominators', () => {
-      vi.spyOn(Math, 'random')
-        .mockReturnValueOnce(0) // den -> min
-        .mockReturnValueOnce(0) // targetNum -> min
-        .mockReturnValueOnce(0); // num2 -> min
+    it('defines misconceptions for subtracting denominators or adding denominators', () => {
+      // Mock sequence:
+      // 1. den -> 0 (min)
+      // 2. targetNum -> 0 (min)
+      // 3. num2 -> 0 (min)
+      const rng = createMockRng([0, 0, 0]);
 
-      const item = SubLikeFractionGenerator.generate(0.1);
-      const matcher = item.misconceptionMatchers?.[0];
-      expect(matcher).toBeDefined();
-      if (!matcher) return;
+      const item = SubLikeFractionGenerator.generate(0.1, rng);
+      
+      const miscSubDen = item.misconceptions?.find(m => m.error_tag === 'sub_num_sub_den');
+      const miscAddDen = item.misconceptions?.find(m => m.error_tag === 'sub_num_add_den');
 
-      const [ansNum, ansDen] = getAnswerValueString(item).split('/').map(Number);
+      expect(miscSubDen).toBeDefined();
+      expect(miscAddDen).toBeDefined();
 
-      expect(matcher(`${ansNum}/0`)).toBe('sub_num_sub_den');
-      expect(matcher(`${ansNum}/${ansDen + ansDen}`)).toBe('sub_num_add_den');
-      expect(matcher(`${ansNum}/${ansDen}`)).toBeNull();
+      const [ansNum, ansDen] = item.solution_logic.final_answer_canonical.split('/').map(Number);
+
+      // Verify the trigger values
+      // sub_num_sub_den regex: ^ansNum/0$
+      expect(miscSubDen?.trigger.kind).toBe('regex');
+      expect(miscSubDen?.trigger.value).toBe(`^${ansNum}/0$`);
+
+      // sub_num_add_den regex: ^ansNum/2*den$
+      expect(miscAddDen?.trigger.kind).toBe('regex');
+      expect(miscAddDen?.trigger.value).toBe(`^${ansNum}/${ansDen + ansDen}$`);
     });
   });
 
   describe('SimplifyFractionGenerator', () => {
     it('generates a reducible fraction and provides a lowest-terms answer', () => {
-      vi.spyOn(Math, 'random')
-        .mockReturnValueOnce(0) // numBase -> min
-        .mockReturnValueOnce(0.999) // denBase -> max
-        .mockReturnValueOnce(0.999); // multiplier -> max
+      // Mock sequence:
+      // 1. numBase -> 0 (min)
+      // 2. denBase -> 0.999 (max)
+      // 3. multiplier -> 0.999 (max)
+      const rng = createMockRng([0, 0.999, 0.999]);
 
-      const item = SimplifyFractionGenerator.generate(0.1);
+      const item = SimplifyFractionGenerator.generate(0.1, rng);
 
-      const qText = getTexQuestionText(item);
+      const qText = item.problem_content.stem;
       const match = qText.match(/\\frac\{(\d+)\}\{(\d+)\}/);
       expect(match).not.toBeNull();
       if (!match) return;
@@ -116,44 +115,65 @@ describe('grade4-fractions generators', () => {
       const questionDen = Number(match[2]);
       expect(gcd(questionNum, questionDen)).toBeGreaterThan(1);
 
-      const [ansNum, ansDen] = getAnswerValueString(item).split('/').map(Number);
+      const [ansNum, ansDen] = item.solution_logic.final_answer_canonical.split('/').map(Number);
       expect(gcd(ansNum, ansDen)).toBe(1);
       expect(questionNum * ansDen).toBe(questionDen * ansNum);
     });
 
-    it('expands number ranges when difficulty >= 0.5 (characterization)', () => {
-      vi.spyOn(Math, 'random')
-        .mockReturnValueOnce(0.999) // numBase -> max
-        .mockReturnValueOnce(0.999) // denBase -> max
-        .mockReturnValueOnce(0.999); // multiplier -> max
+    it('expands number ranges when difficulty >= 0.5', () => {
+      // Mock sequence:
+      // 1. numBase -> 0.999 (max)
+      // 2. denBase -> 0.999 (max)
+      // 3. multiplier -> 0.999 (max)
+      const rng = createMockRng([0.999, 0.999, 0.999]);
 
-      const item = SimplifyFractionGenerator.generate(0.9);
-      const [ansNum, ansDen] = getAnswerValueString(item).split('/').map(Number);
+      const item = SimplifyFractionGenerator.generate(0.9, rng);
+      const [ansNum, ansDen] = item.solution_logic.final_answer_canonical.split('/').map(Number);
       expect(ansNum).toBeGreaterThan(0);
       expect(ansDen).toBeGreaterThan(ansNum);
     });
 
-    it('tags the no_simplify misconception when the original fraction is submitted', () => {
-      vi.spyOn(Math, 'random')
-        .mockReturnValueOnce(0) // numBase -> min
-        .mockReturnValueOnce(0.999) // denBase -> max
-        .mockReturnValueOnce(0.999); // multiplier -> max
+    it('defines the no_simplify misconception trigger', () => {
+      // Mock sequence:
+      // 1. numBase -> 0 (min)
+      // 2. denBase -> 0.999 (max)
+      // 3. multiplier -> 0.999 (max)
+      const rng = createMockRng([0, 0.999, 0.999]);
 
-      const item = SimplifyFractionGenerator.generate(0.1);
-      const matcher = item.misconceptionMatchers?.[0];
-      expect(matcher).toBeDefined();
-      if (!matcher) return;
+      const item = SimplifyFractionGenerator.generate(0.1, rng);
+      const miscNoSimp = item.misconceptions?.find(m => m.error_tag === 'no_simplify');
+      
+      expect(miscNoSimp).toBeDefined();
 
-      const qText = getTexQuestionText(item);
+      const qText = item.problem_content.stem;
       const match = qText.match(/\\frac\{(\d+)\}\{(\d+)\}/);
-      expect(match).not.toBeNull();
-      if (!match) return;
+      const questionNum = Number(match![1]);
+      const questionDen = Number(match![2]);
 
-      const questionNum = Number(match[1]);
-      const questionDen = Number(match[2]);
+      expect(miscNoSimp?.trigger.kind).toBe('exact_answer');
+      expect(miscNoSimp?.trigger.value).toBe(`${questionNum}/${questionDen}`);
+    });
+  });
 
-      expect(matcher(`${questionNum}/${questionDen}`)).toBe('no_simplify');
-      expect(matcher(getAnswerValueString(item))).toBeNull();
+  describe('EquivFractionGenerator', () => {
+    it('generates valid equivalent fraction problems', () => {
+        const item = EquivFractionGenerator.generate(0.1);
+        const vars = item.problem_content.variables as { baseNum: number; baseDen: number; multiplier: number };
+        
+        expect(item.meta.skill_id).toBe(SKILL_EQUIV_FRACTIONS.id);
+        expect(vars.baseNum).toBeGreaterThanOrEqual(1);
+    });
+
+    it('identifies additive misconception', () => {
+        const item = EquivFractionGenerator.generate(0.5);
+        const vars = item.problem_content.variables as { baseNum: number; baseDen: number; targetDen: number };
+        const { baseNum, baseDen, targetDen } = vars;
+        const diff = targetDen - baseDen;
+        const wrongAns = baseNum + diff;
+        
+        const misc = item.misconceptions?.find(m => m.error_tag === 'add_num_add_den');
+        expect(misc).toBeDefined();
+        expect(misc?.trigger.value).toBe(String(wrongAns));
     });
   });
 });

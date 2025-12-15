@@ -27,35 +27,10 @@ Network fetch failed, falling back to local generator (Dev Mode) Error: Network 
     at trace (file:///C:/Users/dmedl/Projects/MathFlow/node_modules/vitest/dist/chunks/test.BT8LKgU9.js:239:21)
     at runTest (file:///C:/Users/dmedl/Projects/MathFlow/node_modules/@vitest/runner/dist/index.js:1650:12)
 
- [31mΓ¥»[39m src/domain/generator/engine.test.ts [2m([22m[2m6 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 11[2mms[22m[39m
-     [32mΓ£ô[39m generates valid equivalent fraction problems[32m 2[2mms[22m[39m
-     [32mΓ£ô[39m identifies additive misconception[32m 0[2mms[22m[39m
-     [32mΓ£ô[39m tries to fetch from API and successfully returns verifying item[32m 2[2mms[22m[39m
-[31m     [31m├ù[31m falls back to local generator if API fetch fails[39m[32m 5[2mms[22m[39m
-     [32mΓ£ô[39m falls back to local generator if API returns empty[32m 0[2mms[22m[39m
-     [32mΓ£ô[39m throws error when skill not found locally and API fails[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m src/domain/generator/engine.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 11[2mms[22m[39m
 
-ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Failed Tests 1 ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
-
- FAIL  src/domain/generator/engine.test.ts > Generator Engine (Client Integration) > falls back to local generator if API fetch fails
-AssertionError: expected 'Find the missing number: **1/4 = ?/16ΓÇª' to contain 'equivalent'
-
-Expected: "equivalent"
-Received: "Find the missing number: **1/4 = ?/16**"
-
- Γ¥» src/domain/generator/engine.test.ts:66:43
-     64|         expect(item.meta.skill_id).toBe('frac_equiv_01');
-     65|         // Check it came from local generator (random ID, not static AΓÇª
-     66|         expect(item.problem_content.stem).toContain('equivalent');
-       |                                           ^
-     67|     });
-     68| 
-
-ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/1]ΓÄ»
-
-
-[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
-[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m5 passed[39m[22m[90m (6)[39m
-[2m   Start at [22m 17:26:11
-[2m   Duration [22m 727ms[2m (transform 68ms, setup 127ms, import 62ms, tests 11ms, environment 0ms)[22m
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m6 passed[39m[22m[90m (6)[39m
+[2m   Start at [22m 17:29:39
+[2m   Duration [22m 851ms[2m (transform 84ms, setup 154ms, import 73ms, tests 11ms, environment 0ms)[22m
 

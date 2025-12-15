@@ -38,6 +38,10 @@ The system is designed to be **safe for school math** (especially elementary/mid
 - **Problem Generator (LLM)**: produces candidate items anchored to a skill node; outputs strict `MathProblemItem` JSON.
 - **Critic (LLM, blind solve)**: solves stem-only, returns derived solution + rubric scores + issues.
 - **Judge (LLM, compare phase)**: compares critic solution to generator solution; final rubric scoring + verdict.
+
+> [!IMPORTANT]
+> **V1 Implementation Note:** The Offline Pipeline (Generator/Critic/Judge) is currently **simulated** via `createMockProvenance` in `src/domain/skills/*.ts`. Real LLM-based verification will be implemented in Phase 4.
+
 - **Deterministic Verifier (CAS/numeric)**: validates answer equivalence where supported (recommended for V1).
 - **Refinement Loop**: bounded revise cycles (max attempts) on rejection.
 - **Verified Problem Bank**: persistent store for `VERIFIED` items with provenance + audit trail.

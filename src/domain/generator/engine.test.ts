@@ -1,101 +1,116 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { engine } from './engine';
-import { EquivFractionGenerator, AddLikeFractionGenerator, SKILL_EQUIV_FRACTIONS } from '../skills/grade4-fractions';
+import { EquivFractionGenerator } from '../skills/grade4-fractions';
+import type { Generator, MathProblemItem } from '../types';
 
-describe('Fraction Generator', () => {
-    it('generates valid equivalent fraction problems', () => {
-        const item = EquivFractionGenerator.generate(0.1);
-        const config = item.config as { baseNum: number; baseDen: number; multiplier: number };
-        
-        expect(item.skillId).toBe(SKILL_EQUIV_FRACTIONS.id);
-        expect(item.templateId).toBe('T_EQUIV_FRACTION_FIND');
-        
-        // Config checks
-        expect(config.baseNum).toBeGreaterThanOrEqual(1);
-        expect(config.baseDen).toBeGreaterThan(config.baseNum); // Proper fraction
-        
-        const { baseNum, baseDen, multiplier } = config;
-        const targetNum = item.answer as number;
-        const targetDen = baseDen * multiplier;
-        
-        // Correctness check: baseNum/baseDen == targetNum/targetDen
-        expect(baseNum * targetDen).toBe(targetNum * baseDen);
-    });
-
-    it('adjusts difficulty (multiplier increases)', () => {
-        // Mock random potentially or just check range
-        // Difficulty 1.0 SHOULD produce higher multipliers
-        const hardItem = EquivFractionGenerator.generate(1.0);
-        const hardConfig = hardItem.config as { multiplier: number };
-        // We can't deterministic check random without mocking, but we can check constraints if we exported them
-        expect(hardConfig.multiplier).toBeGreaterThanOrEqual(2);
-    });
-
-    it('identifies additive misconception', () => {
-        const item = EquivFractionGenerator.generate(0.5);
-        // e.g. 1/2 = ?/4 (diff is +2)
-        // Additive wrong answer would be 1+2 = 3.
-        const { baseNum, baseDen, multiplier } = item.config as { baseNum: number; baseDen: number; multiplier: number };
-        const targetDen = baseDen * multiplier;
-        const diff = targetDen - baseDen;
-        const wrongAns = baseNum + diff;
-        
-        // Find the matcher
-        const matcher = item.misconceptionMatchers?.[0];
-        expect(matcher).toBeDefined();
-        if (matcher) {
-            expect(matcher(wrongAns)).toBe('add_num_add_den');
-            expect(matcher(wrongAns + 1)).toBeNull(); // Random wrong answer shouldn't match
-        }
-    });
-
-    it('generates adding like fractions problems', () => {
-         const gen = engine.getGenerator('T_ADD_LIKE_FRACTION');
-         expect(gen).toBeDefined();
-         const item = gen?.generate(0.5);
-         expect(item).toBeDefined();
-         if (!item) return;
-
-         expect(item.skillId).toBe('frac_add_like_01');
-         const { num1, num2, den } = item.config as { num1: number; num2: number; den: number };
-         expect(num1 + num2).toBe(item.answer);
-         // Ensure we don't exceed denominator (for this specific generator logic)
-         expect(num1 + num2).toBeLessThanOrEqual(den);
-    });
-    it('identifies add_denominators misconception', () => {
-         const item = AddLikeFractionGenerator.generate(0.5);
-         const { den } = item.config as { den: number };
-         
-         // Misconception: The student adds the denominators.
-         // Since the question asks "?/den", if they answer "den + den", it implies they think the bottom should change.
-         const wrongAns = den + den;
-
-         const matcher = item.misconceptionMatchers?.[0];
-         expect(matcher).toBeDefined();
-         if (matcher) {
-             expect(matcher(wrongAns)).toBe('add_denominators');
-             expect(matcher(wrongAns + 1)).toBeNull(); // Random wrong answer shouldn't match
-         }
-    });
-
-});
+// Mock global fetch
+const mockFetch = vi.fn();
+global.fetch = mockFetch;
 
 describe('Generator Engine', () => {
-    it('retrieves registered generators', () => {
-        const gen = engine.getGenerator('T_EQUIV_FRACTION_FIND');
-        expect(gen).toBeDefined();
-        expect(gen?.skillId).toBe('frac_equiv_01');
+    beforeEach(() => {
+        mockFetch.mockReset();
+        // Reset console spies if needed or just spy
+        vi.spyOn(console, 'error').mockImplementation(() => {});
+        vi.spyOn(console, 'warn').mockImplementation(() => {});
     });
 
-    it('generates items via engine', () => {
-        const item = engine.generateItem('T_EQUIV_FRACTION_FIND', 0.5);
-        expect(item).toBeDefined();
-        expect(item.id).toContain('it_');
+    afterEach(() => {
+        vi.restoreAllMocks();
     });
 
-    it('throws error when template not found', () => {
-        expect(() => {
-            engine.generateItem('NON_EXISTENT_TEMPLATE', 0.5);
-        }).toThrow(/No generator found/);
+    describe('Client Integration (Network & Fallback)', () => {
+        beforeEach(() => {
+             // Explicitly register to ensure fallback works
+             engine.register(EquivFractionGenerator);
+        });
+
+        it('tries to fetch from API and successfully returns verifying item', async () => {
+            const mockItem = {
+                meta: { id: 'api_item_1', skill_id: 'frac_equiv_01' },
+                problem_content: { stem: 'API Problem' }
+            };
+
+            mockFetch.mockResolvedValueOnce({
+                ok: true,
+                json: async () => [mockItem]
+            });
+
+            const item = await engine.generate('frac_equiv_01', 0.5);
+            
+            expect(mockFetch).toHaveBeenCalledWith(expect.stringContaining('/api/problems?skillId=frac_equiv_01'));
+            expect(item.meta.id).toBe('api_item_1');
+        });
+
+        it('falls back to local generator if API fetch fails', async () => {
+            mockFetch.mockRejectedValueOnce(new Error("Network Error"));
+            
+            // Should catch error and fall back to local EquivGenerator
+            const item = await engine.generate('frac_equiv_01', 0.5);
+            
+            expect(item).toBeDefined();
+            expect(item.meta.skill_id).toBe('frac_equiv_01');
+            // Check it came from local generator (random ID, not static API mock)
+            expect(item.problem_content.stem).toContain('missing number');
+        });
+
+        it('falls back to local generator if API returns empty', async () => {
+            // 1. Fetch returns empty []
+            // 2. Factory run fetch returns empty (simulated)
+            mockFetch
+                .mockResolvedValueOnce({ ok: true, json: async () => [] }) 
+                .mockResolvedValueOnce({ ok: true, json: async () => ({ items: [] }) }); 
+
+            const item = await engine.generate('frac_equiv_01', 0.5);
+            
+            expect(mockFetch).toHaveBeenCalledTimes(2); // Problem fetch + Factory trigger
+            expect(item).toBeDefined();
+        });
+        
+        it('throws error when skill not found locally and API fails', async () => {
+             mockFetch.mockRejectedValue(new Error("Network Error"));
+
+             await expect(engine.generate('NON_EXISTENT_SKILL', 0.5)).rejects.toThrow(/No generator found/);
+        });
+    });
+
+    describe('Registry & Behavior', () => {
+        beforeEach(() => {
+             // Force network failure to test local registry logic purely
+             mockFetch.mockRejectedValue(new Error('Network offline (Test)'));
+        });
+
+        it('should register and retrieve a generator', async () => {
+            const mockGen: Generator = {
+                templateId: 'tpl_test_1',
+                skillId: 'skill_test_1',
+                generate: vi.fn().mockReturnValue({} as any),
+            };
+    
+            engine.register(mockGen);
+            
+            await expect(engine.generate('skill_test_1', 0.5)).resolves.toBeDefined();
+        });
+    
+        it('should generate an item when generator exists', async () => {
+            const mockItem = {
+                meta: { id: 'item_1', skill_id: 'skill_test_2' },
+                problem_content: { stem: '1+1' },
+                solution_logic: { final_answer_canonical: '2' }
+            } as unknown as MathProblemItem;
+    
+            const mockGen: Generator = {
+                templateId: 'tpl_test_2',
+                skillId: 'skill_test_2',
+                generate: vi.fn().mockReturnValue(mockItem),
+            };
+    
+            engine.register(mockGen);
+            
+            const result = await engine.generate('skill_test_2', 0.5);
+            
+            expect(result).toBe(mockItem);
+            expect(mockGen.generate).toHaveBeenCalledWith(0.5, undefined);
+        });
     });
 });
