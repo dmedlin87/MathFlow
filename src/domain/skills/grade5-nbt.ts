@@ -437,19 +437,24 @@ const genRoundingDecimals: Generator = {
     let rounded: number;
     let placeValueStr = "";
 
+    // Helper for robust rounding to avoid floating point issues (1.235 -> 1.24)
+    const robustRound = (n: number, scale: number) => {
+        return Math.round((n + Number.EPSILON) * scale) / scale;
+    };
+
     if (placeIdx === 0) {
       // Whole number
-      rounded = Math.round(num);
+      rounded = robustRound(num, 1);
       placeValueStr = "ones place";
     } else if (placeIdx === 1) {
       // Tenth
       // 3.456 -> 3.5
-      rounded = Math.round(num * 10) / 10;
+      rounded = robustRound(num, 10);
       placeValueStr = "tenths place";
     } else {
       // Hundredth
       // 3.456 -> 3.46
-      rounded = Math.round(num * 100) / 100;
+      rounded = robustRound(num, 100);
       placeValueStr = "hundredths place";
     }
 
@@ -474,5 +479,312 @@ export const SKILL_5_NBT_ROUND_DECIMALS: Skill = {
   misconceptions: {
     'truncation': 'Rounding is not just cutting off the numbers. If the next digit is 5 or more, you must round up.',
     'place_confusion': 'Identify the correct place value first before looking at the neighbor digit.'
+  }
+};
+
+/**
+ * MODULE 2 & 3 Additions: Operations with Decimals and Multi-Digit
+ * Standards: 5.NBT.B.5, 5.NBT.B.6, 5.NBT.B.7
+ */
+
+// ----------------------------------------------------------------------
+// 5. Add/Subtract Decimals (5.NBT.B.7 - partial)
+// ----------------------------------------------------------------------
+
+const genAddSubDecimals: Generator = {
+  generate: (): Problem => {
+    const isAddition = Math.random() < 0.5;
+
+    // Generate decimals with varying lengths to force alignment issues
+    // e.g. 3.5 + 4.25
+    const d1 = Math.floor(Math.random() * 2) + 1; // 1 or 2 decimal places
+    const d2 = Math.floor(Math.random() * 2) + 1; // 1 or 2 decimal places
+
+    // Ensure at least one has 2 places for richness, or mismatch
+    // If d1=1 and d2=1, maybe make one 3? Standard says "to hundredths", so max 2 usually, but thousandths is also 5th grade (5.NBT.A.1)
+
+    const n1 = parseFloat((Math.random() * 50 + 1).toFixed(d1));
+    const n2 = parseFloat((Math.random() * 50 + 1).toFixed(d2));
+
+    let result = isAddition ? n1 + n2 : n1 - n2;
+    // Formatting: 2 decimal places max for result usually
+    // JavaScript float precision fix
+    result = parseFloat(result.toFixed(3));
+
+    // For subtraction, ensure n1 > n2 or handle negative? Grade 5 usually positive only?
+    // Grade 6 is negative numbers. We should swap if negative.
+    let finalN1 = n1;
+    let finalN2 = n2;
+    if (!isAddition && n1 < n2) {
+      finalN1 = n2;
+      finalN2 = n1;
+      result = parseFloat((finalN1 - finalN2).toFixed(3));
+    }
+
+    const op = isAddition ? '+' : '-';
+
+    return {
+      type: 'fill_in_blank',
+      stem: `Compute: ${finalN1} ${op} ${finalN2} = ?`,
+      items: [{
+        id: 'ans',
+        type: 'math',
+        answer_spec: { input_type: 'decimal', accepted_forms: [String(result)] },
+        solution_logic: { final_answer_canonical: String(result) }
+      }]
+    };
+  }
+};
+
+export const SKILL_5_NBT_ADD_SUB_DECIMALS: Skill = {
+  id: '5.nbt.add_sub_decimals',
+  name: 'Add and Subtract Decimals',
+  description: 'Add and subtract decimals to hundredths',
+  generator: genAddSubDecimals,
+  misconceptions: {
+    'alignment': 'You must line up the decimal points before adding or subtracting.',
+    'place_drift': 'Do not add tenths to hundredths. Use zeros as placeholders to help line up the numbers.'
+  }
+};
+
+// ----------------------------------------------------------------------
+// 6. Multi-Digit Multiplication (5.NBT.B.5)
+// ----------------------------------------------------------------------
+// Fluently multiply multi-digit whole numbers using the standard algorithm.
+
+const genMultWhole: Generator = {
+  generate: (): Problem => {
+    // 3-digit x 2-digit, 4-digit x 2-digit, etc.
+    // Grade 5 expectation: Standard Algorithm
+
+    const type = Math.random();
+    let n1: number, n2: number;
+
+    if (type < 0.5) {
+      // 3 x 2
+      n1 = Math.floor(Math.random() * 900) + 100; // 100-999
+      n2 = Math.floor(Math.random() * 90) + 10;   // 10-99
+    } else {
+      // 4 x 2 (or 3 x 3? Standard usually says "multi-digit", but 4x2 is common max)
+      n1 = Math.floor(Math.random() * 9000) + 1000; // 1000-9999
+      n2 = Math.floor(Math.random() * 90) + 10;     // 10-99
+    }
+
+    const result = n1 * n2;
+
+    return {
+      type: 'fill_in_blank',
+      stem: `Multiply: ${n1} × ${n2} = ?`,
+      items: [{
+        id: 'ans',
+        type: 'math',
+        answer_spec: { input_type: 'integer', accepted_forms: [String(result)] },
+        solution_logic: { final_answer_canonical: String(result) }
+      }]
+    };
+  }
+};
+
+export const SKILL_5_NBT_MULT_WHOLE: Skill = {
+  id: '5.nbt.mult_whole',
+  name: 'Multi-Digit Multiplication',
+  description: 'Multiply multi-digit whole numbers',
+  generator: genMultWhole,
+  misconceptions: {
+    'zero_placeholder': 'When moving to the next line (tens place), don\'t forget to put a zero placeholder.',
+    'column_alignment': 'Keep your columns straight to add the partial products correctly.'
+  }
+};
+
+// ----------------------------------------------------------------------
+// 7. Decimal Multiplication (5.NBT.B.7 - partial)
+// ----------------------------------------------------------------------
+
+const genMultDecimals: Generator = {
+  generate: (): Problem => {
+    // Decimal x Whole or Decimal x Decimal
+    const isDecDec = Math.random() < 0.6;
+
+    let n1: number, n2: number;
+    let n1Str: string, n2Str: string;
+
+    if (isDecDec) {
+      // e.g. 3.4 x 0.5
+      n1 = parseFloat((Math.random() * 10).toFixed(1));
+      n2 = parseFloat((Math.random() * 5).toFixed(1));
+    } else {
+      // e.g. 4.52 x 4
+      const d = Math.random() < 0.5 ? 1 : 2;
+      n1 = parseFloat((Math.random() * 20).toFixed(d));
+      n2 = Math.floor(Math.random() * 9) + 2; // 2-10
+    }
+
+    const result = n1 * n2;
+    // Fix float precision
+    const canonical = parseFloat(result.toFixed(4)).toString();
+
+    return {
+      type: 'fill_in_blank',
+      stem: `Multiply: ${n1} × ${n2} = ?`,
+      items: [{
+        id: 'ans',
+        type: 'math',
+        answer_spec: { input_type: 'decimal', accepted_forms: [canonical] },
+        solution_logic: { final_answer_canonical: canonical }
+      }]
+    };
+  }
+};
+
+export const SKILL_5_NBT_MULT_DECIMALS: Skill = {
+  id: '5.nbt.mult_decimals',
+  name: 'Decimal Multiplication',
+  description: 'Multiply decimals to hundredths',
+  generator: genMultDecimals,
+  misconceptions: {
+    'decimal_placement': 'Ignore the decimal points while multiplying, then place the decimal in the answer. The number of decimal places in the answer is the sum of decimal places in the factors.',
+    'line_up_error': 'You do not need to line up the decimal points for multiplication.'
+  }
+};
+
+// ----------------------------------------------------------------------
+// 8. Multi-Digit Division (5.NBT.B.6)
+// ----------------------------------------------------------------------
+// Find whole-number quotients of whole numbers with up to four-digit dividends and two-digit divisors.
+
+const genDivWhole: Generator = {
+  generate: (): Problem => {
+    // 3-digit / 1-digit, 4-digit / 1-digit, 3-digit / 2-digit, 4-digit / 2-digit
+    // We should bias towards 2-digit divisors as that's the new 5th grade skill
+
+    const divisorDigits = Math.random() < 0.7 ? 2 : 1;
+    let divisor: number;
+    if (divisorDigits === 1) {
+        divisor = Math.floor(Math.random() * 8) + 2; // 2-9
+    } else {
+        divisor = Math.floor(Math.random() * 90) + 10; // 10-99
+    }
+
+    // Construct dividend to be a multiple of divisor for clean division?
+    // 5.NBT.B.6 says "Find whole-number quotients...". It doesn't explicitly say "without remainder", but "using strategies...".
+    // Usually starts with no remainders, then remainders.
+    // Let's do 50/50 clean vs remainder
+    const isClean = Math.random() < 0.6;
+
+    const quotient = Math.floor(Math.random() * 100) + 10; // 2 or 3 digit quotient
+    let dividend = quotient * divisor;
+    let remainder = 0;
+
+    if (!isClean) {
+        remainder = Math.floor(Math.random() * (divisor - 1)) + 1;
+        dividend += remainder;
+    }
+
+    // We need to decide how to ask for the answer. "Quotient and Remainder"? or just "Evaluate"?
+    // If we use 'integer' input, it expects a single number.
+    // If remainder exists, maybe ask "What is the quotient?" and "What is the remainder?" separately?
+    // Or "54 / 4 = ? R ?"
+
+    if (remainder === 0) {
+        return {
+            type: 'fill_in_blank',
+            stem: `Divide: ${dividend} ÷ ${divisor} = ?`,
+            items: [{
+                id: 'ans',
+                type: 'math',
+                answer_spec: { input_type: 'integer', accepted_forms: [String(quotient)] },
+                solution_logic: { final_answer_canonical: String(quotient) }
+            }]
+        };
+    } else {
+        return {
+            type: 'fill_in_blank',
+            stem: `Divide: ${dividend} ÷ ${divisor} = ? R ?`,
+            items: [
+                {
+                    id: 'quotient',
+                    type: 'math',
+                    answer_spec: { input_type: 'integer', accepted_forms: [String(quotient)] },
+                    solution_logic: { final_answer_canonical: String(quotient) }
+                },
+                {
+                    id: 'remainder',
+                    type: 'math',
+                    answer_spec: { input_type: 'integer', accepted_forms: [String(remainder)] },
+                    solution_logic: { final_answer_canonical: String(remainder) }
+                }
+            ]
+        };
+    }
+  }
+};
+
+export const SKILL_5_NBT_DIV_WHOLE: Skill = {
+  id: '5.nbt.div_whole',
+  name: 'Multi-Digit Division',
+  description: 'Divide multi-digit numbers (up to 4-digit dividend, 2-digit divisor)',
+  generator: genDivWhole,
+  misconceptions: {
+    'estimation': 'Use estimation to help find the quotient digit. e.g., think "How many 20s in 80?"',
+    'remainder_size': 'The remainder must always be smaller than the divisor.'
+  }
+};
+
+// ----------------------------------------------------------------------
+// 9. Decimal Division (5.NBT.B.7 - partial)
+// ----------------------------------------------------------------------
+
+const genDivDecimals: Generator = {
+  generate: (): Problem => {
+    // Decimal / Whole, Whole / Decimal, Decimal / Decimal
+    // Usually constructed to have clean terminating decimal answers
+
+    const type = Math.floor(Math.random() * 3);
+    let dividend: number, divisor: number;
+
+    // Helper to get clean division
+    // quotient * divisor = dividend
+    // choose quotient and divisor, compute dividend
+
+    const quotient = parseFloat((Math.random() * 20 + 0.1).toFixed(2));
+
+    if (type === 0) {
+       // Decimal / Whole
+       // dividend is decimal, divisor is whole
+       divisor = Math.floor(Math.random() * 10) + 2;
+    } else if (type === 1) {
+       // Whole / Decimal
+       // dividend is whole, divisor is decimal
+       // Harder to generate randomly without getting complex dividends
+       // Let's stick to simple ones.
+       divisor = parseFloat((Math.random() * 5 + 0.1).toFixed(1));
+    } else {
+       // Decimal / Decimal
+       divisor = parseFloat((Math.random() * 5 + 0.1).toFixed(1));
+    }
+
+    dividend = parseFloat((quotient * divisor).toFixed(4));
+
+    return {
+        type: 'fill_in_blank',
+        stem: `Divide: ${dividend} ÷ ${divisor} = ?`,
+        items: [{
+            id: 'ans',
+            type: 'math',
+            answer_spec: { input_type: 'decimal', accepted_forms: [String(quotient)] },
+            solution_logic: { final_answer_canonical: String(quotient) }
+        }]
+    };
+  }
+};
+
+export const SKILL_5_NBT_DIV_DECIMALS: Skill = {
+  id: '5.nbt.div_decimals',
+  name: 'Decimal Division',
+  description: 'Divide decimals to hundredths',
+  generator: genDivDecimals,
+  misconceptions: {
+    'move_decimal': 'If the divisor is a decimal, move the decimal point to the right to make it a whole number. Then move the dividend\'s decimal point the same amount.',
+    'position': 'Place the decimal point in the quotient directly above the decimal point in the dividend (after adjustment).'
   }
 };
