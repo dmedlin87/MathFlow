@@ -44,6 +44,31 @@ describe('LocalLearnerService', () => {
         expect(Date.now() - start).toBeGreaterThanOrEqual(300);
     });
 
+    it('should reject non-serializable data (Architecture Violation)', async () => {
+        const service = new LocalLearnerService();
+        const state = await service.loadState('user_test');
+
+        const circular: any = {};
+        circular.self = circular;
+
+        const attempt: Attempt = {
+            id: '123',
+            userId: 'user_test',
+            itemId: 'item1',
+            skillId: 'any',
+            timestamp: new Date().toISOString(),
+            isCorrect: true,
+            timeTakenMs: 1000,
+            attemptsCount: 1,
+            hintsUsed: 0,
+            errorTags: [circular] // Circular reference embedded
+        };
+
+        await expect(service.submitAttempt(state, attempt))
+            .rejects
+            .toThrow("Data could not be serialized (Architecture Violation)");
+    });
+
     it('should diagnose known misconceptions', async () => {
         const service = new LocalLearnerService();
         const item: MathProblemItem = {
