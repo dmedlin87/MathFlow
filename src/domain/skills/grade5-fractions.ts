@@ -1,4 +1,462 @@
-import { Skill, Generator, Problem, ProblemType } from "../types";
+import type { Skill, Generator, MathProblemItem } from "../types";
+import { engine } from "../generator/engine";
+import { gcd } from "../math-utils";
 
-// Module 4: Addition and Subtraction of Fractions
-// Module 5: Multiplication and Division of Fractions
+// Helper to get random integer between min and max (inclusive)
+const randomInt = (min: number, max: number, rng: () => number = Math.random) =>
+  Math.floor(rng() * (max - min + 1)) + min;
+
+// Helper to create mock provenance
+const createMockProvenance = (
+  skillId: string,
+  diff: number
+): MathProblemItem["meta"] => ({
+  id: `it_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+  version: 1,
+  skill_id: skillId,
+  difficulty: Math.ceil(diff * 5) || 1,
+  created_at: new Date().toISOString(),
+  verified_at: new Date().toISOString(),
+  status: "VERIFIED",
+  provenance: {
+    generator_model: "v0-rule-based-engine",
+    critic_model: "v0-simulation",
+    judge_model: "v0-simulation",
+    verifier: { type: "numeric", passed: true },
+    attempt: 1,
+  },
+  verification_report: {
+    rubric_scores: {
+      solvability: 1,
+      ambiguity: 0,
+      procedural_correctness: 1,
+      pedagogical_alignment: 1,
+    },
+    underspecified: false,
+    issues: [],
+  },
+});
+
+// Helper for LCM
+const lcm = (a: number, b: number) => (a * b) / gcd(a, b);
+
+// ----------------------------------------------------------------------
+// 1. Add/Subtract Unlike Fractions (5.NF.A.1)
+// ----------------------------------------------------------------------
+
+export const SKILL_5_NF_ADD_SUB_UNLIKE: Skill = {
+  id: "5.nf.add_sub_unlike",
+  name: "Add/Subtract Unlike Fractions",
+  gradeBand: "3-5",
+  prereqs: ["frac_add_like_01", "frac_equiv_01"],
+  misconceptions: ["add_num_add_den", "sub_num_sub_den"],
+  templates: ["T_ADD_SUB_UNLIKE"],
+  description: "Add and subtract fractions with unlike denominators",
+  bktParams: { learningRate: 0.1, slip: 0.1, guess: 0.05 },
+};
+
+export const AddSubUnlikeGenerator: Generator = {
+  skillId: SKILL_5_NF_ADD_SUB_UNLIKE.id,
+  templateId: "T_ADD_SUB_UNLIKE",
+  generate: (difficulty: number, rng?: () => number): MathProblemItem => {
+    const isAddition = (rng ?? Math.random)() < 0.6;
+
+    // Generate unlike denominators
+    // Diff < 0.5: One den is multiple of other (e.g. 3, 6)
+    // Diff >= 0.5: Neither is multiple (e.g. 3, 4)
+
+    let d1 = randomInt(2, 6, rng);
+    let d2: number;
+
+    if (difficulty < 0.5) {
+        const mult = randomInt(2, 3, rng);
+        d2 = d1 * mult;
+    } else {
+        d2 = randomInt(2, 8, rng);
+        while (d1 === d2 || d2 % d1 === 0 || d1 % d2 === 0) {
+            d2 = randomInt(2, 9, rng);
+        }
+    }
+
+    const n1 = randomInt(1, d1 - 1, rng);
+    const n2 = randomInt(1, d2 - 1, rng);
+
+    // For subtraction, ensure result > 0
+    let num1 = n1;
+    let den1 = d1;
+    let num2 = n2;
+    let den2 = d2;
+
+    if (!isAddition) {
+       if (n1/d1 < n2/d2) {
+           // Swap
+           [num1, den1, num2, den2] = [n2, d2, n1, d1];
+       }
+    }
+
+    const commonDen = lcm(den1, den2);
+    // Convert
+    const convN1 = num1 * (commonDen / den1);
+    const convN2 = num2 * (commonDen / den2);
+
+    const resultNum = isAddition ? convN1 + convN2 : convN1 - convN2;
+    const resultDen = commonDen;
+
+    // Simplify result?
+    const commonFactor = gcd(resultNum, resultDen);
+    const finalNum = resultNum / commonFactor;
+    const finalDen = resultDen / commonFactor;
+
+    const op = isAddition ? "+" : "-";
+    const opText = isAddition ? "Add" : "Subtract";
+
+    // Misconception: Add tops and bottoms
+    const wrongNum = isAddition ? num1 + num2 : Math.abs(num1 - num2);
+    const wrongDen = isAddition ? den1 + den2 : Math.abs(den1 - den2); // often 0 if subtraction den same (not here)
+
+    return {
+      meta: createMockProvenance(SKILL_5_NF_ADD_SUB_UNLIKE.id, difficulty),
+      problem_content: {
+        stem: `${opText}: $$\\frac{${num1}}{${den1}} ${op} \\frac{${num2}}{${den2}} = ?$$`,
+        format: "latex",
+        variables: { num1, den1, num2, den2 },
+      },
+      answer_spec: {
+        answer_mode: "final_only",
+        input_type: "fraction",
+      },
+      solution_logic: {
+        final_answer_canonical: `${finalNum}/${finalDen}`,
+        final_answer_type: "numeric",
+        steps: [
+          {
+            step_index: 1,
+            explanation: `Find a common denominator for ${den1} and ${den2}. The LCM is ${commonDen}.`,
+            math: `\\text{LCM} = ${commonDen}`,
+            answer: String(commonDen),
+          },
+          {
+            step_index: 2,
+            explanation: `Convert fractions: $\\frac{${num1}}{${den1}} = \\frac{${convN1}}{${commonDen}}$ and $\\frac{${num2}}{${den2}} = \\frac{${convN2}}{${commonDen}}$.`,
+            math: `\\frac{${convN1}}{${commonDen}} ${op} \\frac{${convN2}}{${commonDen}}`,
+            answer: `${convN1}/${commonDen}, ${convN2}/${commonDen}`,
+          },
+          {
+            step_index: 3,
+            explanation: `${opText} the numerators.`,
+            math: `\\frac{${resultNum}}{${resultDen}}`,
+            answer: `${resultNum}/${resultDen}`,
+          }
+        ],
+      },
+      misconceptions: [
+        {
+          id: "misc_add_den",
+          error_tag: "add_num_add_den",
+          trigger: { kind: "exact_answer", value: `${wrongNum}/${wrongDen}` },
+          hint_ladder: [
+             "You cannot just add the numerators and denominators. Find a common denominator first."
+          ]
+        }
+      ],
+    };
+  },
+};
+
+engine.register(AddSubUnlikeGenerator);
+
+// ----------------------------------------------------------------------
+// 2. Fractions as Division (5.NF.B.3)
+// ----------------------------------------------------------------------
+
+export const SKILL_5_NF_FRAC_DIV: Skill = {
+  id: "5.nf.frac_div",
+  name: "Fractions as Division",
+  gradeBand: "3-5",
+  prereqs: ["nbt_div_remainders"],
+  misconceptions: ["order_confusion"],
+  templates: ["T_FRAC_DIV"],
+  description: "Interpret a fraction as division of the numerator by the denominator (a/b = a ÷ b)",
+  bktParams: { learningRate: 0.2, slip: 0.1, guess: 0.1 },
+};
+
+export const FracDivGenerator: Generator = {
+  skillId: SKILL_5_NF_FRAC_DIV.id,
+  templateId: "T_FRAC_DIV",
+  generate: (difficulty: number, rng?: () => number): MathProblemItem => {
+    // 3 divided by 4 = 3/4
+    const num = randomInt(1, 10, rng);
+    const den = randomInt(2, 12, rng);
+
+    // Sometimes a > b (improper)
+
+    return {
+      meta: createMockProvenance(SKILL_5_NF_FRAC_DIV.id, difficulty),
+      problem_content: {
+        stem: `Write the division expression as a fraction:
+$$${num} \\div ${den} = ?$$`,
+        format: "latex",
+        variables: { num, den },
+      },
+      answer_spec: {
+        answer_mode: "final_only",
+        input_type: "fraction",
+      },
+      solution_logic: {
+        final_answer_canonical: `${num}/${den}`,
+        final_answer_type: "numeric",
+        steps: [
+          {
+            step_index: 1,
+            explanation: `The first number (dividend) becomes the numerator. The second number (divisor) becomes the denominator.`,
+            math: `${num} \\div ${den} = \\frac{${num}}{${den}}`,
+            answer: `${num}/${den}`,
+          },
+        ],
+      },
+      misconceptions: [
+        {
+           id: "misc_reverse",
+           error_tag: "order_confusion",
+           trigger: { kind: "exact_answer", value: `${den}/${num}` },
+           hint_ladder: ["Remember: Numerator ÷ Denominator. The first number goes on top."]
+        }
+      ],
+    };
+  },
+};
+
+engine.register(FracDivGenerator);
+
+// ----------------------------------------------------------------------
+// 3. Multiplication as Scaling (5.NF.B.5)
+// ----------------------------------------------------------------------
+
+export const SKILL_5_NF_SCALING: Skill = {
+  id: "5.nf.scaling",
+  name: "Multiplication as Scaling",
+  gradeBand: "3-5",
+  prereqs: ["5.nbt.mult_whole"],
+  misconceptions: ["mult_always_bigger"],
+  templates: ["T_SCALING"],
+  description: "Understand multiplication as scaling (resizing)",
+  bktParams: { learningRate: 0.2, slip: 0.1, guess: 0.25 },
+};
+
+export const ScalingGenerator: Generator = {
+  skillId: SKILL_5_NF_SCALING.id,
+  templateId: "T_SCALING",
+  generate: (difficulty: number, rng?: () => number): MathProblemItem => {
+    // Compare product to factor without calculating
+    // "5 x 3/4 is [Less than/Greater than/Equal to] 5?"
+
+    const factor = randomInt(2, 10, rng);
+    const num = randomInt(1, 10, rng);
+    const den = randomInt(2, 10, rng);
+    if (num === den) return ScalingGenerator.generate(difficulty, rng); // retry
+
+    const isLess = num < den;
+    const fractionStr = `\\frac{${num}}{${den}}`;
+
+    const expected = isLess ? "<" : ">";
+
+    return {
+      meta: createMockProvenance(SKILL_5_NF_SCALING.id, difficulty),
+      problem_content: {
+        stem: `Without calculating, choose the correct symbol:
+$$${factor} \\times ${fractionStr} \\text{ ? } ${factor}$$`,
+        format: "latex",
+        variables: { factor, num, den },
+      },
+      answer_spec: {
+        answer_mode: "final_only",
+        input_type: "multiple_choice",
+        ui: { choices: ["<", ">", "="] },
+      },
+      solution_logic: {
+        final_answer_canonical: expected,
+        final_answer_type: "multiple_choice",
+        steps: [
+          {
+            step_index: 1,
+            explanation: `You are multiplying ${factor} by a number ${isLess ? "less" : "greater"} than 1.`,
+            math: `\\text{Since } \\frac{${num}}{${den}} ${expected} 1, \\text{ the product is } ${expected} ${factor}.`,
+            answer: expected,
+          },
+        ],
+      },
+      misconceptions: [
+         {
+             id: "misc_bigger",
+             error_tag: "mult_always_bigger",
+             trigger: { kind: "predicate", value: "false" },
+             hint_ladder: ["Multiplication doesn't always make things bigger. If you multiply by something less than 1, it gets smaller."]
+         }
+      ],
+    };
+  },
+};
+
+engine.register(ScalingGenerator);
+
+// ----------------------------------------------------------------------
+// 4. Multiplying Fractions (5.NF.B.4)
+// ----------------------------------------------------------------------
+
+export const SKILL_5_NF_MULT_FRAC: Skill = {
+  id: "5.nf.mult_frac",
+  name: "Multiplying Fractions",
+  gradeBand: "3-5",
+  prereqs: ["5.nf.scaling"],
+  misconceptions: ["cross_multiply_add"],
+  templates: ["T_MULT_FRAC"],
+  description: "Multiply a fraction by a fraction",
+  bktParams: { learningRate: 0.15, slip: 0.1, guess: 0.1 },
+};
+
+export const MultFracGenerator: Generator = {
+  skillId: SKILL_5_NF_MULT_FRAC.id,
+  templateId: "T_MULT_FRAC",
+  generate: (difficulty: number, rng?: () => number): MathProblemItem => {
+    const num1 = randomInt(1, 5, rng);
+    const den1 = randomInt(num1 + 1, 8, rng);
+    const num2 = randomInt(1, 5, rng);
+    const den2 = randomInt(num2 + 1, 8, rng);
+
+    const resNum = num1 * num2;
+    const resDen = den1 * den2;
+
+    // Simplify? 5th grade standard often accepts unsimplified, but good habit.
+    // Let's ask for unsimplified or simplified. System usually canonizes both?
+    // We will provide simplified as canonical.
+    const common = gcd(resNum, resDen);
+    const simNum = resNum / common;
+    const simDen = resDen / common;
+
+    return {
+      meta: createMockProvenance(SKILL_5_NF_MULT_FRAC.id, difficulty),
+      problem_content: {
+        stem: `Multiply: $$\\frac{${num1}}{${den1}} \\times \\frac{${num2}}{${den2}} = ?$$`,
+        format: "latex",
+        variables: { num1, den1, num2, den2 },
+      },
+      answer_spec: {
+        answer_mode: "final_only",
+        input_type: "fraction",
+      },
+      solution_logic: {
+        final_answer_canonical: `${simNum}/${simDen}`,
+        final_answer_type: "numeric",
+        steps: [
+          {
+            step_index: 1,
+            explanation: `Multiply the numerators and multiply the denominators.`,
+            math: `\\frac{${num1} \\times ${num2}}{${den1} \\times ${den2}} = \\frac{${resNum}}{${resDen}}`,
+            answer: `${resNum}/${resDen}`,
+          },
+        ],
+      },
+      misconceptions: [
+         {
+             id: "misc_cross",
+             error_tag: "cross_multiply_add",
+             trigger: { kind: "exact_answer", value: `${num1*den2 + num2*den1}/${den1*den2}` }, // cross mult add like addition?
+             hint_ladder: ["For multiplication, you just multiply straight across."]
+         }
+      ],
+    };
+  },
+};
+
+engine.register(MultFracGenerator);
+
+// ----------------------------------------------------------------------
+// 5. Dividing Fractions (5.NF.B.7)
+// ----------------------------------------------------------------------
+
+export const SKILL_5_NF_DIV_FRAC: Skill = {
+  id: "5.nf.div_frac",
+  name: "Dividing Fractions",
+  gradeBand: "3-5",
+  prereqs: ["5.nf.mult_frac"],
+  misconceptions: ["divide_denominators", "flip_wrong_one"],
+  templates: ["T_DIV_FRAC"],
+  description: "Divide unit fractions by whole numbers and whole numbers by unit fractions",
+  bktParams: { learningRate: 0.1, slip: 0.1, guess: 0.1 },
+};
+
+export const DivFracGenerator: Generator = {
+  skillId: SKILL_5_NF_DIV_FRAC.id,
+  templateId: "T_DIV_FRAC",
+  generate: (difficulty: number, rng?: () => number): MathProblemItem => {
+    // Case 1: Unit Frac / Whole
+    // Case 2: Whole / Unit Frac
+    const isCase1 = (rng ?? Math.random)() < 0.5;
+
+    if (isCase1) {
+        // 1/3 ÷ 4
+        const den = randomInt(2, 8, rng);
+        const whole = randomInt(2, 6, rng);
+        // Answer: 1 / (3*4) = 1/12
+        const ansDen = den * whole;
+
+        return {
+            meta: createMockProvenance(SKILL_5_NF_DIV_FRAC.id, difficulty),
+            problem_content: {
+                stem: `Divide: $$\\frac{1}{${den}} \\div ${whole} = ?$$`,
+                format: "latex",
+            },
+            answer_spec: {
+                answer_mode: "final_only",
+                input_type: "fraction",
+            },
+            solution_logic: {
+                final_answer_canonical: `1/${ansDen}`,
+                final_answer_type: "numeric",
+                steps: [
+                    {
+                        step_index: 1,
+                        explanation: `Dividing a unit fraction by ${whole} means each part gets ${whole} times smaller (denominator gets ${whole} times bigger).`,
+                        math: `\\frac{1}{${den} \\times ${whole}} = \\frac{1}{${ansDen}}`,
+                        answer: `1/${ansDen}`,
+                    }
+                ],
+            },
+            misconceptions: []
+        };
+    } else {
+        // 4 ÷ 1/3
+        const whole = randomInt(2, 6, rng);
+        const den = randomInt(2, 8, rng);
+        // Answer: 4 * 3 = 12
+        const ans = whole * den;
+
+        return {
+            meta: createMockProvenance(SKILL_5_NF_DIV_FRAC.id, difficulty),
+            problem_content: {
+                stem: `Divide: $$${whole} \\div \\frac{1}{${den}} = ?$$`,
+                format: "latex",
+            },
+            answer_spec: {
+                answer_mode: "final_only",
+                input_type: "integer",
+            },
+            solution_logic: {
+                final_answer_canonical: String(ans),
+                final_answer_type: "numeric",
+                steps: [
+                    {
+                        step_index: 1,
+                        explanation: `How many 1/${den}s are in ${whole}? Multiply ${whole} by ${den}.`,
+                        math: `${whole} \\times ${den} = ${ans}`,
+                        answer: String(ans),
+                    }
+                ],
+            },
+            misconceptions: []
+        };
+    }
+  },
+};
+
+engine.register(DivFracGenerator);
