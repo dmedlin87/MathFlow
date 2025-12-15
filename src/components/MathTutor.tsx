@@ -152,6 +152,10 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
     }
   };
 
+  const handleEndSession = () => {
+    setIsSessionDone(true);
+  };
+
   const handleRestart = () => {
      setSessionStats({ total: 0, correct: 0, masteredSkills: [] });
      setIsSessionDone(false);
@@ -284,32 +288,24 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
                     animate={{ opacity: 1 }}
                     className="mt-6"
                 >
-                    <button
-                        onClick={handleNext}
-                        className="w-full py-3 bg-gray-900 text-white rounded-lg font-semibold hover:bg-black transition-colors"
-                    >
-                        Next Problem →
-                    </button>
-                </motion.div>
-            )}
-
-            {/* Steps/Hints on incorrect (using solution_logic.steps for now, but V1 says hints > steps) */}
-            {/* V0 behavior: show full steps on incorrect. V1 spec: hints first. Keeping V0 behavior for now to minimize degradation. */}
-            {feedback === 'incorrect' && currentItem.solution_logic.steps && (
-                 <motion.div
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    className="mt-6"
-                >
-                    <InteractiveSteps 
-                        steps={currentItem.solution_logic.steps.map(s => ({
-                            id: String(s.step_index),
-                            text: s.explanation,
-                            answer: s.answer, 
-                            inputFormat: 'text',
-                            explanation: s.math
-                        }))} 
-                    />
+                    <div className="flex gap-4">
+                        <button
+                            onClick={handleNext}
+                            className="flex-1 py-3 bg-gray-900 text-white rounded-lg font-semibold hover:bg-black transition-colors"
+                        >
+                            Next Problem →
+                        </button>
+                        <button
+                            onClick={handleEndSession}
+                            className="flex-1 py-3 bg-gray-200 text-gray-800 rounded-lg font-semibold hover:bg-gray-300 transition-colors"
+                        >
+                            End Session
+                        </button>
+                    </div>
+                    
+                    {currentItem.steps && feedback === 'incorrect' && (
+                        <InteractiveSteps steps={currentItem.steps} />
+                    )}
                 </motion.div>
             )}
         </motion.div>
