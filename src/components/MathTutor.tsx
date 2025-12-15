@@ -197,6 +197,7 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
             {isLoading && <span className="text-blue-500 font-bold text-xs animate-pulse">SYNCING...</span>}
             <button 
                 onClick={() => setIsDevMode(!isDevMode)}
+                aria-pressed={isDevMode}
                 className={`font-mono text-xs px-3 py-1 border rounded transition-colors ${
                     isDevMode 
                         ? 'bg-blue-100 border-blue-300 text-blue-700 font-bold shadow-sm' 
@@ -240,6 +241,7 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
                 <div>
                     <input
                         type="text"
+                        aria-label="Enter your answer"
                         value={userAnswer}
                         onChange={(e) => {
                             setUserAnswer(e.target.value);

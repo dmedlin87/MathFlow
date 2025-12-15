@@ -61,6 +61,7 @@ export const InteractiveSteps: React.FC<InteractiveStepsProps> = ({ steps }) => 
                     <div className="flex items-center gap-2">
                         <input
                             type="text"
+                            aria-label={`Answer for step ${index + 1}`}
                             value={stepAnswers[step.id] || ''}
                             onChange={(e) => setStepAnswers(prev => ({ ...prev, [step.id]: e.target.value }))}
                             className={`p-2 border rounded w-32 ${
@@ -73,6 +74,7 @@ export const InteractiveSteps: React.FC<InteractiveStepsProps> = ({ steps }) => 
                          {!isCompleted && (
                             <button
                                 onClick={() => handleStepSubmit(index, step)}
+                                aria-label={`Check answer for step ${index + 1}`}
                                 className="px-3 py-2 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 text-sm font-medium"
                             >
                                 Check
