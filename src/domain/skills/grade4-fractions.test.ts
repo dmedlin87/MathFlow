@@ -1,7 +1,6 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { SubLikeFractionGenerator, SimplifyFractionGenerator, EquivFractionGenerator, SKILL_EQUIV_FRACTIONS } from './grade4-fractions';
 import { gcd } from '../math-utils';
-import type { MathProblemItem } from '../types';
 
 describe('grade4-fractions generators', () => {
   // Helper to create a controllable RNG

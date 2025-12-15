@@ -153,3 +153,16 @@ export interface Diagnosis {
     confidence_score?: number;
     hint_ladder?: string[]; // V1 extension for static hints
 }
+
+// --- UI Step Type for Interactive Scaffolding ---
+
+/**
+ * Represents a single step in an interactive solution walkthrough.
+ * Used by InteractiveSteps component to guide learners through problem-solving.
+ */
+export interface Step {
+    id: string;
+    text: string;                    // The instructional text / question for this step
+    answer?: string | number;        // Expected answer (if interactive step)
+    explanation?: string;            // Explanation shown after correct answer
+}
