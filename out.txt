@@ -1,56 +1,61 @@
 
 [1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/dmedl/Projects/MathFlow[39m
 
-[90mstdout[2m | src/domain/learner/state.behavior.test.ts[2m > [22m[2mlearner/state behavior[2m > [22m[2mrecommendNextItem[2m > [22m[2mshould select review items when due (>24h) and random roll < 0.3
-[22m[39mChecking prereq frac_equiv_01 for frac_add_like_01. State: {
-  masteryProb: [33m0.95[39m,
-  stability: [33m0[39m,
-  lastPracticed: [32m'2023-12-30T12:00:00.000Z'[39m,
-  misconceptions: []
-}
-Skill frac_add_like_01 prereqs met: true
+stderr | src/domain/generator/engine.test.ts > Generator Engine (Client Integration) > falls back to local generator if API fetch fails
+Network fetch failed, falling back to local generator (Dev Mode) Error: Network Error
+    at C:/Users/dmedl/Projects/MathFlow/src/domain/generator/engine.test.ts:58:41
+    at file:///C:/Users/dmedl/Projects/MathFlow/node_modules/@vitest/runner/dist/index.js:145:11
+    at file:///C:/Users/dmedl/Projects/MathFlow/node_modules/@vitest/runner/dist/index.js:915:26
+    at file:///C:/Users/dmedl/Projects/MathFlow/node_modules/@vitest/runner/dist/index.js:1240:20
+    at new Promise (<anonymous>)
+    at runWithTimeout (file:///C:/Users/dmedl/Projects/MathFlow/node_modules/@vitest/runner/dist/index.js:1206:10)
+    at file:///C:/Users/dmedl/Projects/MathFlow/node_modules/@vitest/runner/dist/index.js:1650:37
+    at Traces.$ (file:///C:/Users/dmedl/Projects/MathFlow/node_modules/vitest/dist/chunks/traces.U4xDYhzZ.js:115:27)
+    at trace (file:///C:/Users/dmedl/Projects/MathFlow/node_modules/vitest/dist/chunks/test.BT8LKgU9.js:239:21)
+    at runTest (file:///C:/Users/dmedl/Projects/MathFlow/node_modules/@vitest/runner/dist/index.js:1650:12)
 
-[90mstdout[2m | src/domain/learner/state.behavior.test.ts[2m > [22m[2mlearner/state behavior[2m > [22m[2mrecommendNextItem[2m > [22m[2mshould select learning queue items when random roll > 0.3
-[22m[39mChecking prereq frac_equiv_01 for frac_add_like_01. State: {
-  masteryProb: [33m0.95[39m,
-  stability: [33m0[39m,
-  lastPracticed: [32m'2023-12-30T12:00:00.000Z'[39m,
-  misconceptions: []
-}
-Skill frac_add_like_01 prereqs met: true
+stderr | src/domain/generator/engine.test.ts > Generator Engine (Client Integration) > throws error when skill not found locally and API fails
+Network fetch failed, falling back to local generator (Dev Mode) Error: Network Error
+    at C:/Users/dmedl/Projects/MathFlow/src/domain/generator/engine.test.ts:83:38
+    at file:///C:/Users/dmedl/Projects/MathFlow/node_modules/@vitest/runner/dist/index.js:145:11
+    at file:///C:/Users/dmedl/Projects/MathFlow/node_modules/@vitest/runner/dist/index.js:915:26
+    at file:///C:/Users/dmedl/Projects/MathFlow/node_modules/@vitest/runner/dist/index.js:1240:20
+    at new Promise (<anonymous>)
+    at runWithTimeout (file:///C:/Users/dmedl/Projects/MathFlow/node_modules/@vitest/runner/dist/index.js:1206:10)
+    at file:///C:/Users/dmedl/Projects/MathFlow/node_modules/@vitest/runner/dist/index.js:1650:37
+    at Traces.$ (file:///C:/Users/dmedl/Projects/MathFlow/node_modules/vitest/dist/chunks/traces.U4xDYhzZ.js:115:27)
+    at trace (file:///C:/Users/dmedl/Projects/MathFlow/node_modules/vitest/dist/chunks/test.BT8LKgU9.js:239:21)
+    at runTest (file:///C:/Users/dmedl/Projects/MathFlow/node_modules/@vitest/runner/dist/index.js:1650:12)
 
-[90mstdout[2m | src/domain/learner/state.behavior.test.ts[2m > [22m[2mlearner/state behavior[2m > [22m[2mrecommendNextItem[2m > [22m[2mshould pick lowest mastery item from learning queue
-[22m[39mChecking prereq frac_equiv_01 for frac_add_like_01. State: {
-  masteryProb: [33m0.4[39m,
-  stability: [33m0[39m,
-  lastPracticed: [32m'2024-01-01T12:00:00.000Z'[39m,
-  misconceptions: []
-}
-Skill frac_add_like_01 prereqs met: false
+ [31mΓ¥»[39m src/domain/generator/engine.test.ts [2m([22m[2m6 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 11[2mms[22m[39m
+     [32mΓ£ô[39m generates valid equivalent fraction problems[32m 2[2mms[22m[39m
+     [32mΓ£ô[39m identifies additive misconception[32m 0[2mms[22m[39m
+     [32mΓ£ô[39m tries to fetch from API and successfully returns verifying item[32m 2[2mms[22m[39m
+[31m     [31m├ù[31m falls back to local generator if API fetch fails[39m[32m 5[2mms[22m[39m
+     [32mΓ£ô[39m falls back to local generator if API returns empty[32m 0[2mms[22m[39m
+     [32mΓ£ô[39m throws error when skill not found locally and API fails[32m 1[2mms[22m[39m
 
-[90mstdout[2m | src/domain/learner/state.behavior.test.ts[2m > [22m[2mlearner/state behavior[2m > [22m[2mrecommendNextItem[2m > [22m[2mshould skip skill if prerequisites are not met
-[22m[39mChecking prereq frac_equiv_01 for frac_add_like_01. State: {
-  masteryProb: [33m0.5[39m,
-  stability: [33m0[39m,
-  lastPracticed: [32m'2024-01-01T12:00:00.000Z'[39m,
-  misconceptions: []
-}
-Skill frac_add_like_01 prereqs met: false
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Failed Tests 1 ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
 
- [31mΓ¥»[39m src/domain/learner/state.behavior.test.ts [2m([22m[2m10 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 16[2mms[22m[39m
-       [32mΓ£ô[39m should return a zeroed state for a new user[32m 3[2mms[22m[39m
-       [32mΓ£ô[39m should increase mastery when attempt is correct[32m 1[2mms[22m[39m
-       [32mΓ£ô[39m should decrease mastery when attempt is incorrect[32m 0[2mms[22m[39m
-       [32mΓ£ô[39m should clamp mastery between 0.01 and 0.99[32m 0[2mms[22m[39m
-       [32mΓ£ô[39m should initialize state for a new skill if missing[32m 0[2mms[22m[39m
-       [32mΓ£ô[39m should select review items when due (>24h) and random roll < 0.3[32m 3[2mms[22m[39m
-       [32mΓ£ô[39m should select learning queue items when random roll > 0.3[32m 1[2mms[22m[39m
-[31m       [31m├ù[31m should pick lowest mastery item from learning queue[39m[32m 5[2mms[22m[39m
-       [32mΓ£ô[39m should fallback to random skill when no review or learning candidates exist[32m 1[2mms[22m[39m
-       [32mΓ£ô[39m should skip skill if prerequisites are not met[32m 1[2mms[22m[39m
+ FAIL  src/domain/generator/engine.test.ts > Generator Engine (Client Integration) > falls back to local generator if API fetch fails
+AssertionError: expected 'Find the missing number: **1/4 = ?/16ΓÇª' to contain 'equivalent'
+
+Expected: "equivalent"
+Received: "Find the missing number: **1/4 = ?/16**"
+
+ Γ¥» src/domain/generator/engine.test.ts:66:43
+     64|         expect(item.meta.skill_id).toBe('frac_equiv_01');
+     65|         // Check it came from local generator (random ID, not static AΓÇª
+     66|         expect(item.problem_content.stem).toContain('equivalent');
+       |                                           ^
+     67|     });
+     68| 
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/1]ΓÄ»
+
 
 [2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
-[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m9 passed[39m[22m[90m (10)[39m
-[2m   Start at [22m 01:04:13
-[2m   Duration [22m 714ms[2m (transform 93ms, setup 153ms, import 89ms, tests 16ms, environment 0ms)[22m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m5 passed[39m[22m[90m (6)[39m
+[2m   Start at [22m 17:26:11
+[2m   Duration [22m 727ms[2m (transform 68ms, setup 127ms, import 62ms, tests 11ms, environment 0ms)[22m
 

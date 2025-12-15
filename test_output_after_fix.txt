@@ -1,0 +1,80 @@
+
+> mathflow@0.0.0 test
+> vitest
+
+
+[1m[44m DEV [49m[22m [34mv4.0.15 [39m[90mC:/Users/dmedl/Projects/MathFlow[39m
+
+ [32mΓ£ô[39m src/domain/learner/misconceptionEvaluator.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32mΓ£ô[39m src/domain/math-utils.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32mΓ£ô[39m src/domain/skills/grade4-decimals.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32mΓ£ô[39m src/domain/skills/grade4-fractions.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [31mΓ¥»[39m src/domain/generator/engine.test.ts [2m([22m[2m7 tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[32m 14[2mms[22m[39m
+[31m       [31m├ù[31m tries to fetch from API and successfully returns verifying item[39m[32m 7[2mms[22m[39m
+       [32mΓ£ô[39m falls back to local generator if API fetch fails[32m 1[2mms[22m[39m
+[31m       [31m├ù[31m falls back to local generator if API returns empty[39m[32m 1[2mms[22m[39m
+[31m       [31m├ù[31m uses factory item if bank is empty but factory returns item[39m[32m 1[2mms[22m[39m
+       [32mΓ£ô[39m throws error when skill not found locally and API fails[32m 1[2mms[22m[39m
+       [32mΓ£ô[39m should register and retrieve a generator[32m 1[2mms[22m[39m
+       [32mΓ£ô[39m should generate an item when generator exists[32m 1[2mms[22m[39m
+ [32mΓ£ô[39m src/domain/learner/state.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32mΓ£ô[39m server/src/factory/pipeline.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32mΓ£ô[39m src/domain/learner/state.behavior.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+ [32mΓ£ô[39m src/services/LearnerService.test.ts [2m([22m[2m7 tests[22m[2m)[22m[33m 4468[2mms[22m[39m
+     [33m[2mΓ£ô[22m[39m should simulate network latency [33m 402[2mms[22m[39m
+     [33m[2mΓ£ô[22m[39m should return valid initial state [33m 411[2mms[22m[39m
+     [33m[2mΓ£ô[22m[39m should submit attempt and return updated state [33m 1213[2mms[22m[39m
+     [33m[2mΓ£ô[22m[39m should reject non-serializable data (Architecture Violation) [33m 404[2mms[22m[39m
+     [33m[2mΓ£ô[22m[39m should return null when answer matches no misconception [33m 404[2mms[22m[39m
+     [33m[2mΓ£ô[22m[39m should diagnose known misconceptions [33m 413[2mms[22m[39m
+     [33m[2mΓ£ô[22m[39m should get recommendation from domain logic [33m 1217[2mms[22m[39m
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Failed Tests 3 ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+
+ FAIL  src/domain/generator/engine.test.ts > Generator Engine > Client Integration (Network & Fallback) > tries to fetch from API and successfully returns verifying item
+AssertionError: expected "vi.fn()" to be called with arguments: [ StringContaining{ΓÇª} ]
+
+Number of calls: 0
+
+ Γ¥» src/domain/generator/engine.test.ts:41:31
+     39|             const item = await engine.generate('frac_equiv_01', 0.5);
+     40|             
+     41|             expect(mockFetch).toHaveBeenCalledWith(expect.stringContaiΓÇª
+       |                               ^
+     42|             expect(item.meta.id).toBe('api_item_1');
+     43|         });
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/3]ΓÄ»
+
+ FAIL  src/domain/generator/engine.test.ts > Generator Engine > Client Integration (Network & Fallback) > falls back to local generator if API returns empty
+AssertionError: expected "vi.fn()" to be called 2 times, but got 0 times
+ Γ¥» src/domain/generator/engine.test.ts:66:31
+     64|             const item = await engine.generate('frac_equiv_01', 0.5);
+     65|             
+     66|             expect(mockFetch).toHaveBeenCalledTimes(2); // Problem fetΓÇª
+       |                               ^
+     67|             expect(item).toBeDefined();
+     68|         });
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[2/3]ΓÄ»
+
+ FAIL  src/domain/generator/engine.test.ts > Generator Engine > Client Integration (Network & Fallback) > uses factory item if bank is empty but factory returns item
+AssertionError: expected "vi.fn()" to be called 2 times, but got 0 times
+ Γ¥» src/domain/generator/engine.test.ts:85:31
+     83|             const item = await engine.generate('frac_equiv_01', 0.5);
+     84|             
+     85|             expect(mockFetch).toHaveBeenCalledTimes(2);
+       |                               ^
+     86|             expect(item.meta.id).toBe('factory_item_1');
+     87|         });
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[3/3]ΓÄ»
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m8 passed[39m[22m[90m (9)[39m
+[2m      Tests [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m66 passed[39m[22m[90m (69)[39m
+[2m   Start at [22m 23:16:26
+[2m   Duration [22m 5.41s[2m (transform 881ms, setup 2.07s, import 960ms, tests 4.53s, environment 1ms)[22m
+
+[1m[41m FAIL [49m[22m [31mTests failed. Watching for file changes...[39m
+       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m

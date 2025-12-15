@@ -1,54 +1,55 @@
-# React + TypeScript + Vite
+# MathFlow (AI Tutoring System)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+A **hybrid AI intelligent tutoring system** that combines deterministic "Pedagogical Truth" (verified math problems) with a "Conversational Voice" (LLM) for explanations and hints.
 
-Currently, two official plugins are available:
+## 🚀 Quick Start
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Prerequisites
 
-## Expanding the ESLint configuration
+- Node.js (v18+)
+- npm
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+### Installation
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+```bash
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Development
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Start both the client (Vite) and server (Express):
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
+```bash
+npm run dev
 ```
+
+> This runs:
+> - Client: `http://localhost:5173`
+> - Server: `http://localhost:3002`
+
+## 🏗 Architecture
+
+MathFlow separates content verification from runtime delivery.
+
+- **Spec:** [docs/ARCHITECTURE_SPEC.md](./docs/ARCHITECTURE_SPEC.md)
+- **Problem Bank:** Verified items are currently generated via a simulated factory (see `src/domain/skills`).
+
+## 🧪 Testing
+
+Run unit and behavior tests:
+
+```bash
+npm run test
+```
+
+Generate coverage report:
+
+```bash
+npm run test:coverage
+```
+
+## 🛠 Tech Stack
+
+- **Frontend:** React, TypeScript, TailwindCSS, Vite
+- **Backend:** Express, Node.js
+- **Testing:** Vitest, Testing Library

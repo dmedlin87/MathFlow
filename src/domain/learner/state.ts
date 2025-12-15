@@ -1,9 +1,9 @@
-import type { LearnerState, Attempt, Item } from '../types';
+import type { LearnerState, Attempt, MathProblemItem } from '../types';
 import { engine } from '../generator/engine';
-import { SKILL_EQUIV_FRACTIONS, SKILL_ADD_LIKE_FRACTIONS } from '../skills/grade4-fractions';
+import { ALL_SKILLS_LIST } from '../skills/registry';
 
-// Temporary simpler scheduler: Just focus on fractions for now
-const ALL_SKILLS = [SKILL_EQUIV_FRACTIONS, SKILL_ADD_LIKE_FRACTIONS];
+// Scheduler uses the central registry
+const ALL_SKILLS = ALL_SKILLS_LIST;
 
 export function createInitialState(userId: string): LearnerState {
   const state: LearnerState = {
@@ -87,10 +87,10 @@ export function updateLearnerState(state: LearnerState, attempt: Attempt): Learn
   return newState;
 }
 
-export function recommendNextItem(state: LearnerState, rng: () => number = Math.random): Item {
+export async function recommendNextItem(state: LearnerState, rng: () => number = Math.random): Promise<MathProblemItem> {
     const now = new Date();
+    // Re-verify ALL_SKILLS against state to ensure no missing entries (e.g. if loaded from storage)
     const candidateSkills = ALL_SKILLS.map(skill => {
-        // Fallback if new skill added and state is old
         const s = state.skillState[skill.id] || {
             masteryProb: 0.1,
             stability: 0,
@@ -101,7 +101,6 @@ export function recommendNextItem(state: LearnerState, rng: () => number = Math.
     });
 
     // 1. Identify "Review Due" items
-    // Simple logic: if mastery > 0.8 but not practiced in 1 day (mock logic), it's due
     const reviewDue = candidateSkills.filter(c => {
         if (c.state.masteryProb < 0.8) return false; // Only review reinforced items
         
@@ -109,8 +108,6 @@ export function recommendNextItem(state: LearnerState, rng: () => number = Math.
         const hoursSince = (now.getTime() - lastPracticed.getTime()) / (1000 * 60 * 60);
         
         // Base interval is 24h
-        // If stability is high, extend interval: 24h * (1 + stability)
-        // e.g. stability 0 -> 24h, stability 2 -> 72h
         const requiredIntervalHours = 24 * (1 + (c.state.stability || 0));
         
         return hoursSince > requiredIntervalHours;
@@ -156,7 +153,7 @@ export function recommendNextItem(state: LearnerState, rng: () => number = Math.
         difficulty = 0.9; // Challenge on review
     }
     
-    // Pick a template
-    const templateId = targetSkill.templates[0]; 
-    return engine.generateItem(templateId, difficulty);
+    // Use engine.generate with skillId
+    // Note: engine.generate might fail if we ask for a skill not registered.
+    return engine.generate(targetSkill.id, difficulty);
 }
