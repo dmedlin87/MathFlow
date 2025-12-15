@@ -519,3 +519,106 @@ Choose <, >, or =.`,
 };
 
 engine.register(FracCompareUnlikeGenerator);
+
+// --- 7. Add Tenths and Hundredths (4.NF.C.5) ---
+
+export const SKILL_ADD_TENTHS_HUNDREDTHS: Skill = {
+  id: "frac_add_tenths_hundredths",
+  name: "Add Tenths and Hundredths",
+  gradeBand: "3-5",
+  prereqs: ["frac_equiv_01", "frac_add_like_01"],
+  misconceptions: ["add_num_add_den"],
+  templates: ["T_ADD_TENTHS_HUNDREDTHS"],
+  description:
+    "Express a fraction with denominator 10 as an equivalent fraction with denominator 100, and use this technique to add two fractions with respective denominators 10 and 100.",
+  bktParams: { learningRate: 0.15, slip: 0.1, guess: 0.1 },
+};
+
+export const AddTenthsHundredthsGenerator: Generator = {
+  templateId: "T_ADD_TENTHS_HUNDREDTHS",
+  skillId: SKILL_ADD_TENTHS_HUNDREDTHS.id,
+  generate: (difficulty: number, rng?: () => number): MathProblemItem => {
+    // Problem type: A/10 + B/100 = ?
+    // Ensure sum <= 100/100 or allow > 1? Standard usually starts < 1.
+    // Let's keep sum <= 100/100 for lower difficulty.
+
+    const num10 = randomInt(1, 9, rng); // e.g. 3/10
+    const num100 = randomInt(1, 50, rng); // e.g. 42/100
+
+    // To make it interesting, sometimes put 100 first?
+    const order = (rng ?? Math.random)() > 0.5; // True = 10 first
+
+    // True calculation
+    // num10/10 = (num10 * 10)/100
+    // Total num = num10*10 + num100
+    const correctNum = num10 * 10 + num100;
+    const correctDen = 100;
+
+    // Misconception: Add tops and bottoms
+    // (num10 + num100) / (10 + 100) = (num10+num100)/110
+    // Or just (num10+num100)/100 without converting?
+    // "3/10 + 4/100 = 7/100" -> very common error
+    const wrongNumNoConvert = num10 + num100;
+
+    const term1 = order
+      ? `\\frac{${num10}}{10}`
+      : `\\frac{${num100}}{100}`;
+    const term2 = order
+      ? `\\frac{${num100}}{100}`
+      : `\\frac{${num10}}{10}`;
+
+    return {
+      meta: createMockProvenance(SKILL_ADD_TENTHS_HUNDREDTHS.id, difficulty),
+      problem_content: {
+        stem: `Add: $$${term1} + ${term2} = ?$$`,
+        format: "latex",
+        variables: { num10, num100 },
+      },
+      answer_spec: {
+        answer_mode: "final_only",
+        input_type: "fraction",
+      },
+      solution_logic: {
+        final_answer_canonical: `${correctNum}/${correctDen}`,
+        final_answer_type: "numeric",
+        steps: [
+          {
+            step_index: 1,
+            explanation: `Convert \\(\\frac{${num10}}{10}\\) to hundredths. Multiply top and bottom by 10.`,
+            math: `\\frac{${num10} \\times 10}{10 \\times 10} = \\frac{${
+              num10 * 10
+            }}{100}`,
+            answer: `${num10 * 10}/100`,
+          },
+          {
+            step_index: 2,
+            explanation: `Now add the numerators: ${
+              num10 * 10
+            } + ${num100}.`,
+            math: `\\frac{${num10 * 10}}{100} + \\frac{${num100}}{100} = \\frac{${correctNum}}{100}`,
+            answer: `${correctNum}/${correctDen}`,
+          },
+        ],
+      },
+      misconceptions: [
+        {
+          id: "misc_no_convert",
+          error_tag: "add_num_add_den", // reusing generic tag or specific?
+          // Specific tag might be "failed_to_convert_tenths"
+          trigger: {
+            kind: "exact_answer",
+            value: `${wrongNumNoConvert}/100`,
+          },
+          hint_ladder: [
+            "Did you convert tenths to hundredths first?",
+            `Remember, \\(\\frac{${num10}}{10} = \\frac{${
+              num10 * 10
+            }}{100}\\).`,
+          ],
+        },
+      ],
+    };
+  },
+};
+
+engine.register(AddTenthsHundredthsGenerator);

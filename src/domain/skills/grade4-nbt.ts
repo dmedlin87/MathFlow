@@ -180,6 +180,92 @@ export const PlaceValueGenerator: Generator = {
 
 engine.register(PlaceValueGenerator);
 
+// --- 1.5. Compare Multi-Digit Numbers (4.NBT.A.2) ---
+
+export const SKILL_COMPARE_MULTI_DIGIT: Skill = {
+  id: "nbt_compare_multi",
+  name: "Compare Multi-Digit Numbers",
+  gradeBand: "3-5",
+  prereqs: ["nbt_place_value"],
+  misconceptions: ["compare_first_digit_only", "longer_is_larger_reversed"],
+  templates: ["T_COMPARE_MULTI"],
+  description:
+    "Compare two multi-digit numbers based on meanings of the digits in each place, using >, =, and < symbols.",
+  bktParams: { learningRate: 0.2, slip: 0.05, guess: 0.33 },
+};
+
+export const CompareMultiDigitGenerator: Generator = {
+  templateId: "T_COMPARE_MULTI",
+  skillId: SKILL_COMPARE_MULTI_DIGIT.id,
+  generate: (difficulty: number, rng?: () => number): MathProblemItem => {
+    // Generate two large numbers
+    // Difficulty controls magnitude and "closeness" (similarity)
+    // < 0.5: Different lengths or obvious differences
+    // >= 0.5: Same length, difference in lower place values (harder to spot)
+
+    let exp = 3; // 1000s
+    if (difficulty >= 0.3) exp = 5; // 100,000s
+    if (difficulty >= 0.6) exp = 6; // 1,000,000s
+
+    const minVal = Math.pow(10, exp - 1);
+    const maxVal = Math.pow(10, exp) - 1;
+
+    let n1 = randomInt(minVal, maxVal, rng);
+    let n2 = randomInt(minVal, maxVal, rng);
+
+    // Make them close for higher difficulty
+    if (difficulty >= 0.5) {
+      // Force same length
+      // Change only one digit or swap digits?
+      // Let's take n1 and modify it slightly to get n2
+      const s1 = n1.toString().split("");
+      const changeIdx = randomInt(0, s1.length - 1, rng);
+      let digit = parseInt(s1[changeIdx]);
+      digit = (digit + randomInt(1, 3, rng)) % 10;
+      s1[changeIdx] = digit.toString();
+      n2 = parseInt(s1.join(""));
+      // Ensure not equal?
+      if (n1 === n2) n2 += 1;
+    }
+
+    let sym = "=";
+    if (n1 > n2) sym = ">";
+    if (n1 < n2) sym = "<";
+
+    return {
+      meta: createMockProvenance(SKILL_COMPARE_MULTI_DIGIT.id, difficulty),
+      problem_content: {
+        stem: `Compare the numbers:
+**${n1.toLocaleString()}** and **${n2.toLocaleString()}**`,
+        format: "text",
+        variables: { n1, n2 },
+      },
+      answer_spec: {
+        answer_mode: "final_only",
+        input_type: "multiple_choice",
+        ui: {
+          choices: ["<", ">", "="],
+        },
+      },
+      solution_logic: {
+        final_answer_canonical: sym,
+        final_answer_type: "multiple_choice",
+        steps: [
+          {
+            step_index: 1,
+            explanation: `Compare the digits starting from the left.`,
+            math: `${n1.toLocaleString()} ${sym} ${n2.toLocaleString()}`,
+            answer: sym,
+          },
+        ],
+      },
+      misconceptions: [],
+    };
+  },
+};
+
+engine.register(CompareMultiDigitGenerator);
+
 // --- 2. Rounding (4.NBT.A.3) ---
 
 export const SKILL_ROUNDING: Skill = {

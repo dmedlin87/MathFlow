@@ -808,3 +808,199 @@ export const ShapeClassificationGenerator: Generator = {
 };
 
 engine.register(ShapeClassificationGenerator);
+
+// --- 8. Money Word Problems (4.MD.A.2) ---
+
+export const SKILL_MONEY_WORD_PROBLEMS: Skill = {
+  id: "meas_money_word_problems",
+  name: "Solve Money Word Problems",
+  gradeBand: "3-5",
+  prereqs: ["nbt_add_sub_multi", "dec_notation_01"],
+  misconceptions: ["decimal_alignment", "cents_notation"],
+  templates: ["T_MONEY_WORD_PROBLEM"],
+  description:
+    "Solve word problems involving money, including simple addition and subtraction of money amounts.",
+  bktParams: { learningRate: 0.15, slip: 0.1, guess: 0.1 },
+};
+
+export const MoneyWordProblemGenerator: Generator = {
+  templateId: "T_MONEY_WORD_PROBLEM",
+  skillId: SKILL_MONEY_WORD_PROBLEMS.id,
+  generate: (difficulty: number, rng?: () => number): MathProblemItem => {
+    // Scenario: Shopping
+    // 1. Total Cost
+    // 2. Change Calculation
+
+    const price1 = randomInt(1, 15, rng) + randomInt(0, 99, rng) / 100;
+    const price2 = randomInt(1, 10, rng) + randomInt(0, 99, rng) / 100;
+
+    // Use fixed precision to avoid floating point weirdness
+    const p1Fixed = Number(price1.toFixed(2));
+    const p2Fixed = Number(price2.toFixed(2));
+    const total = Number((p1Fixed + p2Fixed).toFixed(2));
+
+    const mode = (rng ?? Math.random)() > 0.5 ? "TOTAL" : "CHANGE";
+
+    if (mode === "TOTAL") {
+      return {
+        meta: createMockProvenance(SKILL_MONEY_WORD_PROBLEMS.id, difficulty),
+        problem_content: {
+          stem: `Alice buys a book for **$${p1Fixed.toFixed(
+            2
+          )}** and a pen for **$${p2Fixed.toFixed(2)}**.
+How much did she spend in total?`,
+          format: "text",
+          variables: { p1: p1Fixed, p2: p2Fixed },
+        },
+        answer_spec: {
+          answer_mode: "final_only",
+          input_type: "decimal",
+          ui: { placeholder: "0.00" },
+        },
+        solution_logic: {
+          final_answer_canonical: total.toFixed(2),
+          final_answer_type: "numeric",
+          steps: [
+            {
+              step_index: 1,
+              explanation: `Align the decimal points and add.`,
+              math: `$${p1Fixed.toFixed(2)} + $${p2Fixed.toFixed(
+                2
+              )} = $${total.toFixed(2)}`,
+              answer: total.toFixed(2),
+            },
+          ],
+        },
+        misconceptions: [
+          {
+            id: "misc_dec_align",
+            error_tag: "decimal_alignment",
+            trigger: { kind: "manual", value: "check" }, // Hard to predict exact alignment error result
+            hint_ladder: [
+              "Make sure to line up the decimal points when adding.",
+            ],
+          },
+        ],
+      };
+    } else {
+      // Change
+      const paid = Math.ceil(total / 5) * 5; // e.g. 20
+      // Ensure paid > total
+      const paidAmt = paid === total ? paid + 5 : paid;
+      const change = Number((paidAmt - total).toFixed(2));
+
+      return {
+        meta: createMockProvenance(SKILL_MONEY_WORD_PROBLEMS.id, difficulty),
+        problem_content: {
+          stem: `Bob buys a toy for **$${total.toFixed(
+            2
+          )}**. He pays with a **$${paidAmt}** bill.
+How much change should he receive?`,
+          format: "text",
+          variables: { total, paid: paidAmt },
+        },
+        answer_spec: {
+          answer_mode: "final_only",
+          input_type: "decimal",
+          ui: { placeholder: "0.00" },
+        },
+        solution_logic: {
+          final_answer_canonical: change.toFixed(2),
+          final_answer_type: "numeric",
+          steps: [
+            {
+              step_index: 1,
+              explanation: `Subtract the cost from the amount paid.`,
+              math: `$${paidAmt.toFixed(2)} - $${total.toFixed(
+                2
+              )} = $${change.toFixed(2)}`,
+              answer: change.toFixed(2),
+            },
+          ],
+        },
+        misconceptions: [],
+      };
+    }
+  },
+};
+
+engine.register(MoneyWordProblemGenerator);
+
+// --- 9. Protractor Measurement (4.MD.C.6) ---
+
+export const SKILL_PROTRACTOR_MEASURE: Skill = {
+  id: "meas_protractor",
+  name: "Measure Angles with a Protractor",
+  gradeBand: "3-5",
+  prereqs: ["geo_lines_angles", "meas_angles"],
+  misconceptions: ["read_wrong_scale"],
+  templates: ["T_PROTRACTOR"],
+  description:
+    "Measure angles in whole-number degrees using a protractor. Sketch angles of specified measure.",
+  bktParams: { learningRate: 0.15, slip: 0.1, guess: 0.1 },
+};
+
+export const ProtractorGenerator: Generator = {
+  templateId: "T_PROTRACTOR",
+  skillId: SKILL_PROTRACTOR_MEASURE.id,
+  generate: (difficulty: number, rng?: () => number): MathProblemItem => {
+    // Simulate a protractor reading.
+    // "One ray is at 0 degrees. The other ray crosses the scale at X degrees."
+    // Or harder: "One ray is at 20 degrees. The other is at 80 degrees."
+
+    const startAngle = difficulty < 0.5 ? 0 : randomInt(10, 50, rng);
+    const angleSize = randomInt(20, 160, rng);
+    const endAngle = startAngle + angleSize;
+
+    // Protractor has inner and outer scales.
+    // Inner: 0 to 180 (Right to Left)
+    // Outer: 180 to 0 (Right to Left) -> actually 0 to 180 (Left to Right)
+    // Let's assume standard position for simplicity or describe the crossing.
+
+    // Misconception: Reading the supplement (wrong scale).
+    // e.g. Angle is 60. Crosses at 60 and 120. User says 120.
+    const wrongScale = 180 - angleSize;
+
+    return {
+      meta: createMockProvenance(SKILL_PROTRACTOR_MEASURE.id, difficulty),
+      problem_content: {
+        stem: `An angle is being measured with a protractor.
+One ray of the angle points to **${startAngle}°**.
+The other ray points to **${endAngle}°**.
+What is the measure of the angle in degrees?`,
+        format: "text",
+        variables: { start: startAngle, end: endAngle },
+      },
+      answer_spec: {
+        answer_mode: "final_only",
+        input_type: "integer",
+      },
+      solution_logic: {
+        final_answer_canonical: String(angleSize),
+        final_answer_type: "numeric",
+        steps: [
+          {
+            step_index: 1,
+            explanation: `Find the difference between the two markings.`,
+            math: `${endAngle} - ${startAngle} = ${angleSize}`,
+            answer: String(angleSize),
+          },
+        ],
+      },
+      misconceptions: [
+        {
+          id: "misc_wrong_scale",
+          error_tag: "read_wrong_scale",
+          trigger: { kind: "exact_answer", value: String(wrongScale) },
+          hint_ladder: [
+            `Did you read the wrong scale? The angle looks ${
+              angleSize < 90 ? "Acute (small)" : "Obtuse (wide)"
+            }.`,
+          ],
+        },
+      ],
+    };
+  },
+};
+
+engine.register(ProtractorGenerator);
