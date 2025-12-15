@@ -80,11 +80,6 @@ describe("learner/state behavior", () => {
         hintsUsed: 0,
       };
 
-      // This logic relies on 'test_skill' matching something in ALL_SKILLS for BKT params lookup?
-      // In state.ts, it calls ALL_SKILLS.find(s => s.id === attempt.skillId).
-      // If not found, it defaults to learningRate 0.1, slip 0.1, guess 0.2.
-      // This is safe even for 'test_skill'.
-
       const newState = updateLearnerState(startState, attempt);
       expect(newState.skillState["test_skill"].masteryProb).toBeGreaterThan(
         0.5
@@ -170,7 +165,14 @@ describe("learner/state behavior", () => {
       });
     });
 
-    it("should select review items when due (>24h) and random roll < 0.3", () => {
+    it("should throw error if no candidate skills provided", async () => {
+        const state = createTestState({ skillState: {} });
+        await expect(recommendNextItem(state, undefined, [])).rejects.toThrow(
+            "No skills available to recommend"
+        );
+    });
+
+    it("should select review items when due (>24h) and random roll < 0.3", async () => {
       vi.spyOn(Math, "random").mockReturnValue(0.1);
       const oldDate = new Date("2023-12-30T12:00:00.000Z").toISOString();
 
@@ -183,11 +185,12 @@ describe("learner/state behavior", () => {
         },
       });
 
-      recommendNextItem(state, undefined, TEST_SKILLS);
+      await recommendNextItem(state, undefined, TEST_SKILLS);
+      // High mastery review sets difficulty to 0.9 (Line 170 coverage)
       expect(engine.generate).toHaveBeenCalledWith(SKILL_ID_1, 0.9);
     });
 
-    it("should select learning queue items when random roll > 0.3", () => {
+    it("should select learning queue items when random roll > 0.3", async () => {
       vi.spyOn(Math, "random").mockReturnValue(0.5);
       const oldDate = new Date("2023-12-30T12:00:00.000Z").toISOString();
 
@@ -207,7 +210,7 @@ describe("learner/state behavior", () => {
       const skills = TEST_SKILLS.filter((s) =>
         Object.keys(state.skillState).includes(s.id)
       );
-      recommendNextItem(state, undefined, skills);
+      await recommendNextItem(state, undefined, skills);
 
       expect(engine.generate).toHaveBeenCalledWith(
         "frac_add_like_01",
@@ -215,7 +218,7 @@ describe("learner/state behavior", () => {
       );
     });
 
-    it("should pick lowest mastery item from learning queue", () => {
+    it("should pick lowest mastery item from learning queue", async () => {
       vi.spyOn(Math, "random").mockReturnValue(0.5);
       const state = createTestState({
         skillState: {
@@ -230,7 +233,7 @@ describe("learner/state behavior", () => {
       const skills = TEST_SKILLS.filter((s) =>
         Object.keys(state.skillState).includes(s.id)
       );
-      recommendNextItem(state, undefined, skills);
+      await recommendNextItem(state, undefined, skills);
 
       expect(engine.generate).toHaveBeenCalledWith("frac_add_like_01", 0.2);
     });
@@ -277,7 +280,7 @@ describe("learner/state behavior", () => {
       expect(engine.generate).toHaveBeenCalled();
     });
 
-    it("should skip skill if prerequisites are not met", () => {
+    it("should skip skill if prerequisites are not met", async () => {
       vi.spyOn(Math, "random").mockReturnValue(0.5);
 
       const state = createTestState({
@@ -291,7 +294,7 @@ describe("learner/state behavior", () => {
         { id: "frac_equiv_01", prereqs: [] },
         { id: "frac_add_like_01", prereqs: ["frac_equiv_01"] },
       ] as any;
-      recommendNextItem(state, undefined, skills);
+      await recommendNextItem(state, undefined, skills);
 
       // Should pick equiv fractions (the prereq)
       expect(engine.generate).toHaveBeenCalledWith(
@@ -305,9 +308,9 @@ describe("learner/state behavior", () => {
       );
     });
 
-    it("should handle recommended skill not being present in state (default difficulty)", () => {
+    it("should handle recommended skill not being present in state (default difficulty)", async () => {
       const state = createTestState({ skillState: {} });
-      recommendNextItem(state, undefined, TEST_SKILLS);
+      await recommendNextItem(state, undefined, TEST_SKILLS);
 
       expect(engine.generate).toHaveBeenCalledWith(expect.any(String), 0.1);
     });
@@ -330,6 +333,24 @@ describe("learner/state behavior", () => {
       await recommendNextItem(state, undefined, skills);
 
       expect(engine.generate).toHaveBeenCalledWith("frac_add_like_01", 0.1);
+    });
+
+    it("should NOT set high difficulty if selected skill is not highly mastered", async () => {
+        // This test targets the ELSE branch of "if (skillState && skillState.masteryProb > 0.8)"
+        // Case: Selected skill has mastery <= 0.8.
+
+        vi.spyOn(Math, "random").mockReturnValue(0.5); // Learning queue path
+        const state = createTestState({
+            skillState: {
+                [SKILL_ID_1]: createSkillState({ masteryProb: 0.5 })
+            }
+        });
+
+        const skills = TEST_SKILLS.filter(s => s.id === SKILL_ID_1);
+        await recommendNextItem(state, undefined, skills);
+
+        // Should use the masteryProb (0.5) as difficulty, not 0.9
+        expect(engine.generate).toHaveBeenCalledWith(SKILL_ID_1, 0.5);
     });
   });
 });

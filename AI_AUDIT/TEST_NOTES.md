@@ -1,196 +1,88 @@
-# Behavior-First Test Notes
+# AI Audit: Test Notes
 
-## 1. Preflight Run
+## 1. Call-Site Map
 
-* **Stack**: Vitest (v4.0.15)
-* **Commands**:
-  * `npm run test -- --run`
-  * `npm run test:coverage`
-  * Mutation sanity (targeted):
-    * `npm run test -- --run src/domain/math-utils.test.ts`
-    * `npm run test -- --run src/domain/skills/grade4-fractions.test.ts`
-* **Initial State**: Tests passing. Coverage indicated missing coverage in `domain/math-utils.ts` and `domain/skills/grade4-fractions.ts`.
+### `src/domain/generator/engine.ts`
 
-## 2. Latest Coverage Map
+**Exported: `Engine` class**
+- `constructor(config)`
+- `register(generator)`
+- `generate(skillId, difficulty, rng)`
 
-* **Before (from `npm run test:coverage`)**:
-  * **`domain/math-utils.ts`**: 0% (uncovered lines `2-10`).
-  * **`domain/skills/grade4-fractions.ts`**: partial (uncovered lines `171-212, 246-290`).
-  * **`domain/learner/state.ts`**: 100%.
-  * **`domain/generator/engine.ts`**: 100%.
-* **After adding tests (from `npm run test:coverage`)**:
-  * **All files**: 100% Statements / 100% Branch / 100% Functions / 100% Lines.
-  * **`domain/math-utils.ts`**: 100%.
-  * **`domain/skills/grade4-fractions.ts`**: 100%.
+**Call Sites:**
+- `src/domain/learner/state.ts` -> `recommendNextItem` calls `engine.generate`
+- `src/domain/skills/*.ts` -> calls `engine.register`
+- Tests -> `engine.generate`
 
-## 3. Call-Site Map
+### `src/domain/learner/state.ts`
 
-### `learner/state.ts`
+**Exported Functions:**
+- `createInitialState(userId)`
+- `updateLearnerState(state, attempt)`
+- `recommendNextItem(state, rng, skills)`
 
-| Function | Call Sites | Context |
-|----------|------------|---------|
-| `createInitialState` | `App.tsx` (state initializer) | Called on app startup if persistence has no saved state. |
-| `updateLearnerState` | `MathTutor.tsx` (Handler) | Called when user submits answer. Expects immutable update. |
-| `recommendNextItem` | `MathTutor.tsx` (Effect/Handler) | Called on load and "Next" button. expects valid Item. |
+**Call Sites:**
+- `src/services/LearnerService.ts` -> calls all three
+- Tests
 
-### `generator/engine.ts`
+## 2. Contracts
 
-| Function | Call Sites | Context |
-|----------|------------|---------|
-| `engine.generateItem` | `state.ts` (`recommendNextItem`) | Core delegation for content. |
-| `engine.register` | `grade4-fractions.ts` | Module side-effect registration. |
+### `Engine.generate(skillId, difficulty, rng)`
+- **Inputs:** `skillId` (string), `difficulty` (number 0-1), `rng` (optional function)
+- **Outputs:** `Promise<MathProblemItem>`
+- **Invariants:**
+    - Prioritizes API fetch if `apiBaseUrl` is configured.
+    - Falls back to local generator if API fetch fails or returns empty.
+    - Throws if no generator found (local or remote).
+- **Errors:** "No generator found for skill: {skillId}"
 
-### `math-utils.ts`
+### `recommendNextItem(state, rng, skills)`
+- **Inputs:** `state` (LearnerState), `rng` (function), `skills` (Skill[])
+- **Outputs:** `Promise<MathProblemItem>`
+- **Invariants:**
+    - Recommend "Review Due" items first (if roll < 0.3).
+    - Then "Learning Queue" (lowest mastery, prereqs met).
+    - Fallback to random if nothing else matches.
+    - Sets difficulty to 0.9 if mastery > 0.8 (Review Challenge).
+- **Errors:** "No skills available to recommend" (if skills list empty).
 
-| Function | Call Sites | Context |
-|----------|------------|---------|
-| `gcd` | `skills/grade4-fractions.ts` (`SimplifyFractionGenerator.generate`) | Used to ensure the base fraction is simplified before scaling. |
-| `getFactors` | *(none found)* | No call sites observed; tests are characterization of current behavior. |
+## 3. Test Plan & Implementation Notes
 
-### `skills/grade4-fractions.ts` (new coverage targets)
+### Added Tests
 
-| Export | Call Sites | Context |
-|--------|-----------|---------|
-| `SubLikeFractionGenerator.generate` | `engine.generateItem('T_SUB_LIKE_FRACTIONS', ...)` via engine registry; UI flow via `recommendNextItem` | Produces TeX-ish question payload and fraction-string answer payload. |
-| `SimplifyFractionGenerator.generate` | `engine.generateItem('T_SIMPLIFY_FRACTION', ...)` via engine registry; UI flow via `recommendNextItem` | Produces TeX-ish question payload and fraction-string answer payload. |
+**`src/domain/generator/engine.test.ts`**
+1. `tries to fetch from API...` (Happy Path, Network)
+2. `falls back to local generator if API fetch fails` (Boundary, Network)
+3. `falls back to local generator if API returns empty` (Boundary, Data)
+4. `uses factory item if bank is empty...` (Happy Path, Factory)
+5. `throws error when skill not found...` (Error Path)
+6. `should handle invalid API response gracefully` (Invalid Input)
 
-## 4. Contracts
+**`src/domain/learner/state.behavior.test.ts`**
+1. `should throw error if no candidate skills provided` (Error Path)
+2. `should select review items when due...` (Happy Path, Logic)
+3. `should fallback to random skill...` (Boundary, Fallback)
+4. `should NOT set high difficulty if selected skill is not highly mastered` (Branch Coverage)
 
-### `createInitialState(userId: string): LearnerState`
+### Implementation Details
+- Used `vi.spyOn(global, 'fetch')` to mock API calls in `engine.test.ts`.
+- Used `vi.useFakeTimers()` to control time in state tests.
+- Explicitly injected `TEST_SKILLS` to ensure determinism in `state.behavior.test.ts`.
+- Mocked `Math.random` via `rng` injection or spies to force logic branches.
 
-* **Inputs**: `userId` string.
-* **Outputs**: `LearnerState` with `skillState` entries for the current `ALL_SKILLS` list.
-* **Invariants**:
-  1. Initializes each known skill with default mastery (`0.1`) and stability (`0`).
-* **Errors**: none observed.
-* **Examples**:
-  * Happy: new user id returns state with both fraction skills present.
-  * Boundary: empty-ish string user id still returns a state object.
-  * Invalid: none (no runtime validation).
+## 4. Mutation Sanity Check
 
-### `updateLearnerState(state: LearnerState, attempt: Attempt): LearnerState`
+**Mutation 1: `engine.ts`**
+- **Change:** Commented out `if (API_BASE) { ... }` block.
+- **Result:** Test `tries to fetch from API` FAILED (Expected: called fetch, Received: not called).
+- **Status:** PASSED (Mutation detected).
 
-* **Inputs**: Existing `LearnerState`, an `Attempt` containing `skillId`, `isCorrect`, `timestamp`.
-* **Outputs**: New `LearnerState` with updated `skillState[attempt.skillId]`.
-* **Invariants**:
-  1. **Immutability**: returns new `state` and new `skillState` object references.
-  2. **Clamp**: `masteryProb` clamped to `[0.01, 0.99]`.
-  3. **Denominator guard**: if the Bayesian update denominator would be `0`, the posterior update preserves `currentP` (avoids `NaN`).
-* **Errors**: none observed.
-* **Examples**:
-  * Happy: correct attempt increases mastery.
-  * Boundary: extremely high/low mastery stays within clamp.
-  * Invalid: missing `skillId` state gets initialized and then updated.
+**Mutation 2: `state.ts`**
+- **Change:** Changed `if (skillState && skillState.masteryProb > 0.8)` to `> 0.99`.
+- **Result:** Test `should select review items when due` FAILED (Expected difficulty 0.9, Received 0.95 (mastery)).
+- **Status:** PASSED (Mutation detected).
 
-### `recommendNextItem(state: LearnerState): Item`
+## 5. Coverage Summary
 
-* **Inputs**: Valid `LearnerState`.
-* **Outputs**: `Item` object with valid `id`, `question`, `answer`.
-* **Invariants**:
-  1. **Prerequisite Safety**: Never recommends a skill if its prerequisites are not met (mastery > 0.7).
-  2. **Review Priority**: Prioritizes reviewing mastered skills (>0.8) if processed >24h ago (with prob 0.3).
-  3. **Learning Priority**: otherwise picks lowest mastery skill from valid queue.
-  4. **Fallback**: Returns *something* (random valid skill) if no specific candidates exist.
-* **Errors**: none observed.
-* **Examples**:
-  * Happy: Returns "Low Mastery" skill when user is new.
-  * Boundary: Returns "Review" skill when user has mastered skill and waited 24h.
-  * Invalid: Returns "Prereq" skill instead of "Blocked" skill.
-
-### `gcd(a: number, b: number): number`
-
-* **Inputs**: numbers `a`, `b`.
-* **Outputs**: numeric GCD as computed by the recursive implementation.
-* **Invariants**:
-  1. Base case returns `a` when `b === 0`.
-* **Errors**: none observed.
-* **Examples**:
-  * Happy: `gcd(12, 8) === 4`.
-  * Boundary: `gcd(5, 0) === 5`.
-  * Invalid: `gcd(0, 5) === 5` (characterization).
-
-### `getFactors(n: number): number[]`
-
-* **Inputs**: integer-ish number `n`.
-* **Outputs**: all positive divisors found by iterating `i = 1..n`.
-* **Invariants**:
-  1. For `n > 0`, always includes `1` and `n`.
-* **Errors**: none observed.
-* **Examples**:
-  * Happy: `getFactors(6) === [1,2,3,6]`.
-  * Boundary: `getFactors(1) === [1]`.
-  * Invalid: `getFactors(0) === []`, `getFactors(-3) === []` (characterization).
-
-### `SubLikeFractionGenerator.generate(difficulty: number): Item`
-
-* **Inputs**: `difficulty` number.
-* **Outputs**: an `Item` where:
-  * `question.text` embeds `\frac{num1}{den} - \frac{num2}{den}`.
-  * `answer.value` is the fraction string `${targetNum}/${den}`.
-* **Invariants**:
-  1. Uses `max = 10` when `difficulty < 0.5`, else `max = 20`.
-  2. Answer numerator equals `(num1 - num2)`.
-* **Errors**: none observed.
-* **Examples**:
-  * Happy: returns consistent `num1 - num2` and denominator.
-  * Boundary: difficulty crossing `0.5` changes max range.
-  * Invalid: misconception matcher returns `sub_num_sub_den` for `${targetNum}/0`.
-
-### `SimplifyFractionGenerator.generate(difficulty: number): Item`
-
-* **Inputs**: `difficulty` number.
-* **Outputs**: an `Item` where:
-  * `question.text` embeds `\frac{questionNum}{questionDen}`.
-  * `answer.value` is a lowest-terms fraction string `${simpleNum}/${simpleDen}`.
-* **Invariants**:
-  1. Generated question fraction is reducible (`gcd(questionNum, questionDen) > 1`).
-  2. Answer fraction is lowest terms (`gcd(ansNum, ansDen) === 1`).
-* **Errors**: none observed.
-* **Examples**:
-  * Happy: answer is reduced and equivalent to the question.
-  * Boundary: difficulty crossing `0.5` changes range/multiplier.
-  * Invalid: misconception matcher returns `no_simplify` when `${questionNum}/${questionDen}` is submitted.
-
-## 5. Tests Added
-
-| Test Name | Behavior Verified | Branch/Line | Type |
-|-----------|-------------------|-------------|------|
-| `should fallback to random skill...` | Ensures app doesn't crash/hang when user masters everything. | `state.ts:127` | Edge/Boundary |
-| `should skip skill if prerequisites are not met` | **Critical**: Prevents serving content user isn't ready for. | `state.ts:106-110` | Logic/Branch |
-| `should handle recommended skill not being present in state` | Robustness against stale state/new skills. | `state.ts:131` | Robustness |
-| *(Updated)* `should pick lowest mastery item...` | Fixed test usage to respect prerequisites (set prereq mastery > 0.7). | N/A | Fix |
-| `keeps mastery unchanged when correct-update denominator is zero` | If BKT params produce `denominator === 0`, preserves `currentP` (avoids `NaN`). | `state.ts:60` | Invalid/Edge |
-| `keeps mastery unchanged when incorrect-update denominator is zero` | Same as above for incorrect branch. | `state.ts:71` | Invalid/Edge |
-
-### New files
-
-* `src/domain/math-utils.test.ts`
-  * `gcd` base case (`b === 0`) and recursion.
-  * `getFactors` happy/boundary/invalid characterization (`n <= 0`).
-* `src/domain/skills/grade4-fractions.test.ts`
-  * `SubLikeFractionGenerator.generate` covers both difficulty branches (`< 0.5` vs `>= 0.5`) and misconception matcher branches.
-  * `SimplifyFractionGenerator.generate` covers difficulty branches and the `no_simplify` misconception matcher.
-
-## 6. Implementation Notes
-
-* **Determinism**: Used `vi.spyOn(Math, 'random')` to control Review vs Learning vs Fallback paths.
-* **Determinism (new)**: Used `vi.spyOn(Math, 'random')` sequences to drive `randomInt(...)` branches in generators.
-* **Behavior-first assertions**:
-  * For generator items, assert math equivalence from the rendered TeX string (parse `\frac{a}{b}`) and ensure the `answer.value` matches the arithmetic.
-  * For simplify, assert reducible question fraction and lowest-terms answer (`gcd(...)`).
-* **Test Fix**: Found that existing test "should pick lowest mastery item" was failing invisibly/conceptually because it ignored prerequisite logic. Updated test data to satisfy prerequisites (mastery 0.75) so the target skill (mastery 0.2) is actually valid for selection.
-* **Mocking**: Used `vi.clearAllMocks()` and `vi.restoreAllMocks()` to prevent state leakage between tests.
-* **Denominator-guard tests**: Temporarily override `SKILL_EQUIV_FRACTIONS.bktParams` inside the test and restore them in `finally`.
-
-## 7. Proof of Done
-
-* **Mutation Sanity**:
-  * **`math-utils.ts`**: Mutated `gcd` base case to return `b` when `b === 0`.
-    * `returns a when b is 0` failed (expected `5`, got `0`).
-    * `computes the greatest common divisor via recursion` failed.
-    * Reverted mutation; tests pass.
-  * **`grade4-fractions.ts`**: Mutated `SimplifyFractionGenerator` to return the *unsimplified* fraction as the answer.
-    * `generates a reducible fraction and provides a lowest-terms answer` failed (answer was not in lowest terms).
-    * `tags the no_simplify misconception when the original fraction is submitted` failed (correct answer incorrectly tagged).
-    * Reverted mutation; tests pass.
-* **Coverage**: After new tests, coverage is 100% across the repo.
+- **`domain/generator/engine.ts`**: 100% Statements, 100% Branches (Improved from ~80%).
+- **`domain/learner/state.ts`**: High coverage, specifically targeted the fallback logic and difficulty setting branches.
