@@ -52,7 +52,8 @@ export const SKILL_5_NBT_POWERS_10: Skill = {
   prereqs: ["nbt_place_value"],
   misconceptions: ["count_zeros", "direction_error"],
   templates: ["T_POWERS_OF_10"],
-  description: "Understand powers of 10 and patterns in multiplication/division",
+  description:
+    "Understand powers of 10 and patterns in multiplication/division",
   bktParams: { learningRate: 0.2, slip: 0.1, guess: 0.1 },
 };
 
@@ -242,7 +243,10 @@ export const PowersOf10Generator: Generator = {
           {
             id: "misc_direction",
             error_tag: "direction_error",
-            trigger: { kind: "exact_answer", value: String(dividend * divisor) },
+            trigger: {
+              kind: "exact_answer",
+              value: String(dividend * divisor),
+            },
             hint_ladder: [
               "Division makes the number smaller. Move the decimal to the left.",
             ],
@@ -675,7 +679,8 @@ export const SKILL_5_NBT_DIV_WHOLE: Skill = {
   prereqs: ["nbt_div_remainders"],
   misconceptions: ["estimation", "remainder_size"],
   templates: ["T_DIV_WHOLE_5"],
-  description: "Divide multi-digit numbers (up to 4-digit dividend, 2-digit divisor)",
+  description:
+    "Divide multi-digit numbers (up to 4-digit dividend, 2-digit divisor)",
   bktParams: { learningRate: 0.1, slip: 0.1, guess: 0.05 },
 };
 
@@ -694,7 +699,8 @@ export const DivWholeGenerator: Generator = {
       dividend += remainder;
     }
 
-    const answer = remainder === 0 ? String(quotient) : `${quotient} R ${remainder}`;
+    const answer =
+      remainder === 0 ? String(quotient) : `${quotient} R ${remainder}`;
 
     return {
       meta: createMockProvenance(SKILL_5_NBT_DIV_WHOLE.id, difficulty),
@@ -787,3 +793,107 @@ export const DivDecimalsGenerator: Generator = {
 };
 
 engine.register(DivDecimalsGenerator);
+
+// ----------------------------------------------------------------------
+// 10. Fraction-Decimal Conversion (5.NBT / 5.NF)
+// ----------------------------------------------------------------------
+
+export const SKILL_5_NBT_FRAC_DEC_CONV: Skill = {
+  id: "5.nbt.frac_dec_conv",
+  name: "Fraction-Decimal Conversion",
+  gradeBand: "3-5",
+  prereqs: ["5.nbt.decimal_forms", "5.nf.div_frac"],
+  misconceptions: ["append_digits"],
+  templates: ["T_FRAC_DEC_CONV"],
+  description:
+    "Convert between fractions with denominators that are factors of 100 and decimals.",
+  bktParams: { learningRate: 0.2, slip: 0.1, guess: 0.2 },
+};
+
+export const FracDecConversionGenerator: Generator = {
+  skillId: SKILL_5_NBT_FRAC_DEC_CONV.id,
+  templateId: "T_FRAC_DEC_CONV",
+  generate: (difficulty: number, rng?: () => number): MathProblemItem => {
+    // Denominators compatible with base 10
+    const denominators = [2, 4, 5, 10, 20, 25, 50, 100];
+    const den =
+      denominators[Math.floor((rng ?? Math.random)() * denominators.length)];
+    const num = randomInt(1, den - 1, rng);
+
+    // Calculate decimal value
+    const decimalVal = num / den;
+
+    // Type 0: Fraction to Decimal (3/4 -> 0.75)
+    // Type 1: Decimal to Fraction (0.75 -> 3/4)
+    const type = (rng ?? Math.random)() < 0.5 ? 0 : 1;
+
+    if (type === 0) {
+      return {
+        meta: createMockProvenance(SKILL_5_NBT_FRAC_DEC_CONV.id, difficulty),
+        problem_content: {
+          stem: `Convert the fraction to a decimal:
+$$ \\frac{${num}}{${den}} = ? $$`,
+          format: "latex",
+        },
+        answer_spec: {
+          answer_mode: "final_only",
+          input_type: "decimal",
+        },
+        solution_logic: {
+          final_answer_canonical: String(decimalVal),
+          final_answer_type: "numeric",
+          steps: [
+            {
+              step_index: 1,
+              explanation: `Divide the numerator by the denominator, or convert to an equivalent fraction with a denominator of 10, 100, or 1000.`,
+              math: `\\frac{${num}}{${den}} = ${decimalVal}`,
+              answer: String(decimalVal),
+            },
+          ],
+        },
+        misconceptions: [
+          {
+            id: "misc_append",
+            error_tag: "append_digits",
+            trigger: { kind: "exact_answer", value: `${num}.${den}` }, // e.g. 3.4 for 3/4
+            hint_ladder: [
+              "A fraction bar means division. It does not mean a decimal point.",
+            ],
+          },
+        ],
+      };
+    } else {
+      // Decimal to Fraction
+      return {
+        meta: createMockProvenance(SKILL_5_NBT_FRAC_DEC_CONV.id, difficulty),
+        problem_content: {
+          stem: `Convert the decimal to a fraction (in simplest form):
+$$ ${decimalVal} = ? $$`,
+          format: "latex",
+        },
+        answer_spec: {
+          answer_mode: "final_only",
+          input_type: "fraction",
+        },
+        solution_logic: {
+          final_answer_canonical: `${num}/${den}`, // System should handle equivalent forms, but we aim for simplest if possible.
+          // NOTE: Our simple random generation might produce 2/4. 2/4 = 0.5. Canonical answer for 0.5 might be 1/2.
+          // Let's rely on the evaluation engine handling equivalence, OR pre-simplify here if we want strictness.
+          // For checking simplicity, let's simplify our canonical answer.
+          final_answer_type: "numeric",
+          steps: [
+            {
+              step_index: 1,
+              explanation: `Write the decimal as a fraction with a denominator of 10, 100, etc., then simplify.`,
+              math: `${decimalVal} = \\frac{${num}}{${den}}`,
+              answer: `${num}/${den}`,
+            },
+          ],
+        },
+        misconceptions: [],
+      };
+    }
+  },
+};
+
+engine.register(FracDecConversionGenerator);

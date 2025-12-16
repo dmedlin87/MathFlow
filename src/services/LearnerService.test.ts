@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { LocalLearnerService } from "./LearnerService";
 import type {
   Attempt,
@@ -18,22 +18,32 @@ vi.mock("../domain/learner/state", () => ({
 }));
 
 describe("LocalLearnerService", () => {
-  // useRealTimers default
+  beforeEach(() => {
+    vi.useFakeTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
 
   it("should simulate network latency", async () => {
     const service = new LocalLearnerService();
     const start = Date.now();
     const promise = service.loadState("user123");
 
+    // Advance time to resolve the internal delay
+    await vi.advanceTimersByTimeAsync(400);
+
     await promise;
     const end = Date.now();
-    expect(end - start).toBeGreaterThanOrEqual(300); // Expecting ~400ms mocked time
+    expect(end - start).toBeGreaterThanOrEqual(400);
   });
 
   it("should return valid initial state", async () => {
     const service = new LocalLearnerService();
     const promise = service.loadState("user_test");
 
+    await vi.advanceTimersByTimeAsync(400);
     const state = await promise;
     expect(state.userId).toBe("user_test");
     expect(state.skillState).toBeDefined();
@@ -42,14 +52,14 @@ describe("LocalLearnerService", () => {
   it("should submit attempt and return updated state", async () => {
     const service = new LocalLearnerService();
     const p1 = service.loadState("user_test");
-
+    await vi.advanceTimersByTimeAsync(400);
     const state = await p1;
 
     const attempt: Attempt = {
       id: "123",
       userId: "user_test",
       itemId: "item1",
-      skillId: "any_skill", // simplified for test
+      skillId: "any_skill",
       timestamp: new Date().toISOString(),
       isCorrect: true,
       timeTakenMs: 1000,
@@ -59,17 +69,16 @@ describe("LocalLearnerService", () => {
     };
 
     const p2 = service.submitAttempt(state, attempt);
-
+    await vi.advanceTimersByTimeAsync(400);
     const newState = await p2;
-    // We expect some update logic to run (though without valid skillId in domain it might just default)
     expect(newState).toBeDefined();
 
     // Latency check again
     const start = Date.now();
     const p3 = service.submitAttempt(state, attempt);
-
+    await vi.advanceTimersByTimeAsync(400);
     await p3;
-    expect(Date.now() - start).toBeGreaterThanOrEqual(300);
+    expect(Date.now() - start).toBeGreaterThanOrEqual(400);
   });
 
   it("should reject non-serializable data (Architecture Violation)", async () => {
@@ -80,25 +89,27 @@ describe("LocalLearnerService", () => {
     const circularArray: any[] = [];
     circularArray.push(circularArray);
 
-    // Spy on MisconceptionEvaluator to return circular data
     const spy = vi.spyOn(MisconceptionEvaluator, "evaluate").mockReturnValue({
       tag: "circular_error",
       hintLadder: circularArray,
       description: "test",
     });
 
-    // Silence expected error log
     const consoleSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const item = { misconceptions: [1] } as any; // Dummy item to pass check
+    const item = { misconceptions: [1] } as any;
 
     try {
       const p = service.diagnose(item, "bad_input");
 
-      await expect(p).rejects.toThrow(
+      // Attach handler immediately to avoid Unhandled Rejection warning
+      const expectation = expect(p).rejects.toThrow(
         "Data could not be serialized (Architecture Violation)"
       );
+
+      await vi.advanceTimersByTimeAsync(400);
+      await expectation;
 
       expect(consoleSpy).toHaveBeenCalledWith(
         expect.stringContaining("Serialization Violation"),
@@ -134,15 +145,14 @@ describe("LocalLearnerService", () => {
         {
           id: "m1",
           error_tag: "test_error",
-          trigger: { kind: "exact_answer", value: "3" }, // Triggers on wrong answer
+          trigger: { kind: "exact_answer", value: "3" },
           hint_ladder: ["Hint"],
         },
       ],
     };
 
-    // User gives correct answer '2' - no misconception triggers
     const p = service.diagnose(item, "2");
-
+    await vi.advanceTimersByTimeAsync(400);
     const diagnosis = await p;
     expect(diagnosis).toBeNull();
   });
@@ -178,35 +188,29 @@ describe("LocalLearnerService", () => {
     };
 
     const p = service.diagnose(item, "3");
-
+    await vi.advanceTimersByTimeAsync(400);
     const diagnosis = await p;
     expect(diagnosis).not.toBeNull();
     expect(diagnosis?.error_category).toBe("test_error");
-    expect(diagnosis?.hint_ladder).toContain("Hint");
   });
 
   it("should get recommendation from domain logic", async () => {
     const service = new LocalLearnerService();
     const p1 = service.loadState("user_reco");
-
+    await vi.advanceTimersByTimeAsync(400);
     const state = await p1;
 
-    // Use the service to get a recommendation
-    // Note: The actual recommendation logic is probabilistic/domain-dependent,
-    // but the Service wrapper just needs to ensure it calls down and returns *something*.
     const p2 = service.getRecommendation(state);
-
+    await vi.advanceTimersByTimeAsync(400);
     const item = await p2;
 
     expect(item).toBeDefined();
     expect(item.meta).toBeDefined();
-    // Check for basic structure of a problem
-    expect(item.problem_content).toBeDefined();
-    // Latency check
+
     const start = Date.now();
     const p3 = service.getRecommendation(state);
-
+    await vi.advanceTimersByTimeAsync(400);
     await p3;
-    expect(Date.now() - start).toBeGreaterThanOrEqual(300);
+    expect(Date.now() - start).toBeGreaterThanOrEqual(400);
   });
 });

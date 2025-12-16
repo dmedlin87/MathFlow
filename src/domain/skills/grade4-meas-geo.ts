@@ -1077,11 +1077,11 @@ export const DataGraphGenerator: Generator = {
       });
     }
 
+    const chartType = mode === "FREQ_TABLE" ? "Frequency Table" : "Bar Graph";
+
     if (qType === 1) {
       const target = data[randomInt(0, data.length - 1, rng)];
-      stem = `Look at the ${
-        mode === "FREQ_TABLE" ? "Frequency Table" : "Bar Graph"
-      } below:\n\n${display}\nHow many items are **${target.name}**?`;
+      stem = `Look at the ${chartType} below:\n\n${display}\nHow many items are **${target.name}**?`;
       ans = String(target.val);
       logic = `Find the row for ${target.name} and read the count: ${target.val}.`;
     } else if (qType === 2) {
@@ -1096,17 +1096,27 @@ export const DataGraphGenerator: Generator = {
       const less = d1.val > d2.val ? d2 : d1;
       const diff = more.val - less.val;
 
-      stem = `Look at the graph:\n\n${display}\nHow many **more** ${more.name} items are there than ${less.name} items?`;
+      stem = `Look at the ${chartType}:\n\n${display}\nHow many **more** ${more.name} items are there than ${less.name} items?`;
       ans = String(diff);
       logic = `${more.name} has ${more.val}. ${less.name} has ${less.val}. Difference: ${more.val} - ${less.val} = ${diff}.`;
     } else {
       // Total
       const total = data.reduce((sum, d) => sum + d.val, 0);
-      stem = `Look at the graph:\n\n${display}\nWhat is the **total** number of items?`;
+      stem = `Look at the ${chartType}:\n\n${display}\nWhat is the **total** number of items?`;
       ans = String(total);
       logic = `Add up all the counts: ${data
         .map((d) => d.val)
         .join(" + ")} = ${total}.`;
+    }
+
+    if (!ans || ans === "NaN") {
+      console.error("DataGraphGenerator Error: Resulting ans is invalid", {
+        ans,
+        qType,
+        data,
+      });
+      // Fallback or throw
+      throw new Error(`DataGraphGenerator produced invalid answer: ${ans}`);
     }
 
     return {

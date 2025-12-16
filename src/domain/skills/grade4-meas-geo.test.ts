@@ -159,7 +159,8 @@ describe("grade4-meas-geo generator", () => {
       const vars = item.problem_content.variables as any;
       expect(["FREQ_TABLE", "BAR_GRAPH"]).toContain(vars.mode);
 
-      const ans = parseInt(item.solution_logic.final_answer_canonical);
+      const ansStr = item.solution_logic.final_answer_canonical;
+      const ans = parseInt(ansStr);
       expect(ans).toBeGreaterThanOrEqual(0);
     });
   });
