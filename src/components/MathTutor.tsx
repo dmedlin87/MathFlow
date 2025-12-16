@@ -8,6 +8,8 @@ import { MathRenderer } from './MathRenderer';
 import { FractionVisualizer } from './FractionVisualizer';
 import { InteractiveSteps } from './InteractiveSteps';
 import { motion, AnimatePresence } from 'framer-motion';
+import { UniversalInput } from './inputs/UniversalInput'; // Import Universal Input
+import { ProblemVisualizer } from './visualizers/ProblemVisualizer'; // Import Visualizer
 
 import { SessionSummary } from './SessionSummary';
 import { DeveloperControls } from './DeveloperControls';
@@ -230,7 +232,15 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
             <div className="text-2xl font-medium mb-8 text-gray-800 flex flex-col items-center">
                 <MathRenderer text={currentItem.problem_content.stem} />
                 
-                {fracEquivConfig && (
+                {/* Generic Visualizer Dispatcher */}
+                {currentItem.problem_content.visual_spec && (
+                   <div className="mt-8 flex justify-center w-full">
+                       <ProblemVisualizer spec={currentItem.problem_content.visual_spec} />
+                   </div>
+                )}
+
+                {/* Legacy Hardcoded Visualizer - Keep for now until migrated */}
+                {!currentItem.problem_content.visual_spec && fracEquivConfig && (
                     <div className="mt-8 flex gap-12 items-center justify-center">
                         <div className="text-center">
                             <FractionVisualizer 
@@ -247,29 +257,41 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
 
             <form onSubmit={handleSubmit} className="space-y-4">
                 <div>
-                    <input
-                        type="text"
-                        aria-label="Enter your answer"
+                    <UniversalInput
+                        item={currentItem}
                         value={userAnswer}
-                        onChange={(e) => {
-                            setUserAnswer(e.target.value);
+                        onChange={(val) => {
+                            setUserAnswer(val);
                             if (feedback === 'incorrect') {
                                 setFeedback(null);
                             }
                         }}
-                        className={`w-full text-lg p-3 border-2 rounded-lg outline-none transition-colors ${
-                            feedback === 'incorrect' ? 'border-red-300 bg-red-50' : 'border-gray-200 focus:border-blue-500'
-                        }`}
-                        placeholder={currentItem.answer_spec.ui?.placeholder || "Enter your answer"}
+                        onSubmit={() => handleSubmit()}
                         disabled={feedback === 'correct'}
-                        autoFocus
                     />
                 </div>
 
-                {feedback !== 'correct' && (
+                {feedback !== 'correct' && currentItem.answer_spec.input_type !== 'multiple_choice' && (
                     <button
                         type="submit"
                         className="w-full py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                    >
+                        {feedback === 'incorrect' ? 'Try Again' : 'Check Answer'}
+                    </button>
+                )}
+                {/* For Multiple Choice, UniversalInput handles click-to-select, but we still might want a submit or auto-submit.
+                    The current implementation of UniversalInput for MC is passive (just onChange).
+                    Let's add a condition: if multiple choice, maybe we show the button OR make UniversalInput smart.
+                    Actually, keeping the button is safer for kids (select then confirm).
+                    The previous plan said "Select-then-submit". So keeping the button is correct.
+                */}
+                {feedback !== 'correct' && currentItem.answer_spec.input_type === 'multiple_choice' && (
+                    <button
+                        type="submit"
+                        disabled={!userAnswer} // Disable if nothing selected
+                        className={`w-full py-3 rounded-lg font-semibold transition-colors ${
+                             !userAnswer ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700'
+                        }`}
                     >
                         {feedback === 'incorrect' ? 'Try Again' : 'Check Answer'}
                     </button>

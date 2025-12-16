@@ -320,25 +320,23 @@ export const BoxPlotGenerator: Generator = {
 
     const type = (rng ?? Math.random)() < 0.5 ? "range" : "iqr";
 
-    const stem = `A box plot indicates the following five-number summary:
-     
-* Minimum: ${min}
-* First Quartile (Q1): ${q1}
-* Median: ${med}
-* Third Quartile (Q3): ${q3}
-* Maximum: ${max}
-
-${
-  type === "range"
-    ? "What is the **range** of the data?"
-    : "What is the **interquartile range (IQR)** of the data?"
-}`;
+    // Replaced Text Description with Visual Spec
+    const stem = type === "range"
+      ? "Use the box plot below to find the **range** of the data."
+      : "Use the box plot below to find the **interquartile range (IQR)** of the data.";
 
     const ans = type === "range" ? max - min : q3 - q1;
 
     return {
       meta: createMockProvenance(SKILL_6_SP_BOX_PLOTS.id, difficulty),
-      problem_content: { stem, format: "text" },
+      problem_content: {
+        stem,
+        format: "text",
+        visual_spec: {
+            type: "box_plot",
+            data: { min, q1, median: med, q3, max }
+        }
+      },
       answer_spec: { answer_mode: "final_only", input_type: "integer" },
       solution_logic: {
         final_answer_canonical: String(ans),
@@ -347,7 +345,7 @@ ${
           {
             step_index: 1,
             explanation:
-              type === "range" ? "Range = Max - Min" : "IQR = Q3 - Q1",
+              type === "range" ? `Range = Max - Min = ${max} - ${min}` : `IQR = Q3 - Q1 = ${q3} - ${q1}`,
             math: `${ans}`,
             answer: String(ans),
           },
@@ -383,14 +381,13 @@ export const DotPlotGenerator: Generator = {
       randomInt(1, 5, rng),
     ];
 
-    let ascii = "";
     let total = 0;
     let maxCount = 0;
     const modeVals: number[] = [];
 
     counts.forEach((c, i) => {
       const val = base + i;
-      ascii += `${val}: ${"* ".repeat(c)}\n`;
+      for (let k = 0; k < c; k++) rawData.push(val);
       total += c;
       if (c > maxCount) {
         maxCount = c;
@@ -412,12 +409,16 @@ export const DotPlotGenerator: Generator = {
     return {
       meta: createMockProvenance(SKILL_6_SP_DOT_PLOTS.id, difficulty),
       problem_content: {
-        stem: `Consider the following dot plot:\n\n${ascii}\n\n${
+        stem: `Consider the following dot plot:\n\n${
           type === "count"
             ? "How many total data points are there?"
             : "What is the mode of the data?"
         }`,
         format: "text",
+        visual_spec: {
+            type: "dot_plot",
+            data: { data: rawData }
+        }
       },
       answer_spec: {
         answer_mode: "final_only",
@@ -432,8 +433,8 @@ export const DotPlotGenerator: Generator = {
             step_index: 1,
             explanation:
               type === "count"
-                ? "Count all the stars."
-                : "Find the value with the most stars.",
+                ? "Count all the dots."
+                : "Find the value with the most dots.",
             math: "",
             answer: ans,
           },
