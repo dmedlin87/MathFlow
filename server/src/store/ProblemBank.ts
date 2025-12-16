@@ -25,9 +25,8 @@ export class ProblemBank {
     async fetch(skillId: string, limit: number = 1): Promise<MathProblemItem[]> {
         const itemIds = this.bySkill.get(skillId) || [];
         
-        // Simple random selection for V0
-        // In V1 this would use more complex logic (difficulty matching, spaced repetition etc)
-        const selectedIds = this.shuffle(itemIds).slice(0, limit);
+        // Use optimized sampling instead of full shuffle
+        const selectedIds = this.sample(itemIds, limit);
         
         return selectedIds.map(id => this.items.get(id)!).filter(Boolean);
     }
@@ -36,8 +35,65 @@ export class ProblemBank {
         return this.items.get(id);
     }
 
-    private shuffle<T>(array: T[]): T[] {
-        return [...array].sort(() => Math.random() - 0.5);
+    /**
+     * Efficiently selects `count` random unique elements from `array`.
+     * Uses Set-based selection for small counts relative to array size (avoiding O(N) copy).
+     * Uses Fisher-Yates shuffle for larger counts.
+     */
+    private sample<T>(array: T[], count: number): T[] {
+        const len = array.length;
+        if (count === 0 || len === 0) return [];
+        if (count >= len) {
+            // If we need all items (or more), return a shuffled copy
+            // Fisher-Yates
+            const copy = [...array];
+            for (let i = len - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [copy[i], copy[j]] = [copy[j], copy[i]];
+            }
+            return copy;
+        }
+
+        // Optimization: If count is small compared to length (e.g. < 50%),
+        // use random index selection to avoid O(N) array copy.
+        // This is O(count) on average.
+        if (count < len / 2) {
+             const selectedIndices = new Set<number>();
+             const result: T[] = [];
+
+             // Safety counter to prevent infinite loop in edge cases (though mathematically rare)
+             let attempts = 0;
+             const maxAttempts = count * 10;
+
+             while (result.length < count && attempts < maxAttempts) {
+                 const idx = Math.floor(Math.random() * len);
+                 if (!selectedIndices.has(idx)) {
+                     selectedIndices.add(idx);
+                     result.push(array[idx]);
+                 }
+                 attempts++;
+             }
+
+             // Fallback if we somehow got stuck (unlikely with count < len/2)
+             if (result.length < count) {
+                 // Fill the rest with linear scan skipping already selected
+                 for (let i = 0; i < len && result.length < count; i++) {
+                     if (!selectedIndices.has(i)) {
+                         result.push(array[i]);
+                     }
+                 }
+             }
+             return result;
+        }
+
+        // Otherwise, Partial Fisher-Yates on a copy
+        // This is O(N) due to copy, plus O(count) for swaps.
+        const copy = [...array];
+        for (let i = 0; i < count; i++) {
+            const j = i + Math.floor(Math.random() * (len - i));
+            [copy[i], copy[j]] = [copy[j], copy[i]];
+        }
+        return copy.slice(0, count);
     }
 }
 
