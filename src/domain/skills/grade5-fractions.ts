@@ -462,17 +462,17 @@ export const DivFracGenerator: Generator = {
 engine.register(DivFracGenerator);
 
 // ----------------------------------------------------------------------
-// 6. Fraction Word Problems (5.NF.B.6 / 5.NF.B.7)
+// 6. Fraction Word Problems (5.NF.A.2 / 5.NF.B.6 / 5.NF.B.7)
 // ----------------------------------------------------------------------
 
 export const SKILL_5_NF_WORD_PROBLEMS: Skill = {
   id: "5.nf.word_problems",
   name: "Fraction Word Problems",
   gradeBand: "3-5",
-  prereqs: ["5.nf.mult_frac", "5.nf.div_frac"],
+  prereqs: ["5.nf.mult_frac", "5.nf.div_frac", "5.nf.add_sub_unlike"],
   misconceptions: ["wrong_op_word"],
   templates: ["T_FRAC_WORD"],
-  description: "Solve real world problems involving multiplication of fractions and mixed numbers, and division of unit fractions and whole numbers.",
+  description: "Solve word problems involving addition, subtraction, multiplication, and division of fractions.",
   bktParams: { learningRate: 0.15, slip: 0.1, guess: 0.1 },
 };
 
@@ -481,24 +481,96 @@ export const FractionWordProblemsGenerator: Generator = {
   templateId: "T_FRAC_WORD",
   generate: (difficulty: number, rng?: () => number): MathProblemItem => {
     // Types:
-    // 1. Mult: Recipe scaling / Area (e.g. 3/4 of 1/2)
-    // 2. Div: Sharing (e.g. 3 lbs shared by 4 people? No that's 3/4.
-    //    Standard 5.NF.B.7 is 1/b div c or c div 1/b.
-    //    e.g. 1/2 gallon shared by 3 people.
-    //    e.g. 4 cups, serving is 1/3 cup.
+    // 0: Add/Sub (Unlike denominators) - 5.NF.A.2
+    // 1: Mult (Recipe scaling / Area) - 5.NF.B.6
+    // 2: Div (Sharing) - 5.NF.B.7
 
-    const isMult = (rng ?? Math.random)() < 0.5;
+    const type = randomInt(0, 2, rng);
 
-    if (isMult) {
+    if (type === 0) {
+        // Add/Sub Word Problem
+        const isAddition = (rng ?? Math.random)() < 0.6;
+
+        let d1 = randomInt(2, 6, rng);
+        let d2 = randomInt(2, 6, rng);
+        // Ensure unlike
+        while (d1 === d2) d2 = randomInt(2, 6, rng);
+
+        const n1 = 1; // Simplify to unit fractions or simple proper for word problems
+        const n2 = 1;
+
+        // Context: "Alice ran 1/d1 miles. Bob ran 1/d2 miles. How far total? Or How much farther?"
+        const commonDen = lcm(d1, d2);
+        const convN1 = n1 * (commonDen / d1);
+        const convN2 = n2 * (commonDen / d2);
+
+        let resNum, resDen = commonDen;
+        let opText;
+
+        if (isAddition) {
+             resNum = convN1 + convN2;
+             opText = "How many miles did they run in total?";
+        } else {
+             // Ensure positive subtraction
+             const val1 = n1/d1;
+             const val2 = n2/d2;
+             if (val1 < val2) [d1, d2] = [d2, d1]; // Swap denominators to make first fraction larger? No, 1/3 > 1/4. So smaller den is larger val.
+             // If d1 > d2, then 1/d1 < 1/d2.
+             // We want 1/d1 - 1/d2 > 0. So d1 < d2.
+             if (d1 > d2) {
+                 [d1, d2] = [d2, d1];
+                 // Recalc conv
+             }
+             const c1 = n1 * (commonDen / d1);
+             const c2 = n2 * (commonDen / d2);
+             resNum = c1 - c2;
+             opText = "How much farther did the first person run?";
+        }
+
+        const common = gcd(resNum, resDen);
+        const finalNum = resNum / common;
+        const finalDen = resDen / common;
+
+        return {
+            meta: createMockProvenance(SKILL_5_NF_WORD_PROBLEMS.id, difficulty),
+            problem_content: {
+                stem: `Alice ran **1/${d1}** mile. Bob ran **1/${d2}** mile.
+${opText}`,
+                format: "text",
+            },
+            answer_spec: {
+                answer_mode: "final_only",
+                input_type: "fraction",
+            },
+            solution_logic: {
+                final_answer_canonical: `${finalNum}/${finalDen}`,
+                final_answer_type: "numeric",
+                steps: [
+                    {
+                        step_index: 1,
+                        explanation: `Find a common denominator (${resDen}) and ${isAddition ? "add" : "subtract"}.`,
+                        math: `\\frac{1}{${d1}} ${isAddition ? "+" : "-"} \\frac{1}{${d2}} = \\frac{${finalNum}}{${finalDen}}`,
+                        answer: `${finalNum}/${finalDen}`,
+                    }
+                ],
+            },
+            misconceptions: [
+                {
+                    id: "misc_add_den",
+                    error_tag: "add_num_add_den",
+                    trigger: { kind: "exact_answer", value: isAddition ? `2/${d1+d2}` : `0` },
+                    hint_ladder: ["Don't just add/subtract the numbers. Find a common denominator."]
+                }
+            ]
+        };
+
+    } else if (type === 1) {
         // Recipe or "Part of a Part"
         const num1 = randomInt(1, 3, rng);
         const den1 = randomInt(4, 5, rng); // e.g. 3/4
 
         const num2 = 1;
         const den2 = 2; // e.g. 1/2
-
-        // Context: "A recipe needs 3/4 cup of sugar. You are making 1/2 of the recipe."
-        // Or "3/4 of the students... 1/2 of them..."
 
         const resNum = num1 * num2;
         const resDen = den1 * den2;
