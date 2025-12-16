@@ -321,9 +321,10 @@ export const BoxPlotGenerator: Generator = {
     const type = (rng ?? Math.random)() < 0.5 ? "range" : "iqr";
 
     // Replaced Text Description with Visual Spec
-    const stem = type === "range"
-      ? "Use the box plot below to find the **range** of the data."
-      : "Use the box plot below to find the **interquartile range (IQR)** of the data.";
+    const stem =
+      type === "range"
+        ? "Use the box plot below to find the **range** of the data."
+        : "Use the box plot below to find the **interquartile range (IQR)** of the data.";
 
     const ans = type === "range" ? max - min : q3 - q1;
 
@@ -333,9 +334,9 @@ export const BoxPlotGenerator: Generator = {
         stem,
         format: "text",
         visual_spec: {
-            type: "box_plot",
-            data: { min, q1, median: med, q3, max }
-        }
+          type: "box_plot",
+          data: { min, q1, median: med, q3, max },
+        },
       },
       answer_spec: { answer_mode: "final_only", input_type: "integer" },
       solution_logic: {
@@ -345,7 +346,9 @@ export const BoxPlotGenerator: Generator = {
           {
             step_index: 1,
             explanation:
-              type === "range" ? `Range = Max - Min = ${max} - ${min}` : `IQR = Q3 - Q1 = ${q3} - ${q1}`,
+              type === "range"
+                ? `Range = Max - Min = ${max} - ${min}`
+                : `IQR = Q3 - Q1 = ${q3} - ${q1}`,
             math: `${ans}`,
             answer: String(ans),
           },
@@ -384,6 +387,7 @@ export const DotPlotGenerator: Generator = {
     let total = 0;
     let maxCount = 0;
     const modeVals: number[] = [];
+    const rawData: number[] = [];
 
     counts.forEach((c, i) => {
       const val = base + i;
@@ -402,9 +406,7 @@ export const DotPlotGenerator: Generator = {
 
     const ans = type === "count" ? String(total) : String(modeVals[0]);
     const accepted_forms =
-      type === "mode" && modeVals.length > 1
-        ? modeVals.map(String)
-        : undefined;
+      type === "mode" && modeVals.length > 1 ? modeVals.map(String) : undefined;
 
     return {
       meta: createMockProvenance(SKILL_6_SP_DOT_PLOTS.id, difficulty),
@@ -416,9 +418,9 @@ export const DotPlotGenerator: Generator = {
         }`,
         format: "text",
         visual_spec: {
-            type: "dot_plot",
-            data: { data: rawData }
-        }
+          type: "dot_plot",
+          data: { data: rawData },
+        },
       },
       answer_spec: {
         answer_mode: "final_only",

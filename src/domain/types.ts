@@ -39,7 +39,7 @@ export interface MisconceptionConfig {
 
 export interface VisualSpec {
   type: "box_plot" | "dot_plot" | "histogram" | "number_line" | "geometry_2d";
-  data: any; // Flexible schema based on type
+  data: unknown; // Flexible schema based on type
 }
 
 export interface MathProblemItem {
