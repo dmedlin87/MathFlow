@@ -37,6 +37,11 @@ export interface MisconceptionConfig {
   hint_ladder: string[];
 }
 
+export interface VisualSpec {
+  type: "box_plot" | "dot_plot" | "histogram" | "number_line" | "geometry_2d";
+  data: any; // Flexible schema based on type
+}
+
 export interface MathProblemItem {
   meta: {
     id: string; // uuid
@@ -54,6 +59,7 @@ export interface MathProblemItem {
     format: "text" | "latex" | "mixed";
     variables?: Record<string, unknown>;
     diagram_prompt?: string | null;
+    visual_spec?: VisualSpec; // Added Visual Spec
   };
   answer_spec: {
     answer_mode: "final_only" | "work_shown" | "mixed";
