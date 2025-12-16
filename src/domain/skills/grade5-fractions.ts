@@ -460,3 +460,228 @@ export const DivFracGenerator: Generator = {
 };
 
 engine.register(DivFracGenerator);
+
+// ----------------------------------------------------------------------
+// 6. Fraction Word Problems (5.NF.A.2 / 5.NF.B.6 / 5.NF.B.7)
+// ----------------------------------------------------------------------
+
+export const SKILL_5_NF_WORD_PROBLEMS: Skill = {
+  id: "5.nf.word_problems",
+  name: "Fraction Word Problems",
+  gradeBand: "3-5",
+  prereqs: ["5.nf.mult_frac", "5.nf.div_frac", "5.nf.add_sub_unlike"],
+  misconceptions: ["wrong_op_word"],
+  templates: ["T_FRAC_WORD"],
+  description: "Solve word problems involving addition, subtraction, multiplication, and division of fractions.",
+  bktParams: { learningRate: 0.15, slip: 0.1, guess: 0.1 },
+};
+
+export const FractionWordProblemsGenerator: Generator = {
+  skillId: SKILL_5_NF_WORD_PROBLEMS.id,
+  templateId: "T_FRAC_WORD",
+  generate: (difficulty: number, rng?: () => number): MathProblemItem => {
+    // Types:
+    // 0: Add/Sub (Unlike denominators) - 5.NF.A.2
+    // 1: Mult (Recipe scaling / Area) - 5.NF.B.6
+    // 2: Div (Sharing) - 5.NF.B.7
+
+    const type = randomInt(0, 2, rng);
+
+    if (type === 0) {
+        // Add/Sub Word Problem
+        const isAddition = (rng ?? Math.random)() < 0.6;
+
+        let d1 = randomInt(2, 6, rng);
+        let d2 = randomInt(2, 6, rng);
+        // Ensure unlike
+        while (d1 === d2) d2 = randomInt(2, 6, rng);
+
+        const n1 = 1; // Simplify to unit fractions or simple proper for word problems
+        const n2 = 1;
+
+        // Context: "Alice ran 1/d1 miles. Bob ran 1/d2 miles. How far total? Or How much farther?"
+        const commonDen = lcm(d1, d2);
+        const convN1 = n1 * (commonDen / d1);
+        const convN2 = n2 * (commonDen / d2);
+
+        let resNum, resDen = commonDen;
+        let opText;
+
+        if (isAddition) {
+             resNum = convN1 + convN2;
+             opText = "How many miles did they run in total?";
+        } else {
+             // Ensure positive subtraction
+             const val1 = n1/d1;
+             const val2 = n2/d2;
+             if (val1 < val2) [d1, d2] = [d2, d1]; // Swap denominators to make first fraction larger? No, 1/3 > 1/4. So smaller den is larger val.
+             // If d1 > d2, then 1/d1 < 1/d2.
+             // We want 1/d1 - 1/d2 > 0. So d1 < d2.
+             if (d1 > d2) {
+                 [d1, d2] = [d2, d1];
+                 // Recalc conv
+             }
+             const c1 = n1 * (commonDen / d1);
+             const c2 = n2 * (commonDen / d2);
+             resNum = c1 - c2;
+             opText = "How much farther did the first person run?";
+        }
+
+        const common = gcd(resNum, resDen);
+        const finalNum = resNum / common;
+        const finalDen = resDen / common;
+
+        return {
+            meta: createMockProvenance(SKILL_5_NF_WORD_PROBLEMS.id, difficulty),
+            problem_content: {
+                stem: `Alice ran **1/${d1}** mile. Bob ran **1/${d2}** mile.
+${opText}`,
+                format: "text",
+            },
+            answer_spec: {
+                answer_mode: "final_only",
+                input_type: "fraction",
+            },
+            solution_logic: {
+                final_answer_canonical: `${finalNum}/${finalDen}`,
+                final_answer_type: "numeric",
+                steps: [
+                    {
+                        step_index: 1,
+                        explanation: `Find a common denominator (${resDen}) and ${isAddition ? "add" : "subtract"}.`,
+                        math: `\\frac{1}{${d1}} ${isAddition ? "+" : "-"} \\frac{1}{${d2}} = \\frac{${finalNum}}{${finalDen}}`,
+                        answer: `${finalNum}/${finalDen}`,
+                    }
+                ],
+            },
+            misconceptions: [
+                {
+                    id: "misc_add_den",
+                    error_tag: "add_num_add_den",
+                    trigger: { kind: "exact_answer", value: isAddition ? `2/${d1+d2}` : `0` },
+                    hint_ladder: ["Don't just add/subtract the numbers. Find a common denominator."]
+                }
+            ]
+        };
+
+    } else if (type === 1) {
+        // Recipe or "Part of a Part"
+        const num1 = randomInt(1, 3, rng);
+        const den1 = randomInt(4, 5, rng); // e.g. 3/4
+
+        const num2 = 1;
+        const den2 = 2; // e.g. 1/2
+
+        const resNum = num1 * num2;
+        const resDen = den1 * den2;
+
+        return {
+            meta: createMockProvenance(SKILL_5_NF_WORD_PROBLEMS.id, difficulty),
+            problem_content: {
+                stem: `A recipe calls for **${num1}/${den1}** cup of sugar.
+You want to make **${num2}/${den2}** of the recipe.
+How much sugar should you use?`,
+                format: "text",
+            },
+            answer_spec: {
+                answer_mode: "final_only",
+                input_type: "fraction",
+            },
+            solution_logic: {
+                final_answer_canonical: `${resNum}/${resDen}`,
+                final_answer_type: "numeric",
+                steps: [
+                    {
+                        step_index: 1,
+                        explanation: `Multiply the amount needed by the fraction of the recipe you are making.`,
+                        math: `\\frac{${num1}}{${den1}} \\times \\frac{${num2}}{${den2}} = \\frac{${resNum}}{${resDen}}`,
+                        answer: `${resNum}/${resDen}`,
+                    }
+                ],
+            },
+            misconceptions: [
+                {
+                    id: "misc_add",
+                    error_tag: "wrong_op_word",
+                    trigger: { kind: "predicate", value: "false" },
+                    hint_ladder: ["'Of' usually means multiply. You are finding a part of a part."]
+                }
+            ]
+        };
+    } else {
+        // Division
+        // Type A: Share unit fraction (1/b div c)
+        // Type B: How many small parts in whole (c div 1/b)
+
+        const typeA = (rng ?? Math.random)() < 0.5;
+
+        if (typeA) {
+            // 1/3 gallon shared by 4 friends
+            const den = randomInt(2, 5, rng);
+            const friends = randomInt(2, 6, rng);
+            const ansDen = den * friends;
+
+            return {
+                meta: createMockProvenance(SKILL_5_NF_WORD_PROBLEMS.id, difficulty),
+                problem_content: {
+                    stem: `You have **1/${den}** gallon of juice.
+You share it equally among **${friends}** friends.
+How much juice does each friend get?`,
+                    format: "text",
+                },
+                answer_spec: {
+                    answer_mode: "final_only",
+                    input_type: "fraction",
+                },
+                solution_logic: {
+                    final_answer_canonical: `1/${ansDen}`,
+                    final_answer_type: "numeric",
+                    steps: [
+                        {
+                            step_index: 1,
+                            explanation: `Divide the amount of juice by the number of friends.`,
+                            math: `\\frac{1}{${den}} \\div ${friends} = \\frac{1}{${ansDen}}`,
+                            answer: `1/${ansDen}`,
+                        }
+                    ],
+                },
+                misconceptions: []
+            };
+        } else {
+            // 4 lbs of raisins, put in 1/3 lb bags
+            const whole = randomInt(2, 6, rng);
+            const den = randomInt(2, 5, rng);
+            const ans = whole * den;
+
+            return {
+                meta: createMockProvenance(SKILL_5_NF_WORD_PROBLEMS.id, difficulty),
+                problem_content: {
+                    stem: `You have **${whole}** pounds of raisins.
+You put them into bags that each hold **1/${den}** pound.
+How many bags can you fill?`,
+                    format: "text",
+                },
+                answer_spec: {
+                    answer_mode: "final_only",
+                    input_type: "integer",
+                },
+                solution_logic: {
+                    final_answer_canonical: String(ans),
+                    final_answer_type: "numeric",
+                    steps: [
+                        {
+                            step_index: 1,
+                            explanation: `Divide the total weight by the weight per bag.`,
+                            math: `${whole} \\div \\frac{1}{${den}} = ${ans}`,
+                            answer: String(ans),
+                        }
+                    ],
+                },
+                misconceptions: []
+            };
+        }
+    }
+  },
+};
+
+engine.register(FractionWordProblemsGenerator);
