@@ -75,7 +75,8 @@ app.get("/api/problems", async (req, res) => {
  * Body: { skillId, count, difficulty }
  */
 app.post("/api/factory/run", async (req, res) => {
-  let { skillId, count = 1, difficulty = config.defaultDifficulty } = req.body;
+  const { skillId } = req.body;
+  let { count = 1, difficulty = config.defaultDifficulty } = req.body;
 
   if (!skillId || typeof skillId !== "string") {
     res.status(400).json({ error: "Missing skillId" });
