@@ -3,7 +3,7 @@ import cors from "cors";
 import { problemBank } from "./store/ProblemBank.js";
 import { ContentPipeline } from "./factory/pipeline.js";
 import { MockCritic, MockJudge } from "./factory/generators/fractions.js";
-import { EquivFractionGenerator } from "../../src/domain/skills/grade4-fractions.js";
+import { skillGeneratorMap } from "../../src/domain/skills/generatorMap.js";
 import { DomainGeneratorAdapter } from "./factory/adapters/DomainGeneratorAdapter.js";
 import { config } from "./config.js";
 import { rateLimiter } from "./middleware/rateLimit.js";
@@ -17,12 +17,14 @@ app.use(cors());
 app.use(express.json());
 app.use(rateLimiter); // Security: Rate limiting to prevent DoS
 
-// Initialize Pipeline (Mock for now)
-const pipeline = new ContentPipeline(
-  new DomainGeneratorAdapter(EquivFractionGenerator),
-  new MockCritic(),
-  new MockJudge()
-);
+// Helper to create pipeline for a specific generator
+const createPipeline = (generator: Generator) => {
+  return new ContentPipeline(
+    new DomainGeneratorAdapter(generator),
+    new MockCritic(), // In real app, these might vary by skill too
+    new MockJudge()
+  );
+};
 
 // Routes
 
@@ -48,17 +50,20 @@ app.get("/api/problems", async (req, res) => {
 
   // If no problems found, try to generate one on the fly (Just-in-Time for V0 Prototype)
   if (problems.length === 0) {
-    // Fallback: Generate one using the pipeline (simulated offline factory running online)
-    try {
-      // Hack: Use Mock Generator skillId just to make it work for demo
-      // In real app, we'd lookup generator by skillId
-      const newItem = await pipeline.run(config.defaultDifficulty);
-      if (newItem) {
-        await problemBank.save(newItem);
-        problems.push(newItem);
+    const generator = skillGeneratorMap.get(skillId);
+    if (generator) {
+      try {
+        const pipeline = createPipeline(generator);
+        const newItem = await pipeline.run(config.defaultDifficulty);
+        if (newItem) {
+          await problemBank.save(newItem);
+          problems.push(newItem);
+        }
+      } catch (e) {
+        console.error("Failed to fallback generate:", e);
       }
-    } catch (e) {
-      console.error("Failed to fallback generate:", e);
+    } else {
+      console.warn(`No generator found for skillId: ${skillId}`);
     }
   }
 
@@ -71,7 +76,23 @@ app.get("/api/problems", async (req, res) => {
  * Body: { skillId, count, difficulty }
  */
 app.post("/api/factory/run", async (req, res) => {
+  const { skillId } = req.body;
   let { count = 1, difficulty = config.defaultDifficulty } = req.body;
+
+  if (!skillId || typeof skillId !== "string") {
+    res.status(400).json({ error: "Missing skillId" });
+    return;
+  }
+
+  const generator = skillGeneratorMap.get(skillId);
+  if (!generator) {
+    res
+      .status(404)
+      .json({ error: `Generator not found for skill: ${skillId}` });
+    return;
+  }
+
+  const pipeline = createPipeline(generator);
 
   // Security: Input validation
   if (typeof count !== "number" || count < 1) count = 1;

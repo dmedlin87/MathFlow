@@ -110,6 +110,8 @@ export interface Skill {
   templates: string[]; // template IDs
   description?: string;
   tags?: string[];
+  standards?: string[]; // e.g. ["4.NF.A.1"]
+
   // Adaptation Parameters
   bktParams?: {
     learningRate?: number; // p_transit

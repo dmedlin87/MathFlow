@@ -61,8 +61,8 @@ export const AreaPerimeterGenerator: Generator = {
     // Core shapes: Rectangle, Square
     const isSquare = (rng ?? Math.random)() > 0.8;
 
-    let w = randomInt(3, 12, rng);
-    let l = isSquare ? w : randomInt(w + 1, 15, rng);
+    const w = randomInt(3, 12, rng);
+    const l = isSquare ? w : randomInt(w + 1, 15, rng);
 
     // Mode:
     // 0: Find Area

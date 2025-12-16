@@ -307,10 +307,18 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
                         </button>
                     </div>
                     
-                    {currentItem.steps && feedback === 'incorrect' && (
-                        <InteractiveSteps steps={currentItem.steps} />
-                    )}
                 </motion.div>
+            )}
+
+            {currentItem.solution_logic.steps && feedback === 'incorrect' && (
+                <InteractiveSteps 
+                    steps={currentItem.solution_logic.steps.map((s, i) => ({
+                        id: `step_${s.step_index}_${i}`,
+                        text: s.explanation,
+                        answer: s.answer,
+                        explanation: s.math
+                    }))} 
+                />
             )}
         </motion.div>
       </AnimatePresence>

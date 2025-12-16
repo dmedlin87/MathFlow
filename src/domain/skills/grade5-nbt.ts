@@ -691,13 +691,11 @@ export const DivWholeGenerator: Generator = {
     const divisor = randomInt(10, 99, rng);
     const quotient = randomInt(10, 200, rng);
     const isClean = (rng ?? Math.random)() < 0.6;
-    let dividend = quotient * divisor;
     let remainder = 0;
-
     if (!isClean) {
       remainder = randomInt(1, divisor - 1, rng);
-      dividend += remainder;
     }
+    const dividend = quotient * divisor + remainder;
 
     const answer =
       remainder === 0 ? String(quotient) : `${quotient} R ${remainder}`;
@@ -753,7 +751,7 @@ export const DivDecimalsGenerator: Generator = {
   templateId: "T_DIV_DECIMALS",
   generate: (difficulty: number, rng?: () => number): MathProblemItem => {
     const type = Math.floor((rng ?? Math.random)() * 3);
-    let dividend: number, divisor: number;
+    let divisor: number;
     const quotient = parseFloat(((rng ?? Math.random)() * 20 + 0.1).toFixed(2));
 
     if (type === 0) {
@@ -763,7 +761,7 @@ export const DivDecimalsGenerator: Generator = {
     } else {
       divisor = parseFloat(((rng ?? Math.random)() * 5 + 0.1).toFixed(1));
     }
-    dividend = parseFloat((quotient * divisor).toFixed(4));
+    const dividend = parseFloat((quotient * divisor).toFixed(4));
 
     return {
       meta: createMockProvenance(SKILL_5_NBT_DIV_DECIMALS.id, difficulty),

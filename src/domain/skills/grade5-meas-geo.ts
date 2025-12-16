@@ -47,7 +47,8 @@ export const SKILL_5_GM_VOLUME_CUBES: Skill = {
   prereqs: ["nbt_mult_whole"],
   misconceptions: ["surface_area_confusion"],
   templates: ["T_VOLUME_CUBES"],
-  description: "Recognize volume as an attribute of solid figures and understand concepts of volume measurement by counting unit cubes.",
+  description:
+    "Recognize volume as an attribute of solid figures and understand concepts of volume measurement by counting unit cubes.",
   bktParams: { learningRate: 0.15, slip: 0.1, guess: 0.1 },
 };
 
@@ -90,12 +91,17 @@ How many unit cubes does it contain?`,
         ],
       },
       misconceptions: [
-         {
-             id: "misc_sa",
-             error_tag: "surface_area_confusion",
-             trigger: { kind: "exact_answer", value: String(2*(l*w + l*h + w*h)) }, // Surface Area
-             hint_ladder: ["You calculated the area of the outside faces (Surface Area). Volume is the space inside."]
-         }
+        {
+          id: "misc_sa",
+          error_tag: "surface_area_confusion",
+          trigger: {
+            kind: "exact_answer",
+            value: String(2 * (l * w + l * h + w * h)),
+          }, // Surface Area
+          hint_ladder: [
+            "You calculated the area of the outside faces (Surface Area). Volume is the space inside.",
+          ],
+        },
       ],
     };
   },
@@ -114,7 +120,8 @@ export const SKILL_5_GM_VOLUME_FORMULA: Skill = {
   prereqs: ["5.gm.volume_cubes"],
   misconceptions: ["add_dims"],
   templates: ["T_VOLUME_FORMULA"],
-  description: "Relate volume to the operations of multiplication and addition and solve real world and mathematical problems involving volume.",
+  description:
+    "Relate volume to the operations of multiplication and addition and solve real world and mathematical problems involving volume.",
   bktParams: { learningRate: 0.2, slip: 0.1, guess: 0.1 },
 };
 
@@ -154,12 +161,14 @@ Height: **${h}** cm`,
         ],
       },
       misconceptions: [
-         {
-             id: "misc_add",
-             error_tag: "add_dims",
-             trigger: { kind: "exact_answer", value: String(l+w+h) },
-             hint_ladder: ["Do not add the dimensions. Volume is found by multiplying length, width, and height."]
-         }
+        {
+          id: "misc_add",
+          error_tag: "add_dims",
+          trigger: { kind: "exact_answer", value: String(l + w + h) },
+          hint_ladder: [
+            "Do not add the dimensions. Volume is found by multiplying length, width, and height.",
+          ],
+        },
       ],
     };
   },
@@ -178,7 +187,8 @@ export const SKILL_5_GM_COORD_PLANE: Skill = {
   prereqs: ["nbt_place_value"],
   misconceptions: ["xy_reversal"],
   templates: ["T_COORD_PLANE"],
-  description: "Graph points on the coordinate plane to solve real-world and mathematical problems.",
+  description:
+    "Graph points on the coordinate plane to solve real-world and mathematical problems.",
   bktParams: { learningRate: 0.15, slip: 0.1, guess: 0.25 },
 };
 
@@ -200,64 +210,66 @@ export const CoordPlaneGenerator: Generator = {
     const type = (rng ?? Math.random)() < 0.5 ? "DIST_AXIS" : "IDENTIFY";
 
     if (type === "DIST_AXIS") {
-        return {
-          meta: createMockProvenance(SKILL_5_GM_COORD_PLANE.id, difficulty),
-          problem_content: {
-            stem: `Point A is located at **(${x}, ${y})** on the coordinate plane.
+      return {
+        meta: createMockProvenance(SKILL_5_GM_COORD_PLANE.id, difficulty),
+        problem_content: {
+          stem: `Point A is located at **(${x}, ${y})** on the coordinate plane.
 How many units is Point A from the **y-axis**?`, // Distance from y-axis is x-coord
-            format: "text",
-            variables: { x, y },
-          },
-          answer_spec: {
-            answer_mode: "final_only",
-            input_type: "integer",
-          },
-          solution_logic: {
-            final_answer_canonical: String(x),
-            final_answer_type: "numeric",
-            steps: [
-              {
-                step_index: 1,
-                explanation: `The x-coordinate (${x}) represents the distance to the right of the y-axis.`,
-                math: `\\text{Distance} = ${x}`,
-                answer: String(x),
-              },
-            ],
-          },
-          misconceptions: [
-             {
-                 id: "misc_xy_rev",
-                 error_tag: "xy_reversal",
-                 trigger: { kind: "exact_answer", value: String(y) },
-                 hint_ladder: ["The first number is the x-coordinate (horizontal). Distance from the y-axis corresponds to x."]
-             }
+          format: "text",
+          variables: { x, y },
+        },
+        answer_spec: {
+          answer_mode: "final_only",
+          input_type: "integer",
+        },
+        solution_logic: {
+          final_answer_canonical: String(x),
+          final_answer_type: "numeric",
+          steps: [
+            {
+              step_index: 1,
+              explanation: `The x-coordinate (${x}) represents the distance to the right of the y-axis.`,
+              math: `\\text{Distance} = ${x}`,
+              answer: String(x),
+            },
           ],
-        };
-    } else {
-        return {
-          meta: createMockProvenance(SKILL_5_GM_COORD_PLANE.id, difficulty),
-          problem_content: {
-            stem: `In the ordered pair **(${x}, ${y})**, which number is the **y-coordinate**?`,
-            format: "text",
-          },
-          answer_spec: {
-            answer_mode: "final_only",
-            input_type: "integer",
-          },
-          solution_logic: {
-            final_answer_canonical: String(y),
-            final_answer_type: "numeric",
-            steps: [
-              {
-                step_index: 1,
-                explanation: `An ordered pair is written as (x, y). The second number is the y-coordinate.`,
-                math: `y = ${y}`,
-                answer: String(y),
-              },
+        },
+        misconceptions: [
+          {
+            id: "misc_xy_rev",
+            error_tag: "xy_reversal",
+            trigger: { kind: "exact_answer", value: String(y) },
+            hint_ladder: [
+              "The first number is the x-coordinate (horizontal). Distance from the y-axis corresponds to x.",
             ],
           },
-          misconceptions: [],
-        };
+        ],
+      };
+    } else {
+      return {
+        meta: createMockProvenance(SKILL_5_GM_COORD_PLANE.id, difficulty),
+        problem_content: {
+          stem: `In the ordered pair **(${x}, ${y})**, which number is the **y-coordinate**?`,
+          format: "text",
+        },
+        answer_spec: {
+          answer_mode: "final_only",
+          input_type: "integer",
+        },
+        solution_logic: {
+          final_answer_canonical: String(y),
+          final_answer_type: "numeric",
+          steps: [
+            {
+              step_index: 1,
+              explanation: `An ordered pair is written as (x, y). The second number is the y-coordinate.`,
+              math: `y = ${y}`,
+              answer: String(y),
+            },
+          ],
+        },
+        misconceptions: [],
+      };
     }
   },
 };
@@ -275,7 +287,8 @@ export const SKILL_5_GM_CLASS_FIGURES: Skill = {
   prereqs: ["geo_shape_class"],
   misconceptions: ["all_rects_are_squares"],
   templates: ["T_CLASS_FIGURES_HIERARCHY"],
-  description: "Understand that attributes belonging to a category of two-dimensional figures also belong to all subcategories of that category.",
+  description:
+    "Understand that attributes belonging to a category of two-dimensional figures also belong to all subcategories of that category.",
   bktParams: { learningRate: 0.15, slip: 0.1, guess: 0.33 },
 };
 
@@ -285,12 +298,12 @@ export const ClassFiguresHierarchyGenerator: Generator = {
   generate: (difficulty: number, rng?: () => number): MathProblemItem => {
     // True/False statements about hierarchy
     const statements = [
-        { text: "All squares are rectangles.", ans: "True" },
-        { text: "All rectangles are squares.", ans: "False" },
-        { text: "All parallelograms are quadrilaterals.", ans: "True" },
-        { text: "All trapezoids are parallelograms.", ans: "False" }, // US definition (inclusive vs exclusive debated, usually exclusive in elementary texts implies False, or inclusive means True? Standard US curriculum usually treats trapezoid (1 pair parallel) distinct from parallelogram (2 pairs). Wait. Inclusive definition says trapezoid has AT LEAST 1 pair. So Parallelogram IS a Trapezoid. But rarely taught that way in Grade 5. Usually distinct. Let's stick to safer ones.)
-        { text: "A square is always a rhombus.", ans: "True" },
-        { text: "A rhombus is always a square.", ans: "False" },
+      { text: "All squares are rectangles.", ans: "True" },
+      { text: "All rectangles are squares.", ans: "False" },
+      { text: "All parallelograms are quadrilaterals.", ans: "True" },
+      { text: "All trapezoids are parallelograms.", ans: "False" }, // US definition (inclusive vs exclusive debated, usually exclusive in elementary texts implies False, or inclusive means True? Standard US curriculum usually treats trapezoid (1 pair parallel) distinct from parallelogram (2 pairs). Wait. Inclusive definition says trapezoid has AT LEAST 1 pair. So Parallelogram IS a Trapezoid. But rarely taught that way in Grade 5. Usually distinct. Let's stick to safer ones.)
+      { text: "A square is always a rhombus.", ans: "True" },
+      { text: "A rhombus is always a square.", ans: "False" },
     ];
 
     const q = statements[randomInt(0, statements.length - 1, rng)];
@@ -309,7 +322,7 @@ export const ClassFiguresHierarchyGenerator: Generator = {
       },
       solution_logic: {
         final_answer_canonical: q.ans,
-        final_answer_type: "string",
+        final_answer_type: "multiple_choice",
         steps: [
           {
             step_index: 1,
@@ -337,7 +350,8 @@ export const SKILL_5_GM_UNIT_CONV: Skill = {
   prereqs: ["meas_unit_conversion"],
   misconceptions: ["wrong_op_conv"],
   templates: ["T_UNIT_CONV_5"],
-  description: "Convert among different-sized standard measurement units within a given measurement system.",
+  description:
+    "Convert among different-sized standard measurement units within a given measurement system.",
   bktParams: { learningRate: 0.15, slip: 0.1, guess: 0.1 },
 };
 
@@ -345,45 +359,47 @@ export const UnitConv5Generator: Generator = {
   skillId: SKILL_5_GM_UNIT_CONV.id,
   templateId: "T_UNIT_CONV_5",
   generate: (difficulty: number, rng?: () => number): MathProblemItem => {
-      // 5th grade adds decimals to conversions or multi-step (e.g. m to cm involving decimal)
-      // 2.5 m = ? cm
+    // 5th grade adds decimals to conversions or multi-step (e.g. m to cm involving decimal)
+    // 2.5 m = ? cm
 
-      const val = parseFloat(((rng ?? Math.random)() * 10).toFixed(1));
-      const result = val * 100; // m to cm
+    const val = parseFloat(((rng ?? Math.random)() * 10).toFixed(1));
+    const result = val * 100; // m to cm
 
-      return {
-        meta: createMockProvenance(SKILL_5_GM_UNIT_CONV.id, difficulty),
-        problem_content: {
-          stem: `Convert:
+    return {
+      meta: createMockProvenance(SKILL_5_GM_UNIT_CONV.id, difficulty),
+      problem_content: {
+        stem: `Convert:
 **${val} meters** = ? **centimeters**`,
-          format: "text",
-          variables: { val },
-        },
-        answer_spec: {
-          answer_mode: "final_only",
-          input_type: "integer", // result should be integer usually if val has 1 decimal
-        },
-        solution_logic: {
-          final_answer_canonical: String(result),
-          final_answer_type: "numeric",
-          steps: [
-            {
-              step_index: 1,
-              explanation: `1 meter = 100 centimeters. Multiply by 100.`,
-              math: `${val} \\times 100 = ${result}`,
-              answer: String(result),
-            },
+        format: "text",
+        variables: { val },
+      },
+      answer_spec: {
+        answer_mode: "final_only",
+        input_type: "integer", // result should be integer usually if val has 1 decimal
+      },
+      solution_logic: {
+        final_answer_canonical: String(result),
+        final_answer_type: "numeric",
+        steps: [
+          {
+            step_index: 1,
+            explanation: `1 meter = 100 centimeters. Multiply by 100.`,
+            math: `${val} \\times 100 = ${result}`,
+            answer: String(result),
+          },
+        ],
+      },
+      misconceptions: [
+        {
+          id: "misc_div",
+          error_tag: "wrong_op_conv",
+          trigger: { kind: "exact_answer", value: String(val / 100) },
+          hint_ladder: [
+            "Large unit to small unit means you need MORE of them. Multiply, don't divide.",
           ],
         },
-        misconceptions: [
-           {
-               id: "misc_div",
-               error_tag: "wrong_op_conv",
-               trigger: { kind: "exact_answer", value: String(val/100) },
-               hint_ladder: ["Large unit to small unit means you need MORE of them. Multiply, don't divide."]
-           }
-        ],
-      };
+      ],
+    };
   },
 };
 
@@ -400,7 +416,8 @@ export const SKILL_5_MD_LINE_PLOTS: Skill = {
   prereqs: ["5.nf.add_sub_unlike"],
   misconceptions: ["count_vs_value"],
   templates: ["T_LINE_PLOTS"],
-  description: "Make a line plot to display a data set of measurements in fractions of a unit. Solve problems using this data.",
+  description:
+    "Make a line plot to display a data set of measurements in fractions of a unit. Solve problems using this data.",
   bktParams: { learningRate: 0.15, slip: 0.1, guess: 0.1 },
 };
 
@@ -416,12 +433,12 @@ export const LinePlotGenerator: Generator = {
     // Create random data points
     const count = randomInt(5, 10, rng);
     const data: number[] = [];
-    for(let i=0; i<count; i++) {
-        const num = randomInt(1, den, rng); // e.g. 1/8 to 8/8? or 1/8 to 7/8.
-        // 5.MD.B.2 often uses fractions of a unit (e.g. 1/2, 1/4, 1/8).
-        // Let's stick to proper fractions + 0 and 1 maybe?
-        // Let's use 1/den, 2/den ...
-        data.push(num);
+    for (let i = 0; i < count; i++) {
+      const num = randomInt(1, den, rng); // e.g. 1/8 to 8/8? or 1/8 to 7/8.
+      // 5.MD.B.2 often uses fractions of a unit (e.g. 1/2, 1/4, 1/8).
+      // Let's stick to proper fractions + 0 and 1 maybe?
+      // Let's use 1/den, 2/den ...
+      data.push(num);
     }
 
     // Question types:
@@ -432,85 +449,80 @@ export const LinePlotGenerator: Generator = {
     const type = randomInt(0, 1, rng); // 0: Sum, 1: Range? Sum is better for fraction ops.
 
     // Prepare ASCII visual or text list
-    data.sort((a,b) => a - b);
-    const textData = data.map(n => `${n}/${den}`).join(", ");
+    data.sort((a, b) => a - b);
+    const textData = data.map((n) => `${n}/${den}`).join(", ");
 
     if (type === 0) {
-        // Sum
-        const sumNum = data.reduce((a,b) => a+b, 0);
-        const whole = Math.floor(sumNum / den);
-        const rem = sumNum % den;
+      // Sum
+      const sumNum = data.reduce((a, b) => a + b, 0);
+      const whole = Math.floor(sumNum / den);
+      const rem = sumNum % den;
 
-        let ans = "";
-        if (rem === 0) ans = String(whole);
-        else if (whole === 0) ans = `${rem}/${den}`;
-        else ans = `${whole} ${rem}/${den}`;
+      // Canonical might be improper or mixed. Let's use mixed or improper.
+      // The system likely handles equivalence. Let's provide improper as canonical if simple.
+      const canonical = rem === 0 ? String(whole) : `${sumNum}/${den}`;
 
-        // Canonical might be improper or mixed. Let's use mixed or improper.
-        // The system likely handles equivalence. Let's provide improper as canonical if simple.
-        const canonical = rem === 0 ? String(whole) : `${sumNum}/${den}`;
-
-        return {
-            meta: createMockProvenance(SKILL_5_MD_LINE_PLOTS.id, difficulty),
-            problem_content: {
-                stem: `A scientist measured the amount of liquid in several beakers (in liters).
+      return {
+        meta: createMockProvenance(SKILL_5_MD_LINE_PLOTS.id, difficulty),
+        problem_content: {
+          stem: `A scientist measured the amount of liquid in several beakers (in liters).
 The data collected is:
 **${textData}**
 
 What is the **total** amount of liquid in all the beakers combined?`,
-                format: "text",
+          format: "text",
+        },
+        answer_spec: {
+          answer_mode: "final_only",
+          input_type: "fraction",
+        },
+        solution_logic: {
+          final_answer_canonical: canonical,
+          final_answer_type: "numeric",
+          steps: [
+            {
+              step_index: 1,
+              explanation: `Add all the fractions together.`,
+              math: `\\text{Sum} = \\frac{${sumNum}}{${den}}`,
+              answer: canonical,
             },
-            answer_spec: {
-                answer_mode: "final_only",
-                input_type: "fraction",
-            },
-            solution_logic: {
-                final_answer_canonical: canonical,
-                final_answer_type: "numeric",
-                steps: [
-                    {
-                        step_index: 1,
-                        explanation: `Add all the fractions together.`,
-                        math: `\\text{Sum} = \\frac{${sumNum}}{${den}}`,
-                        answer: canonical,
-                    }
-                ],
-            },
-            misconceptions: []
-        };
+          ],
+        },
+        misconceptions: [],
+      };
     } else {
-        // Range (Max - Min)
-        const min = data[0];
-        const max = data[data.length-1];
-        const diff = max - min;
+      // Range (Max - Min)
+      const min = data[0];
+      const max = data[data.length - 1];
+      const diff = max - min;
 
-        return {
-            meta: createMockProvenance(SKILL_5_MD_LINE_PLOTS.id, difficulty),
-            problem_content: {
-                stem: `The data below shows the weight of several apples (in lbs):
+      return {
+        meta: createMockProvenance(SKILL_5_MD_LINE_PLOTS.id, difficulty),
+        problem_content: {
+          stem: `The data below shows the weight of several apples (in lbs):
 **${textData}**
 
 What is the difference in weight between the heaviest and lightest apple?`,
-                format: "text",
+          format: "text",
+        },
+        answer_spec: {
+          answer_mode: "final_only",
+          input_type: "fraction",
+        },
+        solution_logic: {
+          final_answer_canonical: `${diff}/${den}`,
+          final_answer_type: "numeric",
+          steps: [
+            {
+              step_index: 1,
+              explanation: `Subtract the smallest value from the largest value.`,
+              math: `\\frac{${max}}{${den}} - \\frac{${min}}{${den}} = \\frac{${diff}}{${den}}`,
+              answer: `${diff}/${den}`,
             },
-            answer_spec: {
-                answer_mode: "final_only",
-                input_type: "fraction",
-            },
-            solution_logic: {
-                final_answer_canonical: `${diff}/${den}`,
-                final_answer_type: "numeric",
-                steps: [
-                    {
-                        step_index: 1,
-                        explanation: `Subtract the smallest value from the largest value.`,
-                        math: `\\frac{${max}}{${den}} - \\frac{${min}}{${den}} = \\frac{${diff}}{${den}}`,
-                        answer: `${diff}/${den}`,
-                    }
-                ],
-            },
-            misconceptions: []
-        };
+          ],
+        },
+        misconceptions: [],
+      };
     }
   },
 };

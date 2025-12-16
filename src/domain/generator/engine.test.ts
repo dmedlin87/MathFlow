@@ -123,34 +123,36 @@ describe("Generator Engine", () => {
         json: async () => ({ invalid: "shape" }), // Not an array
       });
 
-       // Should fall back to factory then local
-       // We'll mock factory as empty to force local
-       mockFetch.mockResolvedValueOnce({ ok: true, json: async () => ({ items: [] }) });
+      // Should fall back to factory then local
+      // We'll mock factory as empty to force local
+      mockFetch.mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ items: [] }),
+      });
 
-       const item = await testEngine.generate("frac_equiv_01", 0.5);
-       expect(item).toBeDefined();
-       expect(item.meta.skill_id).toBe("frac_equiv_01");
+      const item = await testEngine.generate("frac_equiv_01", 0.5);
+      expect(item).toBeDefined();
+      expect(item.meta.skill_id).toBe("frac_equiv_01");
     });
   });
 
   describe("Environment Configuration", () => {
     it("should detect environment variable", async () => {
-        // We can't easily change import.meta.env at runtime in Vitest as it's static
-        // But we can check if the default exported engine has the correct config if we set it up
-        // However, the default export is already instantiated.
-        // We can check if the default engine has undefined apiBaseUrl in test env
-        // based on how it's currently running.
+      // We can't easily change import.meta.env at runtime in Vitest as it's static
+      // But we can check if the default exported engine has the correct config if we set it up
+      // However, the default export is already instantiated.
+      // We can check if the default engine has undefined apiBaseUrl in test env
+      // based on how it's currently running.
 
-        // This is a bit tricky to test directly without mocking the module load.
-        // But we can verify the behavior of the constructor default.
-        const defaultEngine = new Engine();
-        // Since we can't inspect private config, we can infer from behavior or check if we can inspect it.
-        // Let's rely on the fact that if we pass nothing, config is {}.
+      // But we can verify the behavior of the constructor default.
+      new Engine();
+      // Since we can't inspect private config, we can infer from behavior or check if we can inspect it.
+      // Let's rely on the fact that if we pass nothing, config is {}.
 
-        // We can also spy on import.meta if possible, but that's hard.
-        // Let's stick to testing the Engine class behavior with explicit config which we did above.
-        // To cover the line "const apiBaseUrl = ...", we effectively need to see if the default engine instance exists.
-        expect(engine).toBeInstanceOf(Engine);
+      // We can also spy on import.meta if possible, but that's hard.
+      // Let's stick to testing the Engine class behavior with explicit config which we did above.
+      // To cover the line "const apiBaseUrl = ...", we effectively need to see if the default engine instance exists.
+      expect(engine).toBeInstanceOf(Engine);
     });
   });
 

@@ -65,17 +65,17 @@ export const AddSubUnlikeGenerator: Generator = {
     // Diff < 0.5: One den is multiple of other (e.g. 3, 6)
     // Diff >= 0.5: Neither is multiple (e.g. 3, 4)
 
-    let d1 = randomInt(2, 6, rng);
+    const d1 = randomInt(2, 6, rng);
     let d2: number;
 
     if (difficulty < 0.5) {
-        const mult = randomInt(2, 3, rng);
-        d2 = d1 * mult;
+      const mult = randomInt(2, 3, rng);
+      d2 = d1 * mult;
     } else {
-        d2 = randomInt(2, 8, rng);
-        while (d1 === d2 || d2 % d1 === 0 || d1 % d2 === 0) {
-            d2 = randomInt(2, 9, rng);
-        }
+      d2 = randomInt(2, 8, rng);
+      while (d1 === d2 || d2 % d1 === 0 || d1 % d2 === 0) {
+        d2 = randomInt(2, 9, rng);
+      }
     }
 
     const n1 = randomInt(1, d1 - 1, rng);
@@ -88,10 +88,10 @@ export const AddSubUnlikeGenerator: Generator = {
     let den2 = d2;
 
     if (!isAddition) {
-       if (n1/d1 < n2/d2) {
-           // Swap
-           [num1, den1, num2, den2] = [n2, d2, n1, d1];
-       }
+      if (n1 / d1 < n2 / d2) {
+        // Swap
+        [num1, den1, num2, den2] = [n2, d2, n1, d1];
+      }
     }
 
     const commonDen = lcm(den1, den2);
@@ -146,7 +146,7 @@ export const AddSubUnlikeGenerator: Generator = {
             explanation: `${opText} the numerators.`,
             math: `\\frac{${resultNum}}{${resultDen}}`,
             answer: `${resultNum}/${resultDen}`,
-          }
+          },
         ],
       },
       misconceptions: [
@@ -155,9 +155,9 @@ export const AddSubUnlikeGenerator: Generator = {
           error_tag: "add_num_add_den",
           trigger: { kind: "exact_answer", value: `${wrongNum}/${wrongDen}` },
           hint_ladder: [
-             "You cannot just add the numerators and denominators. Find a common denominator first."
-          ]
-        }
+            "You cannot just add the numerators and denominators. Find a common denominator first.",
+          ],
+        },
       ],
     };
   },
@@ -176,7 +176,8 @@ export const SKILL_5_NF_FRAC_DIV: Skill = {
   prereqs: ["nbt_div_remainders"],
   misconceptions: ["order_confusion"],
   templates: ["T_FRAC_DIV"],
-  description: "Interpret a fraction as division of the numerator by the denominator (a/b = a ÷ b)",
+  description:
+    "Interpret a fraction as division of the numerator by the denominator (a/b = a ÷ b)",
   bktParams: { learningRate: 0.2, slip: 0.1, guess: 0.1 },
 };
 
@@ -216,11 +217,13 @@ $$${num} \\div ${den} = ?$$`,
       },
       misconceptions: [
         {
-           id: "misc_reverse",
-           error_tag: "order_confusion",
-           trigger: { kind: "exact_answer", value: `${den}/${num}` },
-           hint_ladder: ["Remember: Numerator ÷ Denominator. The first number goes on top."]
-        }
+          id: "misc_reverse",
+          error_tag: "order_confusion",
+          trigger: { kind: "exact_answer", value: `${den}/${num}` },
+          hint_ladder: [
+            "Remember: Numerator ÷ Denominator. The first number goes on top.",
+          ],
+        },
       ],
     };
   },
@@ -279,19 +282,23 @@ $$${factor} \\times ${fractionStr} \\text{ ? } ${factor}$$`,
         steps: [
           {
             step_index: 1,
-            explanation: `You are multiplying ${factor} by a number ${isLess ? "less" : "greater"} than 1.`,
+            explanation: `You are multiplying ${factor} by a number ${
+              isLess ? "less" : "greater"
+            } than 1.`,
             math: `\\text{Since } \\frac{${num}}{${den}} ${expected} 1, \\text{ the product is } ${expected} ${factor}.`,
             answer: expected,
           },
         ],
       },
       misconceptions: [
-         {
-             id: "misc_bigger",
-             error_tag: "mult_always_bigger",
-             trigger: { kind: "predicate", value: "false" },
-             hint_ladder: ["Multiplication doesn't always make things bigger. If you multiply by something less than 1, it gets smaller."]
-         }
+        {
+          id: "misc_bigger",
+          error_tag: "mult_always_bigger",
+          trigger: { kind: "predicate", value: "false" },
+          hint_ladder: [
+            "Multiplication doesn't always make things bigger. If you multiply by something less than 1, it gets smaller.",
+          ],
+        },
       ],
     };
   },
@@ -357,12 +364,17 @@ export const MultFracGenerator: Generator = {
         ],
       },
       misconceptions: [
-         {
-             id: "misc_cross",
-             error_tag: "cross_multiply_add",
-             trigger: { kind: "exact_answer", value: `${num1*den2 + num2*den1}/${den1*den2}` }, // cross mult add like addition?
-             hint_ladder: ["For multiplication, you just multiply straight across."]
-         }
+        {
+          id: "misc_cross",
+          error_tag: "cross_multiply_add",
+          trigger: {
+            kind: "exact_answer",
+            value: `${num1 * den2 + num2 * den1}/${den1 * den2}`,
+          }, // cross mult add like addition?
+          hint_ladder: [
+            "For multiplication, you just multiply straight across.",
+          ],
+        },
       ],
     };
   },
@@ -381,7 +393,8 @@ export const SKILL_5_NF_DIV_FRAC: Skill = {
   prereqs: ["5.nf.mult_frac"],
   misconceptions: ["divide_denominators", "flip_wrong_one"],
   templates: ["T_DIV_FRAC"],
-  description: "Divide unit fractions by whole numbers and whole numbers by unit fractions",
+  description:
+    "Divide unit fractions by whole numbers and whole numbers by unit fractions",
   bktParams: { learningRate: 0.1, slip: 0.1, guess: 0.1 },
 };
 
@@ -394,67 +407,67 @@ export const DivFracGenerator: Generator = {
     const isCase1 = (rng ?? Math.random)() < 0.5;
 
     if (isCase1) {
-        // 1/3 ÷ 4
-        const den = randomInt(2, 8, rng);
-        const whole = randomInt(2, 6, rng);
-        // Answer: 1 / (3*4) = 1/12
-        const ansDen = den * whole;
+      // 1/3 ÷ 4
+      const den = randomInt(2, 8, rng);
+      const whole = randomInt(2, 6, rng);
+      // Answer: 1 / (3*4) = 1/12
+      const ansDen = den * whole;
 
-        return {
-            meta: createMockProvenance(SKILL_5_NF_DIV_FRAC.id, difficulty),
-            problem_content: {
-                stem: `Divide: $$\\frac{1}{${den}} \\div ${whole} = ?$$`,
-                format: "latex",
+      return {
+        meta: createMockProvenance(SKILL_5_NF_DIV_FRAC.id, difficulty),
+        problem_content: {
+          stem: `Divide: $$\\frac{1}{${den}} \\div ${whole} = ?$$`,
+          format: "latex",
+        },
+        answer_spec: {
+          answer_mode: "final_only",
+          input_type: "fraction",
+        },
+        solution_logic: {
+          final_answer_canonical: `1/${ansDen}`,
+          final_answer_type: "numeric",
+          steps: [
+            {
+              step_index: 1,
+              explanation: `Dividing a unit fraction by ${whole} means each part gets ${whole} times smaller (denominator gets ${whole} times bigger).`,
+              math: `\\frac{1}{${den} \\times ${whole}} = \\frac{1}{${ansDen}}`,
+              answer: `1/${ansDen}`,
             },
-            answer_spec: {
-                answer_mode: "final_only",
-                input_type: "fraction",
-            },
-            solution_logic: {
-                final_answer_canonical: `1/${ansDen}`,
-                final_answer_type: "numeric",
-                steps: [
-                    {
-                        step_index: 1,
-                        explanation: `Dividing a unit fraction by ${whole} means each part gets ${whole} times smaller (denominator gets ${whole} times bigger).`,
-                        math: `\\frac{1}{${den} \\times ${whole}} = \\frac{1}{${ansDen}}`,
-                        answer: `1/${ansDen}`,
-                    }
-                ],
-            },
-            misconceptions: []
-        };
+          ],
+        },
+        misconceptions: [],
+      };
     } else {
-        // 4 ÷ 1/3
-        const whole = randomInt(2, 6, rng);
-        const den = randomInt(2, 8, rng);
-        // Answer: 4 * 3 = 12
-        const ans = whole * den;
+      // 4 ÷ 1/3
+      const whole = randomInt(2, 6, rng);
+      const den = randomInt(2, 8, rng);
+      // Answer: 4 * 3 = 12
+      const ans = whole * den;
 
-        return {
-            meta: createMockProvenance(SKILL_5_NF_DIV_FRAC.id, difficulty),
-            problem_content: {
-                stem: `Divide: $$${whole} \\div \\frac{1}{${den}} = ?$$`,
-                format: "latex",
+      return {
+        meta: createMockProvenance(SKILL_5_NF_DIV_FRAC.id, difficulty),
+        problem_content: {
+          stem: `Divide: $$${whole} \\div \\frac{1}{${den}} = ?$$`,
+          format: "latex",
+        },
+        answer_spec: {
+          answer_mode: "final_only",
+          input_type: "integer",
+        },
+        solution_logic: {
+          final_answer_canonical: String(ans),
+          final_answer_type: "numeric",
+          steps: [
+            {
+              step_index: 1,
+              explanation: `How many 1/${den}s are in ${whole}? Multiply ${whole} by ${den}.`,
+              math: `${whole} \\times ${den} = ${ans}`,
+              answer: String(ans),
             },
-            answer_spec: {
-                answer_mode: "final_only",
-                input_type: "integer",
-            },
-            solution_logic: {
-                final_answer_canonical: String(ans),
-                final_answer_type: "numeric",
-                steps: [
-                    {
-                        step_index: 1,
-                        explanation: `How many 1/${den}s are in ${whole}? Multiply ${whole} by ${den}.`,
-                        math: `${whole} \\times ${den} = ${ans}`,
-                        answer: String(ans),
-                    }
-                ],
-            },
-            misconceptions: []
-        };
+          ],
+        },
+        misconceptions: [],
+      };
     }
   },
 };
@@ -472,7 +485,8 @@ export const SKILL_5_NF_WORD_PROBLEMS: Skill = {
   prereqs: ["5.nf.mult_frac", "5.nf.div_frac", "5.nf.add_sub_unlike"],
   misconceptions: ["wrong_op_word"],
   templates: ["T_FRAC_WORD"],
-  description: "Solve word problems involving addition, subtraction, multiplication, and division of fractions.",
+  description:
+    "Solve word problems involving addition, subtraction, multiplication, and division of fractions.",
   bktParams: { learningRate: 0.15, slip: 0.1, guess: 0.1 },
 };
 
@@ -488,198 +502,209 @@ export const FractionWordProblemsGenerator: Generator = {
     const type = randomInt(0, 2, rng);
 
     if (type === 0) {
-        // Add/Sub Word Problem
-        const isAddition = (rng ?? Math.random)() < 0.6;
+      // Add/Sub Word Problem
+      const isAddition = (rng ?? Math.random)() < 0.6;
 
-        let d1 = randomInt(2, 6, rng);
-        let d2 = randomInt(2, 6, rng);
-        // Ensure unlike
-        while (d1 === d2) d2 = randomInt(2, 6, rng);
+      let d1 = randomInt(2, 6, rng);
+      let d2 = randomInt(2, 6, rng);
+      // Ensure unlike
+      while (d1 === d2) d2 = randomInt(2, 6, rng);
 
-        const n1 = 1; // Simplify to unit fractions or simple proper for word problems
-        const n2 = 1;
+      const n1 = 1; // Simplify to unit fractions or simple proper for word problems
+      const n2 = 1;
 
-        // Context: "Alice ran 1/d1 miles. Bob ran 1/d2 miles. How far total? Or How much farther?"
-        const commonDen = lcm(d1, d2);
-        const convN1 = n1 * (commonDen / d1);
-        const convN2 = n2 * (commonDen / d2);
+      // Context: "Alice ran 1/d1 miles. Bob ran 1/d2 miles. How far total? Or How much farther?"
+      const commonDen = lcm(d1, d2);
+      const convN1 = n1 * (commonDen / d1);
+      const convN2 = n2 * (commonDen / d2);
 
-        let resNum, resDen = commonDen;
-        let opText;
+      let resNum;
+      const resDen = commonDen;
+      let opText;
 
-        if (isAddition) {
-             resNum = convN1 + convN2;
-             opText = "How many miles did they run in total?";
-        } else {
-             // Ensure positive subtraction
-             const val1 = n1/d1;
-             const val2 = n2/d2;
-             if (val1 < val2) [d1, d2] = [d2, d1]; // Swap denominators to make first fraction larger? No, 1/3 > 1/4. So smaller den is larger val.
-             // If d1 > d2, then 1/d1 < 1/d2.
-             // We want 1/d1 - 1/d2 > 0. So d1 < d2.
-             if (d1 > d2) {
-                 [d1, d2] = [d2, d1];
-                 // Recalc conv
-             }
-             const c1 = n1 * (commonDen / d1);
-             const c2 = n2 * (commonDen / d2);
-             resNum = c1 - c2;
-             opText = "How much farther did the first person run?";
+      if (isAddition) {
+        resNum = convN1 + convN2;
+        opText = "How many miles did they run in total?";
+      } else {
+        // Ensure positive subtraction
+        const val1 = n1 / d1;
+        const val2 = n2 / d2;
+        if (val1 < val2) [d1, d2] = [d2, d1]; // Swap denominators to make first fraction larger? No, 1/3 > 1/4. So smaller den is larger val.
+        // If d1 > d2, then 1/d1 < 1/d2.
+        // We want 1/d1 - 1/d2 > 0. So d1 < d2.
+        if (d1 > d2) {
+          [d1, d2] = [d2, d1];
+          // Recalc conv
         }
+        const c1 = n1 * (commonDen / d1);
+        const c2 = n2 * (commonDen / d2);
+        resNum = c1 - c2;
+        opText = "How much farther did the first person run?";
+      }
 
-        const common = gcd(resNum, resDen);
-        const finalNum = resNum / common;
-        const finalDen = resDen / common;
+      const common = gcd(resNum, resDen);
+      const finalNum = resNum / common;
+      const finalDen = resDen / common;
 
-        return {
-            meta: createMockProvenance(SKILL_5_NF_WORD_PROBLEMS.id, difficulty),
-            problem_content: {
-                stem: `Alice ran **1/${d1}** mile. Bob ran **1/${d2}** mile.
+      return {
+        meta: createMockProvenance(SKILL_5_NF_WORD_PROBLEMS.id, difficulty),
+        problem_content: {
+          stem: `Alice ran **1/${d1}** mile. Bob ran **1/${d2}** mile.
 ${opText}`,
-                format: "text",
+          format: "text",
+        },
+        answer_spec: {
+          answer_mode: "final_only",
+          input_type: "fraction",
+        },
+        solution_logic: {
+          final_answer_canonical: `${finalNum}/${finalDen}`,
+          final_answer_type: "numeric",
+          steps: [
+            {
+              step_index: 1,
+              explanation: `Find a common denominator (${resDen}) and ${
+                isAddition ? "add" : "subtract"
+              }.`,
+              math: `\\frac{1}{${d1}} ${
+                isAddition ? "+" : "-"
+              } \\frac{1}{${d2}} = \\frac{${finalNum}}{${finalDen}}`,
+              answer: `${finalNum}/${finalDen}`,
             },
-            answer_spec: {
-                answer_mode: "final_only",
-                input_type: "fraction",
+          ],
+        },
+        misconceptions: [
+          {
+            id: "misc_add_den",
+            error_tag: "add_num_add_den",
+            trigger: {
+              kind: "exact_answer",
+              value: isAddition ? `2/${d1 + d2}` : `0`,
             },
-            solution_logic: {
-                final_answer_canonical: `${finalNum}/${finalDen}`,
-                final_answer_type: "numeric",
-                steps: [
-                    {
-                        step_index: 1,
-                        explanation: `Find a common denominator (${resDen}) and ${isAddition ? "add" : "subtract"}.`,
-                        math: `\\frac{1}{${d1}} ${isAddition ? "+" : "-"} \\frac{1}{${d2}} = \\frac{${finalNum}}{${finalDen}}`,
-                        answer: `${finalNum}/${finalDen}`,
-                    }
-                ],
-            },
-            misconceptions: [
-                {
-                    id: "misc_add_den",
-                    error_tag: "add_num_add_den",
-                    trigger: { kind: "exact_answer", value: isAddition ? `2/${d1+d2}` : `0` },
-                    hint_ladder: ["Don't just add/subtract the numbers. Find a common denominator."]
-                }
-            ]
-        };
-
+            hint_ladder: [
+              "Don't just add/subtract the numbers. Find a common denominator.",
+            ],
+          },
+        ],
+      };
     } else if (type === 1) {
-        // Recipe or "Part of a Part"
-        const num1 = randomInt(1, 3, rng);
-        const den1 = randomInt(4, 5, rng); // e.g. 3/4
+      // Recipe or "Part of a Part"
+      const num1 = randomInt(1, 3, rng);
+      const den1 = randomInt(4, 5, rng); // e.g. 3/4
 
-        const num2 = 1;
-        const den2 = 2; // e.g. 1/2
+      const num2 = 1;
+      const den2 = 2; // e.g. 1/2
 
-        const resNum = num1 * num2;
-        const resDen = den1 * den2;
+      const resNum = num1 * num2;
+      const resDen = den1 * den2;
 
-        return {
-            meta: createMockProvenance(SKILL_5_NF_WORD_PROBLEMS.id, difficulty),
-            problem_content: {
-                stem: `A recipe calls for **${num1}/${den1}** cup of sugar.
+      return {
+        meta: createMockProvenance(SKILL_5_NF_WORD_PROBLEMS.id, difficulty),
+        problem_content: {
+          stem: `A recipe calls for **${num1}/${den1}** cup of sugar.
 You want to make **${num2}/${den2}** of the recipe.
 How much sugar should you use?`,
-                format: "text",
+          format: "text",
+        },
+        answer_spec: {
+          answer_mode: "final_only",
+          input_type: "fraction",
+        },
+        solution_logic: {
+          final_answer_canonical: `${resNum}/${resDen}`,
+          final_answer_type: "numeric",
+          steps: [
+            {
+              step_index: 1,
+              explanation: `Multiply the amount needed by the fraction of the recipe you are making.`,
+              math: `\\frac{${num1}}{${den1}} \\times \\frac{${num2}}{${den2}} = \\frac{${resNum}}{${resDen}}`,
+              answer: `${resNum}/${resDen}`,
             },
-            answer_spec: {
-                answer_mode: "final_only",
-                input_type: "fraction",
-            },
-            solution_logic: {
-                final_answer_canonical: `${resNum}/${resDen}`,
-                final_answer_type: "numeric",
-                steps: [
-                    {
-                        step_index: 1,
-                        explanation: `Multiply the amount needed by the fraction of the recipe you are making.`,
-                        math: `\\frac{${num1}}{${den1}} \\times \\frac{${num2}}{${den2}} = \\frac{${resNum}}{${resDen}}`,
-                        answer: `${resNum}/${resDen}`,
-                    }
-                ],
-            },
-            misconceptions: [
-                {
-                    id: "misc_add",
-                    error_tag: "wrong_op_word",
-                    trigger: { kind: "predicate", value: "false" },
-                    hint_ladder: ["'Of' usually means multiply. You are finding a part of a part."]
-                }
-            ]
-        };
+          ],
+        },
+        misconceptions: [
+          {
+            id: "misc_add",
+            error_tag: "wrong_op_word",
+            trigger: { kind: "predicate", value: "false" },
+            hint_ladder: [
+              "'Of' usually means multiply. You are finding a part of a part.",
+            ],
+          },
+        ],
+      };
     } else {
-        // Division
-        // Type A: Share unit fraction (1/b div c)
-        // Type B: How many small parts in whole (c div 1/b)
+      // Division
+      // Type A: Share unit fraction (1/b div c)
+      // Type B: How many small parts in whole (c div 1/b)
 
-        const typeA = (rng ?? Math.random)() < 0.5;
+      const typeA = (rng ?? Math.random)() < 0.5;
 
-        if (typeA) {
-            // 1/3 gallon shared by 4 friends
-            const den = randomInt(2, 5, rng);
-            const friends = randomInt(2, 6, rng);
-            const ansDen = den * friends;
+      if (typeA) {
+        // 1/3 gallon shared by 4 friends
+        const den = randomInt(2, 5, rng);
+        const friends = randomInt(2, 6, rng);
+        const ansDen = den * friends;
 
-            return {
-                meta: createMockProvenance(SKILL_5_NF_WORD_PROBLEMS.id, difficulty),
-                problem_content: {
-                    stem: `You have **1/${den}** gallon of juice.
+        return {
+          meta: createMockProvenance(SKILL_5_NF_WORD_PROBLEMS.id, difficulty),
+          problem_content: {
+            stem: `You have **1/${den}** gallon of juice.
 You share it equally among **${friends}** friends.
 How much juice does each friend get?`,
-                    format: "text",
-                },
-                answer_spec: {
-                    answer_mode: "final_only",
-                    input_type: "fraction",
-                },
-                solution_logic: {
-                    final_answer_canonical: `1/${ansDen}`,
-                    final_answer_type: "numeric",
-                    steps: [
-                        {
-                            step_index: 1,
-                            explanation: `Divide the amount of juice by the number of friends.`,
-                            math: `\\frac{1}{${den}} \\div ${friends} = \\frac{1}{${ansDen}}`,
-                            answer: `1/${ansDen}`,
-                        }
-                    ],
-                },
-                misconceptions: []
-            };
-        } else {
-            // 4 lbs of raisins, put in 1/3 lb bags
-            const whole = randomInt(2, 6, rng);
-            const den = randomInt(2, 5, rng);
-            const ans = whole * den;
+            format: "text",
+          },
+          answer_spec: {
+            answer_mode: "final_only",
+            input_type: "fraction",
+          },
+          solution_logic: {
+            final_answer_canonical: `1/${ansDen}`,
+            final_answer_type: "numeric",
+            steps: [
+              {
+                step_index: 1,
+                explanation: `Divide the amount of juice by the number of friends.`,
+                math: `\\frac{1}{${den}} \\div ${friends} = \\frac{1}{${ansDen}}`,
+                answer: `1/${ansDen}`,
+              },
+            ],
+          },
+          misconceptions: [],
+        };
+      } else {
+        // 4 lbs of raisins, put in 1/3 lb bags
+        const whole = randomInt(2, 6, rng);
+        const den = randomInt(2, 5, rng);
+        const ans = whole * den;
 
-            return {
-                meta: createMockProvenance(SKILL_5_NF_WORD_PROBLEMS.id, difficulty),
-                problem_content: {
-                    stem: `You have **${whole}** pounds of raisins.
+        return {
+          meta: createMockProvenance(SKILL_5_NF_WORD_PROBLEMS.id, difficulty),
+          problem_content: {
+            stem: `You have **${whole}** pounds of raisins.
 You put them into bags that each hold **1/${den}** pound.
 How many bags can you fill?`,
-                    format: "text",
-                },
-                answer_spec: {
-                    answer_mode: "final_only",
-                    input_type: "integer",
-                },
-                solution_logic: {
-                    final_answer_canonical: String(ans),
-                    final_answer_type: "numeric",
-                    steps: [
-                        {
-                            step_index: 1,
-                            explanation: `Divide the total weight by the weight per bag.`,
-                            math: `${whole} \\div \\frac{1}{${den}} = ${ans}`,
-                            answer: String(ans),
-                        }
-                    ],
-                },
-                misconceptions: []
-            };
-        }
+            format: "text",
+          },
+          answer_spec: {
+            answer_mode: "final_only",
+            input_type: "integer",
+          },
+          solution_logic: {
+            final_answer_canonical: String(ans),
+            final_answer_type: "numeric",
+            steps: [
+              {
+                step_index: 1,
+                explanation: `Divide the total weight by the weight per bag.`,
+                math: `${whole} \\div \\frac{1}{${den}} = ${ans}`,
+                answer: String(ans),
+              },
+            ],
+          },
+          misconceptions: [],
+        };
+      }
     }
   },
 };

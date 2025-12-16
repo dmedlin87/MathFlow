@@ -56,6 +56,7 @@ export const SKILL_EQUIV_FRACTIONS: Skill = {
     slip: 0.05,
     guess: 0.25,
   },
+  standards: ["4.NF.A.1"],
 };
 
 export const EquivFractionGenerator: Generator = {
@@ -141,6 +142,7 @@ export const SKILL_ADD_LIKE_FRACTIONS: Skill = {
   misconceptions: ["add_denominators"],
   templates: ["T_ADD_LIKE_FRACTION"],
   description: "Add two fractions that share the same denominator.",
+  standards: ["4.NF.B.3.a"],
 };
 
 export const AddLikeFractionGenerator: Generator = {
@@ -217,6 +219,7 @@ export const SKILL_SUB_LIKE_FRACTIONS: Skill = {
     slip: 0.05,
     guess: 0.1,
   },
+  standards: ["4.NF.B.3.a"],
 };
 
 export const SubLikeFractionGenerator: Generator = {
@@ -301,6 +304,7 @@ export const SKILL_SIMPLIFY_FRACTIONS: Skill = {
     slip: 0.1,
     guess: 0.1,
   },
+  standards: ["4.NF.A.1"],
 };
 
 export const SimplifyFractionGenerator: Generator = {
@@ -371,6 +375,7 @@ export const SKILL_FRAC_MULT_WHOLE: Skill = {
   description:
     "Multiply a fraction by a whole number, understanding it as repeated addition.",
   bktParams: { learningRate: 0.15, slip: 0.1, guess: 0.1 },
+  standards: ["4.NF.B.4"],
 };
 
 export const FracMultWholeGenerator: Generator = {
@@ -447,6 +452,7 @@ export const SKILL_FRAC_COMPARE_UNLIKE: Skill = {
   description:
     "Compare two fractions with different numerators and different denominators.",
   bktParams: { learningRate: 0.1, slip: 0.1, guess: 0.25 },
+  standards: ["4.NF.A.2"],
 };
 
 export const FracCompareUnlikeGenerator: Generator = {
@@ -457,7 +463,7 @@ export const FracCompareUnlikeGenerator: Generator = {
     // Strategy: Pick two simple fractions, ensure they are not equal (for now, or allow equal)
     // Harder: Close values
 
-    let den1 = randomInt(3, 8, rng);
+    const den1 = randomInt(3, 8, rng);
     const num1 = randomInt(1, den1 - 1, rng);
     let den2 = randomInt(3, 8, rng);
 
@@ -465,7 +471,7 @@ export const FracCompareUnlikeGenerator: Generator = {
     while (den1 === den2) {
       den2 = randomInt(3, 10, rng);
     }
-    let num2 = randomInt(1, den2 - 1, rng);
+    const num2 = randomInt(1, den2 - 1, rng);
 
     const val1 = num1 / den1;
     const val2 = num2 / den2;
@@ -532,6 +538,7 @@ export const SKILL_ADD_TENTHS_HUNDREDTHS: Skill = {
   description:
     "Express a fraction with denominator 10 as an equivalent fraction with denominator 100, and use this technique to add two fractions with respective denominators 10 and 100.",
   bktParams: { learningRate: 0.15, slip: 0.1, guess: 0.1 },
+  standards: ["4.NF.C.5"],
 };
 
 export const AddTenthsHundredthsGenerator: Generator = {
@@ -631,6 +638,7 @@ export const SKILL_FRAC_DECOMPOSE: Skill = {
   description:
     "Decompose a fraction into a sum of fractions with the same denominator in more than one way.",
   bktParams: { learningRate: 0.15, slip: 0.1, guess: 0.1 },
+  standards: ["4.NF.B.3.b"],
 };
 
 export const FracDecomposeGenerator: Generator = {
@@ -703,6 +711,7 @@ export const SKILL_ADD_SUB_MIXED: Skill = {
   templates: ["T_ADD_SUB_MIXED"],
   description: "Add and subtract mixed numbers with like denominators.",
   bktParams: { learningRate: 0.1, slip: 0.1, guess: 0.1 },
+  standards: ["4.NF.B.3.c"],
 };
 
 export const AddSubMixedGenerator: Generator = {
@@ -753,8 +762,8 @@ export const AddSubMixedGenerator: Generator = {
     }
 
     // Calculation
-    let targetNum = 0;
-    let targetDen = den;
+    // Variables used for calculation logic below directly use den/resImpNum
+    // targetNum/targetDen were unused placeholders.
 
     // Calculate accurate result as improper fraction
     const impNum1 = w1 * den + num1;
