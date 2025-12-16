@@ -6,7 +6,7 @@ import { MockCritic, MockJudge } from "./factory/generators/fractions.js";
 import { skillGeneratorMap } from "../../src/domain/skills/generatorMap.js";
 import { DomainGeneratorAdapter } from "./factory/adapters/DomainGeneratorAdapter.js";
 import { config } from "./config.js";
-import type { Generator } from "../../src/domain/types.js";
+import { rateLimiter } from "./middleware/rateLimit.js";
 
 // Initialize App
 const app = express();
@@ -15,6 +15,7 @@ const port = config.port;
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(rateLimiter); // Security: Rate limiting to prevent DoS
 
 // Helper to create pipeline for a specific generator
 const createPipeline = (generator: Generator) => {
