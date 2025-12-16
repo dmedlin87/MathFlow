@@ -166,10 +166,10 @@ describe("learner/state behavior", () => {
     });
 
     it("should throw error if no candidate skills provided", async () => {
-        const state = createTestState({ skillState: {} });
-        await expect(recommendNextItem(state, undefined, [])).rejects.toThrow(
-            "No skills available to recommend"
-        );
+      const state = createTestState({ skillState: {} });
+      await expect(recommendNextItem(state, undefined, [])).rejects.toThrow(
+        "No skills available to recommend"
+      );
     });
 
     it("should select review items when due (>24h) and random roll < 0.3", async () => {
@@ -336,21 +336,36 @@ describe("learner/state behavior", () => {
     });
 
     it("should NOT set high difficulty if selected skill is not highly mastered", async () => {
-        // This test targets the ELSE branch of "if (skillState && skillState.masteryProb > 0.8)"
-        // Case: Selected skill has mastery <= 0.8.
+      // This test targets the ELSE branch of "if (skillState && skillState.masteryProb > 0.8)"
+      // Case: Selected skill has mastery <= 0.8.
 
-        vi.spyOn(Math, "random").mockReturnValue(0.5); // Learning queue path
-        const state = createTestState({
-            skillState: {
-                [SKILL_ID_1]: createSkillState({ masteryProb: 0.5 })
-            }
-        });
+      vi.spyOn(Math, "random").mockReturnValue(0.5); // Learning queue path
+      const state = createTestState({
+        skillState: {
+          [SKILL_ID_1]: createSkillState({ masteryProb: 0.5 }),
+        },
+      });
 
-        const skills = TEST_SKILLS.filter(s => s.id === SKILL_ID_1);
-        await recommendNextItem(state, undefined, skills);
+      const skills = TEST_SKILLS.filter((s) => s.id === SKILL_ID_1);
+      await recommendNextItem(state, undefined, skills);
 
-        // Should use the masteryProb (0.5) as difficulty, not 0.9
-        expect(engine.generate).toHaveBeenCalledWith(SKILL_ID_1, 0.5);
+      // Should use the masteryProb (0.5) as difficulty, not 0.9
+      expect(engine.generate).toHaveBeenCalledWith(SKILL_ID_1, 0.5);
+    });
+    it("should NOT consume extra RNG calls (determinism check)", async () => {
+      const rngMock = vi.fn().mockReturnValue(0.5);
+      const state = createTestState({
+        skillState: {
+          [SKILL_ID_1]: createSkillState({ masteryProb: 0.5 }),
+        },
+      });
+      const skills = TEST_SKILLS.filter((s) => s.id === SKILL_ID_1);
+
+      // Scenario: Learning Queue has items, not review due.
+      // Should consume exactly 1 RNG call for the 'roll' decision.
+      await recommendNextItem(state, rngMock, skills);
+
+      expect(rngMock).toHaveBeenCalledTimes(1);
     });
   });
 });

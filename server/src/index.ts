@@ -2,11 +2,9 @@ import express from "express";
 import cors from "cors";
 import { problemBank } from "./store/ProblemBank.js";
 import { ContentPipeline } from "./factory/pipeline.js";
-import {
-  MockFractionsGenerator,
-  MockCritic,
-  MockJudge,
-} from "./factory/generators/fractions.js";
+import { MockCritic, MockJudge } from "./factory/generators/fractions.js";
+import { EquivFractionGenerator } from "../../src/domain/skills/grade4-fractions.js";
+import { DomainGeneratorAdapter } from "./factory/adapters/DomainGeneratorAdapter.js";
 
 // Initialize App
 const app = express();
@@ -18,7 +16,7 @@ app.use(express.json());
 
 // Initialize Pipeline (Mock for now)
 const pipeline = new ContentPipeline(
-  new MockFractionsGenerator(),
+  new DomainGeneratorAdapter(EquivFractionGenerator),
   new MockCritic(),
   new MockJudge()
 );
