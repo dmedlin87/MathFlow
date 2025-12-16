@@ -460,3 +460,156 @@ export const DivFracGenerator: Generator = {
 };
 
 engine.register(DivFracGenerator);
+
+// ----------------------------------------------------------------------
+// 6. Fraction Word Problems (5.NF.B.6 / 5.NF.B.7)
+// ----------------------------------------------------------------------
+
+export const SKILL_5_NF_WORD_PROBLEMS: Skill = {
+  id: "5.nf.word_problems",
+  name: "Fraction Word Problems",
+  gradeBand: "3-5",
+  prereqs: ["5.nf.mult_frac", "5.nf.div_frac"],
+  misconceptions: ["wrong_op_word"],
+  templates: ["T_FRAC_WORD"],
+  description: "Solve real world problems involving multiplication of fractions and mixed numbers, and division of unit fractions and whole numbers.",
+  bktParams: { learningRate: 0.15, slip: 0.1, guess: 0.1 },
+};
+
+export const FractionWordProblemsGenerator: Generator = {
+  skillId: SKILL_5_NF_WORD_PROBLEMS.id,
+  templateId: "T_FRAC_WORD",
+  generate: (difficulty: number, rng?: () => number): MathProblemItem => {
+    // Types:
+    // 1. Mult: Recipe scaling / Area (e.g. 3/4 of 1/2)
+    // 2. Div: Sharing (e.g. 3 lbs shared by 4 people? No that's 3/4.
+    //    Standard 5.NF.B.7 is 1/b div c or c div 1/b.
+    //    e.g. 1/2 gallon shared by 3 people.
+    //    e.g. 4 cups, serving is 1/3 cup.
+
+    const isMult = (rng ?? Math.random)() < 0.5;
+
+    if (isMult) {
+        // Recipe or "Part of a Part"
+        const num1 = randomInt(1, 3, rng);
+        const den1 = randomInt(4, 5, rng); // e.g. 3/4
+
+        const num2 = 1;
+        const den2 = 2; // e.g. 1/2
+
+        // Context: "A recipe needs 3/4 cup of sugar. You are making 1/2 of the recipe."
+        // Or "3/4 of the students... 1/2 of them..."
+
+        const resNum = num1 * num2;
+        const resDen = den1 * den2;
+
+        return {
+            meta: createMockProvenance(SKILL_5_NF_WORD_PROBLEMS.id, difficulty),
+            problem_content: {
+                stem: `A recipe calls for **${num1}/${den1}** cup of sugar.
+You want to make **${num2}/${den2}** of the recipe.
+How much sugar should you use?`,
+                format: "text",
+            },
+            answer_spec: {
+                answer_mode: "final_only",
+                input_type: "fraction",
+            },
+            solution_logic: {
+                final_answer_canonical: `${resNum}/${resDen}`,
+                final_answer_type: "numeric",
+                steps: [
+                    {
+                        step_index: 1,
+                        explanation: `Multiply the amount needed by the fraction of the recipe you are making.`,
+                        math: `\\frac{${num1}}{${den1}} \\times \\frac{${num2}}{${den2}} = \\frac{${resNum}}{${resDen}}`,
+                        answer: `${resNum}/${resDen}`,
+                    }
+                ],
+            },
+            misconceptions: [
+                {
+                    id: "misc_add",
+                    error_tag: "wrong_op_word",
+                    trigger: { kind: "predicate", value: "false" },
+                    hint_ladder: ["'Of' usually means multiply. You are finding a part of a part."]
+                }
+            ]
+        };
+    } else {
+        // Division
+        // Type A: Share unit fraction (1/b div c)
+        // Type B: How many small parts in whole (c div 1/b)
+
+        const typeA = (rng ?? Math.random)() < 0.5;
+
+        if (typeA) {
+            // 1/3 gallon shared by 4 friends
+            const den = randomInt(2, 5, rng);
+            const friends = randomInt(2, 6, rng);
+            const ansDen = den * friends;
+
+            return {
+                meta: createMockProvenance(SKILL_5_NF_WORD_PROBLEMS.id, difficulty),
+                problem_content: {
+                    stem: `You have **1/${den}** gallon of juice.
+You share it equally among **${friends}** friends.
+How much juice does each friend get?`,
+                    format: "text",
+                },
+                answer_spec: {
+                    answer_mode: "final_only",
+                    input_type: "fraction",
+                },
+                solution_logic: {
+                    final_answer_canonical: `1/${ansDen}`,
+                    final_answer_type: "numeric",
+                    steps: [
+                        {
+                            step_index: 1,
+                            explanation: `Divide the amount of juice by the number of friends.`,
+                            math: `\\frac{1}{${den}} \\div ${friends} = \\frac{1}{${ansDen}}`,
+                            answer: `1/${ansDen}`,
+                        }
+                    ],
+                },
+                misconceptions: []
+            };
+        } else {
+            // 4 lbs of raisins, put in 1/3 lb bags
+            const whole = randomInt(2, 6, rng);
+            const den = randomInt(2, 5, rng);
+            const ans = whole * den;
+
+            return {
+                meta: createMockProvenance(SKILL_5_NF_WORD_PROBLEMS.id, difficulty),
+                problem_content: {
+                    stem: `You have **${whole}** pounds of raisins.
+You put them into bags that each hold **1/${den}** pound.
+How many bags can you fill?`,
+                    format: "text",
+                },
+                answer_spec: {
+                    answer_mode: "final_only",
+                    input_type: "integer",
+                },
+                solution_logic: {
+                    final_answer_canonical: String(ans),
+                    final_answer_type: "numeric",
+                    steps: [
+                        {
+                            step_index: 1,
+                            explanation: `Divide the total weight by the weight per bag.`,
+                            math: `${whole} \\div \\frac{1}{${den}} = ${ans}`,
+                            answer: String(ans),
+                        }
+                    ],
+                },
+                misconceptions: []
+            };
+        }
+    }
+  },
+};
+
+engine.register(FractionWordProblemsGenerator);

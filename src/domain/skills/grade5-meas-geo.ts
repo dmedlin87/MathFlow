@@ -388,3 +388,131 @@ export const UnitConv5Generator: Generator = {
 };
 
 engine.register(UnitConv5Generator);
+
+// ----------------------------------------------------------------------
+// 6. Line Plots (5.MD.B.2)
+// ----------------------------------------------------------------------
+
+export const SKILL_5_MD_LINE_PLOTS: Skill = {
+  id: "5.md.line_plots",
+  name: "Line Plots with Fractions",
+  gradeBand: "3-5",
+  prereqs: ["5.nf.add_sub_unlike"],
+  misconceptions: ["count_vs_value"],
+  templates: ["T_LINE_PLOTS"],
+  description: "Make a line plot to display a data set of measurements in fractions of a unit. Solve problems using this data.",
+  bktParams: { learningRate: 0.15, slip: 0.1, guess: 0.1 },
+};
+
+export const LinePlotGenerator: Generator = {
+  skillId: SKILL_5_MD_LINE_PLOTS.id,
+  templateId: "T_LINE_PLOTS",
+  generate: (difficulty: number, rng?: () => number): MathProblemItem => {
+    // Generate data set
+    // E.g. { 1/2: 3, 1/4: 2, 1/8: 5 }
+    const denominators = [2, 4, 8];
+    const den = denominators[randomInt(0, 2, rng)];
+
+    // Create random data points
+    const count = randomInt(5, 10, rng);
+    const data: number[] = [];
+    for(let i=0; i<count; i++) {
+        const num = randomInt(1, den, rng); // e.g. 1/8 to 8/8? or 1/8 to 7/8.
+        // 5.MD.B.2 often uses fractions of a unit (e.g. 1/2, 1/4, 1/8).
+        // Let's stick to proper fractions + 0 and 1 maybe?
+        // Let's use 1/den, 2/den ...
+        data.push(num);
+    }
+
+    // Question types:
+    // 1. Total amount (sum of all)
+    // 2. Difference between max and min value (range)
+    // 3. Amount of items with value X
+
+    const type = randomInt(0, 1, rng); // 0: Sum, 1: Range? Sum is better for fraction ops.
+
+    // Prepare ASCII visual or text list
+    data.sort((a,b) => a - b);
+    const textData = data.map(n => `${n}/${den}`).join(", ");
+
+    if (type === 0) {
+        // Sum
+        const sumNum = data.reduce((a,b) => a+b, 0);
+        const whole = Math.floor(sumNum / den);
+        const rem = sumNum % den;
+
+        let ans = "";
+        if (rem === 0) ans = String(whole);
+        else if (whole === 0) ans = `${rem}/${den}`;
+        else ans = `${whole} ${rem}/${den}`;
+
+        // Canonical might be improper or mixed. Let's use mixed or improper.
+        // The system likely handles equivalence. Let's provide improper as canonical if simple.
+        const canonical = rem === 0 ? String(whole) : `${sumNum}/${den}`;
+
+        return {
+            meta: createMockProvenance(SKILL_5_MD_LINE_PLOTS.id, difficulty),
+            problem_content: {
+                stem: `A scientist measured the amount of liquid in several beakers (in liters).
+The data collected is:
+**${textData}**
+
+What is the **total** amount of liquid in all the beakers combined?`,
+                format: "text",
+            },
+            answer_spec: {
+                answer_mode: "final_only",
+                input_type: "fraction",
+            },
+            solution_logic: {
+                final_answer_canonical: canonical,
+                final_answer_type: "numeric",
+                steps: [
+                    {
+                        step_index: 1,
+                        explanation: `Add all the fractions together.`,
+                        math: `\\text{Sum} = \\frac{${sumNum}}{${den}}`,
+                        answer: canonical,
+                    }
+                ],
+            },
+            misconceptions: []
+        };
+    } else {
+        // Range (Max - Min)
+        const min = data[0];
+        const max = data[data.length-1];
+        const diff = max - min;
+
+        return {
+            meta: createMockProvenance(SKILL_5_MD_LINE_PLOTS.id, difficulty),
+            problem_content: {
+                stem: `The data below shows the weight of several apples (in lbs):
+**${textData}**
+
+What is the difference in weight between the heaviest and lightest apple?`,
+                format: "text",
+            },
+            answer_spec: {
+                answer_mode: "final_only",
+                input_type: "fraction",
+            },
+            solution_logic: {
+                final_answer_canonical: `${diff}/${den}`,
+                final_answer_type: "numeric",
+                steps: [
+                    {
+                        step_index: 1,
+                        explanation: `Subtract the smallest value from the largest value.`,
+                        math: `\\frac{${max}}{${den}} - \\frac{${min}}{${den}} = \\frac{${diff}}{${den}}`,
+                        answer: `${diff}/${den}`,
+                    }
+                ],
+            },
+            misconceptions: []
+        };
+    }
+  },
+};
+
+engine.register(LinePlotGenerator);
