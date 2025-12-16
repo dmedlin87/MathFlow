@@ -1,0 +1,46 @@
+
+C:\Users\dmedl\Projects\MathFlow\src\domain\learner\state.behavior.test.ts
+  296:12  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  332:12  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\dmedl\Projects\MathFlow\src\domain\skills\grade4-fractions.test.ts
+  276:54  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  293:54  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  326:54  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\dmedl\Projects\MathFlow\src\domain\skills\grade4-fractions.ts
+  460:9  error  'den1' is never reassigned. Use 'const' instead  prefer-const
+  468:9  error  'num2' is never reassigned. Use 'const' instead  prefer-const
+
+C:\Users\dmedl\Projects\MathFlow\src\domain\skills\grade4-meas-geo.test.ts
+   38:54  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   50:54  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   62:54  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   82:56  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   94:54  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  108:54  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  158:54  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\dmedl\Projects\MathFlow\src\domain\skills\grade4-meas-geo.ts
+  64:9  error  'w' is never reassigned. Use 'const' instead  prefer-const
+  65:9  error  'l' is never reassigned. Use 'const' instead  prefer-const
+
+C:\Users\dmedl\Projects\MathFlow\src\domain\skills\grade4-nbt.ts
+  213:9  error  'n1' is never reassigned. Use 'const' instead  prefer-const
+
+C:\Users\dmedl\Projects\MathFlow\src\domain\skills\grade5-fractions.ts
+   68:9   error  'd1' is never reassigned. Use 'const' instead      prefer-const
+  507:21  error  'resDen' is never reassigned. Use 'const' instead  prefer-const
+
+C:\Users\dmedl\Projects\MathFlow\src\domain\skills\grade5-nbt.ts
+  766:5  error  'dividend' is never reassigned. Use 'const' instead  prefer-const
+
+C:\Users\dmedl\Projects\MathFlow\src\domain\skills\grade6-ee.ts
+  406:34  error  '_rng' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\dmedl\Projects\MathFlow\src\domain\skills\grade6-stats.ts
+  174:11  error  'modes' is never reassigned. Use 'const' instead  prefer-const
+
+Γ£û 22 problems (22 errors, 0 warnings)
+  7 errors and 0 warnings potentially fixable with the `--fix` option.
+

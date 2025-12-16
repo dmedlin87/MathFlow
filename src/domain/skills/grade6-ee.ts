@@ -403,9 +403,8 @@ export const SKILL_6_EE_VARIABLES: Skill = {
 export const VariablesGenerator: Generator = {
   skillId: SKILL_6_EE_VARIABLES.id,
   templateId: "T_VARIABLES",
-  generate: (difficulty: number, rng?: () => number): MathProblemItem => {
+  generate: (difficulty: number): MathProblemItem => {
     // "y = 2x. Which is dependent?"
-    const indep = "x";
     const dep = "y";
     const eq = "y = 5x + 1";
 

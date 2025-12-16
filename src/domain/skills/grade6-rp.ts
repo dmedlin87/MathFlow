@@ -126,7 +126,7 @@ export const RatiosGenerator: Generator = {
       const b = randomInt(1, 10, rng);
 
       // Determine which part is missing
-      const _missingIndex = randomInt(0, 1, rng); // 0 -> missing second part of scaled, 1 -> missing first part
+      // const _missingIndex = randomInt(0, 1, rng); // 0 -> missing second part of scaled, 1 -> missing first part
       // actually let's just do: Ratio is a:b. If we have (a*m) of first, how many of second?
 
       const scaledA = a * m;

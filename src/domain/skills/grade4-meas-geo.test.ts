@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { describe, it, expect } from "vitest";
 import {
   AreaPerimeterGenerator,
@@ -9,7 +10,6 @@ import {
   ShapeClassificationGenerator,
   SKILL_AREA_PERIMETER,
   SKILL_UNIT_CONVERSION,
-  SKILL_GEO_LINES_ANGLES,
   SKILL_SYMMETRY,
   SKILL_ANGLES_MEASURE,
   SKILL_LINE_PLOTS,
@@ -78,7 +78,7 @@ describe("grade4-meas-geo generator", () => {
       // Type ANGLE (>0.5)
       const rng = createMockRng([0.6, 0.5]); // Type, Deg
       // deg will be randomInt(10, 170).
-      const item = GeometryGenerator.generate(0.5);
+      const item = GeometryGenerator.generate(0.5, rng);
       if (item.problem_content.stem.includes("degrees")) {
         const vars = item.problem_content.variables as any;
         const ans = item.solution_logic.final_answer_canonical;

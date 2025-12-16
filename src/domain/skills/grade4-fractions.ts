@@ -457,7 +457,7 @@ export const FracCompareUnlikeGenerator: Generator = {
     // Strategy: Pick two simple fractions, ensure they are not equal (for now, or allow equal)
     // Harder: Close values
 
-    let den1 = randomInt(3, 8, rng);
+    const den1 = randomInt(3, 8, rng);
     const num1 = randomInt(1, den1 - 1, rng);
     let den2 = randomInt(3, 8, rng);
 
@@ -465,7 +465,7 @@ export const FracCompareUnlikeGenerator: Generator = {
     while (den1 === den2) {
       den2 = randomInt(3, 10, rng);
     }
-    let num2 = randomInt(1, den2 - 1, rng);
+    const num2 = randomInt(1, den2 - 1, rng);
 
     const val1 = num1 / den1;
     const val2 = num2 / den2;
@@ -753,8 +753,8 @@ export const AddSubMixedGenerator: Generator = {
     }
 
     // Calculation
-    let targetNum = 0;
-    let targetDen = den;
+    // Variables used for calculation logic below directly use den/resImpNum
+    // targetNum/targetDen were unused placeholders.
 
     // Calculate accurate result as improper fraction
     const impNum1 = w1 * den + num1;

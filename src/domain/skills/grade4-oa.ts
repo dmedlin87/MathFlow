@@ -431,7 +431,10 @@ export const MultiStepWordGen: Generator = {
       // (adjustedStart + subtract) / divisor ?
 
       return {
-        meta: createMockProvenance(SKILL_MULTI_STEP_WORD_PROBLEMS.id, difficulty),
+        meta: createMockProvenance(
+          SKILL_MULTI_STEP_WORD_PROBLEMS.id,
+          difficulty
+        ),
         problem_content: {
           stem: `Alice had **${adjustedStart}** stickers. She gave **${subtract}** stickers to her sister.
 Then she divided the rest equally into **${divisor}** albums.
@@ -450,13 +453,17 @@ How many stickers did she put in each album?`,
             {
               step_index: 1,
               explanation: `First, subtract the stickers she gave away.`,
-              math: `${adjustedStart} - ${subtract} = ${adjustedStart - subtract}`,
+              math: `${adjustedStart} - ${subtract} = ${
+                adjustedStart - subtract
+              }`,
               answer: String(adjustedStart - subtract),
             },
             {
               step_index: 2,
               explanation: `Then divide the remaining stickers by ${divisor}.`,
-              math: `${adjustedStart - subtract} \\div ${divisor} = ${finalAns}`,
+              math: `${
+                adjustedStart - subtract
+              } \\div ${divisor} = ${finalAns}`,
               answer: String(finalAns),
             },
           ],
@@ -465,10 +472,8 @@ How many stickers did she put in each album?`,
           {
             id: "misc_order_ops",
             error_tag: "wrong_order_operations",
-            trigger: { kind: "manual", value: "check logic" }, // Hard to genericize
-            hint_ladder: [
-              "Did you subtract the stickers she gave away first?",
-            ],
+            trigger: { kind: "predicate", value: "check_logic" }, // Hard to genericize
+            hint_ladder: ["Did you subtract the stickers she gave away first?"],
           },
         ],
       };
@@ -483,7 +488,10 @@ How many stickers did she put in each album?`,
       const ans = numGroups + 1; // Need one more bus
 
       return {
-        meta: createMockProvenance(SKILL_MULTI_STEP_WORD_PROBLEMS.id, difficulty),
+        meta: createMockProvenance(
+          SKILL_MULTI_STEP_WORD_PROBLEMS.id,
+          difficulty
+        ),
         problem_content: {
           stem: `There are **${total}** students going on a field trip.
 Each van can hold **${perGroup}** students.

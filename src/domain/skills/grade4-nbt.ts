@@ -210,7 +210,7 @@ export const CompareMultiDigitGenerator: Generator = {
     const minVal = Math.pow(10, exp - 1);
     const maxVal = Math.pow(10, exp) - 1;
 
-    let n1 = randomInt(minVal, maxVal, rng);
+    const n1 = randomInt(minVal, maxVal, rng);
     let n2 = randomInt(minVal, maxVal, rng);
 
     // Make them close for higher difficulty

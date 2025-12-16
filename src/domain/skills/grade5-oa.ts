@@ -45,9 +45,14 @@ export const SKILL_5_OA_ORDER_OPS: Skill = {
   name: "Order of Operations & Expressions",
   gradeBand: "3-5",
   prereqs: ["nbt_mult_whole", "nbt_div_whole"],
-  misconceptions: ["left_to_right_add_first", "parentheses_ignore", "expression_order"],
+  misconceptions: [
+    "left_to_right_add_first",
+    "parentheses_ignore",
+    "expression_order",
+  ],
   templates: ["T_ORDER_OPS"],
-  description: "Use parentheses, brackets, or braces in numerical expressions, evaluate expressions with these symbols, and write simple expressions.",
+  description:
+    "Use parentheses, brackets, or braces in numerical expressions, evaluate expressions with these symbols, and write simple expressions.",
   bktParams: { learningRate: 0.15, slip: 0.1, guess: 0.05 },
 };
 
@@ -61,128 +66,150 @@ export const OrderOpsGenerator: Generator = {
     const mode = (rng ?? Math.random)() < 0.7 ? "EVAL" : "WRITE";
 
     if (mode === "EVAL") {
-        // Evaluate expression: e.g. 3 + 4 x 5 vs (3 + 4) x 5
-        const templates = [
-            { t: (a:number, b:number, c:number) => `${a} + ${b} \\times ${c}`, eval: (a:number, b:number, c:number) => a + b*c },
-            { t: (a:number, b:number, c:number) => `(${a} + ${b}) \\times ${c}`, eval: (a:number, b:number, c:number) => (a+b)*c },
-            { t: (a:number, b:number, c:number) => `${a} \\times (${b} + ${c})`, eval: (a:number, b:number, c:number) => a*(b+c) },
-            { t: (a:number, b:number, c:number) => `${a} \\times ${b} - ${c}`, eval: (a:number, b:number, c:number) => a*b-c } // ensure result > 0
-        ];
+      // Evaluate expression: e.g. 3 + 4 x 5 vs (3 + 4) x 5
+      const templates = [
+        {
+          t: (a: number, b: number, c: number) => `${a} + ${b} \\times ${c}`,
+          eval: (a: number, b: number, c: number) => a + b * c,
+        },
+        {
+          t: (a: number, b: number, c: number) => `(${a} + ${b}) \\times ${c}`,
+          eval: (a: number, b: number, c: number) => (a + b) * c,
+        },
+        {
+          t: (a: number, b: number, c: number) => `${a} \\times (${b} + ${c})`,
+          eval: (a: number, b: number, c: number) => a * (b + c),
+        },
+        {
+          t: (a: number, b: number, c: number) => `${a} \\times ${b} - ${c}`,
+          eval: (a: number, b: number, c: number) => a * b - c,
+        }, // ensure result > 0
+      ];
 
-        const tIdx = randomInt(0, templates.length - 1, rng);
-        const a = randomInt(2, 9, rng);
-        const b = randomInt(2, 9, rng);
-        const c = randomInt(2, 9, rng);
+      const tIdx = randomInt(0, templates.length - 1, rng);
+      const a = randomInt(2, 9, rng);
+      const b = randomInt(2, 9, rng);
+      const c = randomInt(2, 9, rng);
 
-        let expr = templates[tIdx].t(a, b, c);
-        let val = templates[tIdx].eval(a, b, c);
+      let expr = templates[tIdx].t(a, b, c);
+      let val = templates[tIdx].eval(a, b, c);
 
-        // Ensure positive for last template
-        if (val < 0) {
-            // Redo with larger A
-            const a2 = a + 10;
-            expr = templates[tIdx].t(a2, b, c);
-            val = templates[tIdx].eval(a2, b, c);
-        }
+      // Ensure positive for last template
+      if (val < 0) {
+        // Redo with larger A
+        const a2 = a + 10;
+        expr = templates[tIdx].t(a2, b, c);
+        val = templates[tIdx].eval(a2, b, c);
+      }
 
-        // Misconception: Left to Right strictly
-        let wrongVal = 0;
-        if (tIdx === 0) wrongVal = (a+b)*c;
+      // Misconception: Left to Right strictly
+      let wrongVal = 0;
+      if (tIdx === 0) wrongVal = (a + b) * c;
 
-        return {
-          meta: createMockProvenance(SKILL_5_OA_ORDER_OPS.id, difficulty),
-          problem_content: {
-            stem: `Evaluate the expression:
+      return {
+        meta: createMockProvenance(SKILL_5_OA_ORDER_OPS.id, difficulty),
+        problem_content: {
+          stem: `Evaluate the expression:
 $$${expr} = ?$$`,
-            format: "latex",
-            variables: { a, b, c },
-          },
-          answer_spec: {
-            answer_mode: "final_only",
-            input_type: "integer",
-          },
-          solution_logic: {
-            final_answer_canonical: String(val),
-            final_answer_type: "numeric",
-            steps: [
-              {
-                step_index: 1,
-                explanation: `Follow Order of Operations: Parentheses first, then Multiplication/Division, then Addition/Subtraction.`,
-                math: `${expr} = ${val}`,
-                answer: String(val),
-              },
+          format: "latex",
+          variables: { a, b, c },
+        },
+        answer_spec: {
+          answer_mode: "final_only",
+          input_type: "integer",
+        },
+        solution_logic: {
+          final_answer_canonical: String(val),
+          final_answer_type: "numeric",
+          steps: [
+            {
+              step_index: 1,
+              explanation: `Follow Order of Operations: Parentheses first, then Multiplication/Division, then Addition/Subtraction.`,
+              math: `${expr} = ${val}`,
+              answer: String(val),
+            },
+          ],
+        },
+        misconceptions: [
+          {
+            id: "misc_l2r",
+            error_tag: "left_to_right_add_first",
+            trigger: { kind: "exact_answer", value: String(wrongVal) },
+            hint_ladder: [
+              "Did you add before multiplying? Remember order of operations: Multiply before Add.",
             ],
           },
-          misconceptions: [
-             {
-                 id: "misc_l2r",
-                 error_tag: "left_to_right_add_first",
-                 trigger: { kind: "exact_answer", value: String(wrongVal) },
-                 hint_ladder: ["Did you add before multiplying? Remember order of operations: Multiply before Add."]
-             }
-          ],
-        };
+        ],
+      };
     } else {
-        // Write Expression (Multiple Choice for robustness in V1)
-        // e.g. "Add 8 and 7, then multiply by 2" -> (8 + 7) * 2
+      // Write Expression (Multiple Choice for robustness in V1)
+      // e.g. "Add 8 and 7, then multiply by 2" -> (8 + 7) * 2
 
-        const a = randomInt(2, 9, rng);
-        const b = randomInt(2, 9, rng);
-        const c = randomInt(2, 9, rng);
+      const a = randomInt(2, 9, rng);
+      const b = randomInt(2, 9, rng);
+      const c = randomInt(2, 9, rng);
 
-        // Phrases
-        // 0: (A + B) * C
-        // 1: A + (B * C)
+      // Phrases
+      // 0: (A + B) * C
+      // 1: A + (B * C)
 
-        const isGroupFirst = (rng ?? Math.random)() < 0.5;
+      const isGroupFirst = (rng ?? Math.random)() < 0.5;
 
-        let stem = "";
-        let correctExpr = "";
-        let distractorExpr = "";
+      let stem = "";
+      let correctExpr = "";
+      let distractorExpr = "";
 
-        if (isGroupFirst) {
-            stem = `Add **${a}** and **${b}**, then multiply by **${c}**.`;
-            correctExpr = `(${a} + ${b}) \\times ${c}`;
-            distractorExpr = `${a} + ${b} \\times ${c}`;
-        } else {
-            stem = `Multiply **${b}** by **${c}**, then add **${a}**.`;
-            correctExpr = `${a} + ${b} \\times ${c}`;
-            distractorExpr = `(${a} + ${b}) \\times ${c}`;
-        }
+      if (isGroupFirst) {
+        stem = `Add **${a}** and **${b}**, then multiply by **${c}**.`;
+        correctExpr = `(${a} + ${b}) \\times ${c}`;
+        distractorExpr = `${a} + ${b} \\times ${c}`;
+      } else {
+        stem = `Multiply **${b}** by **${c}**, then add **${a}**.`;
+        correctExpr = `${a} + ${b} \\times ${c}`;
+        distractorExpr = `(${a} + ${b}) \\times ${c}`;
+      }
 
-        return {
-            meta: createMockProvenance(SKILL_5_OA_ORDER_OPS.id, difficulty),
-            problem_content: {
-                stem: `Choose the expression that matches the description:
+      return {
+        meta: createMockProvenance(SKILL_5_OA_ORDER_OPS.id, difficulty),
+        problem_content: {
+          stem: `Choose the expression that matches the description:
 "${stem}"`,
-                format: "text",
+          format: "text",
+        },
+        answer_spec: {
+          answer_mode: "final_only",
+          input_type: "multiple_choice",
+          ui: {
+            choices: [correctExpr, distractorExpr].sort(
+              () => (rng ?? Math.random)() - 0.5
+            ),
+          }, // Simple shuffle
+        },
+        solution_logic: {
+          final_answer_canonical: correctExpr,
+          final_answer_type: "multiple_choice",
+          steps: [
+            {
+              step_index: 1,
+              explanation: `The phrase "${
+                isGroupFirst ? "Add ... then" : "Multiply ... then"
+              }" tells you which operation happens first. Use parentheses if addition needs to happen before multiplication.`,
+              math: `\\text{Expression: } ${correctExpr}`,
+              answer: correctExpr,
             },
-            answer_spec: {
-                answer_mode: "final_only",
-                input_type: "multiple_choice",
-                ui: { choices: [correctExpr, distractorExpr].sort(() => (rng ?? Math.random)() - 0.5) }, // Simple shuffle
-            },
-            solution_logic: {
-                final_answer_canonical: correctExpr,
-                final_answer_type: "string",
-                steps: [
-                    {
-                        step_index: 1,
-                        explanation: `The phrase "${isGroupFirst ? "Add ... then" : "Multiply ... then"}" tells you which operation happens first. Use parentheses if addition needs to happen before multiplication.`,
-                        math: `\\text{Expression: } ${correctExpr}`,
-                        answer: correctExpr,
-                    }
-                ],
-            },
-            misconceptions: [
-                {
-                    id: "misc_order",
-                    error_tag: "expression_order",
-                    trigger: { kind: "exact_answer", value: distractorExpr },
-                    hint_ladder: ["Think about which operation must happen first. Use parentheses to group the first part."]
-                }
-            ]
-        };
+          ],
+        },
+        misconceptions: [
+          {
+            id: "misc_order",
+            error_tag: "expression_order",
+            trigger: { kind: "exact_answer", value: distractorExpr },
+            hint_ladder: [
+              "Think about which operation must happen first. Use parentheses to group the first part.",
+            ],
+          },
+        ],
+      };
     }
   },
 };
@@ -200,7 +227,8 @@ export const SKILL_5_OA_PATTERNS: Skill = {
   prereqs: ["nbt_mult_whole"],
   misconceptions: ["swapped_rule"],
   templates: ["T_PATTERNS"],
-  description: "Generate two numerical patterns using two given rules. Identify apparent relationships between corresponding terms.",
+  description:
+    "Generate two numerical patterns using two given rules. Identify apparent relationships between corresponding terms.",
   bktParams: { learningRate: 0.15, slip: 0.1, guess: 0.1 },
 };
 

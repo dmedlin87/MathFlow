@@ -1,0 +1,27 @@
+
+C:\Users\dmedl\Projects\MathFlow\src\domain\learner\state.behavior.test.ts
+  296:12  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  332:12  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\dmedl\Projects\MathFlow\src\domain\skills\grade4-fractions.test.ts
+  276:54  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  293:54  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  326:54  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\dmedl\Projects\MathFlow\src\domain\skills\grade4-meas-geo.test.ts
+   38:54  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   50:54  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   62:54  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   82:56  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   94:54  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  108:54  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  158:54  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\dmedl\Projects\MathFlow\src\domain\skills\grade5-fractions.ts
+  507:21  error  'resDen' is never reassigned. Use 'const' instead  prefer-const
+
+C:\Users\dmedl\Projects\MathFlow\src\domain\skills\grade5-nbt.ts
+  766:5  error  'dividend' is never reassigned. Use 'const' instead  prefer-const
+
+Γ£û 14 problems (14 errors, 0 warnings)
+

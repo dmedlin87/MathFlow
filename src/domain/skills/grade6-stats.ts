@@ -37,9 +37,6 @@ const createMockProvenance = (
 });
 
 // Helper for robust rounding
-const robustRound = (n: number, scale: number) => {
-  return Math.round((n + Number.EPSILON) * scale) / scale;
-};
 
 // ----------------------------------------------------------------------
 // 1. Mean (6.SP.B.5.c)
@@ -169,12 +166,12 @@ export const MedianModeRangeGenerator: Generator = {
       nums.push(dup); // make sure at least one dup
       // recalculate sorted/dataset
       const finalNums = nums.sort(() => (rng ?? Math.random)() - 0.5);
-      const finalDataSet = finalNums.join(", ");
+      // const finalDataSet = finalNums.join(", ");
 
       // count freqs
       const counts: Record<number, number> = {};
       let maxFreq = 0;
-      let modes: number[] = [];
+      const modes: number[] = [];
       for (const n of finalNums) {
         counts[n] = (counts[n] || 0) + 1;
         if (counts[n] > maxFreq) maxFreq = counts[n];
