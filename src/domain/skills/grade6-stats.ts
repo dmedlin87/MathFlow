@@ -386,7 +386,7 @@ export const DotPlotGenerator: Generator = {
     let ascii = "";
     let total = 0;
     let maxCount = 0;
-    let modeVal = 0;
+    const modeVals: number[] = [];
 
     counts.forEach((c, i) => {
       const val = base + i;
@@ -394,11 +394,20 @@ export const DotPlotGenerator: Generator = {
       total += c;
       if (c > maxCount) {
         maxCount = c;
-        modeVal = val;
+        modeVals.length = 0; // Reset modes
+        modeVals.push(val);
+      } else if (c === maxCount) {
+        modeVals.push(val);
       }
     });
 
     const type = (rng ?? Math.random)() < 0.5 ? "count" : "mode"; // count total, or find mode
+
+    const ans = type === "count" ? String(total) : String(modeVals[0]);
+    const accepted_forms =
+      type === "mode" && modeVals.length > 1
+        ? modeVals.map(String)
+        : undefined;
 
     return {
       meta: createMockProvenance(SKILL_6_SP_DOT_PLOTS.id, difficulty),
@@ -410,9 +419,13 @@ export const DotPlotGenerator: Generator = {
         }`,
         format: "text",
       },
-      answer_spec: { answer_mode: "final_only", input_type: "integer" },
+      answer_spec: {
+        answer_mode: "final_only",
+        input_type: "integer",
+        accepted_forms,
+      },
       solution_logic: {
-        final_answer_canonical: String(type === "count" ? total : modeVal),
+        final_answer_canonical: ans,
         final_answer_type: "numeric",
         steps: [
           {
@@ -422,7 +435,7 @@ export const DotPlotGenerator: Generator = {
                 ? "Count all the stars."
                 : "Find the value with the most stars.",
             math: "",
-            answer: String(type === "count" ? total : modeVal),
+            answer: ans,
           },
         ],
       },
