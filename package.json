@@ -14,7 +14,8 @@
     "test:coverage": "vitest run --coverage",
     "docs:check:links": "node scripts/check-links.mjs",
     "docs:check": "npm run docs:check:links && npm run docs:check:snippets",
-    "docs:check:snippets": "node scripts/check-snippets.mjs"
+    "docs:check:snippets": "node scripts/check-snippets.mjs",
+    "build:server": "vite build -c vite.config.server.ts"
   },
   "dependencies": {
     "-": "^0.0.1",
