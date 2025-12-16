@@ -48,6 +48,7 @@ export const SKILL_PLACE_VALUE: Skill = {
   description:
     "Recognize that in a multi-digit whole number, a digit in one place represents ten times what it represents in the place to its right.",
   bktParams: { learningRate: 0.2, slip: 0.05, guess: 0.1 },
+  standards: ["4.NBT.A.1", "4.NBT.A.2"],
 };
 
 const PLACES = [
@@ -192,6 +193,7 @@ export const SKILL_COMPARE_MULTI_DIGIT: Skill = {
   description:
     "Compare two multi-digit numbers based on meanings of the digits in each place, using >, =, and < symbols.",
   bktParams: { learningRate: 0.2, slip: 0.05, guess: 0.33 },
+  standards: ["4.NBT.A.2"],
 };
 
 export const CompareMultiDigitGenerator: Generator = {
@@ -278,6 +280,7 @@ export const SKILL_ROUNDING: Skill = {
   description:
     "Use place value understanding to round multi-digit whole numbers to any place.",
   bktParams: { learningRate: 0.15, slip: 0.05, guess: 0.1 },
+  standards: ["4.NBT.A.3"],
 };
 
 export const RoundingGenerator: Generator = {
@@ -394,6 +397,7 @@ export const SKILL_ADD_SUB_MULTI: Skill = {
   description:
     "Fluently add and subtract multi-digit whole numbers using the standard algorithm.",
   bktParams: { learningRate: 0.1, slip: 0.05, guess: 0.05 },
+  standards: ["4.NBT.B.4"],
 };
 
 export const AddSubMultiGenerator: Generator = {
@@ -512,6 +516,7 @@ export const SKILL_MULT_1DIGIT: Skill = {
   description:
     "Multiply a whole number of up to four digits by a one-digit whole number.",
   bktParams: { learningRate: 0.15, slip: 0.1, guess: 0.1 },
+  standards: ["4.NBT.B.5"],
 };
 
 export const SKILL_MULT_2DIGIT: Skill = {
@@ -524,6 +529,7 @@ export const SKILL_MULT_2DIGIT: Skill = {
   description:
     "Multiply two two-digit numbers using strategies based on place value.",
   bktParams: { learningRate: 0.1, slip: 0.1, guess: 0.1 },
+  standards: ["4.NBT.B.5"],
 };
 
 export const MultiplicationGenerator: Generator = {
@@ -644,6 +650,7 @@ export const SKILL_DIV_REMAINDERS: Skill = {
   description:
     "Find whole-number quotients and remainders with up to four-digit dividends and one-digit divisors.",
   bktParams: { learningRate: 0.1, slip: 0.1, guess: 0.05 },
+  standards: ["4.NBT.B.6"],
 };
 
 export const DivisionGenerator: Generator = {

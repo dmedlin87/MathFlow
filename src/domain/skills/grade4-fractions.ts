@@ -56,6 +56,7 @@ export const SKILL_EQUIV_FRACTIONS: Skill = {
     slip: 0.05,
     guess: 0.25,
   },
+  standards: ["4.NF.A.1"],
 };
 
 export const EquivFractionGenerator: Generator = {
@@ -141,6 +142,7 @@ export const SKILL_ADD_LIKE_FRACTIONS: Skill = {
   misconceptions: ["add_denominators"],
   templates: ["T_ADD_LIKE_FRACTION"],
   description: "Add two fractions that share the same denominator.",
+  standards: ["4.NF.B.3.a"],
 };
 
 export const AddLikeFractionGenerator: Generator = {
@@ -217,6 +219,7 @@ export const SKILL_SUB_LIKE_FRACTIONS: Skill = {
     slip: 0.05,
     guess: 0.1,
   },
+  standards: ["4.NF.B.3.a"],
 };
 
 export const SubLikeFractionGenerator: Generator = {
@@ -301,6 +304,7 @@ export const SKILL_SIMPLIFY_FRACTIONS: Skill = {
     slip: 0.1,
     guess: 0.1,
   },
+  standards: ["4.NF.A.1"],
 };
 
 export const SimplifyFractionGenerator: Generator = {
@@ -371,6 +375,7 @@ export const SKILL_FRAC_MULT_WHOLE: Skill = {
   description:
     "Multiply a fraction by a whole number, understanding it as repeated addition.",
   bktParams: { learningRate: 0.15, slip: 0.1, guess: 0.1 },
+  standards: ["4.NF.B.4"],
 };
 
 export const FracMultWholeGenerator: Generator = {
@@ -447,6 +452,7 @@ export const SKILL_FRAC_COMPARE_UNLIKE: Skill = {
   description:
     "Compare two fractions with different numerators and different denominators.",
   bktParams: { learningRate: 0.1, slip: 0.1, guess: 0.25 },
+  standards: ["4.NF.A.2"],
 };
 
 export const FracCompareUnlikeGenerator: Generator = {
@@ -532,6 +538,7 @@ export const SKILL_ADD_TENTHS_HUNDREDTHS: Skill = {
   description:
     "Express a fraction with denominator 10 as an equivalent fraction with denominator 100, and use this technique to add two fractions with respective denominators 10 and 100.",
   bktParams: { learningRate: 0.15, slip: 0.1, guess: 0.1 },
+  standards: ["4.NF.C.5"],
 };
 
 export const AddTenthsHundredthsGenerator: Generator = {
@@ -631,6 +638,7 @@ export const SKILL_FRAC_DECOMPOSE: Skill = {
   description:
     "Decompose a fraction into a sum of fractions with the same denominator in more than one way.",
   bktParams: { learningRate: 0.15, slip: 0.1, guess: 0.1 },
+  standards: ["4.NF.B.3.b"],
 };
 
 export const FracDecomposeGenerator: Generator = {
@@ -703,6 +711,7 @@ export const SKILL_ADD_SUB_MIXED: Skill = {
   templates: ["T_ADD_SUB_MIXED"],
   description: "Add and subtract mixed numbers with like denominators.",
   bktParams: { learningRate: 0.1, slip: 0.1, guess: 0.1 },
+  standards: ["4.NF.B.3.c"],
 };
 
 export const AddSubMixedGenerator: Generator = {
