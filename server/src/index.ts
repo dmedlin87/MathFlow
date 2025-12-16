@@ -6,6 +6,7 @@ import { MockCritic, MockJudge } from "./factory/generators/fractions.js";
 import { EquivFractionGenerator } from "../../src/domain/skills/grade4-fractions.js";
 import { DomainGeneratorAdapter } from "./factory/adapters/DomainGeneratorAdapter.js";
 import { config } from "./config.js";
+import { rateLimiter } from "./middleware/rateLimit.js";
 
 // Initialize App
 const app = express();
@@ -14,6 +15,7 @@ const port = config.port;
 // Middleware
 app.use(cors());
 app.use(express.json());
+app.use(rateLimiter); // Security: Rate limiting to prevent DoS
 
 // Initialize Pipeline (Mock for now)
 const pipeline = new ContentPipeline(
