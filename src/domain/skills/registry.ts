@@ -66,6 +66,25 @@ import {
   SKILL_5_OA_ORDER_OPS,
   SKILL_5_OA_PATTERNS,
 } from "./grade5-oa";
+import {
+  SKILL_6_RP_RATIOS,
+  SKILL_6_RP_UNIT_RATE,
+} from "./grade6-rp";
+import {
+  SKILL_6_NS_DIV_FRACTIONS,
+  SKILL_6_NS_MULTI_DIGIT_DIV,
+} from "./grade6-ns";
+import {
+  SKILL_6_EE_EXPONENTS,
+  SKILL_6_EE_ONE_STEP_EQ,
+} from "./grade6-ee";
+import {
+  SKILL_6_G_AREA,
+} from "./grade6-geometry";
+import {
+  SKILL_6_SP_MEAN,
+} from "./grade6-stats";
+
 import type { Skill } from "../types";
 
 export const ALL_SKILLS_LIST: Skill[] = [
@@ -128,4 +147,22 @@ export const ALL_SKILLS_LIST: Skill[] = [
   // Grade 5 OA
   SKILL_5_OA_ORDER_OPS,
   SKILL_5_OA_PATTERNS,
+
+  // Grade 6 RP
+  SKILL_6_RP_RATIOS,
+  SKILL_6_RP_UNIT_RATE,
+
+  // Grade 6 NS
+  SKILL_6_NS_DIV_FRACTIONS,
+  SKILL_6_NS_MULTI_DIGIT_DIV,
+
+  // Grade 6 EE
+  SKILL_6_EE_EXPONENTS,
+  SKILL_6_EE_ONE_STEP_EQ,
+
+  // Grade 6 Geometry
+  SKILL_6_G_AREA,
+
+  // Grade 6 Stats
+  SKILL_6_SP_MEAN,
 ];
