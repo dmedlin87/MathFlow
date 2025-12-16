@@ -234,7 +234,7 @@ export const UnitConversionGenerator: Generator = {
         {
           id: "misc_bad_factor",
           error_tag: "wrong_conversion_factor",
-          trigger: { kind: "manual", value: "impossible" }, // Hard to predict exact wrong factor chosen
+          trigger: { kind: "predicate", value: "check_conversion_factor" },
           hint_ladder: [
             `Did you use the correct conversion factor? 1 ${rule.from} is ${rule.factor} ${rule.to}.`,
           ],
@@ -291,11 +291,13 @@ Is it Acute, Right, or Obtuse?`,
         answer_spec: {
           answer_mode: "final_only",
           input_type: "multiple_choice",
-          choices: ["Acute", "Right", "Obtuse"],
+          ui: {
+            choices: ["Acute", "Right", "Obtuse"],
+          },
         },
         solution_logic: {
           final_answer_canonical: classification,
-          final_answer_type: "string",
+          final_answer_type: "multiple_choice",
           steps: [
             {
               step_index: 1,
@@ -330,11 +332,13 @@ Is it Acute, Right, or Obtuse?`,
         answer_spec: {
           answer_mode: "final_only",
           input_type: "multiple_choice",
-          choices: ["Parallel", "Perpendicular", "Intersecting"],
+          ui: {
+            choices: ["Parallel", "Perpendicular", "Intersecting"],
+          },
         },
         solution_logic: {
           final_answer_canonical: term,
-          final_answer_type: "string",
+          final_answer_type: "multiple_choice",
           steps: [
             {
               step_index: 1,
@@ -391,11 +395,11 @@ export const SymmetryGenerator: Generator = {
       },
       answer_spec: {
         answer_mode: "final_only",
-        input_type: "string", // Accept "4", "2", "Infinite"
+        input_type: "integer", // Accept "4" as number
       },
       solution_logic: {
         final_answer_canonical: String(shape.lines),
-        final_answer_type: "string",
+        final_answer_type: "numeric",
         steps: [
           {
             step_index: 1,
@@ -568,7 +572,7 @@ export const LinePlotGenerator: Generator = {
     // Fractions: 1/2, 1/4, 3/4, maybe 1/8s for harder difficulty.
     // We will provide the list textually as a "Line Plot Data" block.
 
-    const den = 4; // Use 4ths for simplicity
+    // const den = 4; // Use 4ths for simplicity
     const values = ["1/4", "1/2", "3/4", "1"]; // 1/2 is 2/4, 1 is 4/4
     // Generate random counts for each value
     const counts = [
@@ -635,8 +639,8 @@ How many leaves were **${targetVal}** inch long?`,
       const count = counts[targetIdx];
       // 1/2 * count = count/2
       // Simplify if possible.
-      const totalNum = count;
-      const totalDen = 2;
+      // const totalNum = count;
+      // const totalDen = 2;
       // We'll ask for mixed number or improper fraction? Let's just ask for improper for simplicity or decimal?
       // "Enter as a fraction"
       // actually 1/2 * count. If count is even, integer.
@@ -750,12 +754,14 @@ export const ShapeClassificationGenerator: Generator = {
     // Riddles / Property checks
     const questions = [
       {
-        clues: "I have 4 sides. Opposite sides are parallel. All 4 angles are right angles. I am not a square (my sides are not all equal).",
+        clues:
+          "I have 4 sides. Opposite sides are parallel. All 4 angles are right angles. I am not a square (my sides are not all equal).",
         ans: "Rectangle",
         choices: ["Trapezoid", "Rhombus", "Rectangle", "Square"],
       },
       {
-        clues: "I have 3 sides. One of my angles is a right angle (90 degrees).",
+        clues:
+          "I have 3 sides. One of my angles is a right angle (90 degrees).",
         ans: "Right Triangle",
         choices: [
           "Acute Triangle",
@@ -770,7 +776,8 @@ export const ShapeClassificationGenerator: Generator = {
         choices: ["Parallelogram", "Trapezoid", "Rectangle", "Square"],
       },
       {
-        clues: "I have 4 sides. All my sides are the same length. Opposite sides are parallel. I do not necessarily have right angles.",
+        clues:
+          "I have 4 sides. All my sides are the same length. Opposite sides are parallel. I do not necessarily have right angles.",
         ans: "Rhombus",
         choices: ["Square", "Rhombus", "Rectangle", "Trapezoid"],
       },
@@ -788,11 +795,13 @@ export const ShapeClassificationGenerator: Generator = {
       answer_spec: {
         answer_mode: "final_only",
         input_type: "multiple_choice",
-        choices: q.choices,
+        ui: {
+          choices: q.choices,
+        },
       },
       solution_logic: {
         final_answer_canonical: q.ans,
-        final_answer_type: "string",
+        final_answer_type: "multiple_choice",
         steps: [
           {
             step_index: 1,
@@ -875,7 +884,7 @@ How much did she spend in total?`,
           {
             id: "misc_dec_align",
             error_tag: "decimal_alignment",
-            trigger: { kind: "manual", value: "check" }, // Hard to predict exact alignment error result
+            trigger: { kind: "predicate", value: "check_alignment" },
             hint_ladder: [
               "Make sure to line up the decimal points when adding.",
             ],
@@ -1004,3 +1013,128 @@ What is the measure of the angle in degrees?`,
 };
 
 engine.register(ProtractorGenerator);
+
+// --- 10. Data Graphs (Freq Tables, Bar Graphs) (4.DS.A) ---
+
+export const SKILL_DATA_GRAPHS: Skill = {
+  id: "meas_data_graphs",
+  name: "Interpret Frequency Tables and Bar Graphs",
+  gradeBand: "3-5",
+  prereqs: ["nbt_add_sub_multi"],
+  misconceptions: ["read_wrong_bar", "miscount_freq"],
+  templates: ["T_DATA_GRAPH"],
+  description:
+    "Analyze data found in frequency tables or bar graphs. Solve problems comparing categories.",
+  bktParams: { learningRate: 0.15, slip: 0.1, guess: 0.1 },
+};
+
+export const DataGraphGenerator: Generator = {
+  templateId: "T_DATA_GRAPH",
+  skillId: SKILL_DATA_GRAPHS.id,
+  generate: (difficulty: number, rng?: () => number): MathProblemItem => {
+    // Mode: Frequency Table vs Bar Graph
+    const mode = (rng ?? Math.random)() > 0.5 ? "FREQ_TABLE" : "BAR_GRAPH";
+
+    const categories = ["Red", "Blue", "Green", "Yellow"];
+    // Or maybe "Books", "Pencils", "Erasers"
+
+    // Generate data
+    const data = categories.map((c) => ({
+      name: c,
+      val: randomInt(2, 15, rng),
+    }));
+
+    // Shuffle categories for variety? Optional.
+
+    // Select questions:
+    // 1. Value of X?
+    // 2. Most/Least popular?
+    // 3. How many more X than Y?
+    // 4. Total?
+
+    const qType = randomInt(1, 3, rng); // 1=Value, 2=Compare, 3=Total
+
+    let stem = "";
+    let ans = "";
+    let logic = "";
+
+    // Build display string
+    let display = "";
+    if (mode === "FREQ_TABLE") {
+      display = "Color   | Count\n";
+      display += "--------|------\n";
+      data.forEach((d) => {
+        display += `${d.name.padEnd(8)}| ${d.val}\n`;
+      });
+    } else {
+      // ASCII Bar Graph
+      // Color | #### (4)
+      display = "Color   | Graph\n";
+      display += "--------|------\n";
+      data.forEach((d) => {
+        const bar = "#".repeat(d.val);
+        display += `${d.name.padEnd(8)}| ${bar} (${d.val})\n`;
+      });
+    }
+
+    if (qType === 1) {
+      const target = data[randomInt(0, data.length - 1, rng)];
+      stem = `Look at the ${
+        mode === "FREQ_TABLE" ? "Frequency Table" : "Bar Graph"
+      } below:\n\n${display}\nHow many items are **${target.name}**?`;
+      ans = String(target.val);
+      logic = `Find the row for ${target.name} and read the count: ${target.val}.`;
+    } else if (qType === 2) {
+      // Compare: How many more X than Y?
+      const idx1 = randomInt(0, data.length - 1, rng);
+      let idx2 = randomInt(0, data.length - 1, rng);
+      while (idx1 === idx2) idx2 = randomInt(0, data.length - 1, rng);
+      const d1 = data[idx1];
+      const d2 = data[idx2];
+
+      const more = d1.val > d2.val ? d1 : d2;
+      const less = d1.val > d2.val ? d2 : d1;
+      const diff = more.val - less.val;
+
+      stem = `Look at the graph:\n\n${display}\nHow many **more** ${more.name} items are there than ${less.name} items?`;
+      ans = String(diff);
+      logic = `${more.name} has ${more.val}. ${less.name} has ${less.val}. Difference: ${more.val} - ${less.val} = ${diff}.`;
+    } else {
+      // Total
+      const total = data.reduce((sum, d) => sum + d.val, 0);
+      stem = `Look at the graph:\n\n${display}\nWhat is the **total** number of items?`;
+      ans = String(total);
+      logic = `Add up all the counts: ${data
+        .map((d) => d.val)
+        .join(" + ")} = ${total}.`;
+    }
+
+    return {
+      meta: createMockProvenance(SKILL_DATA_GRAPHS.id, difficulty),
+      problem_content: {
+        stem,
+        format: "text", // Preformatted ASCII
+        variables: { mode, qType },
+      },
+      answer_spec: {
+        answer_mode: "final_only",
+        input_type: "integer",
+      },
+      solution_logic: {
+        final_answer_canonical: ans,
+        final_answer_type: "numeric",
+        steps: [
+          {
+            step_index: 1,
+            explanation: logic,
+            math: `Answer: ${ans}`,
+            answer: ans,
+          },
+        ],
+      },
+      misconceptions: [],
+    };
+  },
+};
+
+engine.register(DataGraphGenerator);

@@ -9,6 +9,10 @@ import {
   SKILL_EQUIV_FRACTIONS,
   SKILL_FRAC_MULT_WHOLE,
   SKILL_FRAC_COMPARE_UNLIKE,
+  FracDecomposeGenerator,
+  AddSubMixedGenerator,
+  SKILL_FRAC_DECOMPOSE,
+  SKILL_ADD_SUB_MIXED,
 } from "./grade4-fractions";
 import { gcd } from "../math-utils";
 
@@ -295,6 +299,43 @@ describe("grade4-fractions generators", () => {
       if (val1 > val2) expect(symbol).toBe(">");
       if (val1 < val2) expect(symbol).toBe("<");
       if (val1 === val2) expect(symbol).toBe("=");
+    });
+  });
+  describe("FracDecomposeGenerator", () => {
+    it("generates a decomposition problem", () => {
+      const item = FracDecomposeGenerator.generate(0.5);
+      expect(item.meta.skill_id).toBe(SKILL_FRAC_DECOMPOSE.id);
+      expect(item.problem_content.stem).toContain("Find the missing numerator");
+
+      const vars = item.problem_content.variables as {
+        num: number;
+        den: number;
+        part1: number;
+      };
+      const ans = Number(item.solution_logic.final_answer_canonical);
+      expect(vars.part1 + ans).toBe(vars.num);
+    });
+  });
+
+  describe("AddSubMixedGenerator", () => {
+    it("generates valid mixed number addition/subtraction", () => {
+      const item = AddSubMixedGenerator.generate(0.5);
+      expect(item.meta.skill_id).toBe(SKILL_ADD_SUB_MIXED.id);
+      expect(item.problem_content.stem).toContain("Compute");
+
+      const vars = item.problem_content.variables as any;
+      const { w1, num1, w2, num2, den, op } = vars;
+
+      const val1 = w1 + num1 / den;
+      const val2 = w2 + num2 / den;
+      const expected = op === "+" ? val1 + val2 : val1 - val2;
+
+      const [ansNum, ansDen] = item.solution_logic.final_answer_canonical
+        .split("/")
+        .map(Number);
+
+      const ansVal = ansNum / ansDen;
+      expect(Math.abs(ansVal - expected)).toBeLessThan(0.001);
     });
   });
 });

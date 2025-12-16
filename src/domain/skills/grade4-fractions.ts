@@ -560,12 +560,8 @@ export const AddTenthsHundredthsGenerator: Generator = {
     // "3/10 + 4/100 = 7/100" -> very common error
     const wrongNumNoConvert = num10 + num100;
 
-    const term1 = order
-      ? `\\frac{${num10}}{10}`
-      : `\\frac{${num100}}{100}`;
-    const term2 = order
-      ? `\\frac{${num100}}{100}`
-      : `\\frac{${num10}}{10}`;
+    const term1 = order ? `\\frac{${num10}}{10}` : `\\frac{${num100}}{100}`;
+    const term2 = order ? `\\frac{${num100}}{100}` : `\\frac{${num10}}{10}`;
 
     return {
       meta: createMockProvenance(SKILL_ADD_TENTHS_HUNDREDTHS.id, difficulty),
@@ -592,10 +588,10 @@ export const AddTenthsHundredthsGenerator: Generator = {
           },
           {
             step_index: 2,
-            explanation: `Now add the numerators: ${
+            explanation: `Now add the numerators: ${num10 * 10} + ${num100}.`,
+            math: `\\frac{${
               num10 * 10
-            } + ${num100}.`,
-            math: `\\frac{${num10 * 10}}{100} + \\frac{${num100}}{100} = \\frac{${correctNum}}{100}`,
+            }}{100} + \\frac{${num100}}{100} = \\frac{${correctNum}}{100}`,
             answer: `${correctNum}/${correctDen}`,
           },
         ],
@@ -622,3 +618,183 @@ export const AddTenthsHundredthsGenerator: Generator = {
 };
 
 engine.register(AddTenthsHundredthsGenerator);
+
+// --- 8. Decompose Fractions (4.NF.B.5) ---
+
+export const SKILL_FRAC_DECOMPOSE: Skill = {
+  id: "frac_decompose",
+  name: "Decompose Fractions",
+  gradeBand: "3-5",
+  prereqs: ["frac_add_like_01"],
+  misconceptions: ["sum_equals_product"],
+  templates: ["T_FRAC_DECOMPOSE"],
+  description:
+    "Decompose a fraction into a sum of fractions with the same denominator in more than one way.",
+  bktParams: { learningRate: 0.15, slip: 0.1, guess: 0.1 },
+};
+
+export const FracDecomposeGenerator: Generator = {
+  templateId: "T_FRAC_DECOMPOSE",
+  skillId: SKILL_FRAC_DECOMPOSE.id,
+  generate: (difficulty: number, rng?: () => number): MathProblemItem => {
+    // Concept: 5/8 = 2/8 + ?/8 OR 5/8 = 1/8 + 1/8 + ...
+    // Difficulty:
+    // < 0.5: Missing one part (5/8 = 2/8 + ?)
+    // >= 0.5: Decompose into sum of unit fractions (3/4 = 1/4 + 1/4 + 1/4) - Text input?
+    // Let's stick to "Find the missing part" for easier verification for now.
+
+    const den = randomInt(3, 12, rng);
+    const num = randomInt(2, den, rng); // At least 2 to allow decomposition
+
+    // Split num into two parts
+    const part1 = randomInt(1, num - 1, rng);
+    const part2 = num - part1;
+
+    return {
+      meta: createMockProvenance(SKILL_FRAC_DECOMPOSE.id, difficulty),
+      problem_content: {
+        stem: `Find the missing numerator to complete the decomposition:
+$$
+\\frac{${num}}{${den}} = \\frac{${part1}}{${den}} + \\frac{?}{${den}}
+$$`,
+        format: "latex",
+        variables: { num, den, part1 },
+      },
+      answer_spec: {
+        answer_mode: "final_only",
+        input_type: "integer",
+      },
+      solution_logic: {
+        final_answer_canonical: String(part2),
+        final_answer_type: "numeric",
+        steps: [
+          {
+            step_index: 1,
+            explanation: `The denominators are the same, so the specific parts must add up to the total numerator.`,
+            math: `${part1} + ? = ${num}`,
+            answer: String(part2),
+          },
+        ],
+      },
+      misconceptions: [
+        {
+          id: "misc_sum_prod",
+          error_tag: "sum_equals_product",
+          trigger: { kind: "exact_answer", value: String(part1 * num) }, // Placeholder logic
+          hint_ladder: [
+            "We are adding parts to make the whole, not multiplying.",
+          ],
+        },
+      ],
+    };
+  },
+};
+
+engine.register(FracDecomposeGenerator);
+
+// --- 9. Add/Subtract Mixed Numbers (4.NF.B.6) ---
+
+export const SKILL_ADD_SUB_MIXED: Skill = {
+  id: "frac_add_sub_mixed",
+  name: "Add/Subtract Mixed Numbers",
+  gradeBand: "3-5",
+  prereqs: ["frac_add_like_01", "fractions_sub_like"],
+  misconceptions: ["add_whole_only", "subtract_reversed"],
+  templates: ["T_ADD_SUB_MIXED"],
+  description: "Add and subtract mixed numbers with like denominators.",
+  bktParams: { learningRate: 0.1, slip: 0.1, guess: 0.1 },
+};
+
+export const AddSubMixedGenerator: Generator = {
+  templateId: "T_ADD_SUB_MIXED",
+  skillId: SKILL_ADD_SUB_MIXED.id,
+  generate: (difficulty: number, rng?: () => number): MathProblemItem => {
+    const isAddition = (rng ?? Math.random)() > 0.5;
+    const den = randomInt(3, 12, rng);
+
+    // Initial check to keep it simple (no carrying/borrowing for low difficulty)
+    const simple = difficulty < 0.5;
+
+    let w1 = randomInt(1, 5, rng);
+    let num1 = randomInt(1, den - 1, rng);
+    let w2 = randomInt(1, 4, rng);
+    let num2 = randomInt(1, den - 1, rng);
+
+    // For subtraction, ensure Term 1 > Term 2
+    if (!isAddition) {
+      // Rough value comparison
+      const v1 = w1 + num1 / den;
+      const v2 = w2 + num2 / den;
+      if (v1 < v2) {
+        // Swap
+        [w1, w2] = [w2, w1];
+        [num1, num2] = [num2, num1];
+      }
+      // If equal, bump w1
+      if (w1 === w2 && num1 === num2) {
+        w1++;
+      }
+      // Ensure num1 >= num2 for simple subtraction
+      if (simple && num1 < num2) {
+        // Adjust to avoid borrowing
+        num1 = num2 + 1;
+      }
+    } else {
+      // Addition
+      // Simple: sum of fractions < 1
+      if (simple && num1 + num2 >= den) {
+        // Reduce logic
+        num2 = den - num1 - 1;
+        if (num2 < 1) {
+          num1 = 1;
+          num2 = 1;
+        }
+      }
+    }
+
+    // Calculation
+    let targetNum = 0;
+    let targetDen = den;
+
+    // Calculate accurate result as improper fraction
+    const impNum1 = w1 * den + num1;
+    const impNum2 = w2 * den + num2;
+
+    let resImpNum = 0;
+    if (isAddition) resImpNum = impNum1 + impNum2;
+    else resImpNum = impNum1 - impNum2;
+
+    const op = isAddition ? "+" : "-";
+
+    return {
+      meta: createMockProvenance(SKILL_ADD_SUB_MIXED.id, difficulty),
+      problem_content: {
+        stem: `Compute:
+$$
+${w1}\\frac{${num1}}{${den}} ${op} ${w2}\\frac{${num2}}{${den}} = ?
+$$`,
+        format: "latex",
+        variables: { w1, num1, w2, num2, den, op },
+      },
+      answer_spec: {
+        answer_mode: "final_only",
+        input_type: "fraction", // User can enter improper e.g. 15/4
+      },
+      solution_logic: {
+        final_answer_canonical: `${resImpNum}/${den}`,
+        final_answer_type: "numeric",
+        steps: [
+          {
+            step_index: 1,
+            explanation: `Convert mixed numbers to improper fractions or operate on wholes and parts separately.`,
+            math: `${w1}\\frac{${num1}}{${den}} ${op} ${w2}\\frac{${num2}}{${den}} = \\frac{${resImpNum}}{${den}}`,
+            answer: `${resImpNum}/${den}`,
+          },
+        ],
+      },
+      misconceptions: [],
+    };
+  },
+};
+
+engine.register(AddSubMixedGenerator);

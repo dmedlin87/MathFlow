@@ -6,6 +6,8 @@ import {
   SKILL_FRAC_MULT_WHOLE,
   SKILL_FRAC_COMPARE_UNLIKE,
   SKILL_ADD_TENTHS_HUNDREDTHS,
+  SKILL_FRAC_DECOMPOSE,
+  SKILL_ADD_SUB_MIXED,
 } from "./grade4-fractions";
 import {
   SKILL_AREA_PERIMETER,
@@ -64,28 +66,15 @@ import {
   SKILL_5_GM_UNIT_CONV,
   SKILL_5_MD_LINE_PLOTS,
 } from "./grade5-meas-geo";
-import {
-  SKILL_5_OA_ORDER_OPS,
-  SKILL_5_OA_PATTERNS,
-} from "./grade5-oa";
-import {
-  SKILL_6_RP_RATIOS,
-  SKILL_6_RP_UNIT_RATE,
-} from "./grade6-rp";
+import { SKILL_5_OA_ORDER_OPS, SKILL_5_OA_PATTERNS } from "./grade5-oa";
+import { SKILL_6_RP_RATIOS, SKILL_6_RP_UNIT_RATE } from "./grade6-rp";
 import {
   SKILL_6_NS_DIV_FRACTIONS,
   SKILL_6_NS_MULTI_DIGIT_DIV,
 } from "./grade6-ns";
-import {
-  SKILL_6_EE_EXPONENTS,
-  SKILL_6_EE_ONE_STEP_EQ,
-} from "./grade6-ee";
-import {
-  SKILL_6_G_AREA,
-} from "./grade6-geometry";
-import {
-  SKILL_6_SP_MEAN,
-} from "./grade6-stats";
+import { SKILL_6_EE_EXPONENTS, SKILL_6_EE_ONE_STEP_EQ } from "./grade6-ee";
+import { SKILL_6_G_AREA } from "./grade6-geometry";
+import { SKILL_6_SP_MEAN } from "./grade6-stats";
 
 import type { Skill } from "../types";
 
@@ -98,6 +87,8 @@ export const ALL_SKILLS_LIST: Skill[] = [
   SKILL_FRAC_MULT_WHOLE,
   SKILL_FRAC_COMPARE_UNLIKE,
   SKILL_ADD_TENTHS_HUNDREDTHS,
+  SKILL_FRAC_DECOMPOSE,
+  SKILL_ADD_SUB_MIXED,
   SKILL_DECIMAL_NOTATION,
   SKILL_DECIMAL_COMPARE,
   SKILL_PLACE_VALUE,
