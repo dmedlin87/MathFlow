@@ -7,6 +7,7 @@ import { checkAnswer } from '../domain/math-utils';
 import { MathRenderer } from './MathRenderer';
 import { FractionVisualizer } from './FractionVisualizer';
 import { InteractiveSteps } from './InteractiveSteps';
+import { LoadingSpinner } from './LoadingSpinner';
 import { motion, AnimatePresence } from 'framer-motion';
 import { UniversalInput } from './inputs/UniversalInput'; // Import Universal Input
 import { ProblemVisualizer } from './visualizers/ProblemVisualizer'; // Import Visualizer
@@ -33,7 +34,7 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
     const [startTime, setStartTime] = useState<number>(0);
     const [attempts, setAttempts] = useState<number>(0);
     const [isDevMode, setIsDevMode] = useState(false);
-    const [isLoading, setIsLoading] = useState(false); // Add Loading State for Async Service
+    const [isLoading, setIsLoading] = useState(false); // Add Loading State for Async Service (Used in Submit Button)
     
     // Session State
     const [sessionStats, setSessionStats] = useState({ total: 0, correct: 0, masteredSkills: [] as string[] });
@@ -274,9 +275,18 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
                 {feedback !== 'correct' && currentItem.answer_spec.input_type !== 'multiple_choice' && (
                     <button
                         type="submit"
-                        className="w-full py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                        disabled={isLoading}
+                        aria-busy={isLoading}
+                        className={`w-full py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors flex justify-center items-center gap-2 ${isLoading ? 'opacity-80 cursor-wait' : ''}`}
                     >
-                        {feedback === 'incorrect' ? 'Try Again' : 'Check Answer'}
+                        {isLoading ? (
+                            <>
+                                <LoadingSpinner />
+                                <span>Checking...</span>
+                            </>
+                        ) : (
+                            feedback === 'incorrect' ? 'Try Again' : 'Check Answer'
+                        )}
                     </button>
                 )}
                 {/* For Multiple Choice, UniversalInput handles click-to-select, but we still might want a submit or auto-submit.
@@ -288,12 +298,20 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
                 {feedback !== 'correct' && currentItem.answer_spec.input_type === 'multiple_choice' && (
                     <button
                         type="submit"
-                        disabled={!userAnswer} // Disable if nothing selected
-                        className={`w-full py-3 rounded-lg font-semibold transition-colors ${
+                        disabled={!userAnswer || isLoading} // Disable if nothing selected or loading
+                        aria-busy={isLoading}
+                        className={`w-full py-3 rounded-lg font-semibold transition-colors flex justify-center items-center gap-2 ${
                              !userAnswer ? 'bg-gray-300 text-gray-500 cursor-not-allowed' : 'bg-blue-600 text-white hover:bg-blue-700'
-                        }`}
+                        } ${isLoading ? 'opacity-80 cursor-wait' : ''}`}
                     >
-                        {feedback === 'incorrect' ? 'Try Again' : 'Check Answer'}
+                        {isLoading ? (
+                            <>
+                                <LoadingSpinner />
+                                <span>Checking...</span>
+                            </>
+                        ) : (
+                            feedback === 'incorrect' ? 'Try Again' : 'Check Answer'
+                        )}
                     </button>
                 )}
 
