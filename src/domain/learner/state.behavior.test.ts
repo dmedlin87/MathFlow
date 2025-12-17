@@ -153,6 +153,63 @@ describe("learner/state behavior", () => {
       expect(newState.skillState["new_skill"]).toBeDefined();
       expect(newState.skillState["new_skill"].masteryProb).toBeGreaterThan(0.1);
     });
+
+    it("should NOT increase stability if mastery is not high enough (>0.8)", () => {
+        // Setup: Start with low mastery so that even after correct update, it stays below 0.8
+        const startState = createTestState({
+          skillState: {
+            test_skill: createSkillState({ masteryProb: 0.3, stability: 0 }),
+          },
+        });
+
+        const attempt = {
+          id: "att_1",
+          userId: "user_1",
+          itemId: "item_1",
+          skillId: "test_skill",
+          timestamp: FIXED_DATE.toISOString(),
+          isCorrect: true,
+          timeTakenMs: 1000,
+          attemptsCount: 1,
+          hintsUsed: 0,
+          errorTags: [],
+        };
+
+        const newState = updateLearnerState(startState, attempt);
+        // Mastery should increase
+        expect(newState.skillState["test_skill"].masteryProb).toBeGreaterThan(0.3);
+        // But assuming it didn't jump > 0.8, stability should remain 0
+        // (BKT update from 0.3 usually won't jump to 0.8 in one go with default params)
+        if (newState.skillState["test_skill"].masteryProb <= 0.8) {
+            expect(newState.skillState["test_skill"].stability).toBe(0);
+        }
+    });
+
+    it("should increase stability if mastery becomes high (>0.8)", () => {
+        // Setup: Start with high mastery
+        const startState = createTestState({
+          skillState: {
+            test_skill: createSkillState({ masteryProb: 0.85, stability: 0 }),
+          },
+        });
+
+        const attempt = {
+          id: "att_1",
+          userId: "user_1",
+          itemId: "item_1",
+          skillId: "test_skill",
+          timestamp: FIXED_DATE.toISOString(),
+          isCorrect: true,
+          timeTakenMs: 1000,
+          attemptsCount: 1,
+          hintsUsed: 0,
+          errorTags: [],
+        };
+
+        const newState = updateLearnerState(startState, attempt);
+        expect(newState.skillState["test_skill"].masteryProb).toBeGreaterThan(0.85);
+        expect(newState.skillState["test_skill"].stability).toBe(1);
+    });
   });
 
   describe("recommendNextItem", () => {
@@ -307,6 +364,52 @@ describe("learner/state behavior", () => {
         "frac_add_like_01",
         expect.any(Number)
       );
+    });
+
+    it("should skip skill if prerequisites are exactly at boundary (0.7)", async () => {
+        vi.spyOn(Math, "random").mockReturnValue(0.5);
+
+        const state = createTestState({
+          skillState: {
+            frac_equiv_01: createSkillState({ masteryProb: 0.7 }), // Boundary condition
+            frac_add_like_01: createSkillState({ masteryProb: 0.1 }),
+          },
+        });
+
+        const skills = [
+          { id: "frac_equiv_01", prereqs: [] },
+          { id: "frac_add_like_01", prereqs: ["frac_equiv_01"] },
+        ] as any;
+
+        await recommendNextItem(state, undefined, skills);
+
+        // Should NOT pick the dependent skill because prereq is not > 0.7
+        expect(engine.generate).toHaveBeenCalledWith(
+          "frac_equiv_01",
+          expect.any(Number)
+        );
+        expect(engine.generate).not.toHaveBeenCalledWith("frac_add_like_01", expect.any(Number));
+    });
+
+    it("should skip skill if prerequisite state is missing", async () => {
+        vi.spyOn(Math, "random").mockReturnValue(0.5);
+
+        const state = createTestState({
+          skillState: {
+            // frac_equiv_01 is missing from state
+            frac_add_like_01: createSkillState({ masteryProb: 0.1 }),
+          },
+        });
+
+        const skills = [
+          { id: "frac_equiv_01", prereqs: [] },
+          { id: "frac_add_like_01", prereqs: ["frac_equiv_01"] },
+        ] as any;
+
+        await recommendNextItem(state, undefined, skills);
+
+        // Should NOT pick dependent skill
+        expect(engine.generate).not.toHaveBeenCalledWith("frac_add_like_01", expect.any(Number));
     });
 
     it("should handle recommended skill not being present in state (default difficulty)", async () => {

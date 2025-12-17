@@ -141,6 +141,26 @@ describe("Engine Behavior", () => {
       expect(item.meta.id).toBe("local_item");
     });
 
+    it("returns local item when /factory/run API returns 500 error", async () => {
+        // 1. /problems returns empty []
+        mockFetch.mockResolvedValueOnce({
+          ok: true,
+          json: async () => [],
+        });
+
+        // 2. /factory/run returns 500
+        mockFetch.mockResolvedValueOnce({
+          ok: false,
+          status: 500,
+          statusText: "Internal Server Error",
+          json: async () => ({ error: "fail" }),
+        });
+
+        const item = await testEngine.generate(SKILL_ID, 0.5);
+
+        expect(item.meta.id).toBe("local_item");
+      });
+
     it("returns factory item when /problems is empty but /factory/run succeeds", async () => {
         // 1. /problems empty
         mockFetch.mockResolvedValueOnce({
