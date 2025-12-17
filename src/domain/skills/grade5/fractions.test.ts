@@ -65,6 +65,7 @@ describe("Grade 5 NF Domain (Deterministic)", () => {
       ]);
 
       const item = FracDivGenerator.generate(0.5, rng);
+      expect(item.meta.skill_id).toBe(SKILL_5_NF_FRAC_DIV.id);
       expect(item.solution_logic.final_answer_canonical).toBe("3/7");
     });
   });
@@ -85,6 +86,7 @@ describe("Grade 5 NF Domain (Deterministic)", () => {
       ]);
 
       const item = ScalingGenerator.generate(0.5, rng);
+      expect(item.meta.skill_id).toBe(SKILL_5_NF_SCALING.id);
       expect(item.solution_logic.final_answer_canonical).toBe("<");
     });
   });
@@ -106,6 +108,7 @@ describe("Grade 5 NF Domain (Deterministic)", () => {
       ]);
 
       const item = MultFracGenerator.generate(0.5, rng);
+      expect(item.meta.skill_id).toBe(SKILL_5_NF_MULT_FRAC.id);
       expect(item.solution_logic.final_answer_canonical).toBe("1/25");
     });
   });
@@ -125,6 +128,7 @@ describe("Grade 5 NF Domain (Deterministic)", () => {
       ]);
 
       const item = DivFracGenerator.generate(0.5, rng);
+      expect(item.meta.skill_id).toBe(SKILL_5_NF_DIV_FRAC.id);
       expect(item.solution_logic.final_answer_canonical).toBe("1/20");
     });
   });
@@ -249,6 +253,7 @@ describe("Grade 5 NF Domain (Deterministic)", () => {
       ]);
 
       const item = DivFracGenerator.generate(0.5, rng);
+      expect(item.meta.skill_id).toBe(SKILL_5_NF_DIV_FRAC.id);
       expect(item.solution_logic.final_answer_canonical).toBe("4");
     });
   });
@@ -294,6 +299,7 @@ describe("Grade 5 NF Domain (Deterministic)", () => {
       ]);
 
       const item = ScalingGenerator.generate(0.5, rng);
+      expect(item.meta.skill_id).toBe(SKILL_5_NF_SCALING.id);
       expect(item.solution_logic.final_answer_canonical).toBe(">");
     });
   });
