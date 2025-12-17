@@ -280,7 +280,7 @@ export const SKILL_6_NS_GCF_LCM: Skill = {
   id: "6.ns.gcf_lcm",
   name: "GCF and LCM",
   gradeBand: "6-8",
-  prereqs: ["4.oa.factors_multiples"],
+  prereqs: ["oa_factors_multiples"],
   misconceptions: ["confuse_gcf_lcm"],
   templates: ["T_GCF_LCM"],
   description: "Find greatest common factor and least common multiple",

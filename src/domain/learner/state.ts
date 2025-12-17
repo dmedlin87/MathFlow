@@ -5,9 +5,13 @@ import { ALL_SKILLS_LIST } from "../skills/registry";
 // Scheduler uses the central registry
 const ALL_SKILLS = ALL_SKILLS_LIST;
 
-export function createInitialState(userId: string): LearnerState {
+export function createInitialState(
+  userId: string,
+  gradeLevel?: number
+): LearnerState {
   const state: LearnerState = {
     userId,
+    gradeLevel,
     skillState: {},
   };
   // Initialize with 0 mastery
@@ -90,6 +94,44 @@ export function updateLearnerState(
   return newState;
 }
 
+// Helper: Check if skill is allowed for grade level
+function isSkillAllowedForGrade(skill: Skill, grade?: number): boolean {
+  if (grade === undefined) return true; // No grade set, allow all
+
+  // Map bands to max grade
+  const bandMax: Record<string, number> = {
+    "K-2": 2,
+    "3-5": 5,
+    "6-8": 8,
+    "9-12": 12,
+  };
+
+  const skillMax = bandMax[skill.gradeBand] || 12;
+
+  // Allow if user grade is within or above the band?
+  // Actually, usually you want to allow skills from *current* and *previous* bands.
+  // But you might want to hide skills from *future* bands.
+  // e.g. Grade 4 student (in 3-5) should see K-2 and 3-5. Should NOT see 6-8.
+  // The logic is: Skill Band Min Grade <= User Grade?
+  // Let's rely on the Band Max.
+  // "6-8" implies 6, 7, 8.
+  // "3-5" implies 3, 4, 5.
+  // A Grade 4 student should see "3-5".
+  // A Grade 4 student should NOT see "6-8".
+  // So: If user grade < Band Min, block it.
+
+  const bandMin: Record<string, number> = {
+    "K-2": 0,
+    "3-5": 3,
+    "6-8": 6,
+    "9-12": 9,
+  };
+
+  const skillMin = bandMin[skill.gradeBand] || 0;
+
+  return grade >= skillMin;
+}
+
 export async function recommendNextItem(
   state: LearnerState,
   rng: () => number = Math.random,
@@ -97,15 +139,17 @@ export async function recommendNextItem(
 ): Promise<MathProblemItem> {
   const now = new Date();
   // Re-verify ALL_SKILLS against state to ensure no missing entries (e.g. if loaded from storage)
-  const candidateSkills = skills.map((skill) => {
-    const s = state.skillState[skill.id] || {
-      masteryProb: 0.1,
-      stability: 0,
-      lastPracticed: new Date().toISOString(),
-      misconceptions: [],
-    };
-    return { skill, state: s };
-  });
+  const candidateSkills = skills
+    .map((skill) => {
+      const s = state.skillState[skill.id] || {
+        masteryProb: 0.1,
+        stability: 0,
+        lastPracticed: new Date().toISOString(),
+        misconceptions: [],
+      };
+      return { skill, state: s };
+    })
+    .filter((c) => isSkillAllowedForGrade(c.skill, state.gradeLevel));
 
   // 1. Identify "Review Due" items
   const reviewDue = candidateSkills.filter((c) => {
@@ -137,15 +181,22 @@ export async function recommendNextItem(
     return true;
   });
 
-  // Mix strategy: 30% Review, 70% New Learning (if available)
+  // Mix strategy: 30% Review (Adaptive), 70% New Learning (if available)
   let targetSkill;
   const roll = rng();
+
+  // Adaptive Review Probability
+  // If queue is huge (>5), bump review probability
+  let reviewProb = 0.3;
+  if (reviewDue.length > 5) reviewProb = 0.6;
+  if (reviewDue.length > 10) reviewProb = 0.8;
 
   if (candidateSkills.length === 0) {
     throw new Error("No skills available to recommend");
   }
 
-  if (reviewDue.length > 0 && roll < 0.3) {
+  // Prioritize based on queues
+  if (reviewDue.length > 0 && (roll < reviewProb || learningQueue.length === 0)) {
     // Pick random review item
     targetSkill = reviewDue[Math.floor(rng() * reviewDue.length)].skill;
   } else if (learningQueue.length > 0) {
@@ -154,7 +205,7 @@ export async function recommendNextItem(
       (a, b) => a.state.masteryProb - b.state.masteryProb
     )[0].skill;
   } else {
-    // Fallback: Just random skill
+    // Fallback: Just random skill (or forced review if nothing else)
     targetSkill =
       candidateSkills[Math.floor(rng() * candidateSkills.length)].skill;
   }

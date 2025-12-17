@@ -154,6 +154,7 @@ export interface SkillState {
 
 export interface LearnerState {
   userId: string;
+  gradeLevel?: number; // Optional grade level (1-12)
   skillState: {
     [skillId: string]: SkillState;
   };

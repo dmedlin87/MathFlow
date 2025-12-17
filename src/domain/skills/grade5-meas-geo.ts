@@ -44,7 +44,7 @@ export const SKILL_5_GM_VOLUME_CUBES: Skill = {
   id: "5.gm.volume_cubes",
   name: "Volume with Unit Cubes",
   gradeBand: "3-5",
-  prereqs: ["nbt_mult_whole"],
+  prereqs: ["5.nbt.mult_whole"],
   misconceptions: ["surface_area_confusion"],
   templates: ["T_VOLUME_CUBES"],
   description:

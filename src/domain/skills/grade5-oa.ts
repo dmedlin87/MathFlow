@@ -44,7 +44,7 @@ export const SKILL_5_OA_ORDER_OPS: Skill = {
   id: "5.oa.order_ops",
   name: "Order of Operations & Expressions",
   gradeBand: "3-5",
-  prereqs: ["nbt_mult_whole", "nbt_div_whole"],
+  prereqs: ["5.nbt.mult_whole", "5.nbt.div_whole"],
   misconceptions: [
     "left_to_right_add_first",
     "parentheses_ignore",
@@ -224,7 +224,7 @@ export const SKILL_5_OA_PATTERNS: Skill = {
   id: "5.oa.patterns",
   name: "Numerical Patterns and Relationships",
   gradeBand: "3-5",
-  prereqs: ["nbt_mult_whole"],
+  prereqs: ["5.nbt.mult_whole"],
   misconceptions: ["swapped_rule"],
   templates: ["T_PATTERNS"],
   description:
