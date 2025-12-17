@@ -23,9 +23,9 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">84.48% </span>
+                <span class="strong">87.93% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>49/58</span>
+                <span class='fraction'>51/58</span>
             </div>
         
             
@@ -44,9 +44,9 @@
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">85.96% </span>
+                <span class="strong">89.47% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>49/57</span>
+                <span class='fraction'>51/57</span>
             </div>
         
             
@@ -418,7 +418,7 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
-<span class="cline-any cline-yes">11x</span>
+<span class="cline-any cline-yes">13x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">4x</span>
@@ -589,38 +589,38 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -879,7 +879,7 @@ export const AreaPolyGenerator: Generator = {
         },
         answer_spec: {
           answer_mode: "final_only",
-          input_type: isInt ? "integer" : <span class="branch-1 cbranch-no" title="branch not covered" >"decimal",</span>
+          input_type: isInt ? <span class="branch-0 cbranch-no" title="branch not covered" >"integer" : "</span>decimal",
         },
         solution_logic: {
           final_answer_canonical: String(area),
@@ -938,10 +938,10 @@ export const SurfaceAreaGenerator: Generator = {
 &nbsp;
     const isCube = (rng ?? Math.random)() &lt; 0.4;
 &nbsp;
-    if (isCube) {
-      const s = randomInt(2, 10, rng);
-      const sa = 6 * s * s;
-      return {
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (isCube) {
+      const s = <span class="cstat-no" title="statement not covered" >randomInt(2, 10, rng);</span>
+      const sa = <span class="cstat-no" title="statement not covered" >6 * s * s;</span>
+<span class="cstat-no" title="statement not covered" >      return {</span>
         meta: createMockProvenance(SKILL_6_G_SURFACE_AREA.id, difficulty),
         problem_content: {
           stem: `Find the surface area of a cube with side length ${s} units.`,
@@ -964,13 +964,13 @@ export const SurfaceAreaGenerator: Generator = {
         },
         misconceptions: [],
       };
-    } else <span class="missing-if-branch" title="else path not taken" >E</span>{
-      const l = <span class="cstat-no" title="statement not covered" >randomInt(2, 10, rng);</span>
-      const w = <span class="cstat-no" title="statement not covered" >randomInt(2, 10, rng);</span>
-      const h = <span class="cstat-no" title="statement not covered" >randomInt(2, 10, rng);</span>
-      const sa = <span class="cstat-no" title="statement not covered" >2 * (l * w + l * h + w * h);</span>
+    } else {
+      const l = randomInt(2, 10, rng);
+      const w = randomInt(2, 10, rng);
+      const h = randomInt(2, 10, rng);
+      const sa = 2 * (l * w + l * h + w * h);
 &nbsp;
-<span class="cstat-no" title="statement not covered" >      return {</span>
+      return {
         meta: createMockProvenance(SKILL_6_G_SURFACE_AREA.id, difficulty),
         problem_content: {
           stem: `Find the surface area of a rectangular prism with length=${l}, width=${w}, and height=${h}.`,
@@ -1120,7 +1120,7 @@ engine.register(PolygonsCoordGenerator);
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-17T00:02:49.358Z
+                at 2025-12-17T02:01:16.193Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

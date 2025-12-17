@@ -7,21 +7,44 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Dependencies
 node_modules
+.pnpm-store
+
+# Testing
+coverage
+coverage-final.json
+test-results/
+.nyc_output
+
+# Build
 dist
 dist-ssr
-*.local
-.env
-.env.*
-!.env.example
+*.tsbuildinfo
 
-# Editor directories and files
+# OS
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# IDEs
+.idea
 .vscode/*
 !.vscode/extensions.json
-.idea
-.DS_Store
+!.vscode/launch.json
+!.vscode/settings.json
+!.vscode/tasks.json
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# Environment Variables
+.env
+.env.*
+!.env.example
+*.local
+
+# Misc
+.cache

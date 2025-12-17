@@ -998,41 +998,41 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1215,10 +1215,10 @@ export const RatiosGenerator: Generator = {
       const s2 = subjects[randomInt(0, 3, rng) * 2 + 1];
 &nbsp;
       const askForOrder = (rng ?? Math.random)() &lt; 0.5;
-      const targetS1 = askForOrder ? s1 : <span class="branch-1 cbranch-no" title="branch not covered" >s2;</span>
-      const targetS2 = askForOrder ? s2 : <span class="branch-1 cbranch-no" title="branch not covered" >s1;</span>
-      const val1 = askForOrder ? a : <span class="branch-1 cbranch-no" title="branch not covered" >b;</span>
-      const val2 = askForOrder ? b : <span class="branch-1 cbranch-no" title="branch not covered" >a;</span>
+      const targetS1 = askForOrder ? <span class="branch-0 cbranch-no" title="branch not covered" >s1 : s</span>2;
+      const targetS2 = askForOrder ? <span class="branch-0 cbranch-no" title="branch not covered" >s2 : s</span>1;
+      const val1 = askForOrder ? <span class="branch-0 cbranch-no" title="branch not covered" >a : b</span>;
+      const val2 = askForOrder ? <span class="branch-0 cbranch-no" title="branch not covered" >b : a</span>;
 &nbsp;
       return {
         meta: createMockProvenance(SKILL_6_RP_RATIOS.id, difficulty),
@@ -1529,12 +1529,12 @@ export const RatioTablesGenerator: Generator = {
     // ? | b*mult1
     // a*mult2 | ?
 &nbsp;
-    const missingType = (rng ?? Math.random)() &lt; 0.5 ? 1 : <span class="branch-1 cbranch-no" title="branch not covered" >2;</span>
+    const missingType = (rng ?? Math.random)() &lt; 0.5 ? <span class="branch-0 cbranch-no" title="branch not covered" >1 : 2</span>;
 &nbsp;
-    if (missingType === 1) {
-      const targetB = b * mult1;
-      const answer = a * mult1;
-      return {
+    <span class="missing-if-branch" title="if path not taken" >I</span>if (missingType === 1) {
+      const targetB = <span class="cstat-no" title="statement not covered" >b * mult1;</span>
+      const answer = <span class="cstat-no" title="statement not covered" >a * mult1;</span>
+<span class="cstat-no" title="statement not covered" >      return {</span>
         meta: createMockProvenance(SKILL_6_RP_RATIO_TABLES.id, difficulty),
         problem_content: {
           stem: `Complete the ratio table.
@@ -1563,10 +1563,10 @@ export const RatioTablesGenerator: Generator = {
         },
         misconceptions: [],
       };
-    } else <span class="missing-if-branch" title="else path not taken" >E</span>{
-      const targetA = <span class="cstat-no" title="statement not covered" >a * mult2;</span>
-      const answer = <span class="cstat-no" title="statement not covered" >b * mult2;</span>
-<span class="cstat-no" title="statement not covered" >      return {</span>
+    } else {
+      const targetA = a * mult2;
+      const answer = b * mult2;
+      return {
         meta: createMockProvenance(SKILL_6_RP_RATIO_TABLES.id, difficulty),
         problem_content: {
           stem: `Complete the ratio table.
@@ -1672,7 +1672,7 @@ engine.register(UnitConversionRPGenerator);
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-17T00:02:49.358Z
+                at 2025-12-17T02:01:16.193Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

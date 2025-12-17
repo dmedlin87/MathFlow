@@ -1,29 +1,81 @@
 
+> mathflow@0.0.0 test:coverage
+> vitest run --coverage
+
+
 [1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/dmedl/Projects/MathFlow[39m
       [2mCoverage enabled with [22m[33mv8[39m
 
- [32mΓ£ô[39m src/domain/generator/engine.behavior.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 4[2mms[22m[39m
- [32mΓ£ô[39m src/domain/learner/scheduler.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 4[2mms[22m[39m
- [32mΓ£ô[39m src/domain/generator/engine.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 4[2mms[22m[39m
- [32mΓ£ô[39m src/domain/learner/state.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 4[2mms[22m[39m
- [32mΓ£ô[39m src/domain/learner/state.behavior.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32mΓ£ô[39m src/domain/learner/misconceptionEvaluator.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32mΓ£ô[39m server/src/middleware/rateLimit.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+ [32mΓ£ô[39m src/services/LearnerService.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32mΓ£ô[39m src/domain/math-utils.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32mΓ£ô[39m src/domain/generator/engine.behavior.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32mΓ£ô[39m src/domain/skills/grade6-stats.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32mΓ£ô[39m src/domain/skills/grade4-meas-geo.test.ts [2m([22m[2m27 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+ [32mΓ£ô[39m src/domain/skills/grade4-fractions.test.ts [2m([22m[2m23 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+ [32mΓ£ô[39m src/domain/generator/engine.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32mΓ£ô[39m src/domain/skills/grade4-nbt.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 22[2mms[22m[39m
+ [32mΓ£ô[39m src/domain/skills/grade4-oa.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32mΓ£ô[39m src/domain/skills/grade6-ee.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32mΓ£ô[39m src/domain/skills/grade5-oa.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32mΓ£ô[39m src/domain/skills/grade5-fractions.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32mΓ£ô[39m src/domain/skills/grade5-meas-geo.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32mΓ£ô[39m src/domain/skills/grade5-nbt.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32mΓ£ô[39m server/src/factory/pipeline.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32mΓ£ô[39m src/domain/skills/grade6-rp.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32mΓ£ô[39m src/domain/skills/grade6-geometry.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32mΓ£ô[39m src/domain/skills/grade6-ns.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32mΓ£ô[39m src/domain/learner/state.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [32mΓ£ô[39m src/domain/learner/scheduler.hardening.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32mΓ£ô[39m src/domain/learner/state.behavior.test.ts [2m([22m[2m15 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+ [32mΓ£ô[39m src/domain/skills/grade6-stats.behavior.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32mΓ£ô[39m src/domain/skills/grade4-decimals.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32mΓ£ô[39m src/domain/skills/grade5-oa.jail.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 3[2mms[22m[39m
+ [32mΓ£ô[39m src/domain/validation.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 3[2mms[22m[39m
 
-[2m Test Files [22m [1m[32m5 passed[39m[22m[90m (5)[39m
-[2m      Tests [22m [1m[32m27 passed[39m[22m[90m (27)[39m
-[2m   Start at [22m 01:00:55
-[2m   Duration [22m 486ms[2m (transform 330ms, setup 776ms, import 335ms, tests 26ms, environment 1ms)[22m
+[2m Test Files [22m [1m[32m27 passed[39m[22m[90m (27)[39m
+[2m      Tests [22m [1m[32m222 passed[39m[22m[90m (222)[39m
+[2m   Start at [22m 20:01:14
+[2m   Duration [22m 1.69s[2m (transform 6.19s, setup 7.24s, import 7.36s, tests 248ms, environment 3ms)[22m
 
 [34m % [39m[2mCoverage report from [22m[33mv8[39m
 -------------------|---------|----------|---------|---------|-------------------
 File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 -------------------|---------|----------|---------|---------|-------------------
-All files          |   98.05 |    94.73 |      95 |   98.94 |                   
- domain/generator  |     100 |      100 |     100 |     100 |                   
-  engine.ts        |     100 |      100 |     100 |     100 |                   
- domain/learner    |   96.61 |    92.85 |   88.88 |   98.18 |                   
-  state.ts         |   96.61 |    92.85 |   88.88 |   98.18 | 127               
- domain/skills     |     100 |      100 |     100 |     100 |                   
-  ...-fractions.ts |     100 |      100 |     100 |     100 |                   
- test              |     100 |      100 |     100 |     100 |                   
+All files          |   88.72 |    76.58 |   95.85 |   89.71 |                   
+ ...er/src/factory |     100 |      100 |     100 |     100 |                   
+  pipeline.ts      |     100 |      100 |     100 |     100 |                   
+ ...ory/generators |     100 |      100 |     100 |     100 |                   
+  fractions.ts     |     100 |      100 |     100 |     100 |                   
+ ...src/middleware |   96.55 |    91.66 |   83.33 |     100 |                   
+  rateLimit.ts     |   96.55 |    91.66 |   83.33 |     100 | 23                
+ src/domain        |   92.15 |    83.33 |     100 |   91.48 |                   
+  math-utils.ts    |     100 |     87.5 |     100 |     100 | 29-44             
+  validation.ts    |      84 |       80 |     100 |      84 | 29,43,48,55       
+ ...main/generator |     100 |    80.95 |     100 |     100 |                   
+  engine.ts        |     100 |    80.95 |     100 |     100 | 41,53,81          
+ ...domain/learner |     100 |      100 |     100 |     100 |                   
+  ...nEvaluator.ts |     100 |      100 |     100 |     100 |                   
+  state.ts         |     100 |      100 |     100 |     100 |                   
+ src/domain/skills |   87.23 |    73.15 |   95.39 |   88.34 |                   
+  ...4-decimals.ts |     100 |    86.04 |     100 |     100 | 16,170-192        
+  ...-fractions.ts |   94.61 |    80.85 |     100 |   95.27 | 472,749,756-759   
+  ...4-meas-geo.ts |   96.29 |    77.41 |     100 |   98.85 | 1113-1119         
+  grade4-nbt.ts    |   79.48 |     55.4 |   81.81 |   83.09 | ...37,303-304,546 
+  grade4-oa.ts     |   89.53 |    65.95 |     100 |   88.88 | ...84,249-250,258 
+  ...-fractions.ts |   62.68 |    57.14 |   88.88 |   63.07 | 72-73,502-681     
+  ...5-meas-geo.ts |    64.7 |    66.66 |   63.63 |   68.75 | 430-499           
+  grade5-nbt.ts    |   90.76 |    88.37 |     100 |   90.75 | ...65-369,453,758 
+  grade5-oa.ts     |   94.82 |    76.19 |     100 |   94.73 | 100-102           
+  grade6-ee.ts     |   82.08 |    62.96 |     100 |   82.08 | ...40,167,219-224 
+  ...6-geometry.ts |   87.93 |    56.52 |     100 |   89.47 | 66-70,177-179     
+  grade6-ns.ts     |    92.8 |    63.49 |     100 |   95.83 | ...12,520,525-526 
+  grade6-rp.ts     |   77.92 |    65.85 |     100 |   77.92 | ...34-338,402-404 
+  grade6-stats.ts  |     100 |    90.19 |     100 |     100 | ...68,194,321,405 
+  registry.ts      |     100 |      100 |     100 |     100 |                   
+ src/services      |     100 |      100 |     100 |     100 |                   
+  ...nerService.ts |     100 |      100 |     100 |     100 |                   
+ src/test          |     100 |      100 |     100 |     100 |                   
   testHelpers.ts   |     100 |      100 |     100 |     100 |                   
 -------------------|---------|----------|---------|---------|-------------------
