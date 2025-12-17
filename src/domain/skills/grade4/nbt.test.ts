@@ -12,7 +12,7 @@ import {
   SKILL_MULT_1DIGIT,
   SKILL_MULT_2DIGIT,
   SKILL_DIV_REMAINDERS,
-} from "./grade4-nbt";
+} from "./nbt";
 
 describe("grade4-nbt generator", () => {
   // Helper to create a controllable RNG

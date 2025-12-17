@@ -12,6 +12,46 @@ export function getFactors(n: number): number[] {
   return factors;
 }
 
+// Helper to get random integer
+export function randomInt(
+  min: number,
+  max: number,
+  rng: () => number = Math.random
+): number {
+  return Math.floor(rng() * (max - min + 1)) + min;
+}
+
+// Mock provenance helper
+export const createProblemMeta = (
+  skillId: string,
+  diff: number
+): MathProblemItem["meta"] => ({
+  id: `it_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+  version: 1,
+  skill_id: skillId,
+  difficulty: Math.ceil(diff * 5) || 1,
+  created_at: new Date().toISOString(),
+  verified_at: new Date().toISOString(),
+  status: "VERIFIED",
+  provenance: {
+    generator_model: "v0-rule-based-engine",
+    critic_model: "v0-simulation",
+    judge_model: "v0-simulation",
+    verifier: { type: "numeric", passed: true },
+    attempt: 1,
+  },
+  verification_report: {
+    rubric_scores: {
+      solvability: 1,
+      ambiguity: 0,
+      procedural_correctness: 1,
+      pedagogical_alignment: 1,
+    },
+    underspecified: false,
+    issues: [],
+  },
+});
+
 export function checkAnswer(
   userAnswer: string,
   item: MathProblemItem

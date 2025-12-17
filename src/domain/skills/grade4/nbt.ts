@@ -1,5 +1,5 @@
-import type { Skill, Generator, MathProblemItem } from "../types";
-import { engine } from "../generator/engine";
+import type { Skill, Generator, MathProblemItem } from "../../types";
+import { engine } from "../../generator/engine";
 
 // Helper to get random integer between min and max (inclusive)
 const randomInt = (min: number, max: number, rng: () => number = Math.random) =>

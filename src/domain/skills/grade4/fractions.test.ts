@@ -16,8 +16,8 @@ import {
   SKILL_ADD_SUB_MIXED,
   AddTenthsHundredthsGenerator,
   SKILL_ADD_TENTHS_HUNDREDTHS,
-} from "./grade4-fractions";
-import { gcd } from "../math-utils";
+} from "./fractions";
+import { gcd } from "../../math-utils";
 
 describe("grade4-fractions generators", () => {
   // Helper to create a controllable RNG

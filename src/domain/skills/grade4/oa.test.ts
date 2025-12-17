@@ -8,7 +8,7 @@ import {
   SKILL_PATTERNS,
   SKILL_MULT_COMPARE,
   SKILL_MULTI_STEP_WORD_PROBLEMS,
-} from "./grade4-oa";
+} from "./oa";
 
 describe("grade4-oa generator", () => {
   // Helper to create a controllable RNG
@@ -114,17 +114,17 @@ describe("grade4-oa generator", () => {
     });
 
     it("generates remainder interpretation problems", () => {
-       const rng = createMockRng([0.2]); // < 0.5 -> REMAINDER
-       const item = MultiStepWordGen.generate(0.5, rng);
+      const rng = createMockRng([0.2]); // < 0.5 -> REMAINDER
+      const item = MultiStepWordGen.generate(0.5, rng);
 
-       expect(item.problem_content.stem).toContain("vans needed");
-       const vars = item.problem_content.variables as {
+      expect(item.problem_content.stem).toContain("vans needed");
+      const vars = item.problem_content.variables as {
         total: number;
         perGroup: number;
-       };
+      };
 
-       const expected = Math.ceil(vars.total / vars.perGroup);
-       expect(Number(item.solution_logic.final_answer_canonical)).toBe(expected);
+      const expected = Math.ceil(vars.total / vars.perGroup);
+      expect(Number(item.solution_logic.final_answer_canonical)).toBe(expected);
     });
   });
 });

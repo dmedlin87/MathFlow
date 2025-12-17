@@ -8,22 +8,24 @@ import {
   SKILL_ADD_TENTHS_HUNDREDTHS,
   SKILL_FRAC_DECOMPOSE,
   SKILL_ADD_SUB_MIXED,
-} from "./grade4-fractions";
+} from "./grade4/fractions";
 import {
   SKILL_AREA_PERIMETER,
   SKILL_UNIT_CONVERSION,
-  SKILL_GEO_LINES_ANGLES,
-  SKILL_SYMMETRY,
   SKILL_ANGLES_MEASURE,
-  SKILL_LINE_PLOTS,
-  SKILL_SHAPE_CLASSIFICATION,
   SKILL_MONEY_WORD_PROBLEMS,
   SKILL_PROTRACTOR_MEASURE,
-} from "./grade4-meas-geo";
+} from "./grade4/measurement";
+import {
+  SKILL_GEO_LINES_ANGLES,
+  SKILL_SYMMETRY,
+  SKILL_SHAPE_CLASSIFICATION,
+} from "./grade4/geometry";
+import { SKILL_LINE_PLOTS } from "./grade4/data";
 import {
   SKILL_DECIMAL_NOTATION,
   SKILL_DECIMAL_COMPARE,
-} from "./grade4-decimals";
+} from "./grade4/decimals";
 import {
   SKILL_PLACE_VALUE,
   SKILL_COMPARE_MULTI_DIGIT,
@@ -32,13 +34,13 @@ import {
   SKILL_MULT_1DIGIT,
   SKILL_MULT_2DIGIT,
   SKILL_DIV_REMAINDERS,
-} from "./grade4-nbt";
+} from "./grade4/nbt";
 import {
   SKILL_FACTORS_MULTIPLES,
   SKILL_PATTERNS,
   SKILL_MULT_COMPARE,
   SKILL_MULTI_STEP_WORD_PROBLEMS,
-} from "./grade4-oa";
+} from "./grade4/oa";
 import {
   SKILL_5_NBT_POWERS_10,
   SKILL_5_NBT_DECIMAL_FORMS,
