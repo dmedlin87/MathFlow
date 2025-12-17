@@ -1,7 +1,7 @@
 import type {
   MathProblemItem,
   Generator,
-} from "../../../../src/domain/types.js";
+} from "@domain/types.js";
 import type { OfflineGenerator } from "../base.js";
 
 export class DomainGeneratorAdapter implements OfflineGenerator {

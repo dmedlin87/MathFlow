@@ -1,4 +1,4 @@
-import type { MathProblemItem } from '../../../src/domain/types.js';
+import type { MathProblemItem } from '@domain/types.js';
 
 export class ProblemBank {
     private items: Map<string, MathProblemItem> = new Map();

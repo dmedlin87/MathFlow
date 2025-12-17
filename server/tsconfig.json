@@ -12,7 +12,13 @@
     "noUnusedLocals": true,
     "noUnusedParameters": true,
 
-    "noEmit": true
+    "noEmit": true,
+
+    /* Aliases */
+    "baseUrl": ".",
+    "paths": {
+      "@domain/*": ["../src/domain/*"]
+    }
   },
   "include": ["src", "../src"]
 }
