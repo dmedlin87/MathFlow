@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { engine, Engine } from "./engine";
-import { EquivFractionGenerator } from "../skills/grade4-fractions";
+import { EquivFractionGenerator } from "../skills/grade4/fractions";
 import type { Generator, Provenance, VerificationReport } from "../types";
 
 // Mock global fetch

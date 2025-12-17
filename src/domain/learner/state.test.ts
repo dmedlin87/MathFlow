@@ -8,7 +8,7 @@ import type { Attempt, LearnerState } from "../types";
 import {
   SKILL_EQUIV_FRACTIONS,
   SKILL_ADD_LIKE_FRACTIONS,
-} from "../skills/grade4-fractions";
+} from "../skills/grade4/fractions";
 
 describe("Learner State Behavior", () => {
   describe("createInitialState", () => {

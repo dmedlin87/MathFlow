@@ -10,7 +10,7 @@ import type {
   Provenance,
   VerificationReport,
 } from "../../../../src/domain/types.js";
-import { EquivFractionGenerator } from "../../../../src/domain/skills/grade4-fractions.js";
+import { EquivFractionGenerator } from "../../../../src/domain/skills/grade4/fractions.js";
 
 /**
  * Mock Generator: Wraps the existing deterministic generator from domain/skills
