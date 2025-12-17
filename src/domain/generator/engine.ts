@@ -1,5 +1,6 @@
 import type { Generator, MathProblemItem } from "../types";
 import { validateMathProblemItem } from "../validation";
+import { getApiBaseUrl } from "../config";
 
 // Fix: Eliminate Hardcoded API URL (Architecture Review 2025-12-14)
 export interface EngineConfig {
@@ -77,9 +78,6 @@ export class Engine {
 // Default export uses environment-aware configuration
 // In production, apiBaseUrl would be set via environment variable
 // In tests, it defaults to null (skips network calls)
-const apiBaseUrl =
-  typeof window !== "undefined" && import.meta.env?.VITE_API_BASE_URL
-    ? import.meta.env.VITE_API_BASE_URL
-    : null;
+const apiBaseUrl = getApiBaseUrl();
 
 export const engine = new Engine({ apiBaseUrl });

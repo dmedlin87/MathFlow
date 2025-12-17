@@ -7,7 +7,9 @@ interface ProblemVisualizerProps {
     spec: VisualSpec;
 }
 
-export const ProblemVisualizer: React.FC<ProblemVisualizerProps> = ({ spec }) => {
+// Optimization: Memoize to prevent re-renders when parent state (e.g. user input) changes
+// but the visual specification remains the same. SVGs are expensive to re-calculate/DOM-diff.
+export const ProblemVisualizer = React.memo(({ spec }: ProblemVisualizerProps) => {
     if (!spec) return null;
 
     switch (spec.type) {
@@ -18,4 +20,4 @@ export const ProblemVisualizer: React.FC<ProblemVisualizerProps> = ({ spec }) =>
         default:
             return <div className="text-gray-400 text-sm">Visualizer not implemented for {spec.type}</div>;
     }
-};
+});
