@@ -1,75 +1,65 @@
 # Test Notes
 
-## 1. Call-Site Map
+## Call-Site Map
 
 ### `src/domain/generator/engine.ts`
 
-**Export: `class Engine`**
-- `constructor(config: EngineConfig)`
-  - Called by: `engine.ts` (default export instantiation), `engine.test.ts`, `engine.behavior.test.ts`.
-- `register(generator: Generator)`
-  - Called by: `src/domain/skills/registry.ts` (implied), test files.
-- `generate(skillId, difficulty, rng)`
-  - Called by:
-    - `src/domain/learner/state.ts` (`recommendNextItem`)
-    - `src/services/LearnerService.ts` (`getNextProblem`)
-    - Tests.
+*   **`generate(skillId, difficulty, rng?)`**
+    *   **Call Sites:** `LearnerService.ts` (via `recommendNextItem`), `state.ts` (via `recommendNextItem`), Tests.
+    *   **Implied Assumptions:** Returns `Promise<MathProblemItem>`. Handles API fetching and local fallback.
+*   **`register(generator)`**
+    *   **Call Sites:** Skill definition files (e.g., `grade6/ee.ts`), Tests.
+    *   **Implied Assumptions:** Registers generator for `generate` to use.
 
-**Export: `const engine` (Default Instance)**
-- Called by: `src/domain/learner/state.ts` (imported directly), `src/services/LearnerService.ts`.
+### `src/domain/learner/state.ts`
 
-## 2. Contracts
+*   **`createInitialState(userId)`**
+    *   **Call Sites:** `LearnerService.ts`, Tests.
+    *   **Implied Assumptions:** Returns initialized `LearnerState` with default mastery 0.1.
+*   **`updateLearnerState(state, attempt)`**
+    *   **Call Sites:** `LearnerService.ts`, Tests.
+    *   **Implied Assumptions:** Pure function returning new state. Updates BKT mastery and stability.
+*   **`recommendNextItem(state, rng?, skills?)`**
+    *   **Call Sites:** `LearnerService.ts`, Tests.
+    *   **Implied Assumptions:** Returns `Promise<MathProblemItem>`. Selects based on Review Due > Learning Queue > Random. Respects Prerequisites.
+
+## Extracted Contracts
 
 ### `Engine.generate`
+*   **Inputs:** `skillId` (string), `difficulty` (number), `rng` (optional).
+*   **Outputs:** `Promise<MathProblemItem>`.
+*   **Invariants:** Returned item validation pass.
+*   **Errors:** Throws if skill not found (local mode). Warns/Falls back if API fails.
+*   **Examples:**
+    *   Happy: `generate("add_1", 0.5)` -> Returns item.
+    *   Boundary: API returns 500 -> Returns local item.
 
-- **Inputs**:
-  - `skillId` (string): The ID of the skill to generate.
-  - `difficulty` (number): 0.0 to 1.0.
-  - `rng` (optional function): Random number generator.
-- **Outputs**:
-  - Promise resolving to `MathProblemItem`.
-- **Invariants**:
-  - Always returns a validated `MathProblemItem` structure.
-  - Falls back to local generation if API is configured but fails/returns empty.
-- **Errors**:
-  - Throws if no generator found (local) AND API fails.
-- **Examples**:
-  - *Happy Path*: `generate("frac_equiv", 0.5)` -> Returns API item if available, or local item.
-  - *Boundary*: API returns empty array -> Returns local item.
-  - *Invalid*: API returns malformed JSON -> Returns local item (graceful degradation).
+### `updateLearnerState`
+*   **Inputs:** `state`, `attempt`.
+*   **Outputs:** `LearnerState`.
+*   **Invariants:** Mastery [0.01, 0.99].
+*   **Examples:**
+    *   Happy: Correct -> Mastery increases.
+    *   Boundary: Mastery > 0.8 -> Stability increases.
 
-## 3. Tests Added
+## Tests Added
 
-| Test Name | Behavior | Branch/Line Covered | Type |
-|-----------|----------|---------------------|------|
-| `returns local item when /problems API returns null` | API returns `null` (not array) -> Fallback | `if (problems && ...)` (False branch) | Invalid Input |
-| `returns local item when /problems API returns malformed object` | API returns `{}` (no length) -> Fallback | `if (... && problems.length > 0)` (False branch) | Invalid Input |
-| `returns local item when /factory/run API returns malformed object` | Factory returns `{}` (no items) -> Fallback | `if (runData.items && ...)` (False branch) | Invalid Input |
-| `returns local item when /factory/run API returns null` | Factory returns `null` -> Fallback | `if (runData.items)` (False branch) | Invalid Input |
-| `returns factory item when /problems is empty but /factory/run succeeds` | Bank empty, Factory valid -> Return Factory Item | `if (runData.items ...)` (True branch) | Happy Path (Secondary) |
+| Test Name | Behavior | Target | Type |
+| :--- | :--- | :--- | :--- |
+| `Engine: Factory 500` | `generate` falls back to local when factory API fails (500) | `engine.ts:53` | Boundary |
+| `State: Prereq 0.7` | `recommendNextItem` blocks skill if prereq mastery == 0.7 | `state.ts:133` | Boundary |
+| `State: Missing Prereq` | `recommendNextItem` blocks skill if prereq state missing | `state.ts:132` | Invalid |
+| `State: Stability 0.8` | `updateLearnerState` does NOT increase stability if mastery <= 0.8 | `state.ts:66` | Boundary |
+| `State: Stability > 0.8` | `updateLearnerState` increases stability if mastery > 0.8 | `state.ts:66` | Happy |
 
-## 4. Mutation Sanity
+## Mutation Sanity
 
-**Mutation Applied:**
-Modified `src/domain/generator/engine.ts` line 41:
-From: `if (problems && problems.length > 0)`
-To: `if (true || (problems && problems.length > 0))`
+1.  **Mutation:** `src/domain/learner/state.ts` - Changed stability threshold from `0.8` to `0.1`.
+    *   **Result:** `should NOT increase stability if mastery is not high enough (>0.8)` **FAILED**.
+2.  **Mutation:** `src/domain/generator/engine.ts` - Removed fallback logic (lines 68+).
+    *   **Result:** 5 tests in `engine.behavior.test.ts` **FAILED** (including the new Factory 500 test).
 
-**Result:**
-The test `returns local item when /problems API returns null` **FAILED** with `TypeError: Cannot read properties of null (reading '0')`.
-The test `returns factory item when /problems is empty but /factory/run succeeds` **FAILED** because it crashed on the first check and fell back to local, missing the factory item.
+## Coverage Summary
 
-**Conclusion:**
-The tests accurately constrain the guard logic. The guard is necessary to prevent crashes on malformed API responses.
-
-## 5. Coverage Summary
-
-**Before:**
-- `generator/engine.ts`: 100% Stmts, 80.95% Branch (Lines 41, 53, 81 uncovered)
-
-**After:**
-- `generator/engine.ts`: 100% Stmts, 80.95% Branch (Note: V8 coverage report percentages didn't shift presumably due to line 81 env var or specific boolean optimization, but **behavioral verification** via mutation proves the lines 41 and 53 guards are functionally covered and essential).
-
-**Notes:**
-- Line 81 (`const apiBaseUrl = ...`) involves environment variable reading at module load time, which is not easily testable in the current unit test setup without significant mocking overhead.
-- `learner/state.ts` was already 100% covered and tests were verified to be meaningful (asserting domain values).
+*   **`src/domain/generator/engine.ts`**: Branch coverage increased from ~80% to 85.71%.
+*   **`src/domain/learner/state.ts`**: Remained 100% (High quality behavior tests added to constrain specific logic paths).
