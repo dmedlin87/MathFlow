@@ -1,40 +1,6 @@
 import type { Skill, Generator, MathProblemItem } from "../../types";
 import { engine } from "../../generator/engine";
-
-// Helper to get random integer between min and max (inclusive)
-const randomInt = (min: number, max: number, rng: () => number = Math.random) =>
-  Math.floor(rng() * (max - min + 1)) + min;
-
-// Mock provenance helper (duplicated for isolation)
-const createMockProvenance = (
-  skillId: string,
-  diff: number
-): MathProblemItem["meta"] => ({
-  id: `it_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-  version: 1,
-  skill_id: skillId,
-  difficulty: Math.ceil(diff * 5) || 1,
-  created_at: new Date().toISOString(),
-  verified_at: new Date().toISOString(),
-  status: "VERIFIED",
-  provenance: {
-    generator_model: "v0-rule-based-engine",
-    critic_model: "v0-simulation",
-    judge_model: "v0-simulation",
-    verifier: { type: "numeric", passed: true },
-    attempt: 1,
-  },
-  verification_report: {
-    rubric_scores: {
-      solvability: 1,
-      ambiguity: 0,
-      procedural_correctness: 1,
-      pedagogical_alignment: 1,
-    },
-    underspecified: false,
-    issues: [],
-  },
-});
+import { randomInt, createProblemMeta } from "../../math-utils";
 
 // --- 1. Place Value (4.NBT.A.1, 4.NBT.A.2) ---
 
@@ -107,7 +73,7 @@ export const PlaceValueGenerator: Generator = {
       const actualValue = digitVal * placeInfo.val;
 
       return {
-        meta: createMockProvenance(SKILL_PLACE_VALUE.id, difficulty),
+        meta: createProblemMeta(SKILL_PLACE_VALUE.id, difficulty),
         problem_content: {
           stem: `What is the value of the digit in the **${placeInfo.name}** place of the number **${formattedNum}**?`,
           format: "text",
@@ -149,7 +115,7 @@ export const PlaceValueGenerator: Generator = {
     } else {
       // mode === 'DIGIT_IN'
       return {
-        meta: createMockProvenance(SKILL_PLACE_VALUE.id, difficulty),
+        meta: createProblemMeta(SKILL_PLACE_VALUE.id, difficulty),
         problem_content: {
           stem: `Which digit is in the **${placeInfo.name}** place in the number **${formattedNum}**?`,
           format: "text",
@@ -235,7 +201,7 @@ export const CompareMultiDigitGenerator: Generator = {
     if (n1 < n2) sym = "<";
 
     return {
-      meta: createMockProvenance(SKILL_COMPARE_MULTI_DIGIT.id, difficulty),
+      meta: createProblemMeta(SKILL_COMPARE_MULTI_DIGIT.id, difficulty),
       problem_content: {
         stem: `Compare the numbers:
 **${n1.toLocaleString()}** and **${n2.toLocaleString()}**`,
@@ -336,7 +302,7 @@ export const RoundingGenerator: Generator = {
     const wrongAnswer = rounded === upper ? lower : upper;
 
     return {
-      meta: createMockProvenance(SKILL_ROUNDING.id, difficulty),
+      meta: createProblemMeta(SKILL_ROUNDING.id, difficulty),
       problem_content: {
         stem: `Round **${number.toLocaleString()}** to the nearest **${placeName}**.`,
         format: "text",
@@ -453,7 +419,7 @@ export const AddSubMultiGenerator: Generator = {
     // Or 15+16 -> 5+6=11 (write 1), 1+1=2. 21. Correct 31. Forget carry.
 
     return {
-      meta: createMockProvenance(SKILL_ADD_SUB_MULTI.id, difficulty),
+      meta: createProblemMeta(SKILL_ADD_SUB_MULTI.id, difficulty),
       problem_content: {
         stem: `${isAddition ? "Add" : "Subtract"}:
 $$
@@ -591,7 +557,7 @@ const generateMultProblem = (
   // x   4
 
   return {
-    meta: createMockProvenance(skillId, diff),
+    meta: createProblemMeta(skillId, diff),
     problem_content: {
       stem: `Multiply:
 $$
@@ -678,7 +644,7 @@ export const DivisionGenerator: Generator = {
     // We can just set up the problem.
 
     return {
-      meta: createMockProvenance(SKILL_DIV_REMAINDERS.id, difficulty),
+      meta: createProblemMeta(SKILL_DIV_REMAINDERS.id, difficulty),
       problem_content: {
         stem: `Divide: $${dividend} \\div ${divisor}$
 Enter the Quotient, then the Remainder (separated by a comma).`,

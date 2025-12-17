@@ -1,40 +1,8 @@
-import type { Skill, Generator, MathProblemItem } from "../types";
-import { engine } from "../generator/engine";
-
-// Helper to get random integer between min and max (inclusive)
-const randomInt = (min: number, max: number, rng: () => number = Math.random) =>
-  Math.floor(rng() * (max - min + 1)) + min;
+import type { Skill, Generator, MathProblemItem } from "../../types";
+import { engine } from "../../generator/engine";
+import { randomInt, createProblemMeta } from "../../math-utils";
 
 // Mock provenance helper
-const createMockProvenance = (
-  skillId: string,
-  diff: number
-): MathProblemItem["meta"] => ({
-  id: `it_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-  version: 1,
-  skill_id: skillId,
-  difficulty: Math.ceil(diff * 5) || 1,
-  created_at: new Date().toISOString(),
-  verified_at: new Date().toISOString(),
-  status: "VERIFIED",
-  provenance: {
-    generator_model: "v0-rule-based-engine",
-    critic_model: "v0-simulation",
-    judge_model: "v0-simulation",
-    verifier: { type: "numeric", passed: true },
-    attempt: 1,
-  },
-  verification_report: {
-    rubric_scores: {
-      solvability: 1,
-      ambiguity: 0,
-      procedural_correctness: 1,
-      pedagogical_alignment: 1,
-    },
-    underspecified: false,
-    issues: [],
-  },
-});
 
 // ----------------------------------------------------------------------
 // 1. Exponents (6.EE.A.1)
@@ -61,7 +29,7 @@ export const ExponentsGenerator: Generator = {
     const value = Math.pow(base, exp);
 
     return {
-      meta: createMockProvenance(SKILL_6_EE_EXPONENTS.id, difficulty),
+      meta: createProblemMeta(SKILL_6_EE_EXPONENTS.id, difficulty),
       problem_content: {
         stem: `Evaluate: $ ${base}^${exp} = ? $`,
         format: "latex",
@@ -145,7 +113,7 @@ export const OneStepEqGenerator: Generator = {
       const realX = b * a;
       stem = `Solve for x: $ \\frac{x}{${a}} = ${b} $`;
       return {
-        meta: createMockProvenance(SKILL_6_EE_ONE_STEP_EQ.id, difficulty),
+        meta: createProblemMeta(SKILL_6_EE_ONE_STEP_EQ.id, difficulty),
         problem_content: { stem, format: "latex" },
         answer_spec: { answer_mode: "final_only", input_type: "integer" },
         solution_logic: {
@@ -165,7 +133,7 @@ export const OneStepEqGenerator: Generator = {
     }
 
     return {
-      meta: createMockProvenance(SKILL_6_EE_ONE_STEP_EQ.id, difficulty),
+      meta: createProblemMeta(SKILL_6_EE_ONE_STEP_EQ.id, difficulty),
       problem_content: {
         stem,
         format: "latex",
@@ -222,7 +190,7 @@ export const ExpressionsGenerator: Generator = {
       const ans = m * xVal + c;
 
       return {
-        meta: createMockProvenance(SKILL_6_EE_EXPRESSIONS.id, difficulty),
+        meta: createProblemMeta(SKILL_6_EE_EXPRESSIONS.id, difficulty),
         problem_content: {
           stem: `Evaluate the expression $${m}x + ${c}$ when $x = ${xVal}$.`,
           format: "latex",
@@ -246,7 +214,7 @@ export const ExpressionsGenerator: Generator = {
       const n = randomInt(2, 9, rng);
 
       return {
-        meta: createMockProvenance(SKILL_6_EE_EXPRESSIONS.id, difficulty),
+        meta: createProblemMeta(SKILL_6_EE_EXPRESSIONS.id, difficulty),
         problem_content: {
           stem: `Write an algebraic expression for: "**${n} more than x**" (Do not use spaces)`,
           format: "text",
@@ -302,7 +270,7 @@ export const EquivExpressionsGenerator: Generator = {
     const ans = `${a}x+${a * b}`;
 
     return {
-      meta: createMockProvenance(SKILL_6_EE_EQUIV_EXPRESSIONS.id, difficulty),
+      meta: createProblemMeta(SKILL_6_EE_EQUIV_EXPRESSIONS.id, difficulty),
       problem_content: {
         stem: `Use the distributive property to expand: $${a}(x + ${b})$ (Write standard form, no spaces, e.g. 2x+4)`,
         format: "text",
@@ -358,7 +326,7 @@ export const InequalitiesGenerator: Generator = {
       : [`w<=${val}`, `w =< ${val}`, `${val}>=w`];
 
     return {
-      meta: createMockProvenance(SKILL_6_EE_INEQUALITIES.id, difficulty),
+      meta: createProblemMeta(SKILL_6_EE_INEQUALITIES.id, difficulty),
       problem_content: { stem, format: "text" },
       answer_spec: {
         answer_mode: "final_only",
@@ -409,7 +377,7 @@ export const VariablesGenerator: Generator = {
     const eq = "y = 5x + 1";
 
     return {
-      meta: createMockProvenance(SKILL_6_EE_VARIABLES.id, difficulty),
+      meta: createProblemMeta(SKILL_6_EE_VARIABLES.id, difficulty),
       problem_content: {
         stem: `In the equation $${eq}$, which variable is the **dependent** variable?`,
         format: "latex",

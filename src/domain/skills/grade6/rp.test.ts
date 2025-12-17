@@ -5,7 +5,7 @@ import {
   PercentsGenerator,
   RatioTablesGenerator,
   UnitConversionRPGenerator,
-} from "./grade6-rp";
+} from "./rp";
 
 describe("Grade 6 RP Generators", () => {
   it("RatiosGenerator produces valid problems", () => {

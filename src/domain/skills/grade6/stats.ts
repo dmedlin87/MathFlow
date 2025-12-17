@@ -1,40 +1,8 @@
-import type { Skill, Generator, MathProblemItem } from "../types";
-import { engine } from "../generator/engine";
-
-// Helper to get random integer between min and max (inclusive)
-const randomInt = (min: number, max: number, rng: () => number = Math.random) =>
-  Math.floor(rng() * (max - min + 1)) + min;
+import type { Skill, Generator, MathProblemItem } from "../../types";
+import { engine } from "../../generator/engine";
+import { randomInt, createProblemMeta } from "../../math-utils";
 
 // Mock provenance helper
-const createMockProvenance = (
-  skillId: string,
-  diff: number
-): MathProblemItem["meta"] => ({
-  id: `it_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-  version: 1,
-  skill_id: skillId,
-  difficulty: Math.ceil(diff * 5) || 1,
-  created_at: new Date().toISOString(),
-  verified_at: new Date().toISOString(),
-  status: "VERIFIED",
-  provenance: {
-    generator_model: "v0-rule-based-engine",
-    critic_model: "v0-simulation",
-    judge_model: "v0-simulation",
-    verifier: { type: "numeric", passed: true },
-    attempt: 1,
-  },
-  verification_report: {
-    rubric_scores: {
-      solvability: 1,
-      ambiguity: 0,
-      procedural_correctness: 1,
-      pedagogical_alignment: 1,
-    },
-    underspecified: false,
-    issues: [],
-  },
-});
 
 // Helper for robust rounding
 
@@ -82,7 +50,7 @@ export const MeanGenerator: Generator = {
     const dataSet = nums.join(", ");
 
     return {
-      meta: createMockProvenance(SKILL_6_SP_MEAN.id, difficulty),
+      meta: createProblemMeta(SKILL_6_SP_MEAN.id, difficulty),
       problem_content: {
         stem: `Find the mean (average) of the following data set:
 
@@ -205,7 +173,7 @@ export const MedianModeRangeGenerator: Generator = {
     }
 
     return {
-      meta: createMockProvenance(SKILL_6_SP_MEDIAN_MODE_RANGE.id, difficulty),
+      meta: createProblemMeta(SKILL_6_SP_MEDIAN_MODE_RANGE.id, difficulty),
       problem_content: { stem, format: "latex" },
       answer_spec: { answer_mode: "final_only", input_type: "decimal" }, // Median can be .5
       solution_logic: {
@@ -263,7 +231,7 @@ export const IqrGenerator: Generator = {
     const mixed = [...nums].sort(() => (rng ?? Math.random)() - 0.5).join(", ");
 
     return {
-      meta: createMockProvenance(SKILL_6_SP_IQR.id, difficulty),
+      meta: createProblemMeta(SKILL_6_SP_IQR.id, difficulty),
       problem_content: {
         stem: `Find the Interquartile Range (IQR) of the data set: $${mixed}$`,
         format: "latex",
@@ -329,7 +297,7 @@ export const BoxPlotGenerator: Generator = {
     const ans = type === "range" ? max - min : q3 - q1;
 
     return {
-      meta: createMockProvenance(SKILL_6_SP_BOX_PLOTS.id, difficulty),
+      meta: createProblemMeta(SKILL_6_SP_BOX_PLOTS.id, difficulty),
       problem_content: {
         stem,
         format: "text",
@@ -409,7 +377,7 @@ export const DotPlotGenerator: Generator = {
       type === "mode" && modeVals.length > 1 ? modeVals.map(String) : undefined;
 
     return {
-      meta: createMockProvenance(SKILL_6_SP_DOT_PLOTS.id, difficulty),
+      meta: createProblemMeta(SKILL_6_SP_DOT_PLOTS.id, difficulty),
       problem_content: {
         stem: `Consider the following dot plot:\n\n${
           type === "count"
@@ -483,7 +451,7 @@ export const HistogramGenerator: Generator = {
     });
 
     return {
-      meta: createMockProvenance(SKILL_6_SP_HISTOGRAMS.id, difficulty),
+      meta: createProblemMeta(SKILL_6_SP_HISTOGRAMS.id, difficulty),
       problem_content: {
         stem: `Here is a frequency table for a histogram:\n\n${table}\n\nHow many values are in the interval **${targetBin}**?`,
         format: "text",

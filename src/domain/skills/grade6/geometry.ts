@@ -1,40 +1,8 @@
-import type { Skill, Generator, MathProblemItem } from "../types";
-import { engine } from "../generator/engine";
-
-// Helper to get random integer between min and max (inclusive)
-const randomInt = (min: number, max: number, rng: () => number = Math.random) =>
-  Math.floor(rng() * (max - min + 1)) + min;
+import type { Skill, Generator, MathProblemItem } from "../../types";
+import { engine } from "../../generator/engine";
+import { randomInt, createProblemMeta } from "../../math-utils";
 
 // Mock provenance helper
-const createMockProvenance = (
-  skillId: string,
-  diff: number
-): MathProblemItem["meta"] => ({
-  id: `it_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-  version: 1,
-  skill_id: skillId,
-  difficulty: Math.ceil(diff * 5) || 1,
-  created_at: new Date().toISOString(),
-  verified_at: new Date().toISOString(),
-  status: "VERIFIED",
-  provenance: {
-    generator_model: "v0-rule-based-engine",
-    critic_model: "v0-simulation",
-    judge_model: "v0-simulation",
-    verifier: { type: "numeric", passed: true },
-    attempt: 1,
-  },
-  verification_report: {
-    rubric_scores: {
-      solvability: 1,
-      ambiguity: 0,
-      procedural_correctness: 1,
-      pedagogical_alignment: 1,
-    },
-    underspecified: false,
-    issues: [],
-  },
-});
 
 // ----------------------------------------------------------------------
 // 1. Area of Polygons (6.G.A.1)
@@ -68,7 +36,7 @@ export const AreaPolyGenerator: Generator = {
         (rng ?? Math.random)() < 0.5 ? "rectangle" : "parallelogram";
 
       return {
-        meta: createMockProvenance(SKILL_6_G_AREA.id, difficulty),
+        meta: createProblemMeta(SKILL_6_G_AREA.id, difficulty),
         problem_content: {
           stem: `Find the area of a ${shape} with base ${b} units and height ${h} units.`,
           format: "text",
@@ -107,7 +75,7 @@ export const AreaPolyGenerator: Generator = {
       const stem = `Find the area of a triangle with base ${b} units and height ${h} units.`;
 
       return {
-        meta: createMockProvenance(SKILL_6_G_AREA.id, difficulty),
+        meta: createProblemMeta(SKILL_6_G_AREA.id, difficulty),
         problem_content: {
           stem,
           format: "text",
@@ -177,7 +145,7 @@ export const SurfaceAreaGenerator: Generator = {
       const s = randomInt(2, 10, rng);
       const sa = 6 * s * s;
       return {
-        meta: createMockProvenance(SKILL_6_G_SURFACE_AREA.id, difficulty),
+        meta: createProblemMeta(SKILL_6_G_SURFACE_AREA.id, difficulty),
         problem_content: {
           stem: `Find the surface area of a cube with side length ${s} units.`,
           format: "text",
@@ -206,7 +174,7 @@ export const SurfaceAreaGenerator: Generator = {
       const sa = 2 * (l * w + l * h + w * h);
 
       return {
-        meta: createMockProvenance(SKILL_6_G_SURFACE_AREA.id, difficulty),
+        meta: createProblemMeta(SKILL_6_G_SURFACE_AREA.id, difficulty),
         problem_content: {
           stem: `Find the surface area of a rectangular prism with length=${l}, width=${w}, and height=${h}.`,
           format: "text",
@@ -269,7 +237,7 @@ export const VolumeFracGenerator: Generator = {
     const canonical = den === 1 ? String(num) : `${num}/${den}`;
 
     return {
-      meta: createMockProvenance(SKILL_6_G_VOLUME_FRAC.id, difficulty),
+      meta: createProblemMeta(SKILL_6_G_VOLUME_FRAC.id, difficulty),
       problem_content: {
         stem: `Find the volume of a rectangular prism with length $\\frac{${lNum}}{${lDen}}$, width $\\frac{${wNum}}{${wDen}}$, and height ${h}.`,
         format: "latex",
@@ -324,7 +292,7 @@ export const PolygonsCoordGenerator: Generator = {
     const dist = Math.abs(y1 - y2);
 
     return {
-      meta: createMockProvenance(SKILL_6_G_POLYGONS_COORD.id, difficulty),
+      meta: createProblemMeta(SKILL_6_G_POLYGONS_COORD.id, difficulty),
       problem_content: {
         stem: `The endpoints of a line segment are points $(${x}, ${y1})$ and $(${x}, ${y2})$. What is the length of the segment?`,
         format: "latex",

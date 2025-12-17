@@ -1,43 +1,6 @@
 import type { Skill, Generator, MathProblemItem } from "../../types";
 import { engine } from "../../generator/engine";
-
-// Helper to get random integer between min and max (inclusive)
-const randomInt = (min: number, max: number, rng: () => number = Math.random) =>
-  Math.floor(rng() * (max - min + 1)) + min;
-
-// Helper to create mock provenance (duplicated from fractions for independence)
-const createMockProvenance = (
-  skillId: string,
-  diff: number
-): MathProblemItem["meta"] => ({
-  id: `it_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-  version: 1,
-  skill_id: skillId,
-  difficulty: Math.ceil(diff * 5) || 1,
-  created_at: new Date().toISOString(),
-  verified_at: new Date().toISOString(),
-  status: "VERIFIED",
-  provenance: {
-    generator_model: "v0-rule-based-engine",
-    critic_model: "v0-simulation",
-    judge_model: "v0-simulation",
-    verifier: {
-      type: "numeric",
-      passed: true,
-    },
-    attempt: 1,
-  },
-  verification_report: {
-    rubric_scores: {
-      solvability: 1,
-      ambiguity: 0,
-      procedural_correctness: 1,
-      pedagogical_alignment: 1,
-    },
-    underspecified: false,
-    issues: [],
-  },
-});
+import { randomInt, createProblemMeta } from "../../math-utils";
 
 // --- Decimal Notation (4.NF.C.6) ---
 
@@ -82,7 +45,7 @@ export const DecimalNotationGenerator: Generator = {
     const canonical = (num / den).toString(); // JS handles 3/10 as 0.3 nicely.
 
     return {
-      meta: createMockProvenance(SKILL_DECIMAL_NOTATION.id, difficulty),
+      meta: createProblemMeta(SKILL_DECIMAL_NOTATION.id, difficulty),
       problem_content: {
         stem: `Write **${num}/${den}** as a decimal.`,
         format: "mixed",
@@ -250,7 +213,7 @@ export const DecimalComparisonGenerator: Generator = {
     }
 
     return {
-      meta: createMockProvenance(SKILL_DECIMAL_COMPARE.id, difficulty),
+      meta: createProblemMeta(SKILL_DECIMAL_COMPARE.id, difficulty),
       problem_content: {
         stem: `Compare: **${s1}** and **${s2}**`,
         format: "mixed",

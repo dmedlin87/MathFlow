@@ -1,40 +1,8 @@
-import type { Skill, Generator, MathProblemItem } from "../types";
-import { engine } from "../generator/engine";
-
-// Helper to get random integer between min and max (inclusive)
-const randomInt = (min: number, max: number, rng: () => number = Math.random) =>
-  Math.floor(rng() * (max - min + 1)) + min;
+import type { Skill, Generator, MathProblemItem } from "../../types";
+import { engine } from "../../generator/engine";
+import { randomInt, createProblemMeta } from "../../math-utils";
 
 // Mock provenance helper
-const createMockProvenance = (
-  skillId: string,
-  diff: number
-): MathProblemItem["meta"] => ({
-  id: `it_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-  version: 1,
-  skill_id: skillId,
-  difficulty: Math.ceil(diff * 5) || 1,
-  created_at: new Date().toISOString(),
-  verified_at: new Date().toISOString(),
-  status: "VERIFIED",
-  provenance: {
-    generator_model: "v0-rule-based-engine",
-    critic_model: "v0-simulation",
-    judge_model: "v0-simulation",
-    verifier: { type: "numeric", passed: true },
-    attempt: 1,
-  },
-  verification_report: {
-    rubric_scores: {
-      solvability: 1,
-      ambiguity: 0,
-      procedural_correctness: 1,
-      pedagogical_alignment: 1,
-    },
-    underspecified: false,
-    issues: [],
-  },
-});
 
 // Helper for GCF
 function gcd(a: number, b: number): number {
@@ -76,7 +44,7 @@ export const DivFractionsGenerator: Generator = {
     const canonical = resDenom === 1 ? String(resNum) : `${resNum}/${resDenom}`;
 
     return {
-      meta: createMockProvenance(SKILL_6_NS_DIV_FRACTIONS.id, difficulty),
+      meta: createProblemMeta(SKILL_6_NS_DIV_FRACTIONS.id, difficulty),
       problem_content: {
         stem: `Calculate: $ \\frac{${a}}{${b}} \\div \\frac{${c}}{${d}} = ? $`,
         format: "latex",
@@ -152,7 +120,7 @@ export const MultiDigitDivGenerator: Generator = {
     const dividend = divisor * quotient;
 
     return {
-      meta: createMockProvenance(SKILL_6_NS_MULTI_DIGIT_DIV.id, difficulty),
+      meta: createProblemMeta(SKILL_6_NS_MULTI_DIGIT_DIV.id, difficulty),
       problem_content: {
         stem: `Divide: $ ${dividend} \\div ${divisor} = ? $`,
         format: "latex",
@@ -257,7 +225,7 @@ export const DecimalOpsGenerator: Generator = {
     }
 
     return {
-      meta: createMockProvenance(SKILL_6_NS_DECIMAL_OPS.id, difficulty),
+      meta: createProblemMeta(SKILL_6_NS_DECIMAL_OPS.id, difficulty),
       problem_content: { stem, format: "latex" },
       answer_spec: { answer_mode: "final_only", input_type: "decimal" },
       solution_logic: {
@@ -305,7 +273,7 @@ export const GcfLcmGenerator: Generator = {
     if (type === "GCF") {
       const val = gcd(a, finalB);
       return {
-        meta: createMockProvenance(SKILL_6_NS_GCF_LCM.id, difficulty),
+        meta: createProblemMeta(SKILL_6_NS_GCF_LCM.id, difficulty),
         problem_content: {
           stem: `Find the Greatest Common Factor (GCF) of ${a} and ${finalB}.`,
           format: "text",
@@ -328,7 +296,7 @@ export const GcfLcmGenerator: Generator = {
     } else {
       const val = lcm(a, finalB);
       return {
-        meta: createMockProvenance(SKILL_6_NS_GCF_LCM.id, difficulty),
+        meta: createProblemMeta(SKILL_6_NS_GCF_LCM.id, difficulty),
         problem_content: {
           stem: `Find the Least Common Multiple (LCM) of ${a} and ${finalB}.`,
           format: "text",
@@ -382,7 +350,7 @@ export const IntegersGenerator: Generator = {
       if (val === 0) return IntegersGenerator.generate(difficulty, rng); // recursive retry
       const ans = -val;
       return {
-        meta: createMockProvenance(SKILL_6_NS_INTEGERS.id, difficulty),
+        meta: createProblemMeta(SKILL_6_NS_INTEGERS.id, difficulty),
         problem_content: {
           stem: `What is the opposite of ${val}?`,
           format: "text",
@@ -415,7 +383,7 @@ export const IntegersGenerator: Generator = {
         ans = -val;
       }
       return {
-        meta: createMockProvenance(SKILL_6_NS_INTEGERS.id, difficulty),
+        meta: createProblemMeta(SKILL_6_NS_INTEGERS.id, difficulty),
         problem_content: { stem: text, format: "text" },
         answer_spec: { answer_mode: "final_only", input_type: "integer" },
         solution_logic: {
@@ -466,7 +434,7 @@ export const RationalNumberLineGenerator: Generator = {
     const ans = Math.max(a, b);
 
     return {
-      meta: createMockProvenance(
+      meta: createProblemMeta(
         SKILL_6_NS_RATIONAL_NUMBER_LINE.id,
         difficulty
       ),
@@ -526,7 +494,7 @@ export const CoordPlaneGenerator: Generator = {
     else quad = "IV";
 
     return {
-      meta: createMockProvenance(SKILL_6_NS_COORD_PLANE.id, difficulty),
+      meta: createProblemMeta(SKILL_6_NS_COORD_PLANE.id, difficulty),
       problem_content: {
         stem: `In which quadrant is the point $(${x}, ${y})$ located? (Enter I, II, III, or IV)`,
         format: "latex",

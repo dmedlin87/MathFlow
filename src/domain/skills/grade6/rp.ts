@@ -1,40 +1,8 @@
-import type { Skill, Generator, MathProblemItem } from "../types";
-import { engine } from "../generator/engine";
-
-// Helper to get random integer between min and max (inclusive)
-const randomInt = (min: number, max: number, rng: () => number = Math.random) =>
-  Math.floor(rng() * (max - min + 1)) + min;
+import type { Skill, Generator, MathProblemItem } from "../../types";
+import { engine } from "../../generator/engine";
+import { randomInt, createProblemMeta } from "../../math-utils";
 
 // Mock provenance helper
-const createMockProvenance = (
-  skillId: string,
-  diff: number
-): MathProblemItem["meta"] => ({
-  id: `it_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-  version: 1,
-  skill_id: skillId,
-  difficulty: Math.ceil(diff * 5) || 1,
-  created_at: new Date().toISOString(),
-  verified_at: new Date().toISOString(),
-  status: "VERIFIED",
-  provenance: {
-    generator_model: "v0-rule-based-engine",
-    critic_model: "v0-simulation",
-    judge_model: "v0-simulation",
-    verifier: { type: "numeric", passed: true },
-    attempt: 1,
-  },
-  verification_report: {
-    rubric_scores: {
-      solvability: 1,
-      ambiguity: 0,
-      procedural_correctness: 1,
-      pedagogical_alignment: 1,
-    },
-    underspecified: false,
-    issues: [],
-  },
-});
 
 // Helper for robust rounding
 const robustRound = (n: number, scale: number) => {
@@ -88,7 +56,7 @@ export const RatiosGenerator: Generator = {
       const val2 = askForOrder ? b : a;
 
       return {
-        meta: createMockProvenance(SKILL_6_RP_RATIOS.id, difficulty),
+        meta: createProblemMeta(SKILL_6_RP_RATIOS.id, difficulty),
         problem_content: {
           stem: `There are ${a} ${s1} and ${b} ${s2}. Write the ratio of **${targetS1}** to **${targetS2}** (use a colon, e.g. 1:2).`,
           format: "text",
@@ -133,7 +101,7 @@ export const RatiosGenerator: Generator = {
       const scaledB = b * m;
 
       return {
-        meta: createMockProvenance(SKILL_6_RP_RATIOS.id, difficulty),
+        meta: createProblemMeta(SKILL_6_RP_RATIOS.id, difficulty),
         problem_content: {
           stem: `The ratio of flour to sugar in a recipe is ${a}:${b}. If you use ${scaledA} cups of flour, how many cups of sugar should you use?`,
           format: "text",
@@ -201,7 +169,7 @@ export const UnitRateGenerator: Generator = {
       const totalCost = units * pricePerUnit;
 
       return {
-        meta: createMockProvenance(SKILL_6_RP_UNIT_RATE.id, difficulty),
+        meta: createProblemMeta(SKILL_6_RP_UNIT_RATE.id, difficulty),
         problem_content: {
           stem: `If ${units} notebooks cost $${totalCost.toFixed(
             2
@@ -245,7 +213,7 @@ export const UnitRateGenerator: Generator = {
       const miles = speed * hours;
 
       return {
-        meta: createMockProvenance(SKILL_6_RP_UNIT_RATE.id, difficulty),
+        meta: createProblemMeta(SKILL_6_RP_UNIT_RATE.id, difficulty),
         problem_content: {
           stem: `A car travels ${miles} miles in ${hours} hours. What is its average speed in miles per hour?`,
           format: "text",
@@ -304,7 +272,7 @@ export const PercentsGenerator: Generator = {
       const part = (percent / 100) * whole;
 
       return {
-        meta: createMockProvenance(SKILL_6_RP_PERCENTS.id, difficulty),
+        meta: createProblemMeta(SKILL_6_RP_PERCENTS.id, difficulty),
         problem_content: {
           stem: `What is ${percent}% of ${whole}?`,
           format: "text",
@@ -336,7 +304,7 @@ export const PercentsGenerator: Generator = {
       const part = (percent / 100) * whole;
 
       return {
-        meta: createMockProvenance(SKILL_6_RP_PERCENTS.id, difficulty),
+        meta: createProblemMeta(SKILL_6_RP_PERCENTS.id, difficulty),
         problem_content: {
           stem: `${part} is ${percent}% of what number?`,
           format: "text",
@@ -402,7 +370,7 @@ export const RatioTablesGenerator: Generator = {
       const targetB = b * mult1;
       const answer = a * mult1;
       return {
-        meta: createMockProvenance(SKILL_6_RP_RATIO_TABLES.id, difficulty),
+        meta: createProblemMeta(SKILL_6_RP_RATIO_TABLES.id, difficulty),
         problem_content: {
           stem: `Complete the ratio table.
               
@@ -434,7 +402,7 @@ export const RatioTablesGenerator: Generator = {
       const targetA = a * mult2;
       const answer = b * mult2;
       return {
-        meta: createMockProvenance(SKILL_6_RP_RATIO_TABLES.id, difficulty),
+        meta: createProblemMeta(SKILL_6_RP_RATIO_TABLES.id, difficulty),
         problem_content: {
           stem: `Complete the ratio table.
               
@@ -505,7 +473,7 @@ export const UnitConversionRPGenerator: Generator = {
     const res = val * conv.rate;
 
     return {
-      meta: createMockProvenance(SKILL_6_RP_UNIT_CONVERSION.id, difficulty),
+      meta: createProblemMeta(SKILL_6_RP_UNIT_CONVERSION.id, difficulty),
       problem_content: {
         stem: `Convert ${val} ${conv.from} to ${conv.to}. (Hint: 1 ${conv.from} = ${conv.rate} ${conv.to})`,
         format: "text",

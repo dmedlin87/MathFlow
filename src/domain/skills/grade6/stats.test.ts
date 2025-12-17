@@ -6,7 +6,7 @@ import {
   BoxPlotGenerator,
   HistogramGenerator,
   DotPlotGenerator,
-} from "./grade6-stats";
+} from "./stats";
 
 // Simple mock RNG for deterministic tests
 const createMockRng = (values: number[]) => {

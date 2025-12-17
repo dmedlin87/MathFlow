@@ -1,9 +1,6 @@
 import type { Skill, Generator, MathProblemItem } from "../../types";
 import { engine } from "../../generator/engine";
-
-// Helper to get random integer between min and max (inclusive)
-const randomInt = (min: number, max: number, rng: () => number = Math.random) =>
-  Math.floor(rng() * (max - min + 1)) + min;
+import { randomInt, createProblemMeta } from "../../math-utils";
 
 // Helper to calculate factors
 const getFactors = (n: number): number[] => {
@@ -18,35 +15,6 @@ const getFactors = (n: number): number[] => {
 };
 
 // Mock provenance helper (duplicated for isolation)
-const createMockProvenance = (
-  skillId: string,
-  diff: number
-): MathProblemItem["meta"] => ({
-  id: `it_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-  version: 1,
-  skill_id: skillId,
-  difficulty: Math.ceil(diff * 5) || 1,
-  created_at: new Date().toISOString(),
-  verified_at: new Date().toISOString(),
-  status: "VERIFIED",
-  provenance: {
-    generator_model: "v0-rule-based-engine",
-    critic_model: "v0-simulation",
-    judge_model: "v0-simulation",
-    verifier: { type: "numeric", passed: true },
-    attempt: 1,
-  },
-  verification_report: {
-    rubric_scores: {
-      solvability: 1,
-      ambiguity: 0,
-      procedural_correctness: 1,
-      pedagogical_alignment: 1,
-    },
-    underspecified: false,
-    issues: [],
-  },
-});
 
 // --- 1. Factors & Multiples (4.OA.B.4) ---
 
@@ -81,7 +49,7 @@ export const FactorsMultiplesGenerator: Generator = {
       const factors = getFactors(number);
 
       return {
-        meta: createMockProvenance(SKILL_FACTORS_MULTIPLES.id, difficulty),
+        meta: createProblemMeta(SKILL_FACTORS_MULTIPLES.id, difficulty),
         problem_content: {
           stem: `List all factors of **${number}**.
 Enter them separated by commas (e.g. 1, 2, 4).`,
@@ -136,7 +104,7 @@ Enter them separated by commas (e.g. 1, 2, 4).`,
       const ans = isPrimeTarget ? "Prime" : "Composite";
 
       return {
-        meta: createMockProvenance(SKILL_FACTORS_MULTIPLES.id, difficulty),
+        meta: createProblemMeta(SKILL_FACTORS_MULTIPLES.id, difficulty),
         problem_content: {
           stem: `Is the number **${number}** Prime or Composite?`,
           format: "text",
@@ -182,7 +150,7 @@ Enter them separated by commas (e.g. 1, 2, 4).`,
       const answer = base * targetIndex;
 
       return {
-        meta: createMockProvenance(SKILL_FACTORS_MULTIPLES.id, difficulty),
+        meta: createProblemMeta(SKILL_FACTORS_MULTIPLES.id, difficulty),
         problem_content: {
           stem: `What is the ${targetIndex}th multiple of **${base}**?`,
           format: "text",
@@ -266,7 +234,7 @@ export const PatternGenerator: Generator = {
     // Distractor: Wrong operation (e.g. added instead of sub) or arithmetic error
 
     return {
-      meta: createMockProvenance(SKILL_PATTERNS.id, difficulty),
+      meta: createProblemMeta(SKILL_PATTERNS.id, difficulty),
       problem_content: {
         stem: `Observe the pattern:
 **${visibleSeq}, ...**
@@ -347,7 +315,7 @@ export const MultCompareGenerator: Generator = {
     const additiveError = baseVal + factor;
 
     return {
-      meta: createMockProvenance(SKILL_MULT_COMPARE.id, difficulty),
+      meta: createProblemMeta(SKILL_MULT_COMPARE.id, difficulty),
       problem_content: {
         stem: `Alice has **${baseVal}** marbles.
 Bob has **${factor} times as many** marbles as Alice.
@@ -431,7 +399,7 @@ export const MultiStepWordGen: Generator = {
       // (adjustedStart + subtract) / divisor ?
 
       return {
-        meta: createMockProvenance(
+        meta: createProblemMeta(
           SKILL_MULTI_STEP_WORD_PROBLEMS.id,
           difficulty
         ),
@@ -488,7 +456,7 @@ How many stickers did she put in each album?`,
       const ans = numGroups + 1; // Need one more bus
 
       return {
-        meta: createMockProvenance(
+        meta: createProblemMeta(
           SKILL_MULTI_STEP_WORD_PROBLEMS.id,
           difficulty
         ),

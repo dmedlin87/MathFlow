@@ -1,41 +1,9 @@
-import type { Skill, Generator, MathProblemItem } from "../types";
-import { engine } from "../generator/engine";
-import { gcd } from "../math-utils";
-
-// Helper to get random integer between min and max (inclusive)
-const randomInt = (min: number, max: number, rng: () => number = Math.random) =>
-  Math.floor(rng() * (max - min + 1)) + min;
+import type { Skill, Generator, MathProblemItem } from "../../types";
+import { engine } from "../../generator/engine";
+import { gcd } from "../../math-utils";
+import { randomInt, createProblemMeta } from "../../math-utils";
 
 // Helper to create mock provenance
-const createMockProvenance = (
-  skillId: string,
-  diff: number
-): MathProblemItem["meta"] => ({
-  id: `it_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-  version: 1,
-  skill_id: skillId,
-  difficulty: Math.ceil(diff * 5) || 1,
-  created_at: new Date().toISOString(),
-  verified_at: new Date().toISOString(),
-  status: "VERIFIED",
-  provenance: {
-    generator_model: "v0-rule-based-engine",
-    critic_model: "v0-simulation",
-    judge_model: "v0-simulation",
-    verifier: { type: "numeric", passed: true },
-    attempt: 1,
-  },
-  verification_report: {
-    rubric_scores: {
-      solvability: 1,
-      ambiguity: 0,
-      procedural_correctness: 1,
-      pedagogical_alignment: 1,
-    },
-    underspecified: false,
-    issues: [],
-  },
-});
 
 // Helper for LCM
 const lcm = (a: number, b: number) => (a * b) / gcd(a, b);
@@ -115,7 +83,7 @@ export const AddSubUnlikeGenerator: Generator = {
     const wrongDen = isAddition ? den1 + den2 : Math.abs(den1 - den2); // often 0 if subtraction den same (not here)
 
     return {
-      meta: createMockProvenance(SKILL_5_NF_ADD_SUB_UNLIKE.id, difficulty),
+      meta: createProblemMeta(SKILL_5_NF_ADD_SUB_UNLIKE.id, difficulty),
       problem_content: {
         stem: `${opText}: $$\\frac{${num1}}{${den1}} ${op} \\frac{${num2}}{${den2}} = ?$$`,
         format: "latex",
@@ -192,7 +160,7 @@ export const FracDivGenerator: Generator = {
     // Sometimes a > b (improper)
 
     return {
-      meta: createMockProvenance(SKILL_5_NF_FRAC_DIV.id, difficulty),
+      meta: createProblemMeta(SKILL_5_NF_FRAC_DIV.id, difficulty),
       problem_content: {
         stem: `Write the division expression as a fraction:
 $$${num} \\div ${den} = ?$$`,
@@ -264,7 +232,7 @@ export const ScalingGenerator: Generator = {
     const expected = isLess ? "<" : ">";
 
     return {
-      meta: createMockProvenance(SKILL_5_NF_SCALING.id, difficulty),
+      meta: createProblemMeta(SKILL_5_NF_SCALING.id, difficulty),
       problem_content: {
         stem: `Without calculating, choose the correct symbol:
 $$${factor} \\times ${fractionStr} \\text{ ? } ${factor}$$`,
@@ -341,7 +309,7 @@ export const MultFracGenerator: Generator = {
     const simDen = resDen / common;
 
     return {
-      meta: createMockProvenance(SKILL_5_NF_MULT_FRAC.id, difficulty),
+      meta: createProblemMeta(SKILL_5_NF_MULT_FRAC.id, difficulty),
       problem_content: {
         stem: `Multiply: $$\\frac{${num1}}{${den1}} \\times \\frac{${num2}}{${den2}} = ?$$`,
         format: "latex",
@@ -414,7 +382,7 @@ export const DivFracGenerator: Generator = {
       const ansDen = den * whole;
 
       return {
-        meta: createMockProvenance(SKILL_5_NF_DIV_FRAC.id, difficulty),
+        meta: createProblemMeta(SKILL_5_NF_DIV_FRAC.id, difficulty),
         problem_content: {
           stem: `Divide: $$\\frac{1}{${den}} \\div ${whole} = ?$$`,
           format: "latex",
@@ -445,7 +413,7 @@ export const DivFracGenerator: Generator = {
       const ans = whole * den;
 
       return {
-        meta: createMockProvenance(SKILL_5_NF_DIV_FRAC.id, difficulty),
+        meta: createProblemMeta(SKILL_5_NF_DIV_FRAC.id, difficulty),
         problem_content: {
           stem: `Divide: $$${whole} \\div \\frac{1}{${den}} = ?$$`,
           format: "latex",
@@ -547,7 +515,7 @@ export const FractionWordProblemsGenerator: Generator = {
       const finalDen = resDen / common;
 
       return {
-        meta: createMockProvenance(SKILL_5_NF_WORD_PROBLEMS.id, difficulty),
+        meta: createProblemMeta(SKILL_5_NF_WORD_PROBLEMS.id, difficulty),
         problem_content: {
           stem: `Alice ran **1/${d1}** mile. Bob ran **1/${d2}** mile.
 ${opText}`,
@@ -599,7 +567,7 @@ ${opText}`,
       const resDen = den1 * den2;
 
       return {
-        meta: createMockProvenance(SKILL_5_NF_WORD_PROBLEMS.id, difficulty),
+        meta: createProblemMeta(SKILL_5_NF_WORD_PROBLEMS.id, difficulty),
         problem_content: {
           stem: `A recipe calls for **${num1}/${den1}** cup of sugar.
 You want to make **${num2}/${den2}** of the recipe.
@@ -647,7 +615,7 @@ How much sugar should you use?`,
         const ansDen = den * friends;
 
         return {
-          meta: createMockProvenance(SKILL_5_NF_WORD_PROBLEMS.id, difficulty),
+          meta: createProblemMeta(SKILL_5_NF_WORD_PROBLEMS.id, difficulty),
           problem_content: {
             stem: `You have **1/${den}** gallon of juice.
 You share it equally among **${friends}** friends.
@@ -679,7 +647,7 @@ How much juice does each friend get?`,
         const ans = whole * den;
 
         return {
-          meta: createMockProvenance(SKILL_5_NF_WORD_PROBLEMS.id, difficulty),
+          meta: createProblemMeta(SKILL_5_NF_WORD_PROBLEMS.id, difficulty),
           problem_content: {
             stem: `You have **${whole}** pounds of raisins.
 You put them into bags that each hold **1/${den}** pound.

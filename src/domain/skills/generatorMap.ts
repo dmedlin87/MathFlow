@@ -53,7 +53,7 @@ import {
   MultFracGenerator as grade5_fractions_MultFracGenerator,
   DivFracGenerator as grade5_fractions_DivFracGenerator,
   FractionWordProblemsGenerator as grade5_fractions_FractionWordProblemsGenerator,
-} from "./grade5-fractions";
+} from "./grade5/fractions";
 import {
   VolumeCubesGenerator as grade5_meas_geo_VolumeCubesGenerator,
   VolumeFormulaGenerator as grade5_meas_geo_VolumeFormulaGenerator,
@@ -61,7 +61,7 @@ import {
   ClassFiguresHierarchyGenerator as grade5_meas_geo_ClassFiguresHierarchyGenerator,
   UnitConv5Generator as grade5_meas_geo_UnitConv5Generator,
   LinePlotGenerator as grade5_meas_geo_LinePlotGenerator,
-} from "./grade5-meas-geo";
+} from "./grade5/meas-geo";
 import {
   PowersOf10Generator as grade5_nbt_PowersOf10Generator,
   DecimalFormsGenerator as grade5_nbt_DecimalFormsGenerator,
@@ -73,11 +73,11 @@ import {
   DivWholeGenerator as grade5_nbt_DivWholeGenerator,
   DivDecimalsGenerator as grade5_nbt_DivDecimalsGenerator,
   FracDecConversionGenerator as grade5_nbt_FracDecConversionGenerator,
-} from "./grade5-nbt";
+} from "./grade5/nbt";
 import {
   OrderOpsGenerator as grade5_oa_OrderOpsGenerator,
   PatternsGenerator as grade5_oa_PatternsGenerator,
-} from "./grade5-oa";
+} from "./grade5/oa";
 import {
   ExponentsGenerator as grade6_ee_ExponentsGenerator,
   OneStepEqGenerator as grade6_ee_OneStepEqGenerator,
@@ -85,13 +85,13 @@ import {
   EquivExpressionsGenerator as grade6_ee_EquivExpressionsGenerator,
   InequalitiesGenerator as grade6_ee_InequalitiesGenerator,
   VariablesGenerator as grade6_ee_VariablesGenerator,
-} from "./grade6-ee";
+} from "./grade6/ee";
 import {
   AreaPolyGenerator as grade6_geometry_AreaPolyGenerator,
   SurfaceAreaGenerator as grade6_geometry_SurfaceAreaGenerator,
   VolumeFracGenerator as grade6_geometry_VolumeFracGenerator,
   PolygonsCoordGenerator as grade6_geometry_PolygonsCoordGenerator,
-} from "./grade6-geometry";
+} from "./grade6/geometry";
 import {
   DivFractionsGenerator as grade6_ns_DivFractionsGenerator,
   MultiDigitDivGenerator as grade6_ns_MultiDigitDivGenerator,
@@ -100,14 +100,14 @@ import {
   IntegersGenerator as grade6_ns_IntegersGenerator,
   RationalNumberLineGenerator as grade6_ns_RationalNumberLineGenerator,
   CoordPlaneGenerator as grade6_ns_CoordPlaneGenerator,
-} from "./grade6-ns";
+} from "./grade6/ns";
 import {
   RatiosGenerator as grade6_rp_RatiosGenerator,
   UnitRateGenerator as grade6_rp_UnitRateGenerator,
   PercentsGenerator as grade6_rp_PercentsGenerator,
   RatioTablesGenerator as grade6_rp_RatioTablesGenerator,
   UnitConversionRPGenerator as grade6_rp_UnitConversionRPGenerator,
-} from "./grade6-rp";
+} from "./grade6/rp";
 import {
   MeanGenerator as grade6_stats_MeanGenerator,
   MedianModeRangeGenerator as grade6_stats_MedianModeRangeGenerator,
@@ -115,7 +115,7 @@ import {
   BoxPlotGenerator as grade6_stats_BoxPlotGenerator,
   DotPlotGenerator as grade6_stats_DotPlotGenerator,
   HistogramGenerator as grade6_stats_HistogramGenerator,
-} from "./grade6-stats";
+} from "./grade6/stats";
 
 export const generators: Generator[] = [
   grade4_decimals_DecimalNotationGenerator,
