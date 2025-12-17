@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { DotPlotGenerator } from "./grade6-stats";
+import { DotPlotGenerator } from "./stats";
 
 describe("DotPlotGenerator Behavior", () => {
   it("fails to accept alternative modes when distribution is bimodal", () => {

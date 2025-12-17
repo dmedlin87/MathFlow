@@ -1,40 +1,8 @@
-import type { Skill, Generator, MathProblemItem } from "../types";
-import { engine } from "../generator/engine";
-
-// Helper to get random integer between min and max (inclusive)
-const randomInt = (min: number, max: number, rng: () => number = Math.random) =>
-  Math.floor(rng() * (max - min + 1)) + min;
+import type { Skill, Generator, MathProblemItem } from "../../types";
+import { engine } from "../../generator/engine";
+import { randomInt, createProblemMeta } from "../../math-utils";
 
 // Mock provenance helper
-const createMockProvenance = (
-  skillId: string,
-  diff: number
-): MathProblemItem["meta"] => ({
-  id: `it_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-  version: 1,
-  skill_id: skillId,
-  difficulty: Math.ceil(diff * 5) || 1,
-  created_at: new Date().toISOString(),
-  verified_at: new Date().toISOString(),
-  status: "VERIFIED",
-  provenance: {
-    generator_model: "v0-rule-based-engine",
-    critic_model: "v0-simulation",
-    judge_model: "v0-simulation",
-    verifier: { type: "numeric", passed: true },
-    attempt: 1,
-  },
-  verification_report: {
-    rubric_scores: {
-      solvability: 1,
-      ambiguity: 0,
-      procedural_correctness: 1,
-      pedagogical_alignment: 1,
-    },
-    underspecified: false,
-    issues: [],
-  },
-});
 
 // ----------------------------------------------------------------------
 // 1. Volume: Counting Unit Cubes (5.MD.C.3 / 5.MD.C.4)
@@ -66,7 +34,7 @@ export const VolumeCubesGenerator: Generator = {
     // "A rectangular prism is built with unit cubes. It is X units long, Y units wide, Z units high."
 
     return {
-      meta: createMockProvenance(SKILL_5_GM_VOLUME_CUBES.id, difficulty),
+      meta: createProblemMeta(SKILL_5_GM_VOLUME_CUBES.id, difficulty),
       problem_content: {
         stem: `A rectangular prism is packed with unit cubes (each $1$ cubic unit).
 The prism is **${l} units** long, **${w} units** wide, and **${h} units** high.
@@ -135,7 +103,7 @@ export const VolumeFormulaGenerator: Generator = {
     const volume = l * w * h;
 
     return {
-      meta: createMockProvenance(SKILL_5_GM_VOLUME_FORMULA.id, difficulty),
+      meta: createProblemMeta(SKILL_5_GM_VOLUME_FORMULA.id, difficulty),
       problem_content: {
         stem: `Find the volume of a rectangular prism with:
 Length: **${l}** cm
@@ -211,7 +179,7 @@ export const CoordPlaneGenerator: Generator = {
 
     if (type === "DIST_AXIS") {
       return {
-        meta: createMockProvenance(SKILL_5_GM_COORD_PLANE.id, difficulty),
+        meta: createProblemMeta(SKILL_5_GM_COORD_PLANE.id, difficulty),
         problem_content: {
           stem: `Point A is located at **(${x}, ${y})** on the coordinate plane.
 How many units is Point A from the **y-axis**?`, // Distance from y-axis is x-coord
@@ -247,7 +215,7 @@ How many units is Point A from the **y-axis**?`, // Distance from y-axis is x-co
       };
     } else {
       return {
-        meta: createMockProvenance(SKILL_5_GM_COORD_PLANE.id, difficulty),
+        meta: createProblemMeta(SKILL_5_GM_COORD_PLANE.id, difficulty),
         problem_content: {
           stem: `In the ordered pair **(${x}, ${y})**, which number is the **y-coordinate**?`,
           format: "text",
@@ -309,7 +277,7 @@ export const ClassFiguresHierarchyGenerator: Generator = {
     const q = statements[randomInt(0, statements.length - 1, rng)];
 
     return {
-      meta: createMockProvenance(SKILL_5_GM_CLASS_FIGURES.id, difficulty),
+      meta: createProblemMeta(SKILL_5_GM_CLASS_FIGURES.id, difficulty),
       problem_content: {
         stem: `True or False:
 **${q.text}**`,
@@ -366,7 +334,7 @@ export const UnitConv5Generator: Generator = {
     const result = val * 100; // m to cm
 
     return {
-      meta: createMockProvenance(SKILL_5_GM_UNIT_CONV.id, difficulty),
+      meta: createProblemMeta(SKILL_5_GM_UNIT_CONV.id, difficulty),
       problem_content: {
         stem: `Convert:
 **${val} meters** = ? **centimeters**`,
@@ -463,7 +431,7 @@ export const LinePlotGenerator: Generator = {
       const canonical = rem === 0 ? String(whole) : `${sumNum}/${den}`;
 
       return {
-        meta: createMockProvenance(SKILL_5_MD_LINE_PLOTS.id, difficulty),
+        meta: createProblemMeta(SKILL_5_MD_LINE_PLOTS.id, difficulty),
         problem_content: {
           stem: `A scientist measured the amount of liquid in several beakers (in liters).
 The data collected is:
@@ -497,7 +465,7 @@ What is the **total** amount of liquid in all the beakers combined?`,
       const diff = max - min;
 
       return {
-        meta: createMockProvenance(SKILL_5_MD_LINE_PLOTS.id, difficulty),
+        meta: createProblemMeta(SKILL_5_MD_LINE_PLOTS.id, difficulty),
         problem_content: {
           stem: `The data below shows the weight of several apples (in lbs):
 **${textData}**

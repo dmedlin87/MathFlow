@@ -1,12 +1,12 @@
 import { describe, it, expect } from 'vitest';
-import { engine } from '../generator/engine';
+import { engine } from '../../generator/engine';
 import {
   SKILL_5_GM_VOLUME_CUBES,
   SKILL_5_GM_VOLUME_FORMULA,
   SKILL_5_GM_COORD_PLANE,
   SKILL_5_GM_CLASS_FIGURES,
   SKILL_5_GM_UNIT_CONV
-} from './grade5-meas-geo';
+} from './meas-geo';
 
 describe('Grade 5 GM Domain', () => {
     const generate = async (skillId: string) => {

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { OrderOpsGenerator } from "./grade5-oa";
+import { OrderOpsGenerator } from "./oa";
 
 describe("Grade 5 OA Bug Jail", () => {
   it("reproduces NaN failure deterministically", () => {

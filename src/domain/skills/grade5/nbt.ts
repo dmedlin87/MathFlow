@@ -1,40 +1,8 @@
-import type { Skill, Generator, MathProblemItem } from "../types";
-import { engine } from "../generator/engine";
-
-// Helper to get random integer between min and max (inclusive)
-const randomInt = (min: number, max: number, rng: () => number = Math.random) =>
-  Math.floor(rng() * (max - min + 1)) + min;
+import type { Skill, Generator, MathProblemItem } from "../../types";
+import { engine } from "../../generator/engine";
+import { randomInt, createProblemMeta } from "../../math-utils";
 
 // Mock provenance helper
-const createMockProvenance = (
-  skillId: string,
-  diff: number
-): MathProblemItem["meta"] => ({
-  id: `it_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-  version: 1,
-  skill_id: skillId,
-  difficulty: Math.ceil(diff * 5) || 1,
-  created_at: new Date().toISOString(),
-  verified_at: new Date().toISOString(),
-  status: "VERIFIED",
-  provenance: {
-    generator_model: "v0-rule-based-engine",
-    critic_model: "v0-simulation",
-    judge_model: "v0-simulation",
-    verifier: { type: "numeric", passed: true },
-    attempt: 1,
-  },
-  verification_report: {
-    rubric_scores: {
-      solvability: 1,
-      ambiguity: 0,
-      procedural_correctness: 1,
-      pedagogical_alignment: 1,
-    },
-    underspecified: false,
-    issues: [],
-  },
-});
 
 // Helper for robust rounding
 const robustRound = (n: number, scale: number) => {
@@ -78,7 +46,7 @@ export const PowersOf10Generator: Generator = {
       if (isMultiplication) {
         const val2 = base * Math.pow(10, power - 1);
         return {
-          meta: createMockProvenance(SKILL_5_NBT_POWERS_10.id, difficulty),
+          meta: createProblemMeta(SKILL_5_NBT_POWERS_10.id, difficulty),
           problem_content: {
             stem: `${val1} is 10 times as much as ?`,
             format: "text",
@@ -104,7 +72,7 @@ export const PowersOf10Generator: Generator = {
       } else {
         const val2 = base * Math.pow(10, power - 1);
         return {
-          meta: createMockProvenance(SKILL_5_NBT_POWERS_10.id, difficulty),
+          meta: createProblemMeta(SKILL_5_NBT_POWERS_10.id, difficulty),
           problem_content: {
             stem: `${val2} is 1/10 of ?`,
             format: "text",
@@ -132,7 +100,7 @@ export const PowersOf10Generator: Generator = {
       const exponent = randomInt(1, 4, rng);
       const answer = Math.pow(10, exponent);
       return {
-        meta: createMockProvenance(SKILL_5_NBT_POWERS_10.id, difficulty),
+        meta: createProblemMeta(SKILL_5_NBT_POWERS_10.id, difficulty),
         problem_content: {
           stem: `Evaluate: $10^${exponent} = ?$`,
           format: "latex",
@@ -171,7 +139,7 @@ export const PowersOf10Generator: Generator = {
       const canonical = parseFloat(answer.toFixed(4)).toString();
 
       return {
-        meta: createMockProvenance(SKILL_5_NBT_POWERS_10.id, difficulty),
+        meta: createProblemMeta(SKILL_5_NBT_POWERS_10.id, difficulty),
         problem_content: {
           stem: `Calculate: $${num} \\times ${questionPart} = ?$`,
           format: "latex",
@@ -218,7 +186,7 @@ export const PowersOf10Generator: Generator = {
       const canonical = parseFloat(answer.toFixed(5)).toString();
 
       return {
-        meta: createMockProvenance(SKILL_5_NBT_POWERS_10.id, difficulty),
+        meta: createProblemMeta(SKILL_5_NBT_POWERS_10.id, difficulty),
         problem_content: {
           stem: `Calculate: $${dividend} \\div ${questionPart} = ?$`,
           format: "latex",
@@ -302,7 +270,7 @@ export const DecimalFormsGenerator: Generator = {
     const expandedForm = parts.join(" + ");
 
     return {
-      meta: createMockProvenance(SKILL_5_NBT_DECIMAL_FORMS.id, difficulty),
+      meta: createProblemMeta(SKILL_5_NBT_DECIMAL_FORMS.id, difficulty),
       problem_content: {
         stem: `Write the standard form number for:
 $$${expandedForm}$$`,
@@ -383,7 +351,7 @@ export const CompareDecimalsGenerator: Generator = {
     if (n1 < n2) expected = "<";
 
     return {
-      meta: createMockProvenance(SKILL_5_NBT_COMPARE_DECIMALS.id, difficulty),
+      meta: createProblemMeta(SKILL_5_NBT_COMPARE_DECIMALS.id, difficulty),
       problem_content: {
         stem: `Compare: $${s1} \\text{ ? } ${s2}$`,
         format: "latex",
@@ -453,7 +421,7 @@ export const RoundDecimalsGenerator: Generator = {
     else rounded = robustRound(num, 100);
 
     return {
-      meta: createMockProvenance(SKILL_5_NBT_ROUND_DECIMALS.id, difficulty),
+      meta: createProblemMeta(SKILL_5_NBT_ROUND_DECIMALS.id, difficulty),
       problem_content: {
         stem: `Round **${num}** to the nearest **${targetPlace}**.`,
         format: "text",
@@ -513,7 +481,7 @@ export const AddSubDecimalsGenerator: Generator = {
     const op = isAddition ? "+" : "-";
 
     return {
-      meta: createMockProvenance(SKILL_5_NBT_ADD_SUB_DECIMALS.id, difficulty),
+      meta: createProblemMeta(SKILL_5_NBT_ADD_SUB_DECIMALS.id, difficulty),
       problem_content: {
         stem: `Compute: $${n1} ${op} ${n2} = ?$`,
         format: "latex",
@@ -578,7 +546,7 @@ export const MultWholeGenerator: Generator = {
     const result = n1 * n2;
 
     return {
-      meta: createMockProvenance(SKILL_5_NBT_MULT_WHOLE.id, difficulty),
+      meta: createProblemMeta(SKILL_5_NBT_MULT_WHOLE.id, difficulty),
       problem_content: {
         stem: `Multiply: $${n1} \\times ${n2} = ?$`,
         format: "latex",
@@ -640,7 +608,7 @@ export const MultDecimalsGenerator: Generator = {
     const canonical = String(result);
 
     return {
-      meta: createMockProvenance(SKILL_5_NBT_MULT_DECIMALS.id, difficulty),
+      meta: createProblemMeta(SKILL_5_NBT_MULT_DECIMALS.id, difficulty),
       problem_content: {
         stem: `Multiply: $${n1} \\times ${n2} = ?$`,
         format: "latex",
@@ -701,7 +669,7 @@ export const DivWholeGenerator: Generator = {
       remainder === 0 ? String(quotient) : `${quotient} R ${remainder}`;
 
     return {
-      meta: createMockProvenance(SKILL_5_NBT_DIV_WHOLE.id, difficulty),
+      meta: createProblemMeta(SKILL_5_NBT_DIV_WHOLE.id, difficulty),
       problem_content: {
         stem: `Divide: $${dividend} \\div ${divisor}$
 ${remainder > 0 ? "(Format: Quotient R Remainder, e.g. 5 R 2)" : ""}`,
@@ -764,7 +732,7 @@ export const DivDecimalsGenerator: Generator = {
     const dividend = parseFloat((quotient * divisor).toFixed(4));
 
     return {
-      meta: createMockProvenance(SKILL_5_NBT_DIV_DECIMALS.id, difficulty),
+      meta: createProblemMeta(SKILL_5_NBT_DIV_DECIMALS.id, difficulty),
       problem_content: {
         stem: `Divide: $${dividend} \\div ${divisor} = ?$`,
         format: "latex",
@@ -827,7 +795,7 @@ export const FracDecConversionGenerator: Generator = {
 
     if (type === 0) {
       return {
-        meta: createMockProvenance(SKILL_5_NBT_FRAC_DEC_CONV.id, difficulty),
+        meta: createProblemMeta(SKILL_5_NBT_FRAC_DEC_CONV.id, difficulty),
         problem_content: {
           stem: `Convert the fraction to a decimal:
 $$ \\frac{${num}}{${den}} = ? $$`,
@@ -863,7 +831,7 @@ $$ \\frac{${num}}{${den}} = ? $$`,
     } else {
       // Decimal to Fraction
       return {
-        meta: createMockProvenance(SKILL_5_NBT_FRAC_DEC_CONV.id, difficulty),
+        meta: createProblemMeta(SKILL_5_NBT_FRAC_DEC_CONV.id, difficulty),
         problem_content: {
           stem: `Convert the decimal to a fraction (in simplest form):
 $$ ${decimalVal} = ? $$`,

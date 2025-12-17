@@ -8,7 +8,7 @@ import {
   SKILL_6_G_SURFACE_AREA,
   SKILL_6_G_VOLUME_FRAC,
   SKILL_6_G_POLYGONS_COORD,
-} from "./grade6-geometry";
+} from "./geometry";
 
 const createMockRng = (sequence: number[]) => {
   let index = 0;

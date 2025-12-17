@@ -20,7 +20,7 @@ import {
   SKILL_5_NBT_DIV_WHOLE,
   SKILL_5_NBT_DIV_DECIMALS,
   SKILL_5_NBT_FRAC_DEC_CONV,
-} from "./grade5-nbt";
+} from "./nbt";
 
 // Helper for deterministic RNG
 const createMockRng = (sequence: number[]) => {

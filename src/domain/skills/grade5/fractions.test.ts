@@ -12,7 +12,7 @@ import {
   SKILL_5_NF_MULT_FRAC,
   SKILL_5_NF_DIV_FRAC,
   SKILL_5_NF_WORD_PROBLEMS,
-} from "./grade5-fractions";
+} from "./fractions";
 
 const createMockRng = (sequence: number[]) => {
   let index = 0;

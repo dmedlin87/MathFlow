@@ -6,7 +6,7 @@ import {
   EquivExpressionsGenerator,
   InequalitiesGenerator,
   VariablesGenerator,
-} from "./grade6-ee";
+} from "./ee";
 
 describe("Grade 6 EE Generators", () => {
   // Helper to evaluate LaTeX-like expressions for verification if needed

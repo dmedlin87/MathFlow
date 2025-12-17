@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { engine } from "../generator/engine";
-import { SKILL_5_OA_ORDER_OPS, SKILL_5_OA_PATTERNS } from "./grade5-oa";
+import { engine } from "../../generator/engine";
+import { SKILL_5_OA_ORDER_OPS, SKILL_5_OA_PATTERNS } from "./oa";
 
 // Simple Linear Congruential Generator for deterministic testing
 const createSeededRng = (seed: number) => {

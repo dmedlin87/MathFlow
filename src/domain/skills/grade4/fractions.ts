@@ -1,44 +1,6 @@
 import type { Skill, Generator, MathProblemItem } from "../../types";
 import { engine } from "../../generator/engine";
-import { gcd } from "../../math-utils";
-
-// Helper to get random integer between min and max (inclusive)
-const randomInt = (min: number, max: number, rng: () => number = Math.random) =>
-  Math.floor(rng() * (max - min + 1)) + min;
-
-// Helper to create mock provenance for V0 runtime generation
-const createMockProvenance = (
-  skillId: string,
-  diff: number
-): MathProblemItem["meta"] => ({
-  id: `it_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
-  version: 1,
-  skill_id: skillId,
-  difficulty: Math.ceil(diff * 5) || 1,
-  created_at: new Date().toISOString(),
-  verified_at: new Date().toISOString(),
-  status: "VERIFIED",
-  provenance: {
-    generator_model: "v0-rule-based-engine",
-    critic_model: "v0-simulation",
-    judge_model: "v0-simulation",
-    verifier: {
-      type: "numeric",
-      passed: true,
-    },
-    attempt: 1,
-  },
-  verification_report: {
-    rubric_scores: {
-      solvability: 1,
-      ambiguity: 0,
-      procedural_correctness: 1,
-      pedagogical_alignment: 1,
-    },
-    underspecified: false,
-    issues: [],
-  },
-});
+import { gcd, randomInt, createProblemMeta } from "../../math-utils";
 
 // --- 1. Equivalent Fractions ---
 
@@ -81,7 +43,7 @@ export const EquivFractionGenerator: Generator = {
     const additiveWrongAnswer = baseNum + diff;
 
     return {
-      meta: createMockProvenance(SKILL_EQUIV_FRACTIONS.id, difficulty),
+      meta: createProblemMeta(SKILL_EQUIV_FRACTIONS.id, difficulty),
       problem_content: {
         stem: `Find the missing number: **${baseNum}/${baseDen} = ?/${targetDen}**`,
         format: "mixed",
@@ -156,7 +118,7 @@ export const AddLikeFractionGenerator: Generator = {
     const targetNum = num1 + num2;
 
     return {
-      meta: createMockProvenance(SKILL_ADD_LIKE_FRACTIONS.id, difficulty),
+      meta: createProblemMeta(SKILL_ADD_LIKE_FRACTIONS.id, difficulty),
       problem_content: {
         stem: `Add: **${num1}/${den} + ${num2}/${den} = ?/${den}**`,
         format: "mixed",
@@ -233,7 +195,7 @@ export const SubLikeFractionGenerator: Generator = {
     const num1 = targetNum + num2;
 
     return {
-      meta: createMockProvenance(SKILL_SUB_LIKE_FRACTIONS.id, difficulty),
+      meta: createProblemMeta(SKILL_SUB_LIKE_FRACTIONS.id, difficulty),
       problem_content: {
         stem: `Subtract: \\(\\frac{${num1}}{${den}} - \\frac{${num2}}{${den}} = ?\\)`,
         format: "latex",
@@ -323,7 +285,7 @@ export const SimplifyFractionGenerator: Generator = {
     const questionDen = simpleDen * multiplier;
 
     return {
-      meta: createMockProvenance(SKILL_SIMPLIFY_FRACTIONS.id, difficulty),
+      meta: createProblemMeta(SKILL_SIMPLIFY_FRACTIONS.id, difficulty),
       problem_content: {
         stem: `Simplify \\(\\frac{${questionNum}}{${questionDen}}\\) to its lowest terms.`,
         format: "latex",
@@ -397,7 +359,7 @@ export const FracMultWholeGenerator: Generator = {
     const miscMultDenDen = whole * den;
 
     return {
-      meta: createMockProvenance(SKILL_FRAC_MULT_WHOLE.id, difficulty),
+      meta: createProblemMeta(SKILL_FRAC_MULT_WHOLE.id, difficulty),
       problem_content: {
         stem: `Multiply: **${whole} \\times \\frac{${num}}{${den}}**`,
         format: "latex",
@@ -481,7 +443,7 @@ export const FracCompareUnlikeGenerator: Generator = {
     if (val1 < val2) symbol = "<";
 
     return {
-      meta: createMockProvenance(SKILL_FRAC_COMPARE_UNLIKE.id, difficulty),
+      meta: createProblemMeta(SKILL_FRAC_COMPARE_UNLIKE.id, difficulty),
       problem_content: {
         stem: `Compare the fractions:
 \\(\\frac{${num1}}{${den1}}\\) and \\(\\frac{${num2}}{${den2}}\\).
@@ -571,7 +533,7 @@ export const AddTenthsHundredthsGenerator: Generator = {
     const term2 = order ? `\\frac{${num100}}{100}` : `\\frac{${num10}}{10}`;
 
     return {
-      meta: createMockProvenance(SKILL_ADD_TENTHS_HUNDREDTHS.id, difficulty),
+      meta: createProblemMeta(SKILL_ADD_TENTHS_HUNDREDTHS.id, difficulty),
       problem_content: {
         stem: `Add: $$${term1} + ${term2} = ?$$`,
         format: "latex",
@@ -659,7 +621,7 @@ export const FracDecomposeGenerator: Generator = {
     const part2 = num - part1;
 
     return {
-      meta: createMockProvenance(SKILL_FRAC_DECOMPOSE.id, difficulty),
+      meta: createProblemMeta(SKILL_FRAC_DECOMPOSE.id, difficulty),
       problem_content: {
         stem: `Find the missing numerator to complete the decomposition:
 $$
@@ -776,7 +738,7 @@ export const AddSubMixedGenerator: Generator = {
     const op = isAddition ? "+" : "-";
 
     return {
-      meta: createMockProvenance(SKILL_ADD_SUB_MIXED.id, difficulty),
+      meta: createProblemMeta(SKILL_ADD_SUB_MIXED.id, difficulty),
       problem_content: {
         stem: `Compute:
 $$

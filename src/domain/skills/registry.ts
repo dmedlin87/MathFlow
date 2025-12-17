@@ -52,7 +52,7 @@ import {
   SKILL_5_NBT_DIV_WHOLE,
   SKILL_5_NBT_DIV_DECIMALS,
   SKILL_5_NBT_FRAC_DEC_CONV,
-} from "./grade5-nbt";
+} from "./grade5/nbt";
 import {
   SKILL_5_NF_ADD_SUB_UNLIKE,
   SKILL_5_NF_FRAC_DIV,
@@ -60,7 +60,7 @@ import {
   SKILL_5_NF_MULT_FRAC,
   SKILL_5_NF_DIV_FRAC,
   SKILL_5_NF_WORD_PROBLEMS,
-} from "./grade5-fractions";
+} from "./grade5/fractions";
 import {
   SKILL_5_GM_VOLUME_CUBES,
   SKILL_5_GM_VOLUME_FORMULA,
@@ -68,15 +68,15 @@ import {
   SKILL_5_GM_CLASS_FIGURES,
   SKILL_5_GM_UNIT_CONV,
   SKILL_5_MD_LINE_PLOTS,
-} from "./grade5-meas-geo";
-import { SKILL_5_OA_ORDER_OPS, SKILL_5_OA_PATTERNS } from "./grade5-oa";
+} from "./grade5/meas-geo";
+import { SKILL_5_OA_ORDER_OPS, SKILL_5_OA_PATTERNS } from "./grade5/oa";
 import {
   SKILL_6_RP_RATIOS,
   SKILL_6_RP_UNIT_RATE,
   SKILL_6_RP_PERCENTS,
   SKILL_6_RP_RATIO_TABLES,
   SKILL_6_RP_UNIT_CONVERSION,
-} from "./grade6-rp";
+} from "./grade6/rp";
 import {
   SKILL_6_NS_DIV_FRACTIONS,
   SKILL_6_NS_MULTI_DIGIT_DIV,
@@ -85,7 +85,7 @@ import {
   SKILL_6_NS_INTEGERS,
   SKILL_6_NS_RATIONAL_NUMBER_LINE,
   SKILL_6_NS_COORD_PLANE,
-} from "./grade6-ns";
+} from "./grade6/ns";
 import {
   SKILL_6_EE_EXPONENTS,
   SKILL_6_EE_ONE_STEP_EQ,
@@ -93,13 +93,13 @@ import {
   SKILL_6_EE_EQUIV_EXPRESSIONS,
   SKILL_6_EE_INEQUALITIES,
   SKILL_6_EE_VARIABLES,
-} from "./grade6-ee";
+} from "./grade6/ee";
 import {
   SKILL_6_G_AREA,
   SKILL_6_G_SURFACE_AREA,
   SKILL_6_G_VOLUME_FRAC,
   SKILL_6_G_POLYGONS_COORD,
-} from "./grade6-geometry";
+} from "./grade6/geometry";
 import {
   SKILL_6_SP_MEAN,
   SKILL_6_SP_MEDIAN_MODE_RANGE,
@@ -107,7 +107,7 @@ import {
   SKILL_6_SP_BOX_PLOTS,
   SKILL_6_SP_HISTOGRAMS,
   SKILL_6_SP_DOT_PLOTS,
-} from "./grade6-stats";
+} from "./grade6/stats";
 
 import type { Skill } from "../types";
 
