@@ -149,5 +149,152 @@ describe("Grade 5 NF Domain (Deterministic)", () => {
       expect(item.solution_logic.final_answer_canonical).toBe("3/8");
       expect(item.problem_content.stem).toContain("recipe");
     });
+
+    it("solves addition word problem (Type 0, Addition)", () => {
+      // Logic:
+      // type: 0 (rng=0.1)
+      // isAddition: true (rng=0.1 < 0.6)
+      // d1: randomInt(2,6) -> 0.1 -> 2
+      // d2: randomInt(2,6) -> 0.5 -> 4. Loop while d1==d2? No, 2!=4.
+      // n1=1, n2=1. 1/2 + 1/4. LCM=4.
+      // 2/4 + 1/4 = 3/4.
+
+      const rng = createMockRng([
+        0.1, // Type 0
+        0.1, // isAddition=true
+        0.1, // d1=2
+        0.5, // d2=4
+      ]);
+
+      const item = FractionWordProblemsGenerator.generate(0.5, rng);
+      expect(item.solution_logic.final_answer_canonical).toBe("3/4");
+      expect(item.problem_content.stem).toContain("Alice ran");
+      expect(item.problem_content.stem).toContain("total");
+    });
+
+    it("solves subtraction word problem (Type 0, Subtraction)", () => {
+      // Logic:
+      // type: 0 (rng=0.1)
+      // isAddition: false (rng=0.8 >= 0.6)
+      // d1: randomInt(2,6) -> 0.1 -> 2
+      // d2: randomInt(2,6) -> 0.9 -> 5.
+      // 1/2 - 1/5. LCM=10.
+      // 5/10 - 2/10 = 3/10.
+
+      const rng = createMockRng([
+        0.1, // Type 0
+        0.8, // isAddition=false
+        0.1, // d1=2
+        0.9, // d2=5
+      ]);
+
+      const item = FractionWordProblemsGenerator.generate(0.5, rng);
+      expect(item.solution_logic.final_answer_canonical).toBe("3/10");
+      expect(item.problem_content.stem).toContain("farther");
+    });
+
+    it("solves division word problem (Type 2, Sharing)", () => {
+      // Logic:
+      // type: 2 (rng=0.9)
+      // typeA: true (rng=0.1 < 0.5) => Share unit fraction (1/d div friends)
+      // den: randomInt(2,5) -> 0.1 -> 2
+      // friends: randomInt(2,6) -> 0.1 -> 2
+      // 1/2 div 2 = 1/4.
+
+      const rng = createMockRng([
+        0.9, // Type 2
+        0.1, // typeA=true
+        0.1, // den=2
+        0.1, // friends=2
+      ]);
+
+      const item = FractionWordProblemsGenerator.generate(0.5, rng);
+      expect(item.solution_logic.final_answer_canonical).toBe("1/4");
+      expect(item.problem_content.stem).toContain("Model: Share");
+    });
+
+    it("solves division word problem (Type 2, Grouping)", () => {
+      // Logic:
+      // type: 2 (rng=0.9)
+      // typeA: false (rng=0.6 >= 0.5) => Whole div unit frac (c div 1/b)
+      // whole: randomInt(2,6) -> 0.1 -> 2
+      // den: randomInt(2,5) -> 0.1 -> 2
+      // 2 div 1/2 = 4.
+
+      const rng = createMockRng([
+        0.9, // Type 2
+        0.6, // typeA=false
+        0.1, // whole=2
+        0.1, // den=2
+      ]);
+
+      const item = FractionWordProblemsGenerator.generate(0.5, rng);
+      expect(item.solution_logic.final_answer_canonical).toBe("4");
+      expect(item.problem_content.stem).toContain("bags");
+    });
+  });
+
+  describe("SKILL_5_NF_DIV_FRAC Extra", () => {
+    it("divides whole by unit fraction (Case 2)", () => {
+      // Logic:
+      // isCase1: rng >= 0.5
+      // whole: randomInt(2,6) -> 0.1 -> 2
+      // den: randomInt(2,8) -> 0.1 -> 2
+      // 2 div 1/2 = 4
+
+      const rng = createMockRng([
+        0.6, // Case 2
+        0.1, // whole=2
+        0.1, // den=2
+      ]);
+
+      const item = DivFracGenerator.generate(0.5, rng);
+      expect(item.solution_logic.final_answer_canonical).toBe("4");
+    });
+  });
+
+  describe("SKILL_5_NF_ADD_SUB_UNLIKE Extra", () => {
+    it("subtracts unlike fractions correctly", () => {
+      // Logic:
+      // isAddition: rng >= 0.6
+      // d1: 2
+      // difficulty >= 0.5 case? Let's assume passed diff=0.9
+      // d1=2.
+      // d2: 3 (not mult of 2).
+      // n1=1, n2=1.
+      // 1/2 - 1/3 = 3/6 - 2/6 = 1/6.
+
+      const rng = createMockRng([
+        0.8, // Subtraction
+        0.1, // d1=2 (min 2, max 6) -> 2
+        0.2, // d2=3 (min 2, max 8) -> 3
+        0.1, // n1=1
+        0.1, // n2=1
+      ]);
+
+      const item = AddSubUnlikeGenerator.generate(0.9, rng);
+      expect(item.solution_logic.final_answer_canonical).toBe("1/6");
+      expect(item.problem_content.stem).toContain("Subtract");
+    });
+  });
+
+  describe("SKILL_5_NF_SCALING Extra", () => {
+    it("identifies scaling correctly (>)", () => {
+      // Logic:
+      // factor: 2
+      // num: 3
+      // den: 2
+      // 3/2 > 1.
+      // Symbol >
+
+      const rng = createMockRng([
+        0.1, // factor=2
+        0.5, // num=3
+        0.1, // den=2
+      ]);
+
+      const item = ScalingGenerator.generate(0.5, rng);
+      expect(item.solution_logic.final_answer_canonical).toBe(">");
+    });
   });
 });

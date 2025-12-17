@@ -1,81 +1,22 @@
-
-> mathflow@0.0.0 test:coverage
-> vitest run --coverage
-
-
-[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/dmedl/Projects/MathFlow[39m
-      [2mCoverage enabled with [22m[33mv8[39m
-
- [32mΓ£ô[39m src/domain/learner/misconceptionEvaluator.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 9[2mms[22m[39m
- [32mΓ£ô[39m src/domain/skills/grade6-ee.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 6[2mms[22m[39m
- [32mΓ£ô[39m src/domain/skills/grade6-rp.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 6[2mms[22m[39m
- [32mΓ£ô[39m server/src/middleware/rateLimit.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 13[2mms[22m[39m
- [32mΓ£ô[39m src/services/LearnerService.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 17[2mms[22m[39m
- [32mΓ£ô[39m src/domain/skills/grade4-meas-geo.test.ts [2m([22m[2m27 tests[22m[2m)[22m[32m 15[2mms[22m[39m
- [32mΓ£ô[39m src/domain/skills/grade4-oa.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 7[2mms[22m[39m
- [32mΓ£ô[39m src/domain/skills/grade6-stats.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 7[2mms[22m[39m
- [32mΓ£ô[39m src/domain/skills/grade4-nbt.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 25[2mms[22m[39m
- [32mΓ£ô[39m src/domain/skills/grade5-meas-geo.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 9[2mms[22m[39m
- [32mΓ£ô[39m src/domain/skills/grade5-oa.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 9[2mms[22m[39m
- [32mΓ£ô[39m src/domain/skills/grade6-ns.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 9[2mms[22m[39m
- [32mΓ£ô[39m src/domain/skills/grade5-nbt.test.ts [2m([22m[2m10 tests[22m[2m)[22m[32m 13[2mms[22m[39m
- [32mΓ£ô[39m src/domain/skills/grade4-fractions.test.ts [2m([22m[2m23 tests[22m[2m)[22m[32m 14[2mms[22m[39m
- [32mΓ£ô[39m src/domain/skills/grade5-fractions.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 9[2mms[22m[39m
- [32mΓ£ô[39m src/domain/generator/engine.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 16[2mms[22m[39m
- [32mΓ£ô[39m src/domain/generator/engine.behavior.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 8[2mms[22m[39m
- [32mΓ£ô[39m src/domain/skills/grade4-decimals.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 7[2mms[22m[39m
- [32mΓ£ô[39m src/domain/skills/grade6-geometry.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 8[2mms[22m[39m
- [32mΓ£ô[39m src/domain/learner/scheduler.hardening.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 11[2mms[22m[39m
- [32mΓ£ô[39m server/src/factory/pipeline.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 9[2mms[22m[39m
- [32mΓ£ô[39m src/domain/learner/state.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 10[2mms[22m[39m
- [32mΓ£ô[39m src/domain/learner/state.behavior.test.ts [2m([22m[2m15 tests[22m[2m)[22m[32m 17[2mms[22m[39m
- [32mΓ£ô[39m src/domain/validation.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 4[2mms[22m[39m
- [32mΓ£ô[39m src/domain/skills/grade6-stats.behavior.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 4[2mms[22m[39m
- [32mΓ£ô[39m src/domain/skills/grade5-oa.jail.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 4[2mms[22m[39m
- [32mΓ£ô[39m src/domain/math-utils.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 4[2mms[22m[39m
-
-[2m Test Files [22m [1m[32m27 passed[39m[22m[90m (27)[39m
-[2m      Tests [22m [1m[32m215 passed[39m[22m[90m (215)[39m
-[2m   Start at [22m 19:51:07
-[2m   Duration [22m 1.71s[2m (transform 5.75s, setup 7.24s, import 6.76s, tests 268ms, environment 4ms)[22m
-
-[34m % [39m[2mCoverage report from [22m[33mv8[39m
--------------------|---------|----------|---------|---------|-------------------
-File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
--------------------|---------|----------|---------|---------|-------------------
-All files          |   87.59 |    74.47 |    94.3 |   88.87 |                   
- ...er/src/factory |     100 |      100 |     100 |     100 |                   
-  pipeline.ts      |     100 |      100 |     100 |     100 |                   
- ...ory/generators |     100 |      100 |     100 |     100 |                   
-  fractions.ts     |     100 |      100 |     100 |     100 |                   
- ...src/middleware |   96.55 |    91.66 |   83.33 |     100 |                   
-  rateLimit.ts     |   96.55 |    91.66 |   83.33 |     100 | 23                
- src/domain        |   92.15 |    83.33 |     100 |   91.48 |                   
-  math-utils.ts    |     100 |     87.5 |     100 |     100 | 29-44             
-  validation.ts    |      84 |       80 |     100 |      84 | 29,43,48,55       
- ...main/generator |     100 |    80.95 |     100 |     100 |                   
-  engine.ts        |     100 |    80.95 |     100 |     100 | 41,53,81          
- ...domain/learner |     100 |      100 |     100 |     100 |                   
-  ...nEvaluator.ts |     100 |      100 |     100 |     100 |                   
-  state.ts         |     100 |      100 |     100 |     100 |                   
- src/domain/skills |   85.92 |    70.54 |   93.42 |   87.36 |                   
-  ...4-decimals.ts |     100 |    86.04 |     100 |     100 | 16,170-192        
-  ...-fractions.ts |   93.07 |    78.72 |     100 |    93.7 | ...40,749,756-759 
-  ...4-meas-geo.ts |   96.29 |    77.41 |     100 |   98.85 | 1113-1119         
-  grade4-nbt.ts    |   79.48 |    56.75 |   81.81 |   83.09 | ...37,303-304,546 
-  grade4-oa.ts     |   89.53 |    65.95 |     100 |   88.88 | ...84,249-250,258 
-  ...-fractions.ts |   61.19 |    53.57 |   88.88 |    62.3 | 72-73,93,502-681  
-  ...5-meas-geo.ts |    64.7 |    66.66 |   63.63 |   68.75 | 430-499           
-  grade5-nbt.ts    |   96.73 |    92.24 |     100 |   97.68 | 105-106,164,758   
-  grade5-oa.ts     |   94.82 |    76.19 |     100 |   94.73 | 100-102           
-  grade6-ee.ts     |   86.56 |    62.96 |     100 |   86.56 | ...40,167,246-248 
-  ...6-geometry.ts |   87.93 |    56.52 |     100 |   89.47 | 66-70,177-179     
-  grade6-ns.ts     |    92.8 |    63.49 |     100 |   95.83 | ...12,520,525-526 
-  grade6-rp.ts     |   76.62 |    58.53 |    87.5 |   76.62 | ...02-306,434-436 
-  grade6-stats.ts  |   78.83 |    52.94 |    87.5 |    79.5 | 149-161,165-197   
-  registry.ts      |     100 |      100 |     100 |     100 |                   
- src/services      |     100 |      100 |     100 |     100 |                   
-  ...nerService.ts |     100 |      100 |     100 |     100 |                   
- src/test          |     100 |      100 |     100 |     100 |                   
-  testHelpers.ts   |     100 |      100 |     100 |     100 |                   
--------------------|---------|----------|---------|---------|-------------------
+File | Branch % | Stmt % | Branches (Cov/Tot)
+---|---|---|---
+src\domain\skills\grade5-fractions.ts | 35.7% | 64.2% | 20/56
+src\domain\skills\grade5-nbt.ts | 36.4% | 70.1% | 47/129
+src\domain\skills\grade6-rp.ts | 51.2% | 71.4% | 21/41
+src\domain\skills\grade4-nbt.ts | 55.4% | 79.5% | 41/74
+src\domain\skills\grade6-geometry.ts | 60.9% | 89.7% | 14/23
+src\domain\skills\grade6-ee.ts | 63.0% | 80.6% | 17/27
+src\domain\skills\grade6-ns.ts | 63.5% | 92.8% | 40/63
+src\domain\skills\grade4-oa.ts | 66.0% | 89.5% | 31/47
+src\domain\skills\grade5-meas-geo.ts | 66.7% | 64.7% | 10/15
+src\domain\skills\grade5-oa.ts | 76.2% | 94.8% | 16/21
+src\domain\skills\grade4-meas-geo.ts | 77.4% | 96.3% | 72/93
+src\domain\validation.ts | 80.0% | 84.0% | 24/30
+src\domain\skills\grade4-fractions.ts | 80.9% | 94.6% | 38/47
+src\domain\generator\engine.ts | 81.0% | 100.0% | 17/21
+src\domain\skills\grade4-decimals.ts | 86.0% | 100.0% | 37/43
+src\domain\math-utils.ts | 87.5% | 100.0% | 21/24
+src\domain\skills\grade6-stats.ts | 90.2% | 100.0% | 46/51
+server\src\middleware\rateLimit.ts | 91.7% | 96.6% | 11/12
+src\domain\learner\state.ts | 100.0% | 100.0% | 50/50
+src\domain\learner\misconceptionEvaluator.ts | 100.0% | 100.0% | 10/10
