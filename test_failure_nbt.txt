@@ -1,0 +1,46 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/dmedl/Projects/MathFlow[39m
+
+ [31mΓ¥»[39m src/domain/skills/grade5-nbt.test.ts [2m([22m[2m17 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 12[2mms[22m[39m
+       [32mΓ£ô[39m generates Type 1 (Exponent) correctly[32m 2[2mms[22m[39m
+       [32mΓ£ô[39m generates standard form from expanded correctly[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates correct comparison (>)[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m rounds correctly to nearest tenth[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m adds decimals correctly[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m multiplies multi-digit numbers correctly[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m multiplies decimals correctly[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m divides with remainder correctly[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m divides decimals correctly[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m converts fraction to decimal[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates Shift Relation (Type 0, Mult)[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates Div by Power of 10 (Type 3)[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates equivalence case (Zeros)[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m rounds to nearest hundredth[32m 0[2mms[22m[39m
+[31m       [31m├ù[31m subtracts decimals with swap logic[39m[32m 5[2mms[22m[39m
+       [32mΓ£ô[39m generates clean division[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m divides by decimal (Type 1)[32m 0[2mms[22m[39m
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Failed Tests 1 ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+
+ FAIL  src/domain/skills/grade5-nbt.test.ts > Grade 5 NBT Domain (Deterministic) > SKILL_5_NBT_ADD_SUB_DECIMALS Extra > subtracts decimals with swap logic
+AssertionError: expected '45' to be '48' // Object.is equality
+
+Expected: "48"
+Received: "45"
+
+ Γ¥» src/domain/skills/grade5-nbt.test.ts:356:58
+    354| 
+    355|       const item = AddSubDecimalsGenerator.generate(0.5, rng);
+    356|       expect(item.solution_logic.final_answer_canonical).toBe("48"); /ΓÇª
+       |                                                          ^
+    357|       // n1: rng=0.0 -> floor(0*50)+1 = 1.
+    358|       // n2: rng=0.9 -> floor(45)+1 = 46.
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/1]ΓÄ»
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m16 passed[39m[22m[90m (17)[39m
+[2m   Start at [22m 21:15:30
+[2m   Duration [22m 707ms[2m (transform 97ms, setup 162ms, import 90ms, tests 12ms, environment 0ms)[22m
+

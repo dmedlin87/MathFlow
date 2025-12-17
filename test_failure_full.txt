@@ -1,0 +1,63 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/dmedl/Projects/MathFlow[39m
+
+ [31mΓ¥»[39m src/domain/skills/grade5-fractions.test.ts [2m([22m[2m13 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 11[2mms[22m[39m
+       [32mΓ£ô[39m adds unlike fractions correctly[32m 2[2mms[22m[39m
+       [32mΓ£ô[39m writes division as fraction[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m identifies scaling correctly (<)[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m multiplies fractions correctly[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m divides unit fraction by whole (Case 1)[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m solves recipe word problem (Type 1)[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m solves addition word problem (Type 0, Addition)[32m 0[2mms[22m[39m
+[31m       [31m├ù[31m solves subtraction word problem (Type 0, Subtraction)[39m[32m 4[2mms[22m[39m
+[31m       [31m├ù[31m solves division word problem (Type 2, Sharing)[39m[32m 2[2mms[22m[39m
+       [32mΓ£ô[39m solves division word problem (Type 2, Grouping)[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m divides whole by unit fraction (Case 2)[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m subtracts unlike fractions correctly[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m identifies scaling correctly (>)[32m 0[2mms[22m[39m
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Failed Tests 2 ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+
+ FAIL  src/domain/skills/grade5-fractions.test.ts > Grade 5 NF Domain (Deterministic) > SKILL_5_NF_WORD_PROBLEMS > solves subtraction word problem (Type 0, Subtraction)
+AssertionError: expected '1/3' to be '3/10' // Object.is equality
+
+Expected: "3/10"
+Received: "1/3"
+
+ Γ¥» src/domain/skills/grade5-fractions.test.ts:192:58
+    190| 
+    191|       const item = FractionWordProblemsGenerator.generate(0.5, rng);
+    192|       expect(item.solution_logic.final_answer_canonical).toBe("3/10");
+       |                                                          ^
+    193|       expect(item.problem_content.stem).toContain("farther");
+    194|     });
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/2]ΓÄ»
+
+ FAIL  src/domain/skills/grade5-fractions.test.ts > Grade 5 NF Domain (Deterministic) > SKILL_5_NF_WORD_PROBLEMS > solves division word problem (Type 2, Sharing)
+AssertionError: expected 'You have **1/2** gallon of juice.\nYoΓÇª' to contain 'Model: Share'
+
+- Expected
++ Received
+
+- Model: Share
++ You have **1/2** gallon of juice.
++ You share it equally among **2** friends.
++ How much juice does each friend get?
+
+ Γ¥» src/domain/skills/grade5-fractions.test.ts:213:41
+    211|       const item = FractionWordProblemsGenerator.generate(0.5, rng);
+    212|       expect(item.solution_logic.final_answer_canonical).toBe("1/4");
+    213|       expect(item.problem_content.stem).toContain("Model: Share");
+       |                                         ^
+    214|     });
+    215| 
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[2/2]ΓÄ»
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m11 passed[39m[22m[90m (13)[39m
+[2m   Start at [22m 21:08:25
+[2m   Duration [22m 680ms[2m (transform 130ms, setup 144ms, import 117ms, tests 11ms, environment 0ms)[22m
+

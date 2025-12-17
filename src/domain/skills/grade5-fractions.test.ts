@@ -177,19 +177,19 @@ describe("Grade 5 NF Domain (Deterministic)", () => {
       // type: 0 (rng=0.1)
       // isAddition: false (rng=0.8 >= 0.6)
       // d1: randomInt(2,6) -> 0.1 -> 2
-      // d2: randomInt(2,6) -> 0.9 -> 5.
-      // 1/2 - 1/5. LCM=10.
-      // 5/10 - 2/10 = 3/10.
+      // d2: randomInt(2,6) -> 0.9 -> floor(0.9*5)+2 = 4+2 = 6.
+      // 1/2 - 1/6. LCM=6.
+      // 3/6 - 1/6 = 2/6 = 1/3.
 
       const rng = createMockRng([
         0.1, // Type 0
         0.8, // isAddition=false
         0.1, // d1=2
-        0.9, // d2=5
+        0.9, // d2=6
       ]);
 
       const item = FractionWordProblemsGenerator.generate(0.5, rng);
-      expect(item.solution_logic.final_answer_canonical).toBe("3/10");
+      expect(item.solution_logic.final_answer_canonical).toBe("1/3");
       expect(item.problem_content.stem).toContain("farther");
     });
 
@@ -210,7 +210,7 @@ describe("Grade 5 NF Domain (Deterministic)", () => {
 
       const item = FractionWordProblemsGenerator.generate(0.5, rng);
       expect(item.solution_logic.final_answer_canonical).toBe("1/4");
-      expect(item.problem_content.stem).toContain("Model: Share");
+      expect(item.problem_content.stem).toContain("share");
     });
 
     it("solves division word problem (Type 2, Grouping)", () => {

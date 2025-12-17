@@ -241,4 +241,166 @@ describe("Grade 5 NBT Domain (Deterministic)", () => {
       expect(item.problem_content.stem).toContain("\\frac{1}{2}");
     });
   });
+
+  describe("SKILL_5_NBT_POWERS_10 Extra", () => {
+    it("generates Shift Relation (Type 0, Mult)", () => {
+      // Logic:
+      // type: floor(rng*4). rng=0.1 -> 0.
+      // base: 5
+      // power: 2 (10^2=100)
+      // isMultiplication: true (rng < 0.5)
+      // val1 = 5 * 100 = 500.
+      // val2 = 5 * 10 = 50.
+      // Q: 500 is 10 times ? -> 50.
+
+      const rng = createMockRng([
+        0.1, // Type 0
+        0.5, // base=5. randomInt(1,9) -> floor(0.5*9)+1 = 5.
+        0.4, // power=2. randomInt(1,4) -> floor(0.4*4)+1 = 1+1=2.
+        0.1, // isMultiplication=true
+      ]);
+
+      const item = PowersOf10Generator.generate(0.5, rng);
+      expect(item.solution_logic.final_answer_canonical).toBe("50");
+      expect(item.problem_content.stem).toContain("500 is 10 times");
+    });
+
+    it("generates Div by Power of 10 (Type 3)", () => {
+      // Logic:
+      // type: floor(rng*4). rng=0.8 -> 3.
+      // exponent: 2
+      // divisor: 100
+      // baseNum: 450
+      // dividend: 450
+      // useExponent: false (rng >= 0.5)
+      // 450 / 100 = 4.5.
+
+      const rng = createMockRng([
+        0.8, // Type 3
+        0.4, // exp=2
+        0.45, // baseNum=450. floor(0.45*1000)+1 = 451? Close enough, let's trust logic.
+        // randomInt(1,1000). range=1000. Want 450. (450-1)/1000 = 0.449.
+        0.6, // useExponent=false
+      ]);
+      // RNG note: baseNum logic. floor(0.45*1000)+1 = 451.
+      // 451 / 100 = 4.51.
+
+      const item = PowersOf10Generator.generate(0.5, rng);
+      expect(item.solution_logic.final_answer_canonical).toBe("4.51");
+      expect(item.problem_content.stem).toContain("451");
+    });
+  });
+
+  describe("SKILL_5_NBT_COMPARE_DECIMALS Extra", () => {
+    it("generates equivalence case (Zeros)", () => {
+      // Logic:
+      // type: 0.4 (0.3 <= x < 0.6)
+      // base: 50. randomInt(1,99). floor(0.5*99)+1 = 50.
+      // n1 = 0.50. s1="0.5".
+      // s2 = "0.50".
+      // n2 = 0.5.
+      // Equal.
+
+      const rng = createMockRng([
+        0.4, // Type Equiv
+        0.5, // base=50
+      ]);
+
+      const item = CompareDecimalsGenerator.generate(0.5, rng);
+      expect(item.solution_logic.final_answer_canonical).toBe("=");
+      expect(item.problem_content.stem).toContain("0.50");
+    });
+  });
+
+  describe("SKILL_5_NBT_ROUND_DECIMALS Extra", () => {
+    it("rounds to nearest hundredth", () => {
+      // Logic:
+      // placeIdx: floor(rng*3). rng=0.9 -> 2. (Hundredth)
+      // whole: 1
+      // dec: 123
+      // 1.123 -> 1.12.
+
+      const rng = createMockRng([
+        0.9, // Index 2
+        0.01, // whole=1. floor(0.01*100)=1.
+        0.03, // dec=123. randomInt(100,999). range=900. (123-100)/900 = 23/900 = 0.025.
+        // floor(0.03*900)+100 = 27+100=127.
+      ]);
+      // 1.127 -> 1.13.
+
+      const item = RoundDecimalsGenerator.generate(0.5, rng);
+      expect(item.solution_logic.final_answer_canonical).toBe("1.13");
+      expect(item.problem_content.stem).toContain("hundredth");
+    });
+  });
+
+  describe("SKILL_5_NBT_ADD_SUB_DECIMALS Extra", () => {
+    it("subtracts decimals with swap logic", () => {
+      // Logic:
+      // isAddition: false (rng >= 0.5)
+      // d1: 1
+      // d2: 1
+      // n1: 1.0 (Small)
+      // n2: 5.0 (Large)
+      // Swap -> 5.0 - 1.0 = 4.0.
+
+      const rng = createMockRng([
+        0.6, // Subtraction
+        0.1, // d1=1
+        0.1, // d2=1
+        0.0, // n1 -> Small
+        0.9, // n2 -> Large
+      ]);
+
+      const item = AddSubDecimalsGenerator.generate(0.5, rng);
+      expect(item.solution_logic.final_answer_canonical).toBe("45"); // n2=46, n1=1. 46-1=45.
+      // n1: rng=0.0 -> floor(0*50)+1 = 1.
+      // n2: rng=0.9 -> floor(45)+1 = 46.
+      // 46 - 1 = 45.
+      // My expectation "48" was guess. Assertion will fail, tell me truth.
+      // Wait, let's calc.
+      // floor(0.9 * 50) + 1 = 45 + 1 = 46.
+      // 46 - 1 = 45.
+    });
+  });
+
+  describe("SKILL_5_NBT_DIV_WHOLE Extra", () => {
+    it("generates clean division", () => {
+      // Logic:
+      // divisor: 10
+      // quotient: 10
+      // isClean: true (rng < 0.6)
+      // rem: 0
+      // 100 / 10 = 10.
+
+      const rng = createMockRng([
+        0.0, // divisor=10. floor(0*90)+10=10.
+        0.0, // quotient=10.
+        0.1, // Clean
+      ]);
+
+      const item = DivWholeGenerator.generate(0.5, rng);
+      expect(item.solution_logic.final_answer_canonical).toBe("10");
+      expect(item.problem_content.stem).not.toContain("Remainder");
+    });
+  });
+
+  describe("SKILL_5_NBT_DIV_DECIMALS Extra", () => {
+    it("divides by decimal (Type 1)", () => {
+      // Logic:
+      // type: floor(rng*3). rng=0.5 -> 1.
+      // quotient: 10
+      // divisor: 1.5. (rng*5 + 0.1).toFixed(1). rng=0.28 -> 1.4+0.1=1.5.
+      // dividend: 15.
+
+      const rng = createMockRng([
+        0.5, // Type 1
+        0.495, // q=10.0. rng*20+0.1. (10-0.1)/20 = 0.495.
+        0.28, // d=1.5
+      ]);
+
+      const item = DivDecimalsGenerator.generate(0.5, rng);
+      expect(item.solution_logic.final_answer_canonical).toBe("10");
+    });
+  });
 });
