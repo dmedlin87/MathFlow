@@ -3,7 +3,7 @@ import cors from "cors";
 import { problemBank } from "./store/ProblemBank.js";
 import { ContentPipeline } from "./factory/pipeline.js";
 import { MockCritic, MockJudge } from "./factory/generators/fractions.js";
-import { skillGeneratorMap } from "../../src/domain/skills/generatorMap.js";
+import { skillGeneratorMap } from "@domain/skills/generatorMap.js";
 import { DomainGeneratorAdapter } from "./factory/adapters/DomainGeneratorAdapter.js";
 import { config } from "./config.js";
 import { rateLimiter } from "./middleware/rateLimit.js";

@@ -9,8 +9,8 @@ import type {
   MathProblemItem,
   Provenance,
   VerificationReport,
-} from "../../../../src/domain/types.js";
-import { EquivFractionGenerator } from "../../../../src/domain/skills/grade4/fractions.js";
+} from "@domain/types.js";
+import { EquivFractionGenerator } from "@domain/skills/grade4/fractions.js";
 
 /**
  * Mock Generator: Wraps the existing deterministic generator from domain/skills
