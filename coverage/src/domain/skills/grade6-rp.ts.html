@@ -898,43 +898,43 @@
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -1330,7 +1330,7 @@ export const UnitRateGenerator: Generator = {
     if (type === "cost") {
       const units = randomInt(3, 12, rng);
       const pricePerUnit =
-        randomInt(2, 9, rng) + ((rng ?? Math.random)() &lt; 0.5 ? 0.5 : <span class="branch-1 cbranch-no" title="branch not covered" >0);</span>
+        randomInt(2, 9, rng) + ((rng ?? Math.random)() &lt; 0.5 ? <span class="branch-0 cbranch-no" title="branch not covered" >0.5 : 0</span>);
       const totalCost = units * pricePerUnit;
 &nbsp;
       return {
@@ -1429,14 +1429,14 @@ export const PercentsGenerator: Generator = {
   generate: (difficulty: number, rng?: () =&gt; number): MathProblemItem =&gt; {
     // Type 0: Find part (What is P% of W?)
     // Type 1: Find whole (Part is P% of what?)
-    const type = (rng ?? Math.random)() &lt; 0.6 ? <span class="branch-0 cbranch-no" title="branch not covered" >0 : 1</span>;
+    const type = (rng ?? Math.random)() &lt; 0.6 ? 0 : <span class="branch-1 cbranch-no" title="branch not covered" >1;</span>
 &nbsp;
-    <span class="missing-if-branch" title="if path not taken" >I</span>if (type === 0) {
-      const percent = <span class="cstat-no" title="statement not covered" >randomInt(1, 20, rng) * 5; // 5, 10, ... 100</span>
-      const whole = <span class="cstat-no" title="statement not covered" >randomInt(2, 20, rng) * 10; // 20, 30, ... 200</span>
-      const part = (<span class="cstat-no" title="statement not covered" >percent / 100) * whole;</span>
+    if (type === 0) {
+      const percent = randomInt(1, 20, rng) * 5; // 5, 10, ... 100
+      const whole = randomInt(2, 20, rng) * 10; // 20, 30, ... 200
+      const part = (percent / 100) * whole;
 &nbsp;
-<span class="cstat-no" title="statement not covered" >      return {</span>
+      return {
         meta: createMockProvenance(SKILL_6_RP_PERCENTS.id, difficulty),
         problem_content: {
           stem: `What is ${percent}% of ${whole}?`,
@@ -1462,13 +1462,13 @@ export const PercentsGenerator: Generator = {
         },
         misconceptions: [],
       };
-    } else {
+    } else <span class="missing-if-branch" title="else path not taken" >E</span>{
       // Find whole
-      const percent = [10, 20, 25, 50, 75][randomInt(0, 4, rng)];
-      const whole = randomInt(2, 20, rng) * 4; // Ensure clean numbers
-      const part = (percent / 100) * whole;
+      const percent = <span class="cstat-no" title="statement not covered" >[10, 20, 25, 50, 75][randomInt(0, 4, rng)];</span>
+      const whole = <span class="cstat-no" title="statement not covered" >randomInt(2, 20, rng) * 4; // Ensure clean numbers</span>
+      const part = (<span class="cstat-no" title="statement not covered" >percent / 100) * whole;</span>
 &nbsp;
-      return {
+<span class="cstat-no" title="statement not covered" >      return {</span>
         meta: createMockProvenance(SKILL_6_RP_PERCENTS.id, difficulty),
         problem_content: {
           stem: `${part} is ${percent}% of what number?`,
@@ -1672,7 +1672,7 @@ engine.register(UnitConversionRPGenerator);
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2025-12-16T21:58:50.600Z
+                at 2025-12-17T00:02:49.358Z
             </div>
         <script src="../../../prettify.js"></script>
         <script>

@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { createInitialState, updateLearnerState } from "./state";
+import {
+  createInitialState,
+  updateLearnerState,
+  recommendNextItem,
+} from "./state";
 import type { Attempt, LearnerState } from "../types";
 import {
   SKILL_EQUIV_FRACTIONS,
@@ -310,6 +314,28 @@ describe("Learner State Behavior", () => {
       const newState = updateLearnerState(baseState, attempt);
       expect(newState).not.toBe(baseState);
       expect(newState.skillState).not.toBe(baseState.skillState);
+    });
+  });
+
+  describe("recommendNextItem", () => {
+    it("excludes mastered skills (>= 0.8) from learning queue", async () => {
+      // Setup: 1 mastered skill, 1 unmastered skill
+      const state = createInitialState("u_reco");
+
+      // Manually set mastery
+      state.skillState[SKILL_EQUIV_FRACTIONS.id].masteryProb = 0.9;
+      state.skillState[SKILL_ADD_LIKE_FRACTIONS.id].masteryProb = 0.1;
+
+      // Mock RNG that would potentially pick any available skill
+      // But since one is mastered, it should NOT be in learning Queue.
+      // Logic: IF reviewDue is empty AND learningQueue has items, pick from learningQueue.
+      // If we force reviewDue to be empty (default stability=0 so interval=24h, lastPracticed=now -> not due)
+      // Then it should pick the non-mastered skill.
+
+      const item = await recommendNextItem(state);
+
+      expect(item.meta.skill_id).toBe(SKILL_ADD_LIKE_FRACTIONS.id);
+      expect(item.meta.skill_id).not.toBe(SKILL_EQUIV_FRACTIONS.id);
     });
   });
 });
