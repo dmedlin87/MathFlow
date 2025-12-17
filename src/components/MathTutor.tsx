@@ -6,7 +6,6 @@ import { checkAnswer } from '../domain/math-utils';
 
 import { MathRenderer } from './MathRenderer';
 import { FractionVisualizer } from './FractionVisualizer';
-import { InteractiveSteps } from './InteractiveSteps';
 import { motion, AnimatePresence } from 'framer-motion';
 import { UniversalInput } from './inputs/UniversalInput'; // Import Universal Input
 import { ProblemVisualizer } from './visualizers/ProblemVisualizer'; // Import Visualizer
@@ -274,9 +273,26 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
                 {feedback !== 'correct' && currentItem.answer_spec.input_type !== 'multiple_choice' && (
                     <button
                         type="submit"
-                        className="w-full py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+                        disabled={isLoading}
+                        aria-disabled={isLoading}
+                        aria-busy={isLoading}
+                        className={`w-full py-3 text-white rounded-lg font-semibold transition-colors flex items-center justify-center gap-2 ${
+                            isLoading
+                                ? 'bg-blue-400 cursor-not-allowed'
+                                : 'bg-blue-600 hover:bg-blue-700'
+                        }`}
                     >
-                        {feedback === 'incorrect' ? 'Try Again' : 'Check Answer'}
+                        {isLoading ? (
+                            <>
+                                <svg className="animate-spin h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                </svg>
+                                <span>Checking...</span>
+                            </>
+                        ) : (
+                            feedback === 'incorrect' ? 'Try Again' : 'Check Answer'
+                        )}
                     </button>
                 )}
                 {/* For Multiple Choice, UniversalInput handles click-to-select, but we still might want a submit or auto-submit.
