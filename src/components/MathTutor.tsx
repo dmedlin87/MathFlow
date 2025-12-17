@@ -12,6 +12,7 @@ import { ProblemVisualizer } from './visualizers/ProblemVisualizer'; // Import V
 
 import { SessionSummary } from './SessionSummary';
 import { DeveloperControls } from './DeveloperControls';
+import { InteractiveSteps } from './InteractiveSteps';
 
 import type { ILearnerService } from '../services/LearnerService';
 

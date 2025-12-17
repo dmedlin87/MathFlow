@@ -1,0 +1,28 @@
+
+C:\Users\dmedl\Projects\MathFlow\src\components\visualizers\ProblemVisualizer.tsx
+  17:47  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  19:47  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\dmedl\Projects\MathFlow\src\domain\skills\grade4\data.test.ts
+  1:1  warning  Unused eslint-disable directive (no problems were reported from '@typescript-eslint/no-explicit-any')
+
+C:\Users\dmedl\Projects\MathFlow\src\domain\skills\grade5\nbt.test.ts
+  87:60  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\dmedl\Projects\MathFlow\src\domain\skills\grade6\ns.test.ts
+  12:17  error  '_gcd' is defined but never used  @typescript-eslint/no-unused-vars
+
+C:\Users\dmedl\Projects\MathFlow\src\domain\skills\grade6\stats.test.ts
+  219:64  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  238:64  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  260:64  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  279:64  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+C:\Users\dmedl\Projects\MathFlow\src\domain\skills\registry.consistency.test.ts
+  46:21  error  '_key' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  55:46  error  Unexpected any. Specify a different type   @typescript-eslint/no-explicit-any
+  58:16  error  'e' is defined but never used              @typescript-eslint/no-unused-vars
+
+Γ£û 12 problems (11 errors, 1 warning)
+  0 errors and 1 warning potentially fixable with the `--fix` option.
+

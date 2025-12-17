@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface DotPlotProps {
+export interface DotPlotProps {
   data: number[]; // Raw numbers
   width?: number;
   height?: number;

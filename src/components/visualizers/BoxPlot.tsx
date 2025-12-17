@@ -1,6 +1,6 @@
 import React from 'react';
 
-interface BoxPlotProps {
+export interface BoxPlotProps {
   min: number;
   q1: number;
   median: number;

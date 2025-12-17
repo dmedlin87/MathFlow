@@ -1,0 +1,18 @@
+src/components/MathTutor.tsx(352,18): error TS2304: Cannot find name 'InteractiveSteps'.
+src/components/visualizers/ProblemVisualizer.tsx(17,21): error TS2322: Type 'unknown' is not assignable to type 'IntrinsicAttributes & BoxPlotProps'.
+  Type 'unknown' is not assignable to type 'IntrinsicAttributes'.
+src/components/visualizers/ProblemVisualizer.tsx(17,33): error TS2698: Spread types may only be created from object types.
+src/components/visualizers/ProblemVisualizer.tsx(19,21): error TS2322: Type 'unknown' is not assignable to type 'IntrinsicAttributes & DotPlotProps'.
+  Type 'unknown' is not assignable to type 'IntrinsicAttributes'.
+src/components/visualizers/ProblemVisualizer.tsx(19,33): error TS2698: Spread types may only be created from object types.
+src/domain/skills/grade5/nbt.test.ts(17,3): error TS6133: 'SKILL_5_NBT_ADD_SUB_DECIMALS' is declared but its value is never read.
+src/domain/skills/grade5/nbt.test.ts(19,3): error TS6133: 'SKILL_5_NBT_MULT_DECIMALS' is declared but its value is never read.
+src/domain/skills/grade5/nbt.test.ts(20,3): error TS6133: 'SKILL_5_NBT_DIV_WHOLE' is declared but its value is never read.
+src/domain/skills/grade5/nbt.test.ts(21,3): error TS6133: 'SKILL_5_NBT_DIV_DECIMALS' is declared but its value is never read.
+src/domain/skills/grade5/nbt.test.ts(22,3): error TS6133: 'SKILL_5_NBT_FRAC_DEC_CONV' is declared but its value is never read.
+src/domain/skills/grade6/geometry.test.ts(9,3): error TS6133: 'SKILL_6_G_VOLUME_FRAC' is declared but its value is never read.
+src/domain/skills/grade6/geometry.test.ts(10,3): error TS6133: 'SKILL_6_G_POLYGONS_COORD' is declared but its value is never read.
+src/domain/skills/grade6/ns.test.ts(11,3): error TS6133: 'SKILL_6_NS_DECIMAL_OPS' is declared but its value is never read.
+src/domain/skills/grade6/ns.test.ts(12,3): error TS6133: 'SKILL_6_NS_INTEGERS' is declared but its value is never read.
+src/domain/skills/grade6/ns.test.ts(14,1): error TS6133: 'gcd' is declared but its value is never read.
+src/domain/skills/registry.consistency.test.ts(46,21): error TS6133: 'key' is declared but its value is never read.

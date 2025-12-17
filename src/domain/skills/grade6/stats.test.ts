@@ -216,7 +216,10 @@ describe("Grade 6 Stats Generators", () => {
       expect(item.problem_content.stem).toContain("range");
       expect(item.problem_content.stem).not.toContain("interquartile");
 
-      const visual = item.problem_content.visual_spec!.data as any;
+      const visual = item.problem_content.visual_spec!.data as {
+        min: number;
+        max: number;
+      };
       const range = visual.max - visual.min;
       expect(item.solution_logic.final_answer_canonical).toBe(String(range));
     });
@@ -235,7 +238,10 @@ describe("Grade 6 Stats Generators", () => {
       const item = BoxPlotGenerator.generate(0.5, rng);
       expect(item.problem_content.stem).toContain("interquartile");
 
-      const visual = item.problem_content.visual_spec!.data as any;
+      const visual = item.problem_content.visual_spec!.data as {
+        q1: number;
+        q3: number;
+      };
       const iqr = visual.q3 - visual.q1;
       expect(item.solution_logic.final_answer_canonical).toBe(String(iqr));
     });
@@ -257,8 +263,10 @@ describe("Grade 6 Stats Generators", () => {
       const item = DotPlotGenerator.generate(0.5, rng);
       expect(item.problem_content.stem).toContain("total");
 
-      const visual = item.problem_content.visual_spec!.data as any;
-      const data = visual.data as number[];
+      const visual = item.problem_content.visual_spec!.data as {
+        data: number[];
+      };
+      const data = visual.data;
       expect(item.solution_logic.final_answer_canonical).toBe(
         String(data.length)
       );
@@ -276,8 +284,10 @@ describe("Grade 6 Stats Generators", () => {
       const item = DotPlotGenerator.generate(0.5, rng);
       expect(item.problem_content.stem).toContain("mode");
 
-      const visual = item.problem_content.visual_spec!.data as any;
-      const data = visual.data as number[];
+      const visual = item.problem_content.visual_spec!.data as {
+        data: number[];
+      };
+      const data = visual.data;
       // Calc mode of data manually
       const counts = new Map<number, number>();
       let maxFreq = 0;

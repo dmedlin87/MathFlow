@@ -8,10 +8,7 @@ import {
   RationalNumberLineGenerator,
   CoordPlaneGenerator,
   SKILL_6_NS_DIV_FRACTIONS,
-  SKILL_6_NS_DECIMAL_OPS,
-  SKILL_6_NS_INTEGERS,
 } from "./ns";
-import { gcd } from "../../math-utils";
 
 describe("Grade 6 NS Generators", () => {
   // Helper to create a controllable RNG

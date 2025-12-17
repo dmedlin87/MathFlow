@@ -14,12 +14,7 @@ import {
   SKILL_5_NBT_DECIMAL_FORMS,
   SKILL_5_NBT_COMPARE_DECIMALS,
   SKILL_5_NBT_ROUND_DECIMALS,
-  SKILL_5_NBT_ADD_SUB_DECIMALS,
   SKILL_5_NBT_MULT_WHOLE,
-  SKILL_5_NBT_MULT_DECIMALS,
-  SKILL_5_NBT_DIV_WHOLE,
-  SKILL_5_NBT_DIV_DECIMALS,
-  SKILL_5_NBT_FRAC_DEC_CONV,
 } from "./nbt";
 
 // Helper for deterministic RNG
@@ -89,7 +84,10 @@ describe("Grade 5 NBT Domain (Deterministic)", () => {
       const item = CompareDecimalsGenerator.generate(0.5, rng);
 
       expect(item.meta.skill_id).toBe(SKILL_5_NBT_COMPARE_DECIMALS.id);
-      const { s1, s2 } = item.problem_content.variables as any;
+      const { s1, s2 } = item.problem_content.variables as {
+        s1: string;
+        s2: string;
+      };
       expect(parseFloat(s1)).toBe(0.5);
       expect(parseFloat(s2)).toBe(0.494);
       expect(item.solution_logic.final_answer_canonical).toBe(">");

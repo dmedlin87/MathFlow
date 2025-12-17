@@ -1,7 +1,7 @@
 import React from 'react';
 import type { VisualSpec } from '../../domain/types';
-import { BoxPlot } from './BoxPlot';
-import { DotPlot } from './DotPlot';
+import { BoxPlot, type BoxPlotProps } from './BoxPlot';
+import { DotPlot, type DotPlotProps } from './DotPlot';
 
 interface ProblemVisualizerProps {
     spec: VisualSpec;
@@ -14,9 +14,9 @@ export const ProblemVisualizer = React.memo(({ spec }: ProblemVisualizerProps) =
 
     switch (spec.type) {
         case 'box_plot':
-            return <BoxPlot {...spec.data} />;
+            return <BoxPlot {...(spec.data as BoxPlotProps)} />;
         case 'dot_plot':
-            return <DotPlot {...spec.data} />;
+            return <DotPlot {...(spec.data as DotPlotProps)} />;
         default:
             return <div className="text-gray-400 text-sm">Visualizer not implemented for {spec.type}</div>;
     }

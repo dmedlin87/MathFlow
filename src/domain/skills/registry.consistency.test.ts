@@ -43,7 +43,7 @@ describe("Skill Registry Consistency", () => {
       // Note: We need to handle the path for dynamic import
       try {
         const module = await import(file);
-        for (const [key, value] of Object.entries(module)) {
+        for (const value of Object.values(module)) {
           // Heuristic: Check if it looks like a Skill object
           if (
             value &&
@@ -52,18 +52,15 @@ describe("Skill Registry Consistency", () => {
             "gradeBand" in value &&
             "standards" in value
           ) {
-            foundSkills.push({ id: (value as any).id, file });
+            foundSkills.push({ id: (value as { id: string }).id, file });
           }
         }
-      } catch (e) {
-        // console.warn(`Could not import ${file}:`, e);
+      } catch {
         // Ignore files that aren't modules or fail to load
       }
     }
 
-    const missingSkills = foundSkills.filter(
-      (s) => !registeredIds.has(s.id)
-    );
+    const missingSkills = foundSkills.filter((s) => !registeredIds.has(s.id));
 
     if (missingSkills.length > 0) {
       console.error("Found unregistered skills:", missingSkills);

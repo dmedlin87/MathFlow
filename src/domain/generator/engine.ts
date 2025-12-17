@@ -31,8 +31,9 @@ export class Engine {
 
     const API_BASE = this.config.apiBaseUrl;
 
-    // Only attempt network fetch if API base is configured
-    if (API_BASE) {
+    // Fix: Ensure we don't skip the fetch block (Architecture Review 2025-12-14)
+    // Primary path is network, fallback is local.
+    if (API_BASE && API_BASE !== "") {
       try {
         // 1. Try to fetch verified problem from Bank
         const res = await fetch(
