@@ -87,6 +87,5 @@ const apiBaseUrl = getApiBaseUrl();
 export const engine = new Engine({ apiBaseUrl });
 
 for (const generator of generators) {
-  if (generator.skillId === "dynamic_mult") continue;
   engine.register(generator);
 }
