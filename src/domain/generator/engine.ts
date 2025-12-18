@@ -1,6 +1,7 @@
 import type { Generator, MathProblemItem } from "../types";
 import { validateMathProblemItem } from "../validation";
 import { getApiBaseUrl } from "../config";
+import { generators } from "../skills/generatorMap";
 import { logger } from "../../utils/logger";
 
 // Fix: Eliminate Hardcoded API URL (Architecture Review 2025-12-14)
@@ -84,3 +85,8 @@ export class Engine {
 const apiBaseUrl = getApiBaseUrl();
 
 export const engine = new Engine({ apiBaseUrl });
+
+for (const generator of generators) {
+  if (generator.skillId === "dynamic_mult") continue;
+  engine.register(generator);
+}

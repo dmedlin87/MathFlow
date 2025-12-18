@@ -1,5 +1,4 @@
 import type { Skill, Generator, MathProblemItem } from "../../types";
-import { engine } from "../../generator/engine";
 import { randomInt, createProblemMeta } from "../../math-utils";
 
 // Helper to calculate factors
@@ -178,8 +177,6 @@ Enter them separated by commas (e.g. 1, 2, 4).`,
   },
 };
 
-engine.register(FactorsMultiplesGenerator);
-
 // --- 2. Patterns (4.OA.C.5) ---
 
 export const SKILL_PATTERNS: Skill = {
@@ -276,8 +273,6 @@ What is the next number in the sequence?`,
   },
 };
 
-engine.register(PatternGenerator);
-
 // --- 3. Multiplicative Comparison (4.OA.A.1, 4.OA.A.2) ---
 
 export const SKILL_MULT_COMPARE: Skill = {
@@ -350,8 +345,6 @@ How many marbles does Bob have?`, // hardcoded context for now for simplicity
     };
   },
 };
-
-engine.register(MultCompareGenerator);
 
 // --- 4. Multi-Step Word Problems (4.OA.A.3) ---
 
@@ -504,5 +497,3 @@ What is the fewest number of vans needed to carry **everyone**?`,
     }
   },
 };
-
-engine.register(MultiStepWordGen);

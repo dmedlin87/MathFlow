@@ -1,5 +1,4 @@
 import type { Skill, Generator, MathProblemItem } from "../../types";
-import { engine } from "../../generator/engine";
 import { randomInt, createProblemMeta } from "../../math-utils";
 
 // Mock provenance helper
@@ -92,8 +91,6 @@ export const DivFractionsGenerator: Generator = {
   },
 };
 
-engine.register(DivFractionsGenerator);
-
 // ----------------------------------------------------------------------
 // 2. Multi-Digit Division (6.NS.B.2)
 // ----------------------------------------------------------------------
@@ -145,8 +142,6 @@ export const MultiDigitDivGenerator: Generator = {
     };
   },
 };
-
-engine.register(MultiDigitDivGenerator);
 
 // Helper for robust rounding
 const robustRound = (n: number, scale: number) => {
@@ -238,8 +233,6 @@ export const DecimalOpsGenerator: Generator = {
   },
 };
 
-engine.register(DecimalOpsGenerator);
-
 // ----------------------------------------------------------------------
 // 4. GCF & LCM (6.NS.B.4)
 // ----------------------------------------------------------------------
@@ -319,8 +312,6 @@ export const GcfLcmGenerator: Generator = {
     }
   },
 };
-
-engine.register(GcfLcmGenerator);
 
 // ----------------------------------------------------------------------
 // 5. Integers (6.NS.C.5, 6.NS.C.6)
@@ -404,8 +395,6 @@ export const IntegersGenerator: Generator = {
   },
 };
 
-engine.register(IntegersGenerator);
-
 // ----------------------------------------------------------------------
 // 6. Rational Numbers (6.NS.C.6, 6.NS.C.7)
 // ----------------------------------------------------------------------
@@ -459,8 +448,6 @@ export const RationalNumberLineGenerator: Generator = {
     };
   },
 };
-
-engine.register(RationalNumberLineGenerator);
 
 // ----------------------------------------------------------------------
 // 7. Coordinate Plane (6.NS.C.8)
@@ -518,5 +505,3 @@ export const CoordPlaneGenerator: Generator = {
     };
   },
 };
-
-engine.register(CoordPlaneGenerator);

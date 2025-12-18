@@ -1,5 +1,4 @@
 import type { Skill, Generator, MathProblemItem } from "../../types";
-import { engine } from "../../generator/engine";
 import { randomInt, createProblemMeta } from "../../math-utils";
 
 // Mock provenance helper
@@ -75,8 +74,6 @@ How many unit cubes does it contain?`,
   },
 };
 
-engine.register(VolumeCubesGenerator);
-
 // ----------------------------------------------------------------------
 // 2. Volume Formula (5.MD.C.5)
 // ----------------------------------------------------------------------
@@ -141,8 +138,6 @@ Height: **${h}** cm`,
     };
   },
 };
-
-engine.register(VolumeFormulaGenerator);
 
 // ----------------------------------------------------------------------
 // 3. Coordinate Plane (5.G.A.1 / 5.G.A.2)
@@ -242,8 +237,6 @@ How many units is Point A from the **y-axis**?`, // Distance from y-axis is x-co
   },
 };
 
-engine.register(CoordPlaneGenerator);
-
 // ----------------------------------------------------------------------
 // 4. Classifying Figures (5.G.B.3 / 5.G.B.4)
 // ----------------------------------------------------------------------
@@ -304,8 +297,6 @@ export const ClassFiguresHierarchyGenerator: Generator = {
     };
   },
 };
-
-engine.register(ClassFiguresHierarchyGenerator);
 
 // ----------------------------------------------------------------------
 // 5. Unit Conversions (5.MD.A.1)
@@ -370,8 +361,6 @@ export const UnitConv5Generator: Generator = {
     };
   },
 };
-
-engine.register(UnitConv5Generator);
 
 // ----------------------------------------------------------------------
 // 6. Line Plots (5.MD.B.2)
@@ -494,5 +483,3 @@ What is the difference in weight between the heaviest and lightest apple?`,
     }
   },
 };
-
-engine.register(LinePlotGenerator);

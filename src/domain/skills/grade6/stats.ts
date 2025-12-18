@@ -1,5 +1,4 @@
 import type { Skill, Generator, MathProblemItem } from "../../types";
-import { engine } from "../../generator/engine";
 import { randomInt, createProblemMeta } from "../../math-utils";
 
 // Mock provenance helper
@@ -77,8 +76,6 @@ $${dataSet}$`,
     };
   },
 };
-
-engine.register(MeanGenerator);
 
 // ----------------------------------------------------------------------
 // 2. Median, Mode, Range (6.SP.B.5.c)
@@ -193,8 +190,6 @@ export const MedianModeRangeGenerator: Generator = {
   },
 };
 
-engine.register(MedianModeRangeGenerator);
-
 // ----------------------------------------------------------------------
 // 3. IQR & Box Plots (6.SP.B.5.c, 6.SP.B.4)
 // ----------------------------------------------------------------------
@@ -263,8 +258,6 @@ export const IqrGenerator: Generator = {
   },
 };
 
-engine.register(IqrGenerator);
-
 export const SKILL_6_SP_BOX_PLOTS: Skill = {
   id: "6.sp.box_plots",
   name: "Box Plots",
@@ -326,8 +319,6 @@ export const BoxPlotGenerator: Generator = {
     };
   },
 };
-
-engine.register(BoxPlotGenerator);
 
 export const SKILL_6_SP_DOT_PLOTS: Skill = {
   id: "6.sp.dot_plots",
@@ -415,8 +406,6 @@ export const DotPlotGenerator: Generator = {
   },
 };
 
-engine.register(DotPlotGenerator);
-
 export const SKILL_6_SP_HISTOGRAMS: Skill = {
   id: "6.sp.histograms",
   name: "Histograms",
@@ -473,5 +462,3 @@ export const HistogramGenerator: Generator = {
     };
   },
 };
-
-engine.register(HistogramGenerator);

@@ -1,5 +1,4 @@
 import type { Skill, Generator, MathProblemItem } from "../../types";
-import { engine } from "../../generator/engine";
 import { randomInt, createProblemMeta } from "../../math-utils";
 
 // Mock provenance helper
@@ -137,8 +136,6 @@ export const RatiosGenerator: Generator = {
   },
 };
 
-engine.register(RatiosGenerator);
-
 // ----------------------------------------------------------------------
 // 2. Unit Rates (6.RP.A.2)
 // ----------------------------------------------------------------------
@@ -240,8 +237,6 @@ export const UnitRateGenerator: Generator = {
   },
 };
 
-engine.register(UnitRateGenerator);
-
 // ----------------------------------------------------------------------
 // 3. Percents (6.RP.A.3.c)
 // ----------------------------------------------------------------------
@@ -332,8 +327,6 @@ export const PercentsGenerator: Generator = {
     }
   },
 };
-
-engine.register(PercentsGenerator);
 
 // ----------------------------------------------------------------------
 // 4. Ratio Tables (6.RP.A.3.a)
@@ -434,8 +427,6 @@ export const RatioTablesGenerator: Generator = {
   },
 };
 
-engine.register(RatioTablesGenerator);
-
 // ----------------------------------------------------------------------
 // 5. Unit Conversion (6.RP.A.3.d)
 // ----------------------------------------------------------------------
@@ -498,5 +489,3 @@ export const UnitConversionRPGenerator: Generator = {
     };
   },
 };
-
-engine.register(UnitConversionRPGenerator);

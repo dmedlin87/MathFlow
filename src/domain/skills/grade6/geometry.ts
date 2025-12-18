@@ -1,5 +1,4 @@
 import type { Skill, Generator, MathProblemItem } from "../../types";
-import { engine } from "../../generator/engine";
 import { randomInt, createProblemMeta } from "../../math-utils";
 
 // Mock provenance helper
@@ -111,8 +110,6 @@ export const AreaPolyGenerator: Generator = {
   },
 };
 
-engine.register(AreaPolyGenerator);
-
 const gcd = (a: number, b: number): number => {
   return b === 0 ? a : gcd(b, a % b);
 };
@@ -198,8 +195,6 @@ export const SurfaceAreaGenerator: Generator = {
   },
 };
 
-engine.register(SurfaceAreaGenerator);
-
 // ----------------------------------------------------------------------
 // 3. Volume with Fractions (6.G.A.2)
 // ----------------------------------------------------------------------
@@ -260,8 +255,6 @@ export const VolumeFracGenerator: Generator = {
   },
 };
 
-engine.register(VolumeFracGenerator);
-
 // ----------------------------------------------------------------------
 // 4. Polygons in Coordinate Plane (6.G.A.3)
 // ----------------------------------------------------------------------
@@ -314,5 +307,3 @@ export const PolygonsCoordGenerator: Generator = {
     };
   },
 };
-
-engine.register(PolygonsCoordGenerator);

@@ -1,5 +1,4 @@
 import type { Skill, Generator, MathProblemItem } from "../../types";
-import { engine } from "../../generator/engine";
 import { gcd } from "../../math-utils";
 import { randomInt, createProblemMeta } from "../../math-utils";
 
@@ -131,8 +130,6 @@ export const AddSubUnlikeGenerator: Generator = {
   },
 };
 
-engine.register(AddSubUnlikeGenerator);
-
 // ----------------------------------------------------------------------
 // 2. Fractions as Division (5.NF.B.3)
 // ----------------------------------------------------------------------
@@ -196,8 +193,6 @@ $$${num} \\div ${den} = ?$$`,
     };
   },
 };
-
-engine.register(FracDivGenerator);
 
 // ----------------------------------------------------------------------
 // 3. Multiplication as Scaling (5.NF.B.5)
@@ -272,8 +267,6 @@ $$${factor} \\times ${fractionStr} \\text{ ? } ${factor}$$`,
   },
 };
 
-engine.register(ScalingGenerator);
-
 // ----------------------------------------------------------------------
 // 4. Multiplying Fractions (5.NF.B.4)
 // ----------------------------------------------------------------------
@@ -347,8 +340,6 @@ export const MultFracGenerator: Generator = {
     };
   },
 };
-
-engine.register(MultFracGenerator);
 
 // ----------------------------------------------------------------------
 // 5. Dividing Fractions (5.NF.B.7)
@@ -439,8 +430,6 @@ export const DivFracGenerator: Generator = {
     }
   },
 };
-
-engine.register(DivFracGenerator);
 
 // ----------------------------------------------------------------------
 // 6. Fraction Word Problems (5.NF.A.2 / 5.NF.B.6 / 5.NF.B.7)
@@ -676,5 +665,3 @@ How many bags can you fill?`,
     }
   },
 };
-
-engine.register(FractionWordProblemsGenerator);

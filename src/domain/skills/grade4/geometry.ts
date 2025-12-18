@@ -1,5 +1,4 @@
 import type { Skill, Generator, MathProblemItem } from "../../types";
-import { engine } from "../../generator/engine";
 import { randomInt, createProblemMeta } from "../../math-utils";
 
 // --- 3. Geometry: Lines & Angles (4.G.A.1) ---
@@ -110,8 +109,6 @@ Is it Acute, Right, or Obtuse?`,
   },
 };
 
-engine.register(GeometryGenerator);
-
 // --- 4. Symmetry (4.G.A.3) ---
 
 export const SKILL_SYMMETRY: Skill = {
@@ -169,8 +166,6 @@ export const SymmetryGenerator: Generator = {
     };
   },
 };
-
-engine.register(SymmetryGenerator);
 
 // --- 7. Shape Classification (4.G.A.2) ---
 
@@ -254,5 +249,3 @@ export const ShapeClassificationGenerator: Generator = {
     };
   },
 };
-
-engine.register(ShapeClassificationGenerator);

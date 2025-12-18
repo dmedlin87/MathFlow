@@ -1,5 +1,4 @@
 import type { Skill, Generator, MathProblemItem } from "../../types";
-import { engine } from "../../generator/engine";
 import { randomInt, createProblemMeta } from "../../math-utils";
 
 // Mock provenance helper
@@ -182,8 +181,6 @@ $$${expr} = ?$$`,
   },
 };
 
-engine.register(OrderOpsGenerator);
-
 // ----------------------------------------------------------------------
 // 2. Numerical Patterns (5.OA.B.3)
 // ----------------------------------------------------------------------
@@ -258,5 +255,3 @@ Pattern 2: ?`,
     };
   },
 };
-
-engine.register(PatternsGenerator);

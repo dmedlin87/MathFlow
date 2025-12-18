@@ -1,5 +1,4 @@
 import type { Skill, Generator, MathProblemItem } from "../../types";
-import { engine } from "../../generator/engine";
 import { randomInt, createProblemMeta } from "../../math-utils";
 
 // --- 1. Area & Perimeter (4.MD.A.3) ---
@@ -122,8 +121,6 @@ What is the **Perimeter** of the rectangle?`,
   },
 };
 
-engine.register(AreaPerimeterGenerator);
-
 // --- 2. Unit Conversions (4.MD.A.1) ---
 
 export const SKILL_UNIT_CONVERSION: Skill = {
@@ -209,8 +206,6 @@ export const UnitConversionGenerator: Generator = {
     };
   },
 };
-
-engine.register(UnitConversionGenerator);
 
 // --- 5. Geometric Measurement: Angles (4.MD.C.5-7) ---
 
@@ -344,8 +339,6 @@ How many degrees are in a **${choice.num}/${choice.den}** turn?`,
   },
 };
 
-engine.register(AngleMeasureGenerator);
-
 // --- 8. Money Word Problems (4.MD.A.2) ---
 
 export const SKILL_MONEY_WORD_PROBLEMS: Skill = {
@@ -461,8 +454,6 @@ How much change should he receive?`,
   },
 };
 
-engine.register(MoneyWordProblemGenerator);
-
 // --- 9. Protractor Measurement (4.MD.C.6) ---
 
 export const SKILL_PROTRACTOR_MEASURE: Skill = {
@@ -539,5 +530,3 @@ What is the measure of the angle in degrees?`,
     };
   },
 };
-
-engine.register(ProtractorGenerator);

@@ -1,5 +1,4 @@
 import type { Skill, Generator, MathProblemItem } from "../../types";
-import { engine } from "../../generator/engine";
 import { randomInt, createProblemMeta } from "../../math-utils";
 
 // Mock provenance helper
@@ -63,8 +62,6 @@ export const ExponentsGenerator: Generator = {
     };
   },
 };
-
-engine.register(ExponentsGenerator);
 
 // ----------------------------------------------------------------------
 // 2. One-Step Equations (6.EE.B.7)
@@ -159,8 +156,6 @@ export const OneStepEqGenerator: Generator = {
   },
 };
 
-engine.register(OneStepEqGenerator);
-
 // ----------------------------------------------------------------------
 // 3. Expressions (6.EE.A.2)
 // ----------------------------------------------------------------------
@@ -242,8 +237,6 @@ export const ExpressionsGenerator: Generator = {
   },
 };
 
-engine.register(ExpressionsGenerator);
-
 // ----------------------------------------------------------------------
 // 4. Equivalent Expressions (6.EE.A.3, 6.EE.A.4)
 // ----------------------------------------------------------------------
@@ -292,8 +285,6 @@ export const EquivExpressionsGenerator: Generator = {
     };
   },
 };
-
-engine.register(EquivExpressionsGenerator);
 
 // ----------------------------------------------------------------------
 // 5. Inequalities (6.EE.B.8)
@@ -352,8 +343,6 @@ export const InequalitiesGenerator: Generator = {
   },
 };
 
-engine.register(InequalitiesGenerator);
-
 // ----------------------------------------------------------------------
 // 6. Variables (6.EE.C.9)
 // ----------------------------------------------------------------------
@@ -399,5 +388,3 @@ export const VariablesGenerator: Generator = {
     };
   },
 };
-
-engine.register(VariablesGenerator);

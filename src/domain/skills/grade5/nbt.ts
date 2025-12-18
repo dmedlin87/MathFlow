@@ -1,5 +1,4 @@
 import type { Skill, Generator, MathProblemItem } from "../../types";
-import { engine } from "../../generator/engine";
 import { randomInt, createProblemMeta } from "../../math-utils";
 
 // Mock provenance helper
@@ -225,8 +224,6 @@ export const PowersOf10Generator: Generator = {
   },
 };
 
-engine.register(PowersOf10Generator);
-
 // ----------------------------------------------------------------------
 // 2. Decimal Forms (5.NBT.A.3.a)
 // ----------------------------------------------------------------------
@@ -296,8 +293,6 @@ $$${expandedForm}$$`,
     };
   },
 };
-
-engine.register(DecimalFormsGenerator);
 
 // ----------------------------------------------------------------------
 // 3. Comparing Decimals (5.NBT.A.3.b)
@@ -386,8 +381,6 @@ export const CompareDecimalsGenerator: Generator = {
   },
 };
 
-engine.register(CompareDecimalsGenerator);
-
 // ----------------------------------------------------------------------
 // 4. Rounding Decimals (5.NBT.A.4)
 // ----------------------------------------------------------------------
@@ -446,8 +439,6 @@ export const RoundDecimalsGenerator: Generator = {
     };
   },
 };
-
-engine.register(RoundDecimalsGenerator);
 
 // ----------------------------------------------------------------------
 // 5. Add/Subtract Decimals (5.NBT.B.7)
@@ -516,8 +507,6 @@ export const AddSubDecimalsGenerator: Generator = {
   },
 };
 
-engine.register(AddSubDecimalsGenerator);
-
 // ----------------------------------------------------------------------
 // 6. Multi-Digit Multiplication (5.NBT.B.5)
 // ----------------------------------------------------------------------
@@ -571,8 +560,6 @@ export const MultWholeGenerator: Generator = {
     };
   },
 };
-
-engine.register(MultWholeGenerator);
 
 // ----------------------------------------------------------------------
 // 7. Decimal Multiplication (5.NBT.B.7)
@@ -633,8 +620,6 @@ export const MultDecimalsGenerator: Generator = {
     };
   },
 };
-
-engine.register(MultDecimalsGenerator);
 
 // ----------------------------------------------------------------------
 // 8. Multi-Digit Division (5.NBT.B.6)
@@ -697,8 +682,6 @@ ${remainder > 0 ? "(Format: Quotient R Remainder, e.g. 5 R 2)" : ""}`,
   },
 };
 
-engine.register(DivWholeGenerator);
-
 // ----------------------------------------------------------------------
 // 9. Decimal Division (5.NBT.B.7)
 // ----------------------------------------------------------------------
@@ -757,8 +740,6 @@ export const DivDecimalsGenerator: Generator = {
     };
   },
 };
-
-engine.register(DivDecimalsGenerator);
 
 // ----------------------------------------------------------------------
 // 10. Fraction-Decimal Conversion (5.NBT / 5.NF)
@@ -861,5 +842,3 @@ $$ ${decimalVal} = ? $$`,
     }
   },
 };
-
-engine.register(FracDecConversionGenerator);

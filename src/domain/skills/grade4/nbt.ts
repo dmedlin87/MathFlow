@@ -1,5 +1,4 @@
 import type { Skill, Generator, MathProblemItem } from "../../types";
-import { engine } from "../../generator/engine";
 import { randomInt, createProblemMeta } from "../../math-utils";
 
 // --- 1. Place Value (4.NBT.A.1, 4.NBT.A.2) ---
@@ -145,8 +144,6 @@ export const PlaceValueGenerator: Generator = {
   },
 };
 
-engine.register(PlaceValueGenerator);
-
 // --- 1.5. Compare Multi-Digit Numbers (4.NBT.A.2) ---
 
 export const SKILL_COMPARE_MULTI_DIGIT: Skill = {
@@ -231,8 +228,6 @@ export const CompareMultiDigitGenerator: Generator = {
     };
   },
 };
-
-engine.register(CompareMultiDigitGenerator);
 
 // --- 2. Rounding (4.NBT.A.3) ---
 
@@ -348,8 +343,6 @@ export const RoundingGenerator: Generator = {
     };
   },
 };
-
-engine.register(RoundingGenerator);
 
 // --- 3. Multi-Digit Addition & Subtraction (4.NBT.B.4) ---
 
@@ -467,8 +460,6 @@ $$`,
     };
   },
 };
-
-engine.register(AddSubMultiGenerator);
 
 // --- 4. Multiplication (4.NBT.B.5) ---
 
@@ -683,8 +674,6 @@ Enter the Quotient, then the Remainder (separated by a comma).`,
   },
 };
 
-engine.register(DivisionGenerator);
-
 // Concrete generators
 export const Mult1DigitGen: Generator = {
   skillId: SKILL_MULT_1DIGIT.id,
@@ -697,6 +686,3 @@ export const Mult2DigitGen: Generator = {
   templateId: "T_MULT_VERTICAL",
   generate: (d, r) => generateMultProblem(SKILL_MULT_2DIGIT.id, d, r),
 };
-
-engine.register(Mult1DigitGen);
-engine.register(Mult2DigitGen);
