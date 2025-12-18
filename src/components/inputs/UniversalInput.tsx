@@ -35,6 +35,7 @@ export const UniversalInput: React.FC<UniversalInputProps> = ({ item, value, onC
       onChange={(e) => onChange(e.target.value)}
       className="w-full text-lg p-3 border-2 border-gray-200 rounded-lg outline-none focus:border-blue-500 transition-colors"
       placeholder={item.answer_spec.ui?.placeholder || "Enter your answer"}
+      aria-label={item.answer_spec.ui?.placeholder || "Enter your answer"}
       disabled={disabled}
       autoFocus
       onKeyDown={(e) => {
@@ -76,6 +77,7 @@ const FractionInput: React.FC<{
           onChange={(e) => update(e.target.value, den)}
           className="w-full text-center text-xl p-2 border-2 border-gray-200 rounded-lg outline-none focus:border-blue-500"
           placeholder="Num"
+          aria-label="Numerator"
           disabled={disabled}
           autoFocus
         />
@@ -86,6 +88,7 @@ const FractionInput: React.FC<{
           onChange={(e) => update(num, e.target.value)}
           className="w-full text-center text-xl p-2 border-2 border-gray-200 rounded-lg outline-none focus:border-blue-500"
           placeholder="Den"
+          aria-label="Denominator"
           disabled={disabled}
           onKeyDown={(e) => {
             if (e.key === 'Enter') onSubmit();

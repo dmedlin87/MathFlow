@@ -1,3 +1,6 @@
+/**
+ * @vitest-environment jsdom
+ */
 import { render, screen, fireEvent, waitFor } from '@testing-library/react';
 import { MathTutor } from './MathTutor';
 import { vi, describe, it, expect } from 'vitest';
@@ -38,7 +41,7 @@ describe('MathTutor UX', () => {
     // The MathRenderer breaks up the text, so we check for parts of it
     await waitFor(() => expect(screen.getAllByText('1').length).toBeGreaterThan(0));
 
-    const input = screen.getByLabelText('Enter your answer');
+    const input = screen.getByLabelText('Enter 2');
     const submitBtn = screen.getByText('Check Answer');
 
     // Enter WRONG answer to ensure button stays visible

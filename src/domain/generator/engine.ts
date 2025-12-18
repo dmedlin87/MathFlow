@@ -1,6 +1,7 @@
 import type { Generator, MathProblemItem } from "../types";
 import { validateMathProblemItem } from "../validation";
 import { getApiBaseUrl } from "../config";
+import { logger } from "../../utils/logger";
 
 // Fix: Eliminate Hardcoded API URL (Architecture Review 2025-12-14)
 export interface EngineConfig {
@@ -18,6 +19,7 @@ export class Engine {
   register(generator: Generator) {
     // In V1, we might validate the generator outputs a valid schema here
     this.generators.set(generator.skillId, generator);
+    logger.info(`Registered generator for skill: ${generator.skillId}`);
   }
 
   async generate(
@@ -60,9 +62,9 @@ export class Engine {
           }
         }
       } catch (e) {
-        console.warn(
+        logger.warn(
           "Network fetch failed, falling back to local generator (Dev Mode)",
-          e
+          { error: e }
         );
       }
     }
