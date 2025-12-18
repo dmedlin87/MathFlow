@@ -2,8 +2,8 @@
   "compilerOptions": {
     "target": "ES2022",
     "lib": ["ES2023"],
-    "module": "NodeNext",
-    "moduleResolution": "NodeNext",
+    "module": "ESNext",
+    "moduleResolution": "bundler",
     "types": ["node"],
     "esModuleInterop": true,
     "skipLibCheck": true,
@@ -15,8 +15,9 @@
     "noEmit": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["../src/*"]
+      "@/*": ["../src/*"],
+      "@domain/*": ["../src/domain/*"]
     }
   },
-  "include": ["src", "../src"]
+  "include": ["src", "verify_standards.ts"]
 }

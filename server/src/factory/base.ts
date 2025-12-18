@@ -1,4 +1,4 @@
-import type { MathProblemItem } from '../../../src/domain/types.js';
+import type { MathProblemItem } from "@domain/types.js";
 
 /**
  * Stage A: Generator

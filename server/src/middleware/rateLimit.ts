@@ -13,7 +13,7 @@ export class RateLimiter {
   private intervalId: NodeJS.Timeout;
 
   constructor(private checkInterval = 5 * 60 * 1000) {
-    this.intervalId = setInterval(() => this.cleanup(), checkInterval);
+    this.intervalId = setInterval(() => this.cleanup(), this.checkInterval);
     this.intervalId.unref();
   }
 

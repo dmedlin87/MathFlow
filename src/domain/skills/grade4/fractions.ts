@@ -1,5 +1,4 @@
 import type { Skill, Generator, MathProblemItem } from "../../types";
-import { engine } from "../../generator/engine";
 import { gcd, randomInt, createProblemMeta } from "../../math-utils";
 
 // --- 1. Equivalent Fractions ---
@@ -92,8 +91,6 @@ export const EquivFractionGenerator: Generator = {
   },
 };
 
-engine.register(EquivFractionGenerator);
-
 // --- 2. Add Like Fractions ---
 
 export const SKILL_ADD_LIKE_FRACTIONS: Skill = {
@@ -163,8 +160,6 @@ export const AddLikeFractionGenerator: Generator = {
     };
   },
 };
-
-engine.register(AddLikeFractionGenerator);
 
 // --- 3. Subtract Like Fractions ---
 
@@ -249,8 +244,6 @@ export const SubLikeFractionGenerator: Generator = {
   },
 };
 
-engine.register(SubLikeFractionGenerator);
-
 // --- 4. Simplify Fractions ---
 
 export const SKILL_SIMPLIFY_FRACTIONS: Skill = {
@@ -322,8 +315,6 @@ export const SimplifyFractionGenerator: Generator = {
     };
   },
 };
-
-engine.register(SimplifyFractionGenerator);
 
 // --- 5. Multiply Fraction by Whole Number (4.NF.B.4) ---
 
@@ -399,8 +390,6 @@ export const FracMultWholeGenerator: Generator = {
     };
   },
 };
-
-engine.register(FracMultWholeGenerator);
 
 // --- 6. Compare Unlike Fractions (4.NF.A.2) ---
 
@@ -485,8 +474,6 @@ Choose <, >, or =.`,
     };
   },
 };
-
-engine.register(FracCompareUnlikeGenerator);
 
 // --- 7. Add Tenths and Hundredths (4.NF.C.5) ---
 
@@ -586,8 +573,6 @@ export const AddTenthsHundredthsGenerator: Generator = {
   },
 };
 
-engine.register(AddTenthsHundredthsGenerator);
-
 // --- 8. Decompose Fractions (4.NF.B.5) ---
 
 export const SKILL_FRAC_DECOMPOSE: Skill = {
@@ -659,8 +644,6 @@ $$`,
     };
   },
 };
-
-engine.register(FracDecomposeGenerator);
 
 // --- 9. Add/Subtract Mixed Numbers (4.NF.B.6) ---
 
@@ -767,5 +750,3 @@ $$`,
     };
   },
 };
-
-engine.register(AddSubMixedGenerator);

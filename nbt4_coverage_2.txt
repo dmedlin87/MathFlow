@@ -1,0 +1,36 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/dmedl/Projects/MathFlow[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+[90mstdout[2m | src/domain/skills/grade4/nbt.test.ts
+[22m[39m{"timestamp":"2025-12-18T01:56:28.349Z","level":"INFO","message":"Registered generator for skill: nbt_place_value"}
+{"timestamp":"2025-12-18T01:56:28.350Z","level":"INFO","message":"Registered generator for skill: nbt_compare_multi"}
+{"timestamp":"2025-12-18T01:56:28.350Z","level":"INFO","message":"Registered generator for skill: nbt_rounding"}
+{"timestamp":"2025-12-18T01:56:28.350Z","level":"INFO","message":"Registered generator for skill: nbt_add_sub_multi"}
+{"timestamp":"2025-12-18T01:56:28.350Z","level":"INFO","message":"Registered generator for skill: nbt_div_remainders"}
+{"timestamp":"2025-12-18T01:56:28.350Z","level":"INFO","message":"Registered generator for skill: nbt_mult_1digit"}
+{"timestamp":"2025-12-18T01:56:28.350Z","level":"INFO","message":"Registered generator for skill: nbt_mult_2digit"}
+
+ [32mΓ£ô[39m src/domain/skills/grade4/nbt.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m11 passed[39m[22m[90m (11)[39m
+[2m   Start at [22m 19:56:27
+[2m   Duration [22m 477ms[2m (transform 107ms, setup 136ms, import 106ms, tests 16ms, environment 0ms)[22m
+
+[34m % [39m[2mCoverage report from [22m[33mv8[39m
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   66.26 |    38.46 |      60 |   67.09 |                   
+ domain            |   10.34 |     6.55 |    37.5 |   11.11 |                   
+  config.ts        |      75 |       50 |     100 |      75 | 5                 
+  math-utils.ts    |   10.34 |      7.4 |   33.33 |      12 | 4-12,59-96        
+  validation.ts    |       0 |        0 |       0 |       0 | 10-61             
+ domain/generator  |      25 |     5.26 |   66.66 |      25 |                   
+  engine.ts        |      25 |     5.26 |   66.66 |      25 | 34-77             
+ .../skills/grade4 |   95.39 |    73.23 |   88.88 |   97.82 |                   
+  nbt.ts           |   95.39 |    73.23 |   88.88 |   97.82 | 269-270,512       
+ utils             |   53.33 |       60 |      40 |   53.33 |                   
+  logger.ts        |   53.33 |       60 |      40 |   53.33 | 36-40,54-62       
+-------------------|---------|----------|---------|---------|-------------------

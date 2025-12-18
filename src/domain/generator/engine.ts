@@ -43,7 +43,7 @@ export class Engine {
         );
 
         if (res.ok) {
-          const problems = await res.json();
+          const problems = (await res.json()) as unknown[] | null;
           if (problems && problems.length > 0) {
             return validateMathProblemItem(problems[0]);
           }
@@ -55,7 +55,7 @@ export class Engine {
           });
 
           if (runRes.ok) {
-            const runData = await runRes.json();
+            const runData = (await runRes.json()) as { items?: unknown[] };
             if (runData.items && runData.items.length > 0) {
               return validateMathProblemItem(runData.items[0]);
             }

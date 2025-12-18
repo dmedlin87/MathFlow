@@ -1,4 +1,4 @@
-import type { MathProblemItem, Provenance } from "../../../src/domain/types.js";
+import type { MathProblemItem, Provenance } from "@domain/types.js";
 import type { OfflineGenerator, Critic, Judge, Verifier } from "./base.js";
 
 export interface PipelineConfig {

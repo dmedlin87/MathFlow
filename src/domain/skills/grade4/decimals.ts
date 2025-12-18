@@ -1,5 +1,4 @@
 import type { Skill, Generator, MathProblemItem } from "../../types";
-import { engine } from "../../generator/engine";
 import { randomInt, createProblemMeta } from "../../math-utils";
 
 // --- Decimal Notation (4.NF.C.6) ---
@@ -251,5 +250,3 @@ export const DecimalComparisonGenerator: Generator = {
   },
 };
 
-engine.register(DecimalNotationGenerator);
-engine.register(DecimalComparisonGenerator);

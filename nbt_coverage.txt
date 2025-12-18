@@ -1,0 +1,39 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/dmedl/Projects/MathFlow[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+[90mstdout[2m | src/domain/skills/grade5/nbt.test.ts
+[22m[39m{"timestamp":"2025-12-18T01:12:02.135Z","level":"INFO","message":"Registered generator for skill: 5.nbt.powers_10"}
+{"timestamp":"2025-12-18T01:12:02.137Z","level":"INFO","message":"Registered generator for skill: 5.nbt.decimal_forms"}
+{"timestamp":"2025-12-18T01:12:02.137Z","level":"INFO","message":"Registered generator for skill: 5.nbt.compare_decimals"}
+{"timestamp":"2025-12-18T01:12:02.137Z","level":"INFO","message":"Registered generator for skill: 5.nbt.round_decimals"}
+{"timestamp":"2025-12-18T01:12:02.137Z","level":"INFO","message":"Registered generator for skill: 5.nbt.add_sub_decimals"}
+{"timestamp":"2025-12-18T01:12:02.137Z","level":"INFO","message":"Registered generator for skill: 5.nbt.mult_whole"}
+{"timestamp":"2025-12-18T01:12:02.137Z","level":"INFO","message":"Registered generator for skill: 5.nbt.mult_decimals"}
+{"timestamp":"2025-12-18T01:12:02.137Z","level":"INFO","message":"Registered generator for skill: 5.nbt.div_whole"}
+{"timestamp":"2025-12-18T01:12:02.137Z","level":"INFO","message":"Registered generator for skill: 5.nbt.div_decimals"}
+{"timestamp":"2025-12-18T01:12:02.137Z","level":"INFO","message":"Registered generator for skill: 5.nbt.frac_dec_conv"}
+
+ [32mΓ£ô[39m src/domain/skills/grade5/nbt.test.ts [2m([22m[2m24 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m24 passed[39m[22m[90m (24)[39m
+[2m   Start at [22m 19:12:01
+[2m   Duration [22m 528ms[2m (transform 118ms, setup 154ms, import 116ms, tests 8ms, environment 0ms)[22m
+
+[34m % [39m[2mCoverage report from [22m[33mv8[39m
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   70.03 |    45.49 |   66.66 |   70.61 |                   
+ domain            |   10.34 |     6.55 |    37.5 |   11.11 |                   
+  config.ts        |      75 |       50 |     100 |      75 | 5                 
+  math-utils.ts    |   10.34 |      7.4 |   33.33 |      12 | 4-12,59-96        
+  validation.ts    |       0 |        0 |       0 |       0 | 10-61             
+ domain/generator  |      25 |     5.26 |   66.66 |      25 |                   
+  engine.ts        |      25 |     5.26 |   66.66 |      25 | 34-77             
+ .../skills/grade5 |   96.66 |    69.84 |     100 |   97.63 |                   
+  nbt.ts           |   96.66 |    69.84 |     100 |   97.63 | 73-74,130,730     
+ utils             |   53.33 |       60 |      40 |   53.33 |                   
+  logger.ts        |   53.33 |       60 |      40 |   53.33 | 36-40,54-62       
+-------------------|---------|----------|---------|---------|-------------------

@@ -14,8 +14,7 @@ describe("Rate Limiter Middleware", () => {
 
     req = {
       ip: "127.0.0.1",
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      socket: { remoteAddress: "127.0.0.1" } as any,
+      socket: { remoteAddress: "127.0.0.1" } as unknown as Request["socket"],
     };
     res = {
       status: vi.fn().mockReturnThis(),
@@ -95,16 +94,18 @@ describe("Rate Limiter Middleware", () => {
   });
 
   it("should extract IP from req.socket if req.ip is missing", () => {
-    req.ip = undefined;
-    req.socket = { remoteAddress: "10.0.0.5" } as any;
+    req = {
+      socket: { remoteAddress: "10.0.0.5" } as unknown as Request["socket"],
+    };
 
     limiter.middleware(req as Request, res as Response, next);
     expect(limiter.getClient("10.0.0.5")).toBeDefined();
   });
 
   it("should fallback to 'unknown' if no IP available", () => {
-    req.ip = undefined;
-    req.socket = {} as any;
+    req = {
+      socket: {} as unknown as Request["socket"],
+    };
 
     limiter.middleware(req as Request, res as Response, next);
     expect(limiter.getClient("unknown")).toBeDefined();

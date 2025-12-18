@@ -1,5 +1,4 @@
 import type { Skill, Generator, MathProblemItem } from "../../types";
-import { engine } from "../../generator/engine";
 import { randomInt, createProblemMeta } from "../../math-utils";
 
 // --- 6. Data Representation: Line Plots (4.MD.B.4) ---
@@ -183,8 +182,6 @@ What is the difference between the **longest** and **shortest** leaf?`,
   },
 };
 
-engine.register(LinePlotGenerator);
-
 // --- 10. Data Graphs (Freq Tables, Bar Graphs) (4.DS.A) ---
 
 export const SKILL_DATA_GRAPHS: Skill = {
@@ -317,5 +314,3 @@ export const DataGraphGenerator: Generator = {
     };
   },
 };
-
-engine.register(DataGraphGenerator);

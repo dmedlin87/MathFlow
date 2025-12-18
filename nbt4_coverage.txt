@@ -1,0 +1,50 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/dmedl/Projects/MathFlow[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+[90mstdout[2m | src/domain/skills/grade4/nbt.test.ts
+[22m[39m{"timestamp":"2025-12-18T01:17:19.070Z","level":"INFO","message":"Registered generator for skill: nbt_place_value"}
+{"timestamp":"2025-12-18T01:17:19.071Z","level":"INFO","message":"Registered generator for skill: nbt_compare_multi"}
+{"timestamp":"2025-12-18T01:17:19.071Z","level":"INFO","message":"Registered generator for skill: nbt_rounding"}
+{"timestamp":"2025-12-18T01:17:19.071Z","level":"INFO","message":"Registered generator for skill: nbt_add_sub_multi"}
+{"timestamp":"2025-12-18T01:17:19.071Z","level":"INFO","message":"Registered generator for skill: nbt_div_remainders"}
+{"timestamp":"2025-12-18T01:17:19.071Z","level":"INFO","message":"Registered generator for skill: nbt_mult_1digit"}
+{"timestamp":"2025-12-18T01:17:19.071Z","level":"INFO","message":"Registered generator for skill: nbt_mult_2digit"}
+
+ [31mΓ¥»[39m src/domain/skills/grade4/nbt.test.ts [2m([22m[2m11 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 21[2mms[22m[39m
+       [32mΓ£ô[39m generates VALUE_OF mode[32m 12[2mms[22m[39m
+       [32mΓ£ô[39m generates DIGIT_IN mode[32m 1[2mms[22m[39m
+[31m       [31m├ù[31m generates unequal numbers (>)[39m[32m 5[2mms[22m[39m
+       [32mΓ£ô[39m generates unequal numbers (<)[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m handles close numbers logic (diff >= 0.5)[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m rounds correctly (Rounding Up case)[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates Addition[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates Subtraction with Smaller-From-Larger potential[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m Mult1Digit generates 4-digit x 1-digit[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m Mult2Digit generates 2-digit x 2-digit[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates division with remainder[32m 0[2mms[22m[39m
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Failed Tests 1 ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+
+ FAIL  src/domain/skills/grade4/nbt.test.ts > Grade 4 NBT Generators (Deterministic) > SKILL_COMPARE_MULTI_DIGIT > generates unequal numbers (>)
+AssertionError: expected '<' to be '>' // Object.is equality
+
+Expected: ">"
+Received: "<"
+
+ Γ¥» src/domain/skills/grade4/nbt.test.ts:76:58
+     74|       const item = CompareMultiDigitGenerator.generate(0.5, rng);
+     75|       expect(item.meta.skill_id).toBe(SKILL_COMPARE_MULTI_DIGIT.id);
+     76|       expect(item.solution_logic.final_answer_canonical).toBe(">");
+       |                                                          ^
+     77|     });
+     78| 
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/1]ΓÄ»
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m10 passed[39m[22m[90m (11)[39m
+[2m   Start at [22m 19:17:18
+[2m   Duration [22m 480ms[2m (transform 109ms, setup 136ms, import 107ms, tests 21ms, environment 0ms)[22m
+

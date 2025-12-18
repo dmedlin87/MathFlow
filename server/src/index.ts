@@ -7,7 +7,7 @@ import { skillGeneratorMap } from "@domain/skills/generatorMap.js";
 import { DomainGeneratorAdapter } from "./factory/adapters/DomainGeneratorAdapter.js";
 import { config } from "./config.js";
 import { rateLimiter } from "./middleware/rateLimit.js";
-import type { Generator } from "../../src/domain/types.js";
+import type { Generator } from "@domain/types.js";
 
 // Initialize App
 export const app = express();
@@ -16,7 +16,7 @@ const port = config.port;
 // Middleware
 app.use(cors());
 app.use(express.json());
-app.disable('x-powered-by'); // Security: Hide server info
+app.disable("x-powered-by"); // Security: Hide server info
 app.use(rateLimiter); // Security: Rate limiting to prevent DoS
 
 // Helper to create pipeline for a specific generator
@@ -35,7 +35,11 @@ const createPipeline = (generator: Generator) => {
  * Fetch verified problems for a skill.
  * Query: skillId (required), limit (optional)
  */
-export const getProblems = async (req: Request, res: Response, next: NextFunction) => {
+export const getProblems = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { skillId, limit } = req.query;
 
@@ -79,7 +83,11 @@ app.get("/api/problems", getProblems);
  * Manually trigger the offline factory to generate items.
  * Body: { skillId, count, difficulty }
  */
-export const runFactory = async (req: Request, res: Response, next: NextFunction) => {
+export const runFactory = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
   try {
     const { skillId } = req.body;
     let { count = 1, difficulty = config.defaultDifficulty } = req.body;
@@ -128,7 +136,7 @@ export const runFactory = async (req: Request, res: Response, next: NextFunction
 app.post("/api/factory/run", runFactory);
 
 // Global Error Handler
-app.use((err: any, req: Request, res: Response, next: NextFunction) => {
+app.use((err: unknown, _req: Request, res: Response, next: NextFunction) => {
   console.error("Unhandled Error:", err); // Log generic info
   if (res.headersSent) {
     return next(err);
@@ -137,7 +145,7 @@ app.use((err: any, req: Request, res: Response, next: NextFunction) => {
 });
 
 // Start Server
-if (process.env.NODE_ENV !== 'test') {
+if (process.env.NODE_ENV !== "test") {
   app.listen(port, () => {
     console.log(`MathFlow Server running at http://localhost:${port}`);
   });

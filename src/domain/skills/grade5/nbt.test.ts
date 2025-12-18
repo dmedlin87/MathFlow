@@ -401,4 +401,130 @@ describe("Grade 5 NBT Domain (Deterministic)", () => {
       expect(item.solution_logic.final_answer_canonical).toBe("10");
     });
   });
+
+  describe("SKILL_5_NBT_POWERS_10 Extra 2", () => {
+    it("generates Mult by Power of 10 (Type 2)", () => {
+      const rng = createMockRng([
+        0.5, // Type 2 (floor(0.5*4)=2)
+        0.8, // isDecimal=false
+        0.2, // num=21
+        0.5, // exponent=2
+        0.1, // useExponent=true
+      ]);
+      const item = PowersOf10Generator.generate(0.5, rng);
+      expect(item.solution_logic.final_answer_canonical).toBe("2100");
+    });
+  });
+
+  describe("SKILL_5_NBT_DECIMAL_FORMS Extra 2", () => {
+    it("handles zeros in standard form generation", () => {
+      const rng = createMockRng([
+        0.5, // whole=50
+        0.05, // dec=50 -> "050"
+      ]);
+      const item = DecimalFormsGenerator.generate(0.5, rng);
+      expect(item.solution_logic.final_answer_canonical).toBe("50.05");
+    });
+  });
+
+  describe("SKILL_5_NBT_COMPARE_DECIMALS Extra 2", () => {
+    it("generates Close Numbers case", () => {
+      const rng = createMockRng([
+        0.7, // Type Close (>=0.6)
+        0.5, // base=500
+        0.1, // +1 (501 vs 500)
+      ]);
+      const item = CompareDecimalsGenerator.generate(0.5, rng);
+      expect(item.solution_logic.final_answer_canonical).toBe("<");
+    });
+  });
+
+  describe("SKILL_5_NBT_ROUND_DECIMALS Extra 2", () => {
+    it("rounds to nearest whole number", () => {
+      const rng = createMockRng([
+        0.1, // Index 0 (whole)
+        0.05, // whole=5
+        0.6, // dec=.640
+      ]);
+      const item = RoundDecimalsGenerator.generate(0.5, rng);
+      expect(item.solution_logic.final_answer_canonical).toBe("6");
+    });
+  });
+
+  describe("SKILL_5_NBT_MULT_WHOLE Extra", () => {
+    it("multiplies 4x2 digits", () => {
+      const rng = createMockRng([
+        0.6, // 4x2
+        0.5, // n1=5500
+        0.1, // n2=19
+      ]);
+      const item = MultWholeGenerator.generate(0.5, rng);
+      expect(item.solution_logic.final_answer_canonical).toBe("104500");
+    });
+  });
+
+  describe("SKILL_5_NBT_MULT_DECIMALS Extra", () => {
+    it("multiplies Decimal x Integer", () => {
+      const rng = createMockRng([
+        0.7, // DecInt
+        0.1, // d=1
+        0.5, // n1=10.0
+        0.5, // n2=6
+      ]);
+      const item = MultDecimalsGenerator.generate(0.5, rng);
+      expect(item.solution_logic.final_answer_canonical).toBe("60");
+    });
+  });
+
+  describe("SKILL_5_NBT_FRAC_DEC_CONV Extra", () => {
+    it("converts Decimal to Fraction (Type 1)", () => {
+      const rng = createMockRng([
+        0.15, // den=4
+        0.1, // num=1
+        0.6, // Type 1
+      ]);
+      const item = FracDecConversionGenerator.generate(0.5, rng);
+      expect(item.problem_content.stem).toContain("0.25");
+      expect(item.solution_logic.final_answer_canonical).toBeDefined();
+    });
+  });
+
+  describe("SKILL_5_NBT_POWERS_10 Extra 3", () => {
+    it("generates Mult by Power of 10 (Type 2, Decimal)", () => {
+      // Logic:
+      // type: 2 (rng=0.5 -> 2)
+      // isDecimal: true (rng < 0.7). rng=0.1.
+      // num: (rng*10).Fixed(3). rng=0.5 -> 5.000.
+      // exponent: 2. rng=0.5.
+      // 5.0 * 100 = 500.
+
+      const rng = createMockRng([
+        0.5, // Type 2
+        0.1, // isDecimal=true
+        0.5, // num=5.000
+        0.5, // exponent=2
+        0.1, // useExponent=true
+      ]);
+      const item = PowersOf10Generator.generate(0.5, rng);
+      expect(item.solution_logic.final_answer_canonical).toBe("500");
+    });
+  });
+
+  describe("SKILL_5_NBT_DIV_DECIMALS Extra 3", () => {
+    it("divides by decimal (Type 2)", () => {
+      // Logic:
+      // type: 2 (rng*3). rng=0.9 -> 2.
+      // quotient: 10
+      // divisor: 1.5 (logic same as Type 1). rng=0.28.
+      // 15 / 1.5 = 10.
+
+      const rng = createMockRng([
+        0.9, // Type 2
+        0.495, // q=10
+        0.28, // d=1.5
+      ]);
+      const item = DivDecimalsGenerator.generate(0.5, rng);
+      expect(item.solution_logic.final_answer_canonical).toBe("10");
+    });
+  });
 });

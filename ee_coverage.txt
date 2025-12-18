@@ -1,0 +1,35 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/dmedl/Projects/MathFlow[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+[90mstdout[2m | src/domain/skills/grade6/ee.test.ts
+[22m[39m{"timestamp":"2025-12-18T01:55:53.800Z","level":"INFO","message":"Registered generator for skill: 6.ee.exponents"}
+{"timestamp":"2025-12-18T01:55:53.802Z","level":"INFO","message":"Registered generator for skill: 6.ee.one_step_eq"}
+{"timestamp":"2025-12-18T01:55:53.802Z","level":"INFO","message":"Registered generator for skill: 6.ee.expressions"}
+{"timestamp":"2025-12-18T01:55:53.802Z","level":"INFO","message":"Registered generator for skill: 6.ee.equiv_expressions"}
+{"timestamp":"2025-12-18T01:55:53.802Z","level":"INFO","message":"Registered generator for skill: 6.ee.inequalities"}
+{"timestamp":"2025-12-18T01:55:53.802Z","level":"INFO","message":"Registered generator for skill: 6.ee.variables"}
+
+ [32mΓ£ô[39m src/domain/skills/grade6/ee.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m11 passed[39m[22m[90m (11)[39m
+[2m   Start at [22m 19:55:53
+[2m   Duration [22m 455ms[2m (transform 97ms, setup 136ms, import 94ms, tests 4ms, environment 0ms)[22m
+
+[34m % [39m[2mCoverage report from [22m[33mv8[39m
+-------------------|---------|----------|---------|---------|-------------------
+File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+-------------------|---------|----------|---------|---------|-------------------
+All files          |   51.87 |     26.6 |   59.09 |    53.2 |                   
+ domain            |   10.34 |     6.55 |    37.5 |   11.11 |                   
+  config.ts        |      75 |       50 |     100 |      75 | 5                 
+  math-utils.ts    |   10.34 |      7.4 |   33.33 |      12 | 4-12,59-96        
+  validation.ts    |       0 |        0 |       0 |       0 | 10-61             
+ domain/generator  |      25 |     5.26 |   66.66 |      25 |                   
+  engine.ts        |      25 |     5.26 |   66.66 |      25 | 34-77             
+ .../skills/grade6 |     100 |     87.5 |     100 |     100 |                   
+  ee.ts            |     100 |     87.5 |     100 |     100 | 90,184,317        
+ utils             |   53.33 |       60 |      40 |   53.33 |                   
+  logger.ts        |   53.33 |       60 |      40 |   53.33 | 36-40,54-62       
+-------------------|---------|----------|---------|---------|-------------------

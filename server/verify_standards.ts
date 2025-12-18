@@ -1,4 +1,5 @@
-import { ALL_SKILLS_LIST } from "../src/domain/skills/registry";
+import { ALL_SKILLS_LIST } from "@domain/skills/registry.js";
+import type { Skill } from "@domain/types.js";
 
 console.log("Verifying Standards Alignment...");
 
@@ -6,7 +7,7 @@ let missingCount = 0;
 let totalCount = 0;
 let foundCount = 0;
 
-ALL_SKILLS_LIST.forEach((skill) => {
+ALL_SKILLS_LIST.forEach((skill: Skill) => {
   totalCount++;
   if (skill.standards && skill.standards.length > 0) {
     console.log(`[OK] ${skill.id}: ${skill.standards.join(", ")}`);
