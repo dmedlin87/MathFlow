@@ -24,6 +24,7 @@ npm run dev
 ```
 
 > This runs:
+>
 > - Client: `http://localhost:5173`
 > - Server: `http://localhost:3002`
 
@@ -31,7 +32,7 @@ npm run dev
 
 MathFlow separates content verification from runtime delivery.
 
-- **Spec:** [docs/ARCHITECTURE_SPEC.md](./docs/ARCHITECTURE_SPEC.md)
+- **Spec:** [docs/ARCHITECTURE.md](./docs/ARCHITECTURE.md)
 - **Problem Bank:** Verified items are currently generated via a simulated factory (see `src/domain/skills`).
 
 ## 🧪 Testing
