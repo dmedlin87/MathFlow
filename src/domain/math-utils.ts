@@ -78,7 +78,10 @@ export function checkAnswer(
   // 3. Numeric check
   const inputType = item.answer_spec.input_type;
   if (inputType === "integer" || inputType === "decimal") {
-    const numUser = parseFloat(normalizedUser);
+    // Sanitize commas from user input (e.g. "1,000" -> "1000")
+    // Note: This assumes standard notation where comma is separator.
+    const sanitizedUser = normalizedUser.replace(/,/g, "");
+    const numUser = parseFloat(sanitizedUser);
     const numCanonical = parseFloat(canonical);
 
     if (!isNaN(numUser) && !isNaN(numCanonical)) {
@@ -87,7 +90,7 @@ export function checkAnswer(
       // Usually null tolerance implies strictness, but floating point arithmetic usually needs epsilon.
       // Let's assume if null, we use a very small epsilon.
       const tolerance = item.answer_spec.tolerance ?? 1e-9;
-      if (Math.abs(numUser - numCanonical) < tolerance) {
+      if (Math.abs(numUser - numCanonical) <= tolerance) {
         return true;
       }
     }
