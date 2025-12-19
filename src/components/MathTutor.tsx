@@ -124,7 +124,7 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
                 ...prev,
                 total: prev.total + 1,
                 correct: prev.correct + (isCorrect ? 1 : 0),
-                masteredSkills: newState.skillState[currentItem.meta.skill_id].masteryProb > 0.85
+                masteredSkills: newState.skillState[currentItem.meta.skill_id]?.masteryProb > 0.85
                     ? Array.from(new Set([...prev.masteredSkills, currentItem.meta.skill_id]))
                     : prev.masteredSkills
             }));
