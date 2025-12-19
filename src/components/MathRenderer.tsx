@@ -38,14 +38,22 @@ const ParsedMath: React.FC<{ text: string }> = ({ text }) => {
         if (token.includes('/') && !token.includes('=')) {
           const [num, den] = token.split('/');
           return (
-            <span key={i} className="inline-flex flex-col items-center align-middle mx-1" style={{ verticalAlign: 'middle' }}>
-              <span className="border-b-2 border-current px-1 min-w-[1em] text-center">{num}</span>
-              <span className="px-1 min-w-[1em] text-center">{den}</span>
-            </span>
+            <React.Fragment key={i}>
+              <span className="inline-flex flex-col items-center align-middle mx-1" style={{ verticalAlign: 'middle' }}>
+                <span className="border-b-2 border-current px-1 min-w-[1em] text-center">{num}</span>
+                <span className="px-1 min-w-[1em] text-center">{den}</span>
+              </span>
+              {i < tokens.length - 1 && ' '}
+            </React.Fragment>
           );
         }
         // Operators or regular text
-        return <span key={i} className="mx-1">{token}</span>;
+        return (
+          <React.Fragment key={i}>
+            <span className="mx-1">{token}</span>
+            {i < tokens.length - 1 && ' '}
+          </React.Fragment>
+        );
       })}
     </>
   );

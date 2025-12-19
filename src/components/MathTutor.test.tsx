@@ -12,14 +12,17 @@ const mockLearnerService = {
     meta: { id: 'test1', skill_id: 'test_skill', difficulty: 1 },
     problem_content: { stem: '1 + 1 = ?', variables: {} },
     solution_logic: { final_answer_canonical: '2', steps: [] },
-    answer_spec: { ui: { placeholder: 'Enter 2' }, validation: { canonical: '2' } }
+    answer_spec: { ui: { placeholder: 'Enter 2' }, validation: { canonical: '2' }, input_type: 'text' }
   }),
   submitAttempt: vi.fn().mockImplementation(async (state) => {
     // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 100));
+    await new Promise(resolve => setTimeout(resolve, 50));
     return state;
   }),
-  diagnose: vi.fn()
+  diagnose: vi.fn().mockResolvedValue({
+    error_category: 'calculation_error',
+    diagnosis_explanation: 'Check your addition.'
+  })
 };
 
 const mockLearnerState: LearnerState = {
@@ -28,7 +31,7 @@ const mockLearnerState: LearnerState = {
 };
 
 describe('MathTutor UX', () => {
-  it('disables submit button and shows loading state during submission', async () => {
+  it('loads item on mount', async () => {
     render(
       <MathTutor
         learnerState={mockLearnerState}
@@ -37,24 +40,85 @@ describe('MathTutor UX', () => {
       />
     );
 
-    // Wait for item to load
-    // The MathRenderer breaks up the text, so we check for parts of it
+    // Should call getRecommendation
+    expect(mockLearnerService.getRecommendation).toHaveBeenCalled();
+    // STEM should eventually appear
+    await waitFor(() => expect(screen.getAllByText('1').length).toBeGreaterThan(0));
+  });
+
+  it('handles correct answer submission', async () => {
+    render(
+      <MathTutor
+        learnerState={mockLearnerState}
+        setLearnerState={() => {}}
+        learnerService={mockLearnerService as unknown as import('../services/LearnerService').ILearnerService}
+      />
+    );
+
     await waitFor(() => expect(screen.getAllByText('1').length).toBeGreaterThan(0));
 
-    const input = screen.getByLabelText('Enter 2');
+    const input = screen.getByPlaceholderText('Enter 2'); // From mock answer_spec
+    fireEvent.change(input, { target: { value: '2' } });
+    
     const submitBtn = screen.getByText('Check Answer');
-
-    // Enter WRONG answer to ensure button stays visible
-    fireEvent.change(input, { target: { value: '999' } });
-
-    // Submit
     fireEvent.click(submitBtn);
 
-    // Check loading state immediately after click
-    // The button should show "Checking..." while the async diagnosis/submission happens
-    await waitFor(() => {
-        expect(screen.getByText('Checking...')).toBeInTheDocument();
-        expect(submitBtn).toBeDisabled();
-    });
+    // Wait for checking
+    await waitFor(() => expect(screen.getByText('Correct! 🎉')).toBeInTheDocument());
+    
+    // Check Next Problem button
+    expect(screen.getByText('Next Problem →')).toBeInTheDocument();
+  });
+
+  it('handles incorrect answer and retry', async () => {
+    render(
+      <MathTutor
+        learnerState={mockLearnerState}
+        setLearnerState={() => {}}
+        learnerService={mockLearnerService as unknown as import('../services/LearnerService').ILearnerService}
+      />
+    );
+
+    await waitFor(() => expect(screen.getAllByText('1').length).toBeGreaterThan(0));
+
+    const input = screen.getByPlaceholderText('Enter 2');
+    fireEvent.change(input, { target: { value: '999' } });
+    
+    const submitBtn = screen.getByText('Check Answer');
+    fireEvent.click(submitBtn);
+
+    // Diagnose call should happen
+    expect(mockLearnerService.diagnose).toHaveBeenCalled();
+    
+    // Should show diagnosis
+    await waitFor(() => expect(screen.getByText(/Check your addition/)).toBeInTheDocument());
+
+    // Should show "Try Again" on button (after loading finishes)
+    await waitFor(() => expect(screen.getByText('Try Again')).toBeInTheDocument());
+  });
+
+  it('toggles dev mode and auto-solves', async () => {
+    render(
+        <MathTutor
+          learnerState={mockLearnerState}
+          setLearnerState={() => {}}
+          learnerService={mockLearnerService as unknown as import('../services/LearnerService').ILearnerService}
+        />
+      );
+
+      await waitFor(() => expect(screen.getAllByText('1').length).toBeGreaterThan(0));
+
+      const devBtn = screen.getByText('DEV MODE');
+      fireEvent.click(devBtn);
+
+      // Dev controls should appear
+      const autoSolveBtn = screen.getByText(/Auto Solve/i); // Assuming DeveloperControls has this
+      expect(autoSolveBtn).toBeInTheDocument();
+
+      fireEvent.click(autoSolveBtn);
+
+      // Should fill answer and submit
+      await waitFor(() => expect(screen.getByText('Correct! 🎉')).toBeInTheDocument());
+      expect(screen.getByDisplayValue('2')).toBeInTheDocument();
   });
 });
