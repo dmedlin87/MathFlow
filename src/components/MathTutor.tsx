@@ -318,6 +318,7 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
                     <motion.div 
                         initial={{ opacity: 0, y: 10 }}
                         animate={{ opacity: 1, y: 0 }}
+                        role={feedback === 'correct' ? 'status' : 'alert'}
                         className={`p-4 rounded-lg text-center font-medium ${feedback === 'correct' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}
                     >
                         {feedback === 'correct' ? 'Correct! 🎉' : (diagnosis ? `⚠️ ${diagnosis}` : `Not quite. Try again.`)}
@@ -334,7 +335,8 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
                     <div className="flex gap-4">
                         <button
                             onClick={handleNext}
-                            className="flex-1 py-3 bg-gray-900 text-white rounded-lg font-semibold hover:bg-black transition-colors"
+                            autoFocus
+                            className="flex-1 py-3 bg-gray-900 text-white rounded-lg font-semibold hover:bg-black transition-colors focus:outline-none focus:ring-4 focus:ring-gray-400"
                         >
                             Next Problem →
                         </button>
