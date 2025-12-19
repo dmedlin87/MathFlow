@@ -1,4 +1,4 @@
-# Test Audit Report (v3.0)
+# Behavior-First Test Audit Report (v3.0)
 
 ## 1. Mode & Evidence
 - **Mode A**: Full execution capability (dependencies installed, tests run, coverage generated).
