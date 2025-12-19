@@ -78,7 +78,33 @@ export function checkAnswer(
   // 3. Numeric check
   const inputType = item.answer_spec.input_type;
   if (inputType === "integer" || inputType === "decimal") {
-    const numUser = parseFloat(normalizedUser);
+    // Sanitize commas from user input (e.g. "1,000" -> "1000")
+    // Handle locale differences in comma usage:
+    // 1. If it looks like a standard integer with thousands separators (e.g. "1,000" or "10,000,000"), treat commas as separators.
+    //    Regex: ^\d{1,3}(,\d{3})+$
+    // 2. If it has a comma but NO dot, and doesn't match the thousands pattern (e.g. "3,14"), treat comma as decimal.
+    // 3. Otherwise (e.g. "1,000.50"), remove commas.
+    let numUser: number;
+    const isThousandsFormat = /^-?\d{1,3}(,\d{3})+$/.test(normalizedUser);
+    // Count commas
+    const commaCount = (normalizedUser.match(/,/g) || []).length;
+
+    if (
+      normalizedUser.includes(",") &&
+      !normalizedUser.includes(".") &&
+      !isThousandsFormat &&
+      commaCount === 1
+    ) {
+      // European decimal format (e.g. "3,14" -> 3.14)
+      // Only apply if single comma and not standard thousands format
+      const europeanStyle = normalizedUser.replace(/,/g, ".");
+      numUser = parseFloat(europeanStyle);
+    } else {
+      // Standard format (remove commas)
+      const sanitizedUser = normalizedUser.replace(/,/g, "");
+      numUser = parseFloat(sanitizedUser);
+    }
+
     const numCanonical = parseFloat(canonical);
 
     if (!isNaN(numUser) && !isNaN(numCanonical)) {
@@ -87,7 +113,7 @@ export function checkAnswer(
       // Usually null tolerance implies strictness, but floating point arithmetic usually needs epsilon.
       // Let's assume if null, we use a very small epsilon.
       const tolerance = item.answer_spec.tolerance ?? 1e-9;
-      if (Math.abs(numUser - numCanonical) < tolerance) {
+      if (Math.abs(numUser - numCanonical) <= tolerance) {
         return true;
       }
     }
