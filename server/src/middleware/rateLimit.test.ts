@@ -59,6 +59,48 @@ describe("Rate Limiter Middleware", () => {
     );
   });
 
+  it("should include retryAfter seconds based on remaining window", () => {
+    vi.setSystemTime(0);
+    for (let i = 0; i < MAX_TOKENS; i++) {
+      limiter.middleware(req as Request, res as Response, next);
+    }
+
+    vi.advanceTimersByTime(1500);
+    (res.status as Mock).mockClear();
+    (res.json as Mock).mockClear();
+    (next as Mock).mockClear();
+
+    limiter.middleware(req as Request, res as Response, next);
+
+    expect(res.status).toHaveBeenCalledWith(429);
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        retryAfter: Math.ceil((WINDOW_MS - 1500) / 1000),
+      })
+    );
+  });
+
+  it("should report retryAfter as 1 when one second remains", () => {
+    vi.setSystemTime(0);
+    for (let i = 0; i < MAX_TOKENS; i++) {
+      limiter.middleware(req as Request, res as Response, next);
+    }
+
+    vi.setSystemTime(WINDOW_MS - 1);
+    (res.status as Mock).mockClear();
+    (res.json as Mock).mockClear();
+    (next as Mock).mockClear();
+
+    limiter.middleware(req as Request, res as Response, next);
+
+    expect(res.status).toHaveBeenCalledWith(429);
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({
+        retryAfter: 1,
+      })
+    );
+  });
+
   it("should replenish tokens after window expires", () => {
     // Exhaust
     for (let i = 0; i < MAX_TOKENS; i++) {
@@ -91,6 +133,26 @@ describe("Rate Limiter Middleware", () => {
     limiter.cleanup();
 
     expect(limiter.getClient("127.0.0.1")).toBeUndefined();
+  });
+
+  it("should only cleanup clients past the window", () => {
+    vi.setSystemTime(0);
+    limiter.middleware(req as Request, res as Response, next);
+    expect(limiter.getClient("127.0.0.1")).toBeDefined();
+
+    vi.setSystemTime(WINDOW_MS - 1);
+    req = {
+      ip: "10.0.0.2",
+      socket: { remoteAddress: "10.0.0.2" } as unknown as Request["socket"],
+    };
+    limiter.middleware(req as Request, res as Response, next);
+    expect(limiter.getClient("10.0.0.2")).toBeDefined();
+
+    vi.setSystemTime(WINDOW_MS + 1);
+    limiter.cleanup();
+
+    expect(limiter.getClient("127.0.0.1")).toBeUndefined();
+    expect(limiter.getClient("10.0.0.2")).toBeDefined();
   });
 
   it("should extract IP from req.socket if req.ip is missing", () => {

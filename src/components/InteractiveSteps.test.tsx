@@ -45,10 +45,10 @@ describe('InteractiveSteps', () => {
     await user.type(input, '2');
     await user.click(button);
     
-    expect(await screen.findByText('✓ Correct')).toBeInTheDocument();
-    // Match partials due to MathRenderer splitting
-    expect(await screen.findByText(/equals/)).toBeInTheDocument();
-    expect(await screen.findByText(/2\./)).toBeInTheDocument();
+    expect(await screen.findByText(/Correct/)).toBeInTheDocument();
+    // Match partials due to MathRenderer splitting (sr-only + visible tokens)
+    expect((await screen.findAllByText(/equals/)).length).toBeGreaterThan(0);
+    expect((await screen.findAllByText(/2\./)).length).toBeGreaterThan(0);
     
     // Check for next step parts (static step)
     // MathRenderer splits text, so we check for significant words
@@ -64,10 +64,10 @@ describe('InteractiveSteps', () => {
     fireEvent.change(input, { target: { value: '3' } });
     fireEvent.click(button);
 
-    expect(await screen.findByText('✗ Try again')).toBeInTheDocument();
+    expect(await screen.findByText(/Try again/)).toBeInTheDocument();
     // Verify explanation is NOT present (checking key tokens)
-    expect(screen.queryByText('equals')).not.toBeInTheDocument();
-    expect(screen.queryByText('2.')).not.toBeInTheDocument();
+    expect(screen.queryAllByText('equals').length).toBe(0);
+    expect(screen.queryAllByText('2.').length).toBe(0);
     expect(screen.queryByText('This is a static hint.')).not.toBeInTheDocument();
   });
 
@@ -76,8 +76,8 @@ describe('InteractiveSteps', () => {
     const button = screen.getByLabelText('Check answer for step 1');
     fireEvent.click(button);
 
-    expect(screen.queryByText('✓ Correct')).not.toBeInTheDocument();
-    expect(screen.queryByText('✗ Try again')).not.toBeInTheDocument();
+    expect(screen.queryByText(/Correct/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Try again/)).not.toBeInTheDocument();
     expect(screen.queryByText('This is a static hint.')).not.toBeInTheDocument();
   });
 
@@ -124,12 +124,12 @@ describe('InteractiveSteps', () => {
     fireEvent.click(button3);
 
     // Expect multiple "Correct" messages (one for step 1, one for step 3)
-    expect((await screen.findAllByText('✓ Correct')).length).toBeGreaterThanOrEqual(2);
+    expect((await screen.findAllByText(/Correct/)).length).toBeGreaterThanOrEqual(2);
     
     // Wait for explanation matches
     // "equals" appears in multiple steps
     expect((await screen.findAllByText(/equals/)).length).toBeGreaterThanOrEqual(2);
-    expect(await screen.findByText(/4\./)).toBeInTheDocument();
+    expect((await screen.findAllByText(/4\./)).length).toBeGreaterThan(0);
 
     // Last step, no "Continue" button
     expect(screen.queryByText(/Continue/)).not.toBeInTheDocument();

@@ -52,7 +52,9 @@ describe('MathRenderer', () => {
 
     it('renders explanation text with spaces', () => {
         const { container } = render(<MathRenderer text="1 + 1 equals 2." />);
-        expect(container.textContent).toBe("1 + 1 equals 2.");
+        const srOnly = container.querySelector('.sr-only');
+        expect(srOnly).toBeInTheDocument();
+        expect(srOnly?.textContent).toBe("1 + 1 equals 2.");
         expect(screen.getByText("equals")).toBeInTheDocument();
         expect(screen.getByText("2.")).toBeInTheDocument();
     });

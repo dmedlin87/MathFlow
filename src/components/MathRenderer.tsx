@@ -10,6 +10,8 @@ export const MathRenderer = React.memo(({ text }: { text: string }) => {
 
   return (
     <span className="inline-flex items-center flex-wrap gap-1 text-2xl">
+      {/* Hidden full-text for accessibility and easier testing when markup splits tokens */}
+      <span className="sr-only">{text}</span>
       {parts.map((part, i) => {
         if (part.startsWith('**') && part.endsWith('**')) {
           const content = part.slice(2, -2);
