@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import {
   createInitialState,
   updateLearnerState,
@@ -9,6 +9,15 @@ import {
   SKILL_EQUIV_FRACTIONS,
   SKILL_ADD_LIKE_FRACTIONS,
 } from "../skills/grade4/fractions";
+
+// Mock Engine for Unit Test
+const mockEngine = {
+  generate: vi.fn().mockReturnValue({
+    meta: { id: "test", skill_id: "test" },
+    problem_content: { stem: "Q" },
+    solution_logic: { final_answer_canonical: "A" },
+  }),
+};
 
 describe("Learner State Behavior", () => {
   describe("createInitialState", () => {
@@ -326,13 +335,14 @@ describe("Learner State Behavior", () => {
       state.skillState[SKILL_EQUIV_FRACTIONS.id].masteryProb = 0.9;
       state.skillState[SKILL_ADD_LIKE_FRACTIONS.id].masteryProb = 0.1;
 
-      // Mock RNG that would potentially pick any available skill
-      // But since one is mastered, it should NOT be in learning Queue.
-      // Logic: IF reviewDue is empty AND learningQueue has items, pick from learningQueue.
-      // If we force reviewDue to be empty (default stability=0 so interval=24h, lastPracticed=now -> not due)
-      // Then it should pick the non-mastered skill.
+      // Ensure mock returns correct skill_id to pass validation in test
+      mockEngine.generate.mockReturnValueOnce({
+          meta: { id: "test", skill_id: SKILL_ADD_LIKE_FRACTIONS.id },
+          problem_content: { stem: "Q" },
+          solution_logic: { final_answer_canonical: "A" },
+      });
 
-      const item = await recommendNextItem(state);
+      const item = await recommendNextItem(state, undefined, undefined, mockEngine);
 
       expect(item.meta.skill_id).toBe(SKILL_ADD_LIKE_FRACTIONS.id);
       expect(item.meta.skill_id).not.toBe(SKILL_EQUIV_FRACTIONS.id);

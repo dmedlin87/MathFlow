@@ -1,6 +1,7 @@
 import type { LearnerState, Attempt, MathProblemItem, Diagnosis } from '../domain/types';
 import { createInitialState, updateLearnerState, recommendNextItem } from '../domain/learner/state';
 import { MisconceptionEvaluator } from '../domain/learner/misconceptionEvaluator';
+import { engine } from '../domain/generator/engine';
 
 export interface ILearnerService {
     loadState(userId: string): Promise<LearnerState>;
@@ -42,7 +43,7 @@ export class LocalLearnerService implements ILearnerService {
     }
 
     async getRecommendation(state: LearnerState): Promise<MathProblemItem> {
-        const item = await recommendNextItem(state);
+        const item = await recommendNextItem(state, undefined, undefined, engine);
         return this.simulateNetwork(item);
     }
 

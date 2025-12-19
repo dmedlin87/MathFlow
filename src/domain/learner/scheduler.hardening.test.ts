@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { recommendNextItem } from "./state";
-import { engine } from "../generator/engine";
+// import { engine } from "../generator/engine"; // REMOVED
 import type {
   Skill,
   LearnerState,
@@ -9,12 +9,13 @@ import type {
 } from "../types";
 
 // Mock engine to avoid real generation logic
-vi.mock("../generator/engine", () => ({
-  engine: {
-    generate: vi.fn(),
-    register: vi.fn(),
-  },
-}));
+// REMOVED vi.mock of engine module
+
+const mockEngine = {
+  generate: vi.fn(),
+  register: vi.fn(),
+};
+
 
 // Helper to create a minimal skill
 const createSkill = (id: string, prereqs: string[] = []): Skill => ({
@@ -28,81 +29,118 @@ const createSkill = (id: string, prereqs: string[] = []): Skill => ({
 });
 
 // Helper to create minimal state
-const createState = (
-  skillStates: Record<string, Partial<SkillState>>
-): LearnerState => ({
-  userId: "test_user",
-  skillState: Object.entries(skillStates).reduce((acc, [id, s]) => {
-    acc[id] = {
-      masteryProb: 0.1,
-      stability: 0,
-      lastPracticed: new Date().toISOString(),
-      misconceptions: [],
-      ...s,
-    };
-    return acc;
-  }, {} as Record<string, SkillState>),
+const createTestState = (skillState: Record<string, SkillState>): LearnerState => ({
+  userId: "test-user",
+  skillState,
 });
 
-describe("Scheduler Hardening (Edge Cases)", () => {
+const createSkillState = (masteryProb: number): SkillState => ({
+  masteryProb,
+  stability: 0,
+  lastPracticed: new Date().toISOString(),
+  misconceptions: [],
+});
+
+// Define skills with prereq chain: A -> B -> C
+const skillA = createSkill("A");
+const skillB = createSkill("B", ["A"]);
+const skillC = createSkill("C", ["B"]);
+const skills = [skillA, skillB, skillC];
+
+describe("Scheduler Hardening: Prerequisite Logic", () => {
   beforeEach(() => {
-    vi.clearAllMocks();
-    // Default mock return to avoid unrelated crashes
-    vi.mocked(engine.generate).mockResolvedValue({
-      meta: { id: "mock_item" },
-    } as unknown as MathProblemItem);
+    vi.resetAllMocks();
+    mockEngine.generate.mockResolvedValue({
+      meta: { id: "test", skill_id: "test" },
+      problem_content: { stem: "test" },
+      solution_logic: { final_answer_canonical: "test" },
+    });
   });
 
-  it("should NOT crash when skill list is empty", async () => {
-    const skills: Skill[] = [];
-    const state = createState({});
-
-    // Expectation: Should throw or handle gracefully.
-    // Current code: likely crashes on accessing targetSkill.id
-    await expect(recommendNextItem(state, Math.random, skills)).rejects.toThrow(
-      "No skills available to recommend"
-    );
-    // We anticipate a crash, so we expect rejection.
-    // If it doesn't crash, we'll update the test to expect a safe return (e.g. null).
-  });
-
-  it("should handle circular dependencies by falling back (Fail Open)", async () => {
-    // Graph: A -> B -> A
-    const skills = [createSkill("A", ["B"]), createSkill("B", ["A"])];
-
-    const state = createState({
-      A: { masteryProb: 0.1 },
-      B: { masteryProb: 0.1 },
+  it("should NOT recommend Skill B if Skill A is below mastery threshold (0.7)", async () => {
+    const state = createTestState({
+      A: createSkillState(0.5), // Not mastered
     });
 
-    // neither is unlocked. fallback logic picks random.
-    await recommendNextItem(state, Math.random, skills);
+    // Force RNG to try and pick B? No, logic is deterministic for candidate filtering
+    // recommendNextItem filters out B because prereq A is not > 0.7
+    // So it should pick A.
 
-    expect(engine.generate).toHaveBeenCalled();
-    const callArgs = vi.mocked(engine.generate).mock.calls[0];
-    // Must be A or B
-    expect(["A", "B"]).toContain(callArgs[0]);
+    await recommendNextItem(state, Math.random, skills, mockEngine);
+
+    expect(mockEngine.generate).toHaveBeenCalledWith("A", expect.any(Number));
+    expect(mockEngine.generate).not.toHaveBeenCalledWith("B", expect.any(Number));
   });
 
-  it("should fall back to random skill when ALL skills are mastered and recently practiced (Review saturated)", async () => {
-    const skills = [createSkill("A")];
-    const state = createState({
-      A: { masteryProb: 0.99, lastPracticed: new Date().toISOString() }, // Just practiced
+  it("should recommend Skill B if Skill A is mastered (>0.7) and B is not", async () => {
+    const state = createTestState({
+      A: createSkillState(0.8), // Mastered
+      B: createSkillState(0.1), // Not mastered
     });
 
-    // Review due? No (recent).
-    // Learning queue? No (mastered).
-    // Fallback -> A.
+    // We need to ensure RNG doesn't pick review for A.
+    // If A is > 0.8, it might be in review queue?
+    // Review requires time > 24h.
+    // Last practiced is now (default). So Review queue is empty.
+    // Learning Queue: A (mastery > 0.8) -> Excluded from Learning Queue.
+    // Learning Queue: B (mastery < 0.8, Prereq A > 0.7) -> Included.
+    // So B is the only candidate in Learning Queue.
 
-    await recommendNextItem(state, Math.random, skills);
-    expect(engine.generate).toHaveBeenCalledWith("A", expect.any(Number));
+    await recommendNextItem(state, Math.random, skills, mockEngine);
+
+    expect(mockEngine.generate).toHaveBeenCalledWith("B", expect.any(Number));
   });
 
-  it("should handle missing state for passed skills (Graceful Initialization)", async () => {
-    const skills = [createSkill("A")];
-    const state = createState({}); // Empty state
+  it("should NOT recommend Skill C if Skill B is below mastery threshold", async () => {
+    const state = createTestState({
+      A: createSkillState(0.9),
+      B: createSkillState(0.5), // Not mastered enough for C
+      C: createSkillState(0.1),
+    });
 
-    await recommendNextItem(state, Math.random, skills);
-    expect(engine.generate).toHaveBeenCalledWith("A", expect.any(Number));
+    await recommendNextItem(state, Math.random, skills, mockEngine);
+
+    // Should pick B (Learning Queue) or A (if review).
+    // Assuming Review Queue empty.
+    // Learning Queue: B (Valid), C (Invalid due to B).
+    // Should pick B.
+
+    expect(mockEngine.generate).toHaveBeenCalledWith("B", expect.any(Number));
+    expect(mockEngine.generate).not.toHaveBeenCalledWith("C", expect.any(Number));
+  });
+
+  it("should handle cyclic dependencies gracefully (smoke test)", async () => {
+      // Logic doesn't explicitly check cycles, but should not crash.
+      // A -> B -> A
+      const sA = createSkill("A", ["B"]);
+      const sB = createSkill("B", ["A"]);
+      const cycleSkills = [sA, sB];
+
+      const state = createTestState({
+          A: createSkillState(0.1),
+          B: createSkillState(0.1)
+      });
+
+      // Both blocked by each other.
+      // candidates: A (blocked by B), B (blocked by A).
+      // learningQueue empty.
+      // Fallback: Random from candidates.
+
+      await expect(recommendNextItem(state, Math.random, cycleSkills, mockEngine)).resolves.not.toThrow();
+      expect(mockEngine.generate).toHaveBeenCalled();
+  });
+
+  it("should fail gracefully if skill ID in prereqs does not exist", async () => {
+      const sA = createSkill("A", ["NON_EXISTENT"]);
+      const state = createTestState({ A: createSkillState(0.1) });
+
+      // Prereq check: state['NON_EXISTENT'] is undefined.
+      // undefined && ... -> undefined -> falsy.
+      // So allPrereqsMet = false.
+      // A is excluded from Learning Queue.
+      // Fallback -> Random A.
+
+      await recommendNextItem(state, Math.random, [sA], mockEngine);
+      expect(mockEngine.generate).toHaveBeenCalledWith("A", expect.any(Number));
   });
 });

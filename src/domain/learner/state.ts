@@ -1,9 +1,15 @@
 import type { LearnerState, Attempt, MathProblemItem, Skill } from "../types";
-import { engine } from "../generator/engine";
+// Architecture Fix: Removed hard import of 'engine' singleton (2025-12-14)
+// import { engine } from "../generator/engine";
 import { ALL_SKILLS_LIST } from "../skills/registry";
 
 // Scheduler uses the central registry
 const ALL_SKILLS = ALL_SKILLS_LIST;
+
+// Architecture Fix: Defined Interface for Injection
+export interface ProblemGenerator {
+  generate(skillId: string, difficulty: number): Promise<MathProblemItem> | MathProblemItem;
+}
 
 export function createInitialState(userId: string): LearnerState {
   const state: LearnerState = {
@@ -93,7 +99,9 @@ export function updateLearnerState(
 export async function recommendNextItem(
   state: LearnerState,
   rng: () => number = Math.random,
-  skills: Skill[] = ALL_SKILLS
+  skills: Skill[] = ALL_SKILLS,
+  // Architecture Fix: Dependency Injection
+  generator: ProblemGenerator
 ): Promise<MathProblemItem> {
   const now = new Date();
   // Re-verify ALL_SKILLS against state to ensure no missing entries (e.g. if loaded from storage)
@@ -168,7 +176,6 @@ export async function recommendNextItem(
     difficulty = 0.9; // Challenge on review
   }
 
-  // Use engine.generate with skillId
-  // Note: engine.generate might fail if we ask for a skill not registered.
-  return engine.generate(targetSkill.id, difficulty);
+  // Use injected generator
+  return generator.generate(targetSkill.id, difficulty);
 }
