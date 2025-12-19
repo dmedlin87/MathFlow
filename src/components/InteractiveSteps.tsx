@@ -103,7 +103,7 @@ export const InteractiveSteps = React.memo(({ steps }: InteractiveStepsProps) =>
       </div>
     </div>
   );
-};
+});
 
 function isCorrectAnswer(value: string, step: Step) {
   return value == String(step.answer);
