@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, vi } from "vitest";
 import {
   ExponentsGenerator,
   OneStepEqGenerator,
@@ -24,105 +24,113 @@ const createMockRng = (sequence: number[]) => {
 
 describe("Grade 6 EE Generators (Deterministic)", () => {
   describe("SKILL_6_EE_EXPONENTS", () => {
-    it("generates correctly", () => {
-      // Logic:
-      // base: randomInt(2, 9). rng=0.5 -> 2 + floor(0.5*8) = 2+4 = 6.
-      // exp: randomInt(2, 4). rng=0.9 -> 2 + floor(0.9*3) = 2+2 = 4.
-      // value: 6^4 = 1296.
-
-      const rng = createMockRng([
-        0.5, // base=6
-        0.9, // exp=4
-      ]);
+    it("generates correctly with middle values", () => {
+      // base: randomInt(2, 9). rng=0.5 -> 2 + floor(0.5*8) = 6.
+      // exp: randomInt(2, 4). rng=0.9 -> 2 + floor(0.9*3) = 4.
+      const rng = createMockRng([0.5, 0.9]);
       const item = ExponentsGenerator.generate(0.5, rng);
       expect(item.meta.skill_id).toBe(SKILL_6_EE_EXPONENTS.id);
       expect(item.problem_content.stem).toContain("6^4");
       expect(item.solution_logic.final_answer_canonical).toBe("1296");
+
+      const misc = item.misconceptions.find(
+        (m) => m.error_tag === "multiply_base_exponent"
+      );
+      expect(misc?.trigger.value).toBe("24");
+      expect(item.solution_logic.steps[0].explanation).toBe(
+        "Multiply 6 by itself 4 times."
+      );
+    });
+
+    it("handles lower boundary values (2^2)", () => {
+      const rng = createMockRng([0, 0]);
+      const item = ExponentsGenerator.generate(0.5, rng);
+      expect(item.problem_content.stem).toContain("2^2");
+      expect(item.solution_logic.final_answer_canonical).toBe("4");
+    });
+
+    it("handles upper boundary values (9^4)", () => {
+      const rng = createMockRng([0.99, 0.99]);
+      const item = ExponentsGenerator.generate(0.5, rng);
+      expect(item.problem_content.stem).toContain("9^4");
+      expect(item.solution_logic.final_answer_canonical).toBe("6561");
+    });
+
+    it("uses Math.random when no rng is provided", () => {
+      const spy = vi.spyOn(Math, "random").mockReturnValue(0.5);
+      const item = ExponentsGenerator.generate(0.5);
+      expect(item.problem_content.stem).toContain("6^3"); // 2+floor(0.5*8)=6, 2+floor(0.5*3)=3
+      spy.mockRestore();
     });
   });
 
   describe("SKILL_6_EE_ONE_STEP_EQ", () => {
-    // Types: 0: x+a=b, 1: x-a=b, 2: ax=b, 3: x/a=b
-
-    it("generates Type 0 (Addition)", () => {
-      // Logic:
-      // type: floor(rng*4). rng=0.1 -> 0.
-      // x: randomInt(2, 20). rng=0.5 -> 2+floor(0.5*19) = 2+9=11.
-      // a: randomInt(2, 12). rng=0.5 -> 2+floor(0.5*11) = 2+5=7.
-      // b = 11 + 7 = 18.
-      // Q: x + 7 = 18.
-
-      const rng = createMockRng([
-        0.1, // Type 0
-        0.5, // x=11
-        0.5, // a=7
-      ]);
+    it("generates Type 0 (Addition: x + a = b)", () => {
+      const rng = createMockRng([0.1, 0.5, 0.5]); // type=0, x=11, a=7
       const item = OneStepEqGenerator.generate(0.5, rng);
       expect(item.meta.skill_id).toBe(SKILL_6_EE_ONE_STEP_EQ.id);
-      expect(item.problem_content.stem).toContain("x + 7 = 18");
+      expect(item.problem_content.stem).toBe("Solve for x: $ x + 7 = 18 $");
       expect(item.solution_logic.final_answer_canonical).toBe("11");
+      expect(item.solution_logic.steps[0].explanation).toContain(
+        "inverse operation"
+      );
     });
 
-    it("generates Type 1 (Subtraction)", () => {
-      // Logic:
-      // type: 1. rng=0.3.
-      // x: 10. rng=0.45. range=19. floor(0.45*19)=8. 2+8=10.
-      // a: 5. rng=0.3. range=11. floor(0.3*11)=3. 2+3=5.
-      // b = 10 - 5 = 5.
-      // Q: x - 5 = 5.
-
-      const rng = createMockRng([
-        0.3, // Type 1
-        0.45, // x=10
-        0.3, // a=5
-      ]);
+    it("generates Type 1 (Subtraction: x - a = b)", () => {
+      const rng = createMockRng([0.3, 0.45, 0.3]); // type=1, x=10, a=5
       const item = OneStepEqGenerator.generate(0.5, rng);
-      expect(item.meta.skill_id).toBe(SKILL_6_EE_ONE_STEP_EQ.id);
-      expect(item.problem_content.stem).toContain("x - 5 = 5");
+      expect(item.problem_content.stem).toBe("Solve for x: $ x - 5 = 5 $");
       expect(item.solution_logic.final_answer_canonical).toBe("10");
     });
 
-    it("generates Type 2 (Multiplication)", () => {
-      // Logic:
-      // type: 2. rng=0.6.
-      // x: 4. rng=0.1. (2+floor(0.1*19)=2+1=3?) Wait. floor(1.9)=1. 2+1=3.
-      // a: 3. rng=0.1. (2+floor(0.1*11)=3?) floor(1.1)=1. 2+1=3.
-      // b = 3 * 3 = 9.
-
-      const rng = createMockRng([
-        0.6, // Type 2
-        0.1, // x=3
-        0.1, // a=3
-      ]);
+    it("generates Type 2 (Multiplication: ax = b)", () => {
+      const rng = createMockRng([0.6, 0.1, 0.1]); // type=2, x=3, a=3
       const item = OneStepEqGenerator.generate(0.5, rng);
-      expect(item.meta.skill_id).toBe(SKILL_6_EE_ONE_STEP_EQ.id);
-      expect(item.problem_content.stem).toContain("3x = 9");
+      expect(item.problem_content.stem).toBe("Solve for x: $ 3x = 9 $");
       expect(item.solution_logic.final_answer_canonical).toBe("3");
     });
 
-    it("generates Type 3 (Division)", () => {
-      // Logic:
-      // type: 3. rng=0.9.
-      // x: 12.
-      // a: 2.
-      // b = floor(12/2) = 6.
-      // realX = 6 * 2 = 12.
-      // Q: x/2 = 6.
-
-      const rng = createMockRng([
-        0.9, // Type 3
-        0.55, // x=12. (2+floor(0.55*19)=2+10=12).
-        0.05, // a=2. (2+floor(0.05*11)=2+0=2).
-      ]);
+    it("generates Type 3 (Division: x/a = b)", () => {
+      const rng = createMockRng([0.9, 0.55, 0.05, 0.5]); // type=3, x=unused, a=2, b=6
       const item = OneStepEqGenerator.generate(0.5, rng);
-      expect(item.meta.skill_id).toBe(SKILL_6_EE_ONE_STEP_EQ.id);
-      expect(item.problem_content.stem).toContain("\\frac{x}{2} = 6");
+      expect(item.problem_content.stem).toBe(
+        "Solve for x: $ \\frac{x}{2} = 6 $"
+      );
       expect(item.solution_logic.final_answer_canonical).toBe("12");
+      expect(item.solution_logic.steps[0].explanation).toBe(
+        "Multiply both sides by 2"
+      );
+      expect(item.solution_logic.steps[0].math).toBe("x = 6 \\times 2 = 12");
+    });
+
+    it("handles explicit valid boundaries for OneStepEq inputs", () => {
+      // type: 0 (addition)
+      // x: min (2) -> rng=0
+      // a: min (2) -> rng=0
+      const minRng = createMockRng([0, 0, 0]);
+      const minItem = OneStepEqGenerator.generate(0.5, minRng);
+      expect(minItem.problem_content.stem).toBe("Solve for x: $ x + 2 = 4 $");
+      expect(minItem.solution_logic.final_answer_canonical).toBe("2");
+
+      // type: 2 (multiplication)
+      // x: max (20) -> rng=0.99
+      // a: max (12) -> rng=0.99
+      const maxRng = createMockRng([0.6, 0.99, 0.99]);
+      const maxItem = OneStepEqGenerator.generate(0.5, maxRng);
+      expect(maxItem.problem_content.stem).toBe("Solve for x: $ 12x = 240 $");
+      expect(maxItem.solution_logic.final_answer_canonical).toBe("20");
+    });
+
+    it("uses Math.random for all random calls when no rng provided", () => {
+      const spy = vi.spyOn(Math, "random").mockReturnValue(0.1); // type=0
+      const item = OneStepEqGenerator.generate(0.5);
+      expect(item.problem_content.stem).toContain("x +");
+      spy.mockRestore();
     });
   });
 
   describe("SKILL_6_EE_EXPRESSIONS", () => {
-    it("generates Evaluate mode", () => {
+    it("generates Evaluate mode with substitution", () => {
       // Logic:
       // type: evaluate (rng < 0.5). rng=0.1.
       // m: randomInt(2, 9). rng=0.5 -> 6.
@@ -141,26 +149,61 @@ describe("Grade 6 EE Generators (Deterministic)", () => {
       expect(item.problem_content.stem).toContain("6x + 6");
       expect(item.problem_content.stem).toContain("x = 4");
       expect(item.solution_logic.final_answer_canonical).toBe("30");
+      expect(item.solution_logic.steps[0].math).toBe("6(4) + 6 = 24 + 6 = 30");
     });
 
-    it("generates Translate mode", () => {
+    it("generates Translate mode (more than) with all forms", () => {
       // Logic:
       // type: translate (rng >= 0.5). rng=0.6.
       // n: randomInt(2, 9). rng=0.5 -> 6.
-      // Q: "6 more than x" -> x+6.
-
-      const rng = createMockRng([
-        0.6, // translate
-        0.5, // n=6
-      ]);
+      // subType: floor(rng*4). rng=0.1 -> 0 (more than)
+      const rng = createMockRng([0.6, 0.5, 0.1]);
       const item = ExpressionsGenerator.generate(0.5, rng);
       expect(item.problem_content.stem).toContain("6 more than x");
       expect(item.solution_logic.final_answer_canonical).toBe("x+6");
+      expect(item.answer_spec.accepted_forms).toEqual(["x+6", "6+x"]);
+    });
+
+    it("generates Translate mode (less than)", () => {
+      // Logic:
+      // subType: 1 (less than)
+      const rng = createMockRng([0.6, 0.5, 0.3]);
+      const item = ExpressionsGenerator.generate(0.5, rng);
+      expect(item.problem_content.stem).toContain("6 less than x");
+      expect(item.solution_logic.final_answer_canonical).toBe("x-6");
+      expect(item.answer_spec.accepted_forms).toEqual(["x-6"]);
+    });
+
+    it("generates Translate mode (product)", () => {
+      // Logic:
+      // subType: 2 (product)
+      const rng = createMockRng([0.6, 0.5, 0.6]);
+      const item = ExpressionsGenerator.generate(0.5, rng);
+      expect(item.problem_content.stem).toContain("product of 6 and x");
+      expect(item.solution_logic.final_answer_canonical).toBe("6x");
+      expect(item.answer_spec.accepted_forms).toEqual(["6x", "6*x", "x*6"]);
+    });
+
+    it("generates Translate mode (quotient)", () => {
+      // Logic:
+      // subType: 3 (quotient)
+      const rng = createMockRng([0.6, 0.5, 0.9]);
+      const item = ExpressionsGenerator.generate(0.5, rng);
+      expect(item.problem_content.stem).toContain("quotient of x and 6");
+      expect(item.solution_logic.final_answer_canonical).toBe("x/6");
+      expect(item.answer_spec.accepted_forms).toEqual(["x/6", "\\frac{x}{6}"]);
+    });
+
+    it("uses Math.random for translate path when no rng provided", () => {
+      const spy = vi.spyOn(Math, "random").mockReturnValue(0.6); // translate
+      const item = ExpressionsGenerator.generate(0.5);
+      expect(item.problem_content.stem).toContain("algebraic expression");
+      spy.mockRestore();
     });
   });
 
   describe("SKILL_6_EE_EQUIV_EXPRESSIONS", () => {
-    it("generates distributive property problem", () => {
+    it("verifies distributive property expansion", () => {
       // Logic:
       // a: randomInt(2, 5). rng=0.5 -> 2+floor(0.5*4)=4.
       // b: randomInt(1, 9). rng=0.5 -> 1+floor(0.5*9)=5.
@@ -174,47 +217,130 @@ describe("Grade 6 EE Generators (Deterministic)", () => {
       expect(item.meta.skill_id).toBe(SKILL_6_EE_EQUIV_EXPRESSIONS.id);
       expect(item.problem_content.stem).toContain("4(x + 5)");
       expect(item.solution_logic.final_answer_canonical).toBe("4x+20");
+      expect(item.solution_logic.steps[0].math).toBe(
+        "4 \\times x + 4 \\times 5 = 4x+20"
+      );
+    });
+
+    it("handles boundary values (min and max distributive)", () => {
+      const minRng = createMockRng([
+        0, // a=2
+        0, // b=1
+      ]);
+      const minItem = EquivExpressionsGenerator.generate(0.5, minRng);
+      expect(minItem.problem_content.stem).toContain("2(x + 1)");
+      expect(minItem.solution_logic.final_answer_canonical).toBe("2x+2");
+
+      const maxRng = createMockRng([
+        0.99, // a=5
+        0.99, // b=9
+      ]);
+      const maxItem = EquivExpressionsGenerator.generate(0.5, maxRng);
+      expect(maxItem.problem_content.stem).toContain("5(x + 9)");
+      expect(maxItem.solution_logic.final_answer_canonical).toBe("5x+45");
+    });
+
+    it("uses Math.random when no rng provided", () => {
+      const spy = vi.spyOn(Math, "random").mockReturnValue(0.5);
+      const item = EquivExpressionsGenerator.generate(0.5);
+      expect(item.meta.skill_id).toBe(SKILL_6_EE_EQUIV_EXPRESSIONS.id);
+      expect(item.problem_content.stem).toContain("4(x + 5)");
+      spy.mockRestore();
     });
   });
 
   describe("SKILL_6_EE_INEQUALITIES", () => {
-    it("generates Max (at least / >=) inequality", () => {
-      // Logic:
-      // val: randomInt(10, 90). rng=0.5 -> 10 + floor(0.5*81)=50.
-      // isMax: true (rng < 0.5). rng=0.2.
-      // Q: ...at least 50... -> h>=50.
-
-      const rng = createMockRng([
-        0.5, // val=50
-        0.2, // isMax=true
-      ]);
+    it("generates Type 0 (At least: >=) with all accepted forms", () => {
+      const rng = createMockRng([0.5, 0]); // val=50, type=0
       const item = InequalitiesGenerator.generate(0.5, rng);
       expect(item.meta.skill_id).toBe(SKILL_6_EE_INEQUALITIES.id);
       expect(item.problem_content.stem).toContain("at least 50");
       expect(item.solution_logic.final_answer_canonical).toBe("h>=50");
+      expect(item.answer_spec.accepted_forms).toEqual([
+        "h>=50",
+        "h => 50",
+        "50<=h",
+      ]);
+      expect(item.solution_logic.steps[0].explanation).toBe(
+        "At least means greater than or equal to."
+      );
     });
 
-    it("generates Min (limit / <=) inequality", () => {
-      // Logic:
-      // val: 50.
-      // isMax: false (rng >= 0.5). rng=0.8.
-      // Q: ...limit... -> w<=50.
-
-      const rng = createMockRng([
-        0.5, // val=50
-        0.8, // isMax=false
-      ]);
+    it("generates Type 1 (Limit: <=)", () => {
+      const rng = createMockRng([0.5, 0.4]); // type=1
       const item = InequalitiesGenerator.generate(0.5, rng);
       expect(item.problem_content.stem).toContain("weight limit of 50");
       expect(item.solution_logic.final_answer_canonical).toBe("w<=50");
+      expect(item.answer_spec.accepted_forms).toEqual([
+        "w<=50",
+        "w =< 50",
+        "50>=w",
+      ]);
+    });
+
+    it("generates Type 2 (More than: >)", () => {
+      const rng = createMockRng([0.5, 0.6]); // type=2
+      const item = InequalitiesGenerator.generate(0.5, rng);
+      expect(item.problem_content.stem).toContain("more than 50");
+      expect(item.solution_logic.final_answer_canonical).toBe("s>50");
+      expect(item.answer_spec.accepted_forms).toEqual(["s>50", "50<s"]);
+    });
+
+    it("generates Type 3 (Less than: <)", () => {
+      const rng = createMockRng([0.5, 0.9]); // type=3
+      const item = InequalitiesGenerator.generate(0.5, rng);
+      expect(item.problem_content.stem).toContain("less than 50");
+      expect(item.solution_logic.final_answer_canonical).toBe("t<50");
+      expect(item.answer_spec.accepted_forms).toEqual(["t<50", "50>t"]);
+    });
+
+    it("uses Math.random when no rng provided", () => {
+      const spy = vi.spyOn(Math, "random").mockReturnValue(0.1); // type=0
+      const item = InequalitiesGenerator.generate(0.5);
+      expect(item.problem_content.stem).toContain("at least");
+      spy.mockRestore();
     });
   });
 
   describe("SKILL_6_EE_VARIABLES", () => {
-    it("identifies dependent variable", () => {
-      const item = VariablesGenerator.generate(0.5);
+    it("identifies dependent variable in linear form (y = mx + c)", () => {
+      const rng = createMockRng([0.1, 0.1, 0, 0.5, 0.5]); // v1=x (indep), v2=y (dep), type=0, m=2, c=1+floor(0.5*10)=6
+      const item = VariablesGenerator.generate(0.5, rng);
       expect(item.meta.skill_id).toBe(SKILL_6_EE_VARIABLES.id);
+      expect(item.problem_content.stem).toContain("y = 2x + 6");
       expect(item.solution_logic.final_answer_canonical).toBe("y");
+      expect(item.solution_logic.steps[0].explanation).toBe(
+        "y depends on the value of the other variable."
+      );
+    });
+
+    it("identifies dependent variable in quotient form (p = q/r)", () => {
+      const rng = createMockRng([0.8, 0.8, 0.8, 0.5]); // v1=p (dep), v2=q (indep), type=1, r=randomInt(2,5,0.8)=5
+      const item = VariablesGenerator.generate(0.5, rng);
+      expect(item.problem_content.stem).toContain("p = \\frac{q}{5}");
+      expect(item.solution_logic.final_answer_canonical).toBe("p");
+    });
+
+    it("handles variable list wrap-around (q -> x)", () => {
+      // vars length is 7. indices 0..6.
+      // v1Idx needs to be 6 ('q'). rng >= 6/7 (~0.857). Let's use 0.9.
+      // v2Idx will be (6+1)%7 = 0 ('x').
+      const rng = createMockRng([
+        0.9, // v1Idx = floor(0.9 * 7) = 6 ('q')
+        0.1, // type = 0 (linear)
+        0.5, // m=6
+        0.5, // c=6
+      ]);
+      const item = VariablesGenerator.generate(0.5, rng);
+      expect(item.problem_content.stem).toContain("x = 6q + 6");
+      expect(item.solution_logic.final_answer_canonical).toBe("x"); // x is dependent on q
+    });
+
+    it("uses Math.random when no rng provided", () => {
+      const spy = vi.spyOn(Math, "random").mockReturnValue(0.1);
+      const item = VariablesGenerator.generate(0.5);
+      expect(item.problem_content.stem).toContain("dependent");
+      spy.mockRestore();
     });
   });
 });

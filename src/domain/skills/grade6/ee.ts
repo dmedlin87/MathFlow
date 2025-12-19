@@ -105,7 +105,7 @@ export const OneStepEqGenerator: Generator = {
       stem = `Solve for x: $ ${a}x = ${b} $`;
     } else {
       // x / a = b
-      b = Math.floor(x / a);
+      b = randomInt(2, 10, rng);
       // Need x to be divisible by a
       const realX = b * a;
       stem = `Solve for x: $ \\frac{x}{${a}} = ${b} $`;
@@ -207,27 +207,50 @@ export const ExpressionsGenerator: Generator = {
       };
     } else {
       const n = randomInt(2, 9, rng);
+      const subType = Math.floor((rng ?? Math.random)() * 4);
+      let stem = "";
+      let forms: string[] = [];
+      let logic = "";
+
+      if (subType === 0) {
+        stem = `Write an algebraic expression for: "**${n} more than x**"`;
+        forms = [`x+${n}`, `${n}+x`];
+        logic = `x + ${n}`;
+      } else if (subType === 1) {
+        stem = `Write an algebraic expression for: "**${n} less than x**"`;
+        forms = [`x-${n}`];
+        logic = `x - ${n}`;
+      } else if (subType === 2) {
+        stem = `Write an algebraic expression for: "**the product of ${n} and x**"`;
+        forms = [`${n}x`, `${n}*x`, `x*${n}`];
+        logic = `${n}x`;
+      } else {
+        stem = `Write an algebraic expression for: "**the quotient of x and ${n}**"`;
+        forms = [`x/${n}`, `\\frac{x}{${n}}`];
+        logic = `\\frac{x}{${n}}`;
+      }
 
       return {
         meta: createProblemMeta(SKILL_6_EE_EXPRESSIONS.id, difficulty),
         problem_content: {
-          stem: `Write an algebraic expression for: "**${n} more than x**" (Do not use spaces)`,
+          stem: `${stem} (Do not use spaces)`,
           format: "text",
         },
         answer_spec: {
           answer_mode: "final_only",
           input_type: "text",
-          accepted_forms: [`x+${n}`, `${n}+x`],
+          accepted_forms: forms,
         },
         solution_logic: {
-          final_answer_canonical: `x+${n}`,
-          final_answer_type: "numeric", // text
+          final_answer_canonical: forms[0],
+          final_answer_type: "numeric",
           steps: [
             {
               step_index: 1,
-              explanation: `"More than" means addition.`,
-              math: `x + ${n}`,
-              answer: `x+${n}`,
+              explanation:
+                "Translate the words into a mathematical expression.",
+              math: logic,
+              answer: forms[0],
             },
           ],
         },
@@ -305,16 +328,38 @@ export const InequalitiesGenerator: Generator = {
   templateId: "T_INEQUALITIES",
   generate: (difficulty: number, rng?: () => number): MathProblemItem => {
     const val = randomInt(10, 90, rng);
-    const isMax = (rng ?? Math.random)() < 0.5; // max vs min
+    const type = Math.floor((rng ?? Math.random)() * 4);
 
-    const stem = isMax
-      ? `To ride a roller coaster, you must be at least ${val} inches tall. Let h be height. Write an inequality (e.g. h>10, h>=10).`
-      : `The bridge has a weight limit of ${val} tons. Let w be weight. Write an inequality.`;
+    let stem = "";
+    let ans = "";
+    let accepted: string[] = [];
+    let explanation = "";
 
-    const ans = isMax ? `h>=${val}` : `w<=${val}`;
-    const accepted = isMax
-      ? [`h>=${val}`, `h => ${val}`, `${val}<=h`]
-      : [`w<=${val}`, `w =< ${val}`, `${val}>=w`];
+    if (type === 0) {
+      // at least: h >= val
+      stem = `To ride a roller coaster, you must be at least ${val} inches tall. Let h be height. Write an inequality.`;
+      ans = `h>=${val}`;
+      accepted = [`h>=${val}`, `h => ${val}`, `${val}<=h`];
+      explanation = "At least means greater than or equal to.";
+    } else if (type === 1) {
+      // limit: w <= val
+      stem = `The bridge has a weight limit of ${val} tons. Let w be weight. Write an inequality.`;
+      ans = `w<=${val}`;
+      accepted = [`w<=${val}`, `w =< ${val}`, `${val}>=w`];
+      explanation = "Limit means less than or equal to.";
+    } else if (type === 2) {
+      // more than: p > val
+      stem = `A pizza party requires more than ${val} slices. Let s be slices. Write an inequality.`;
+      ans = `s>${val}`;
+      accepted = [`s>${val}`, `${val}<s`];
+      explanation = "More than means strictly greater than.";
+    } else {
+      // less than: t < val
+      stem = `The temperature must be less than ${val} degrees. Let t be temperature. Write an inequality.`;
+      ans = `t<${val}`;
+      accepted = [`t<${val}`, `${val}>t`];
+      explanation = "Less than means strictly less than.";
+    }
 
     return {
       meta: createProblemMeta(SKILL_6_EE_INEQUALITIES.id, difficulty),
@@ -326,13 +371,11 @@ export const InequalitiesGenerator: Generator = {
       },
       solution_logic: {
         final_answer_canonical: ans,
-        final_answer_type: "numeric", // text
+        final_answer_type: "numeric",
         steps: [
           {
             step_index: 1,
-            explanation: isMax
-              ? "At least means greater than or equal to."
-              : "Limit means less than or equal to.",
+            explanation,
             math: ans,
             answer: ans,
           },
@@ -360,10 +403,28 @@ export const SKILL_6_EE_VARIABLES: Skill = {
 export const VariablesGenerator: Generator = {
   skillId: SKILL_6_EE_VARIABLES.id,
   templateId: "T_VARIABLES",
-  generate: (difficulty: number): MathProblemItem => {
-    // "y = 2x. Which is dependent?"
-    const dep = "y";
-    const eq = "y = 5x + 1";
+  generate: (difficulty: number, rng?: () => number): MathProblemItem => {
+    const vars = ["x", "y", "z", "a", "b", "p", "q"];
+    const v1Idx = Math.floor((rng ?? Math.random)() * vars.length);
+    const v2Idx = (v1Idx + 1) % vars.length;
+
+    const v1 = vars[v1Idx]; // independent usually
+    const v2 = vars[v2Idx]; // dependent usually
+
+    const eqType = Math.floor((rng ?? Math.random)() * 2);
+    let eq = "";
+    let dep = "";
+
+    if (eqType === 0) {
+      const m = randomInt(2, 9, rng);
+      const c = randomInt(1, 10, rng);
+      eq = `${v2} = ${m}${v1} + ${c}`;
+      dep = v2;
+    } else {
+      const r = randomInt(2, 5, rng);
+      eq = `${v1} = \\frac{${v2}}{${r}}`;
+      dep = v1;
+    }
 
     return {
       meta: createProblemMeta(SKILL_6_EE_VARIABLES.id, difficulty),
@@ -374,11 +435,11 @@ export const VariablesGenerator: Generator = {
       answer_spec: { answer_mode: "final_only", input_type: "text" },
       solution_logic: {
         final_answer_canonical: dep,
-        final_answer_type: "numeric", // text
+        final_answer_type: "numeric",
         steps: [
           {
             step_index: 1,
-            explanation: `y depends on the value of x.`,
+            explanation: `${dep} depends on the value of the other variable.`,
             math: "",
             answer: dep,
           },

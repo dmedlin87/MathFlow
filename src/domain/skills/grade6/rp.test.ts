@@ -35,6 +35,20 @@ describe("Grade 6 RP Generators", () => {
       expect(item.solution_logic.final_answer_canonical).toBe("2:2");
     });
 
+    it("Type 0: covers askForOrder branch (rng ?? Math.random)", () => {
+      // In RatiosGenerator.generate:
+      // const askForOrder = (rng ?? Math.random)() < 0.5;
+      // If we pass an rng, it uses it. This hits the branch logic in the SUT.
+      const rng = createMockRng([0.1, 0.5, 0.5, 0.0, 0.0, 0.6]); // askForOrder = false
+      const item = RatiosGenerator.generate(0.5, rng);
+      expect(item.meta.skill_id).toBe("6.rp.ratios");
+
+      // Now force the fallback branch by NOT passing an rng.
+      // This will use Math.random() internally.
+      const itemFallback = RatiosGenerator.generate(0.5);
+      expect(itemFallback.meta.skill_id).toBe("6.rp.ratios");
+    });
+
     it("Type 0: Generates basic ratio writing problem (Order: Reversed)", () => {
       // Sequence:
       // 1. type < 0.5 -> 0.1 (Type 0)
@@ -73,6 +87,23 @@ describe("Grade 6 RP Generators", () => {
       expect(item.solution_logic.final_answer_canonical).toBe("12");
       expect(item.misconceptions?.[0].id).toBe("misc_additive");
     });
+
+    it("covers fallback RNG", () => {
+      const item = RatiosGenerator.generate(0.5);
+      expect(item.meta.skill_id).toBe("6.rp.ratios");
+      expect(item.problem_content.stem).toBeDefined();
+    });
+
+    it("covers different subjects", () => {
+      // s1 calc: randomInt(0, 3) * 2. rng=0.9 -> 3 * 2 = 6 (pens)
+      // s2 calc: randomInt(0, 3) * 2 + 1. rng=0.9 -> 3 * 2 + 1 = 7 (pencils)
+      // Wait, the subjects array has 8 items (0-7).
+      // dogs(0), cats(1), apples(2), oranges(3), boys(4), girls(5), pens(6), pencils(7)
+      const rng = createMockRng([0.1, 0.5, 0.5, 0.8, 0.8, 0.1]);
+      const item = RatiosGenerator.generate(0.5, rng);
+      expect(item.problem_content.stem).toContain("pens");
+      expect(item.problem_content.stem).toContain("pencils");
+    });
   });
 
   describe("UnitRateGenerator", () => {
@@ -105,6 +136,24 @@ describe("Grade 6 RP Generators", () => {
       );
       expect(item.solution_logic.final_answer_canonical).toBe("40");
     });
+
+    it("covers fallback RNG", () => {
+      const item = UnitRateGenerator.generate(0.5);
+      expect(item.meta.skill_id).toBe("6.rp.unit_rate");
+      expect(item.problem_content.stem).toBeDefined();
+    });
+
+    it("Type 'cost' covers extra coin flip branch (rng ?? Math.random)", () => {
+      // In UnitRateGenerator.generate:
+      // + ((rng ?? Math.random)() < 0.5 ? 0.5 : 0);
+      const rng = createMockRng([0.1, 0.0, 0.0, 0.6]); // extra coin = false
+      const item = UnitRateGenerator.generate(0.5, rng);
+      expect(item.meta.skill_id).toBe("6.rp.unit_rate");
+
+      // Now force the fallback branch by NOT passing an rng.
+      const itemFallback = UnitRateGenerator.generate(0.5);
+      expect(itemFallback.meta.skill_id).toBe("6.rp.unit_rate");
+    });
   });
 
   describe("PercentsGenerator", () => {
@@ -132,6 +181,19 @@ describe("Grade 6 RP Generators", () => {
       // 10% of 8 = 0.8
       expect(item.problem_content.stem).toContain("0.8 is 10% of what number?");
       expect(item.solution_logic.final_answer_canonical).toBe("8");
+    });
+
+    it("covers fallback RNG", () => {
+      const item = PercentsGenerator.generate(0.5);
+      expect(item.meta.skill_id).toBe("6.rp.percents");
+      expect(item.problem_content.stem).toBeDefined();
+    });
+
+    it("covers different percent indices in Find Whole", () => {
+      // type index (0-4). rng=0.9 -> 4. percent = 75%
+      const rng = createMockRng([0.8, 0.9, 0.5]);
+      const item = PercentsGenerator.generate(0.5, rng);
+      expect(item.problem_content.stem).toContain("75% of what number?");
     });
   });
 
@@ -169,6 +231,12 @@ describe("Grade 6 RP Generators", () => {
       expect(item.problem_content.stem).toContain("| 8 | ? |");
       expect(item.solution_logic.final_answer_canonical).toBe("8");
     });
+
+    it("covers fallback RNG", () => {
+      const item = RatioTablesGenerator.generate(0.5);
+      expect(item.meta.skill_id).toBe("6.rp.ratio_tables");
+      expect(item.problem_content.stem).toBeDefined();
+    });
   });
 
   describe("UnitConversionRPGenerator", () => {
@@ -182,6 +250,30 @@ describe("Grade 6 RP Generators", () => {
       // 2 feet to inches. Rate 12. 24.
       expect(item.problem_content.stem).toContain("Convert 2 feet to inches");
       expect(item.solution_logic.final_answer_canonical).toBe("24");
+    });
+
+    it("covers fallback RNG", () => {
+      const item = UnitConversionRPGenerator.generate(0.5);
+      expect(item.meta.skill_id).toBe("6.rp.unit_conversion");
+      expect(item.problem_content.stem).toBeDefined();
+    });
+
+    it("covers all conversion types", () => {
+      const types = [
+        { name: "feet", to: "inches" },
+        { name: "yards", to: "feet" },
+        { name: "meters", to: "centimeters" },
+        { name: "kilometers", to: "meters" },
+        { name: "pounds", to: "ounces" },
+      ];
+
+      types.forEach((t, i) => {
+        const rng = createMockRng([i / 5, 0.5]);
+        const item = UnitConversionRPGenerator.generate(0.5, rng);
+        expect(item.problem_content.stem).toContain(`Convert`);
+        expect(item.problem_content.stem).toContain(t.name);
+        expect(item.problem_content.stem).toContain(t.to);
+      });
     });
   });
 });

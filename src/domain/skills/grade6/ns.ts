@@ -423,10 +423,7 @@ export const RationalNumberLineGenerator: Generator = {
     const ans = Math.max(a, b);
 
     return {
-      meta: createProblemMeta(
-        SKILL_6_NS_RATIONAL_NUMBER_LINE.id,
-        difficulty
-      ),
+      meta: createProblemMeta(SKILL_6_NS_RATIONAL_NUMBER_LINE.id, difficulty),
       problem_content: {
         stem: `Which number is greater: $${a}$ or $${b}$?`,
         format: "latex",

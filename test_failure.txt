@@ -1,23 +1,32 @@
 
 [1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/dmedl/Projects/MathFlow[39m
 
- [31mΓ¥»[39m src/domain/skills/grade5-fractions.test.ts [2m([22m[2m13 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 10[2mms[22m[39m
-       [32mΓ£ô[39m adds unlike fractions correctly[32m 2[2mms[22m[39m
-       [32mΓ£ô[39m writes division as fraction[32m 0[2mms[22m[39m
-       [32mΓ£ô[39m identifies scaling correctly (<)[32m 0[2mms[22m[39m
-       [32mΓ£ô[39m multiplies fractions correctly[32m 0[2mms[22m[39m
-       [32mΓ£ô[39m divides unit fraction by whole (Case 1)[32m 0[2mms[22m[39m
-       [32mΓ£ô[39m solves recipe word problem (Type 1)[32m 0[2mms[22m[39m
-       [32mΓ£ô[39m solves addition word problem (Type 0, Addition)[32m 0[2mms[22m[39m
-[31m       [31m├ù[31m solves subtraction word problem (Type 0, Subtraction)[39m[32m 4[2mms[22m[39m
-[31m       [31m├ù[31m solves division word problem (Type 2, Sharing)[39m[32m 1[2mms[22m[39m
-       [32mΓ£ô[39m solves division word problem (Type 2, Grouping)[32m 0[2mms[22m[39m
-       [32mΓ£ô[39m divides whole by unit fraction (Case 2)[32m 0[2mms[22m[39m
-       [32mΓ£ô[39m subtracts unlike fractions correctly[32m 0[2mms[22m[39m
-       [32mΓ£ô[39m identifies scaling correctly (>)[32m 0[2mms[22m[39m
+ [31mΓ¥»[39m src/domain/skills/grade6/ee.test.ts [2m([22m[2m22 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 9[2mms[22m[39m
+       [32mΓ£ô[39m generates correctly[32m 2[2mms[22m[39m
+[31m       [31m├ù[31m generates Type 0 (Addition)[39m[32m 4[2mms[22m[39m
+       [32mΓ£ô[39m generates Type 1 (Subtraction)[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates Type 2 (Multiplication)[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates Type 3 (Division)[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m covers fallback RNG[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates Evaluate mode[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates Translate mode (more than)[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates Translate mode (less than)[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates Translate mode (product)[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates Translate mode (quotient)[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m covers fallback RNG[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m covers fallback RNG for translate subTypes[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates distributive property problem[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates Max (at least / >=) inequality[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates Min (limit / <=) inequality[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates strict greater than inequality[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates strict less than inequality[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m covers fallback RNG[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m identifies dependent variable in mx + c form[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m identifies dependent variable in quotient form[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m covers fallback RNG[32m 0[2mms[22m[39m
 
 [2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
-[2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m11 passed[39m[22m[90m (13)[39m
-[2m   Start at [22m 21:07:45
-[2m   Duration [22m 431ms[2m (transform 90ms, setup 137ms, import 79ms, tests 10ms, environment 0ms)[22m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m21 passed[39m[22m[90m (22)[39m
+[2m   Start at [22m 20:17:41
+[2m   Duration [22m 750ms[2m (transform 69ms, setup 134ms, import 59ms, tests 9ms, environment 0ms)[22m
 
