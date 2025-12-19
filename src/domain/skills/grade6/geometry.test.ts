@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect } from 'vitest';
 import { AreaPolyGenerator, SurfaceAreaGenerator, VolumeFracGenerator, PolygonsCoordGenerator } from './geometry';
 import { createMockRng } from '../../test-utils';
 
