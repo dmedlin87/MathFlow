@@ -226,14 +226,16 @@ describe('MathTutor Session Flow', () => {
     );
 
     // Solve 5 problems
+// Solve 5 problems
     for (let i = 0; i < 5; i++) {
-      await waitFor(() => expect(screen.getByPlaceholderText('Answer')).toBeInTheDocument());
+      await waitFor(() => expect(screen.getByRole('button', { name: 'Check Answer' })).toBeInTheDocument());
       fireEvent.change(screen.getByPlaceholderText('Answer'), { target: { value: '1' } });
       fireEvent.click(screen.getByText('Check Answer'));
       await waitFor(() => expect(screen.getByText('Correct! 🎉')).toBeInTheDocument());
       
       if (i < 4) {
         fireEvent.click(screen.getByText('Next Problem →'));
+        await waitFor(() => expect(screen.getByRole('button', { name: 'Check Answer' })).toBeInTheDocument());
       } else {
         // On 5th problem, clicking Next should end session
         fireEvent.click(screen.getByText('Next Problem →'));
