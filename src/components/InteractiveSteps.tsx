@@ -6,7 +6,8 @@ interface InteractiveStepsProps {
   steps: Step[];
 }
 
-export const InteractiveSteps: React.FC<InteractiveStepsProps> = ({ steps }) => {
+// Optimized with React.memo to prevent unnecessary re-renders when parent state (like user answer) changes
+export const InteractiveSteps = React.memo(({ steps }: InteractiveStepsProps) => {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [stepAnswers, setStepAnswers] = useState<Record<string, string>>({});
   const [stepFeedback, setStepFeedback] = useState<Record<string, 'correct' | 'incorrect' | null>>({});

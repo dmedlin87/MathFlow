@@ -61,7 +61,8 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
         }
     }, [currentItem, learnerState, loadNextItem]);
 
-  const handleSubmit = async (e?: React.FormEvent, overrideAnswer?: string) => {
+  // Wrap handleSubmit in useCallback to prevent it from invalidating memoized children
+  const handleSubmit = useCallback(async (e?: React.FormEvent, overrideAnswer?: string) => {
     if (e) e.preventDefault();
     if (!currentItem || !learnerState) return;
 
@@ -144,7 +145,7 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
     } finally {
         setIsLoading(false);
     }
-  };
+  }, [currentItem, learnerState, userAnswer, learnerService, attempts, startTime]);
 
 
   const handleNext = () => {
@@ -168,6 +169,16 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
      if (learnerState) loadNextItem(learnerState);
   };
 
+  // Hoisted handleAutoSolve before early returns, depends on stable handleSubmit
+  const handleAutoSolve = useCallback(() => {
+    if (!currentItem) return;
+    const correctAns = currentItem.solution_logic.final_answer_canonical;
+    setUserAnswer(correctAns);
+
+    // Call handleSubmit directly with the correct answer
+    handleSubmit(undefined, correctAns);
+  }, [currentItem, handleSubmit]);
+
   if (isSessionDone) {
       return <SessionSummary stats={sessionStats} onRestart={handleRestart} />;
   }
@@ -188,15 +199,6 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
   const fracEquivConfig = currentItem.meta.skill_id === 'frac_equiv_01' && isFractionEquivVars(vars)
     ? { baseNum: vars.baseNum, baseDen: vars.baseDen }
     : null;
-
-  const handleAutoSolve = () => {
-    if (!currentItem) return;
-    const correctAns = currentItem.solution_logic.final_answer_canonical;
-    setUserAnswer(correctAns);
-    
-    // Call handleSubmit directly with the correct answer
-    handleSubmit(undefined, correctAns);
-  };
 
   return (
     <div className="max-w-2xl mx-auto p-6 bg-white rounded-xl shadow-lg mt-10 relative">
