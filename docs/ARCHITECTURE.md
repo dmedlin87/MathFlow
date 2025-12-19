@@ -21,7 +21,7 @@ MathFlow employs a **Hybrid Architecture** combining verifying "Pedagogical Trut
 
 The `src/domain/skills` directory acts as a content factory.
 
-- **Extensibility:** Adding a new skill involves creating a new generator file implementing the `SkillGenerator` interface.
+- Extensibility: Adding a new skill involves creating a new generator file implementing the `Generator` interface.
 - **Registration:** New skills are registered in the Skill Registry (e.g., `src/domain/skills/registry.ts`) to be accessible by the Engine.
 
 ## 3. Observability & Logging
