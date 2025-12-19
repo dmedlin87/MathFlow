@@ -1,0 +1,15 @@
+=== Coverage Summary ===
+Global Branch Coverage: 77.04% (245/318)
+
+=== Top 10 Lowest Branch Coverage (Min 1 Branch) ===
+18.52% (5/27) - C:\Users\dmedl\Projects\MathFlow\src\domain\math-utils.ts
+75.00% (33/44) - C:\Users\dmedl\Projects\MathFlow\src\domain\skills\grade4\fractions.ts
+78.13% (25/32) - C:\Users\dmedl\Projects\MathFlow\src\domain\skills\grade4\measurement.ts
+78.95% (30/38) - C:\Users\dmedl\Projects\MathFlow\src\domain\skills\grade4\data.ts
+80.00% (16/20) - C:\Users\dmedl\Projects\MathFlow\src\domain\skills\grade4\geometry.ts
+84.09% (37/44) - C:\Users\dmedl\Projects\MathFlow\src\domain\skills\grade4\oa.ts
+87.32% (62/71) - C:\Users\dmedl\Projects\MathFlow\src\domain\skills\grade4\nbt.ts
+87.50% (35/40) - C:\Users\dmedl\Projects\MathFlow\src\domain\skills\grade4\decimals.ts
+100.00% (2/2) - C:\Users\dmedl\Projects\MathFlow\src\domain\test-utils.ts
+
+=== Zero Branch Files (Top 5 by size) ===

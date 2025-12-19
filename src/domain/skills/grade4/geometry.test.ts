@@ -72,5 +72,54 @@ describe("grade4 geometry generator", () => {
       const ans = item.solution_logic.final_answer_canonical;
       expect(item.answer_spec.ui?.choices).toContain(ans);
     });
+
+    it("covers Rectangle riddle", () => {
+      // Rectangle is index 0 in questions array
+      const rng = createMockRng([0.0]);
+      const item = ShapeClassificationGenerator.generate(0.5, rng);
+      expect(item.solution_logic.final_answer_canonical).toBe("Rectangle");
+    });
+
+    it("covers Right Triangle riddle", () => {
+      // Right Triangle is index 1
+      const rng = createMockRng([0.33]);
+      const item = ShapeClassificationGenerator.generate(0.5, rng);
+      expect(item.solution_logic.final_answer_canonical).toBe("Right Triangle");
+    });
+
+    it("covers Trapezoid riddle", () => {
+      // Trapezoid is index 2
+      const rng = createMockRng([0.66]);
+      const item = ShapeClassificationGenerator.generate(0.5, rng);
+      expect(item.solution_logic.final_answer_canonical).toBe("Trapezoid");
+    });
+
+    it("covers Rhombus riddle", () => {
+      // Rhombus is index 3
+      const rng = createMockRng([0.99]);
+      const item = ShapeClassificationGenerator.generate(0.5, rng);
+      expect(item.solution_logic.final_answer_canonical).toBe("Rhombus");
+    });
+  });
+
+  describe("Additional Geometry Coverage", () => {
+    it("SymmetryGenerator covers Circle (Infinite lines)", () => {
+      // Circle is index 4 in shapes array (7 shapes, so rng ~0.6)
+      const rng = createMockRng([0.65]);
+      const item = SymmetryGenerator.generate(0.5, rng);
+      expect(item.solution_logic.final_answer_canonical).toBe("Infinite");
+    });
+
+    it("SymmetryGenerator covers various shapes", () => {
+      // Square (index 0)
+      const rng1 = createMockRng([0.0]);
+      const item1 = SymmetryGenerator.generate(0.5, rng1);
+      expect(item1.solution_logic.final_answer_canonical).toBe("4");
+
+      // Isosceles Triangle (index 3)
+      const rng2 = createMockRng([0.5]);
+      const item2 = SymmetryGenerator.generate(0.5, rng2);
+      expect(["1", "3"]).toContain(item2.solution_logic.final_answer_canonical);
+    });
   });
 });

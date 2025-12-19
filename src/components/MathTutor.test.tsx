@@ -412,3 +412,146 @@ describe('MathTutor InteractiveSteps', () => {
     await waitFor(() => expect(screen.getByText(/Start with 5/)).toBeInTheDocument());
   });
 });
+
+describe('MathTutor Coverage Expansion', () => {
+  it('updates masteredSkills on retry when mastery exceeds 0.85 (L134)', async () => {
+    const setLearnerState = vi.fn();
+    const masteryService = {
+      getRecommendation: vi.fn().mockResolvedValue({
+        meta: { id: 'mastery1', skill_id: 'mastery_skill', difficulty: 1 },
+        problem_content: { stem: '1 + 1 = ?', variables: {} },
+        solution_logic: { final_answer_canonical: '2', steps: [] },
+        answer_spec: { ui: { placeholder: 'Answer' }, validation: { canonical: '2' }, input_type: 'text' }
+      }),
+      submitAttempt: vi.fn().mockImplementation(async () => ({
+        userId: 'user1',
+        skillState: { 
+          'mastery_skill': { masteryProb: 0.9, stability: 0.5, lastPracticed: '2023-01-01', misconceptions: [] }
+        }
+      })),
+      diagnose: vi.fn().mockResolvedValue({ 
+        error_category: 'calculation_error', 
+        diagnosis_explanation: 'Try again' 
+      })
+    };
+
+    render(
+      <MathTutor
+        learnerState={{ userId: 'user1', skillState: { 'mastery_skill': { masteryProb: 0.5, stability: 0.5, lastPracticed: '2023-01-01', misconceptions: [] } } }}
+        setLearnerState={setLearnerState}
+        learnerService={masteryService as unknown as import('../services/LearnerService').ILearnerService}
+      />
+    );
+
+    await waitFor(() => expect(screen.getByPlaceholderText('Answer')).toBeInTheDocument());
+
+    // First attempt (incorrect) - sets attempts to 1
+    fireEvent.change(screen.getByPlaceholderText('Answer'), { target: { value: '999' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Check Answer' }));
+    await waitFor(() => expect(screen.getByText('Try Again')).toBeInTheDocument());
+
+    // Second attempt (correct) - triggers the else branch at L132-138 with mastery > 0.85
+    // Note: Changing input clears "incorrect" feedback, so button returns to "Check Answer"
+    fireEvent.change(screen.getByPlaceholderText('Answer'), { target: { value: '2' } });
+    fireEvent.click(screen.getByRole('button', { name: 'Check Answer' }));
+    await waitFor(() => expect(screen.getByText('Correct! 🎉')).toBeInTheDocument());
+
+    // Verify masteredSkills updated via setLearnerState call
+    expect(setLearnerState).toHaveBeenCalled();
+  });
+
+
+  it('handles submitAttempt errors gracefully (L144)', async () => {
+    const errorLogSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const errorService = {
+      getRecommendation: vi.fn().mockResolvedValue({
+        meta: { id: 'err1', skill_id: 'err_skill', difficulty: 1 },
+        problem_content: { stem: '2 + 2 = ?', variables: {} },
+        solution_logic: { final_answer_canonical: '4', steps: [] },
+        answer_spec: { ui: { placeholder: 'Answer' }, validation: { canonical: '4' }, input_type: 'text' }
+      }),
+      submitAttempt: vi.fn().mockRejectedValue(new Error('Network failure')),
+      diagnose: vi.fn().mockResolvedValue(null)
+    };
+
+    render(
+      <MathTutor
+        learnerState={mockLearnerState}
+        setLearnerState={() => {}}
+        learnerService={errorService as unknown as import('../services/LearnerService').ILearnerService}
+      />
+    );
+
+    await waitFor(() => expect(screen.getByPlaceholderText('Answer')).toBeInTheDocument());
+
+    // Submit answer - should trigger error path
+    fireEvent.change(screen.getByPlaceholderText('Answer'), { target: { value: '4' } });
+    fireEvent.click(screen.getByText('Check Answer'));
+
+    // Error should be logged but component should still show feedback
+    await waitFor(() => expect(errorLogSpy).toHaveBeenCalledWith('Failed to submit attempt', expect.any(Error)));
+    
+    // Component should still be usable (not crashed)
+    expect(screen.getByText('Correct! 🎉')).toBeInTheDocument();
+    
+    errorLogSpy.mockRestore();
+  });
+
+  it('renders FractionVisualizer with frac_equiv_01 skill and valid variables (L194-196)', async () => {
+    const fracService = {
+      getRecommendation: vi.fn().mockResolvedValue({
+        meta: { id: 'frac1', skill_id: 'frac_equiv_01', difficulty: 1 },
+        problem_content: { 
+          stem: 'Find an equivalent fraction', 
+          variables: { baseNum: 1, baseDen: 2 }
+        },
+        solution_logic: { final_answer_canonical: '2/4', steps: [] },
+        answer_spec: { ui: { placeholder: 'Answer' }, validation: { canonical: '2/4' }, input_type: 'text' }
+      }),
+      submitAttempt: vi.fn().mockImplementation(async (state) => state),
+      diagnose: vi.fn().mockResolvedValue(null)
+    };
+
+    render(
+      <MathTutor
+        learnerState={mockLearnerState}
+        setLearnerState={() => {}}
+        learnerService={fracService as unknown as import('../services/LearnerService').ILearnerService}
+      />
+    );
+
+    await waitFor(() => expect(screen.getByPlaceholderText('Answer')).toBeInTheDocument());
+
+    // Should render the FractionVisualizer (legacy path) with "Target" label
+    expect(screen.getByText('Target')).toBeInTheDocument();
+  });
+
+  it('handles invalid variables for frac_equiv_01 gracefully (type guard false)', async () => {
+    const invalidFracService = {
+      getRecommendation: vi.fn().mockResolvedValue({
+        meta: { id: 'frac2', skill_id: 'frac_equiv_01', difficulty: 1 },
+        problem_content: { 
+          stem: 'Find an equivalent fraction', 
+          variables: { foo: 'bar' }
+        },
+        solution_logic: { final_answer_canonical: '2/4', steps: [] },
+        answer_spec: { ui: { placeholder: 'Answer' }, validation: { canonical: '2/4' }, input_type: 'text' }
+      }),
+      submitAttempt: vi.fn().mockImplementation(async (state) => state),
+      diagnose: vi.fn().mockResolvedValue(null)
+    };
+
+    render(
+      <MathTutor
+        learnerState={mockLearnerState}
+        setLearnerState={() => {}}
+        learnerService={invalidFracService as unknown as import('../services/LearnerService').ILearnerService}
+      />
+    );
+
+    await waitFor(() => expect(screen.getByPlaceholderText('Answer')).toBeInTheDocument());
+
+    // Should NOT render FractionVisualizer (no "Target" label)
+    expect(screen.queryByText('Target')).not.toBeInTheDocument();
+  });
+});

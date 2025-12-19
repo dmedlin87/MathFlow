@@ -392,10 +392,7 @@ export const MultiStepWordGen: Generator = {
       // (adjustedStart + subtract) / divisor ?
 
       return {
-        meta: createProblemMeta(
-          SKILL_MULTI_STEP_WORD_PROBLEMS.id,
-          difficulty
-        ),
+        meta: createProblemMeta(SKILL_MULTI_STEP_WORD_PROBLEMS.id, difficulty),
         problem_content: {
           stem: `Alice had **${adjustedStart}** stickers. She gave **${subtract}** stickers to her sister.
 Then she divided the rest equally into **${divisor}** albums.
@@ -449,10 +446,7 @@ How many stickers did she put in each album?`,
       const ans = numGroups + 1; // Need one more bus
 
       return {
-        meta: createProblemMeta(
-          SKILL_MULTI_STEP_WORD_PROBLEMS.id,
-          difficulty
-        ),
+        meta: createProblemMeta(SKILL_MULTI_STEP_WORD_PROBLEMS.id, difficulty),
         problem_content: {
           stem: `There are **${total}** students going on a field trip.
 Each van can hold **${perGroup}** students.

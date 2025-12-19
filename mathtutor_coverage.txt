@@ -1,0 +1,21 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/dmedl/Projects/MathFlow[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+(node:91384) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ [32mΓ£ô[39m src/components/MathTutor.test.tsx [2m([22m[2m12 tests[22m[2m)[22m[33m 1921[2mms[22m[39m
+     [33m[2mΓ£ô[22m[39m ends session after 5 problems and shows SessionSummary [33m 1467[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m12 passed[39m[22m[90m (12)[39m
+[2m   Start at [22m 16:41:48
+[2m   Duration [22m 3.41s[2m (transform 182ms, setup 131ms, import 513ms, tests 1.92s, environment 604ms)[22m
+
+[34m % [39m[2mCoverage report from [22m[33mv8[39m
+---------------|---------|----------|---------|---------|-----------------------
+File           | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s     
+---------------|---------|----------|---------|---------|-----------------------
+All files      |   88.88 |    75.92 |      80 |    92.3 |                       
+ MathTutor.tsx |   88.88 |    75.92 |      80 |    92.3 | ...34,144,194-196,271 
+---------------|---------|----------|---------|---------|-----------------------

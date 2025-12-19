@@ -48,6 +48,15 @@ describe("grade4-oa generator", () => {
       const item = FactorsMultiplesGenerator.generate(0.5, rng);
       expect(item.problem_content.stem).toContain("Prime or Composite");
     });
+
+    it("generates Multiples problems (Mode C)", () => {
+      // Mode > 0.66 -> Multiples
+      // difficulty >= 0.6 to avoid forcing lower modes
+      const rng = createMockRng([0.8, 0, 0]); // mode > 0.66
+      const item = FactorsMultiplesGenerator.generate(0.7, rng);
+
+      expect(item.problem_content.stem).toContain("multiple of");
+    });
   });
 
   describe("PatternGenerator", () => {
@@ -75,6 +84,23 @@ describe("grade4-oa generator", () => {
 
       // Just verifying it's numeric and non-zero
       expect(expected).toBeGreaterThan(start);
+    });
+
+    it("generates valid subtract sequence", () => {
+      // rng <= 0.4 -> SUBTRACT
+      const rng = createMockRng([0.3, 0.1, 0.1]);
+      const item = PatternGenerator.generate(0.5, rng);
+
+      const vars = item.problem_content.variables as {
+        rule: string;
+        start: number;
+        step: number;
+      };
+      expect(vars.rule).toBe("SUBTRACT");
+
+      const expected = parseInt(item.solution_logic.final_answer_canonical);
+      // Sequence should decrease
+      expect(expected).toBeLessThan(vars.start);
     });
   });
 

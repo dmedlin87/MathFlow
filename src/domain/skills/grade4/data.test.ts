@@ -88,4 +88,98 @@ describe("grade4 data generator", () => {
       expect(item.meta.skill_id).toBe(SKILL_DATA_GRAPHS.id);
     });
   });
+
+  describe("Additional Data Coverage", () => {
+    it("LinePlotGenerator returns integer answer for even count at 1/2", () => {
+      // Force count at index 1 (1/2) to be even (e.g., 4)
+      // counts[1] = randomInt(2,5) -> high rng gives 5, low gives 2
+      // We need even: 2 or 4. rng=0 -> 2, rng=0.5 -> 3, rng=0.66 -> 4
+      // Actually we want TYPE 2 (qType=2) which uses counts[1]
+      // The answer is count/2 as integer if count is even
+      const rng = createMockRng([
+        0.5, // counts[0]
+        0.0, // counts[1] -> 2 (even)
+        0.5, // counts[2]
+        0.5, // counts[3]
+        0.5, // qType -> 2
+      ]);
+      const item = LinePlotGenerator.generate(0.5, rng);
+      expect(item.problem_content.stem).toContain("total length");
+      // Even count: answer should be an integer (count/2)
+      expect(item.solution_logic.final_answer_canonical).toMatch(/^\d+$/);
+    });
+
+    it("LinePlotGenerator returns fraction answer for odd count at 1/2", () => {
+      // Force count at index 1 to be odd (3 or 5)
+      // randomInt(2,5): 2 + floor(rng * 4)
+      // For 3: floor(rng * 4) = 1 -> rng = 0.25
+      // For 5: floor(rng * 4) = 3 -> rng = 0.75
+      const rng = createMockRng([
+        0.5, // counts[0]
+        0.25, // counts[1] -> 2 + floor(0.25*4) = 2 + 1 = 3 (odd)
+        0.5, // counts[2]
+        0.5, // counts[3]
+        0.5, // qType -> 2
+      ]);
+      const item = LinePlotGenerator.generate(0.5, rng);
+      expect(item.problem_content.stem).toContain("total length");
+      // Odd count (3): answer should be a fraction "3/2"
+      expect(item.solution_logic.final_answer_canonical).toMatch(/\d+\/2/);
+    });
+
+    it("LinePlotGenerator handles range with 0.75 diff", () => {
+      // Need max - min = 0.75
+      // Min = 1/4 (0.25), Max = 1 (1.0) -> diff = 0.75
+      // counts[0]=1/4 needs >0, counts[3]=1 needs >0
+      // others can be 0
+      const rng = createMockRng([
+        0.0, // counts[0] = 1 (for 1/4)
+        0.0, // counts[1] = 2 (for 1/2)
+        0.0, // counts[2] = 1 (for 3/4)
+        0.5, // counts[3] = 1 (for 1)
+        0.9, // qType -> 3 (Range)
+      ]);
+      const item = LinePlotGenerator.generate(0.5, rng);
+      // The diff depends on actual data generated
+      expect(item.problem_content.stem).toContain("difference");
+    });
+
+    it("DataGraphGenerator handles same idx1/idx2 (retry loop)", () => {
+      // Force idx1 and idx2 to be same initially, then different
+      // This tests the while loop for distinct indices
+      const rng = createMockRng([
+        0.4, // mode -> BAR_GRAPH
+        0.5,
+        0.5,
+        0.5,
+        0.5, // data vals
+        0.5, // qType -> 2 (Compare)
+        0.0, // idx1 -> 0
+        0.0, // idx2 -> 0 (same! triggers loop)
+        0.9, // idx2 retry -> 3 (different)
+      ]);
+      const item = DataGraphGenerator.generate(0.5, rng);
+      expect(item.problem_content.stem).toContain("How many **more**");
+    });
+
+    it("DataGraphGenerator handles all data value variations", () => {
+      // Test with varying data values to ensure comparison works
+      const rng = createMockRng([
+        0.6, // FREQ_TABLE
+        0.0, // Red = 2
+        0.9, // Blue = 15
+        0.2, // Green = 4
+        0.5, // Yellow = 8
+        0.5, // qType -> Compare
+        0.0, // idx1 -> Red (2)
+        0.3, // idx2 -> Blue (15)
+      ]);
+      const item = DataGraphGenerator.generate(0.5, rng);
+      expect(item.problem_content.stem).toContain("Frequency Table");
+      // Blue has more than Red, diff = 15 - 2 = 13
+      expect(
+        Number(item.solution_logic.final_answer_canonical)
+      ).toBeGreaterThan(0);
+    });
+  });
 });

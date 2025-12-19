@@ -528,3 +528,62 @@ describe("Grade 5 NBT Domain (Deterministic)", () => {
     });
   });
 });
+
+// Additional coverage tests for uncovered branches
+describe("Grade 5 NBT Extra Coverage", () => {
+  describe("PowersOf10Generator type=0 isMultiplication=false", () => {
+    it('generates "X is 1/10 of ?" problem', () => {
+      // type=0, isMultiplication=false (rng >= 0.5)
+      // base=5, power=2 -> val1=500, val2=50
+      // Question: "50 is 1/10 of ?" -> Answer: 500
+      const rng = createMockRng([
+        0.1, // type=0
+        0.5, // base=5 (randomInt(1,9))
+        0.4, // power=2 (randomInt(1,4))
+        0.6, // isMultiplication=false
+      ]);
+      const item = PowersOf10Generator.generate(0.5, rng);
+      expect(item.problem_content.stem).toContain("1/10 of");
+      expect(
+        parseInt(item.solution_logic.final_answer_canonical)
+      ).toBeGreaterThan(0);
+    });
+  });
+
+  describe("CompareDecimalsGenerator", () => {
+    it("handles n2<0 edge case (type=Close, negative adjustment)", () => {
+      // type >= 0.6 -> Close numbers
+      // base=1 (smallest possible), diff=-1 would make n2=0, needs safety
+      // n2 = (base + (rng < 0.5 ? 1 : -1)) / 1000
+      // If base=1 and diff=-1: n2 = 0/1000 = 0, but code says if n2 < 0: n2 = 0.001
+      const rng = createMockRng([
+        0.7, // type=Close
+        0.0, // base=1 (randomInt(1,999))
+        0.6, // diff=-1 trigger
+      ]);
+      const item = CompareDecimalsGenerator.generate(0.5, rng);
+      // Should not crash and should produce valid comparison
+      expect([">", "<", "="]).toContain(
+        item.solution_logic.final_answer_canonical
+      );
+    });
+  });
+
+  describe("MultDecimalsGenerator", () => {
+    it("handles DecInt with d=2 (two decimal places)", () => {
+      // isDecDec=false (rng >= 0.6), d=2 (rng >= 0.5)
+      const rng = createMockRng([
+        0.7, // isDecDec=false
+        0.6, // d=2
+        0.5, // n1 = (0.5*20).toFixed(2) = 10.00
+        0.5, // n2 = randomInt(2,10) = 6
+      ]);
+      const item = MultDecimalsGenerator.generate(0.5, rng);
+      expect(item.problem_content.stem).toContain("\\times");
+      // Result should be valid number
+      expect(
+        parseFloat(item.solution_logic.final_answer_canonical)
+      ).toBeGreaterThan(0);
+    });
+  });
+});
