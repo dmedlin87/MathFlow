@@ -1,4 +1,5 @@
 import React from 'react';
+import { Axis } from './Axis';
 
 export interface DotPlotProps {
   data: number[]; // Raw numbers
@@ -31,16 +32,7 @@ export const DotPlot: React.FC<DotPlotProps> = ({ data, width = 400, height = 20
 
   return (
     <svg width={width} height={height} className="border border-gray-100 rounded-lg bg-white shadow-sm">
-      {/* Axis */}
-      <line x1={padding} y1={height - 30} x2={width - padding} y2={height - 30} stroke="#94a3b8" strokeWidth="2" />
-
-      {/* Ticks */}
-      {ticks.map(val => (
-        <g key={val} transform={`translate(${xScale(val)}, 0)`}>
-             <line x1="0" y1={height - 35} x2="0" y2={height - 25} stroke="#64748b" strokeWidth="2" />
-             <text x="0" y={height - 10} textAnchor="middle" fontSize="12" fill="#475569">{val}</text>
-        </g>
-      ))}
+      <Axis width={width} height={height} padding={padding} ticks={ticks} xScale={xScale} />
 
       {/* Dots */}
       {Object.entries(counts).map(([valStr, count]) => {

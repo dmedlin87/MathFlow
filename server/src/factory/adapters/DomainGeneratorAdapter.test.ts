@@ -84,7 +84,7 @@ describe("DomainGeneratorAdapter", () => {
   it("should pass through errors from the underlying generator", async () => {
     const generator = createMockGenerator();
     const error = new Error("Generation failed");
-    (generator.generate as any).mockImplementation(() => {
+    vi.mocked(generator.generate).mockImplementation(() => {
       throw error;
     });
 

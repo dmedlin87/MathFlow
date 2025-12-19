@@ -11,12 +11,16 @@ export const InteractiveSteps: React.FC<InteractiveStepsProps> = ({ steps }) => 
   const [stepAnswers, setStepAnswers] = useState<Record<string, string>>({});
   const [stepFeedback, setStepFeedback] = useState<Record<string, 'correct' | 'incorrect' | null>>({});
 
+  const updateAnswer = (stepId: string, value: string) => {
+    setStepAnswers(prev => ({ ...prev, [stepId]: value }));
+  };
+
   const handleStepSubmit = (index: number, step: Step) => {
     const val = stepAnswers[step.id]?.trim();
     if (!val) return;
 
     // Simple equality check for now (can be enhanced with tolerance or domain logic)
-    const isCorrect = val == String(step.answer);
+    const isCorrect = isCorrectAnswer(val, step);
     
     setStepFeedback(prev => ({ ...prev, [step.id]: isCorrect ? 'correct' : 'incorrect' }));
 
@@ -29,16 +33,6 @@ export const InteractiveSteps: React.FC<InteractiveStepsProps> = ({ steps }) => 
     }
   };
 
-  // Auto-advance static steps
-  React.useEffect(() => {
-    const currentStep = steps[currentStepIndex];
-    if (currentStep && currentStep.answer === undefined && currentStepIndex < steps.length - 1) {
-        // It's a static text step, just show it and allow manual advance or auto advance? 
-        // For now, let's just create a "Continue" button for static steps or auto-advance after a delay.
-        // Actually, simplest UX: Show a "Continue" button for static steps.
-    }
-  }, [currentStepIndex, steps]);
-
   return (
     <div className="mt-8 text-left bg-gray-50 p-6 rounded-lg border border-gray-100">
       <h3 className="font-semibold text-gray-700 mb-4">Let's break it down:</h3>
@@ -48,6 +42,8 @@ export const InteractiveSteps: React.FC<InteractiveStepsProps> = ({ steps }) => 
 
           const feedback = stepFeedback[step.id];
           const isCompleted = feedback === 'correct';
+          const stepNumber = index + 1;
+          const isInteractive = step.answer !== undefined;
 
           return (
             <div key={step.id} className={`transition-opacity duration-500 ${index === currentStepIndex ? 'opacity-100' : 'opacity-70'}`}>
@@ -55,26 +51,23 @@ export const InteractiveSteps: React.FC<InteractiveStepsProps> = ({ steps }) => 
                  <MathRenderer text={step.text} />
               </div>
 
-              {step.answer !== undefined ? (
+              {isInteractive ? (
                 // Interactive Step
                 <div className="flex flex-col gap-2">
                     <div className="flex items-center gap-2">
                         <input
                             type="text"
-                            aria-label={`Answer for step ${index + 1}`}
+                            aria-label={`Answer for step ${stepNumber}`}
                             value={stepAnswers[step.id] || ''}
-                            onChange={(e) => setStepAnswers(prev => ({ ...prev, [step.id]: e.target.value }))}
-                            className={`p-2 border rounded w-32 ${
-                                feedback === 'correct' ? 'border-green-500 bg-green-50' : 
-                                feedback === 'incorrect' ? 'border-red-500 bg-red-50' : 'border-gray-300'
-                            }`}
+                            onChange={(e) => updateAnswer(step.id, e.target.value)}
+                            className={getAnswerClassName(feedback)}
                             placeholder="?"
                             disabled={isCompleted}
                         />
                          {!isCompleted && (
                             <button
                                 onClick={() => handleStepSubmit(index, step)}
-                                aria-label={`Check answer for step ${index + 1}`}
+                                aria-label={`Check answer for step ${stepNumber}`}
                                 className="px-3 py-2 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 text-sm font-medium"
                             >
                                 Check
@@ -110,3 +103,13 @@ export const InteractiveSteps: React.FC<InteractiveStepsProps> = ({ steps }) => 
     </div>
   );
 };
+
+function isCorrectAnswer(value: string, step: Step) {
+  return value == String(step.answer);
+}
+
+function getAnswerClassName(feedback: 'correct' | 'incorrect' | null | undefined) {
+  if (feedback === 'correct') return 'p-2 border rounded w-32 border-green-500 bg-green-50';
+  if (feedback === 'incorrect') return 'p-2 border rounded w-32 border-red-500 bg-red-50';
+  return 'p-2 border rounded w-32 border-gray-300';
+}

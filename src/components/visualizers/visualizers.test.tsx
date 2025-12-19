@@ -1,12 +1,68 @@
 /**
  * @vitest-environment jsdom
  */
-import { render } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
 import { DotPlot } from "./DotPlot";
 import { BoxPlot } from "./BoxPlot";
+import { ProblemVisualizer } from "./ProblemVisualizer";
+import type { VisualSpec } from "../../domain/types";
 
 describe("Visualizers", () => {
+  describe("ProblemVisualizer", () => {
+    it("renders BoxPlot when spec.type is 'box_plot'", () => {
+      const spec: VisualSpec = {
+        type: "box_plot",
+        data: { min: 0, q1: 25, median: 50, q3: 75, max: 100 },
+      };
+      const { container } = render(<ProblemVisualizer spec={spec} />);
+      
+      // BoxPlot renders an SVG with a rect (the box)
+      const svg = container.querySelector("svg");
+      expect(svg).toBeInTheDocument();
+      const rect = container.querySelector("rect");
+      expect(rect).toBeInTheDocument();
+    });
+
+    it("renders DotPlot when spec.type is 'dot_plot'", () => {
+      const spec: VisualSpec = {
+        type: "dot_plot",
+        data: { data: [1, 2, 2, 3] },
+      };
+      const { container } = render(<ProblemVisualizer spec={spec} />);
+      
+      // DotPlot renders circles for each data point
+      const svg = container.querySelector("svg");
+      expect(svg).toBeInTheDocument();
+      const circles = container.querySelectorAll("circle");
+      expect(circles.length).toBe(4);
+    });
+
+    it("returns null when spec is undefined or null", () => {
+      // Test undefined
+      const { container: container1 } = render(
+        <ProblemVisualizer spec={undefined as unknown as VisualSpec} />
+      );
+      expect(container1.firstChild).toBeNull();
+
+      // Test null
+      const { container: container2 } = render(
+        <ProblemVisualizer spec={null as unknown as VisualSpec} />
+      );
+      expect(container2.firstChild).toBeNull();
+    });
+
+    it("shows fallback message for unimplemented visualizer types", () => {
+      const spec: VisualSpec = {
+        type: "histogram" as VisualSpec["type"],
+        data: {},
+      };
+      render(<ProblemVisualizer spec={spec} />);
+      
+      expect(screen.getByText(/Visualizer not implemented for histogram/)).toBeInTheDocument();
+    });
+  });
+
   describe("DotPlot", () => {
     it("renders SVG with correct dimensions", () => {
       const { container } = render(<DotPlot data={[1, 2, 2, 3]} />);
