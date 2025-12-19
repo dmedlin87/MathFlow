@@ -19,43 +19,8 @@ export const FractionVisualizer = React.memo(({
   className = ''
 }: FractionVisualizerProps) => { // Explicitly type props here
   if (type === 'pie') {
-    const radius = size / 2;
-    const center = size / 2;
-    
-    // Only support simple visual handling for num <= den or slightly over
-    // If num > den, we might need multiple pies, but for now let's just draw one simple logic
-    // Actually, let's draw slices.
-    
-    // Calculate slices
-    const slices = [];
-    const anglePerSlice = 360 / denominator;
-    
-    for (let i = 0; i < denominator; i++) {
-        const startParams = polarToCartesian(center, center, radius, i * anglePerSlice);
-        const endParams = polarToCartesian(center, center, radius, (i + 1) * anglePerSlice);
-        
-        // Large arc flag requires angle > 180? Slices are usually small.
-        const largeArcFlag = anglePerSlice <= 180 ? "0" : "1";
-        
-        const d = [
-            "M", center, center,
-            "L", startParams.x, startParams.y,
-            "A", radius, radius, 0, largeArcFlag, 1, endParams.x, endParams.y,
-            "Z"
-        ].join(" ");
-        
-        const isFilled = i < numerator;
-        
-        slices.push(
-            <path
-                key={i}
-                d={d}
-                fill={isFilled ? color : 'none'}
-                stroke="#cbd5e1" // slate-300
-                strokeWidth="2"
-            />
-        );
-    }
+    // Only support simple visual handling for num <= den or slightly over.
+    const slices = buildPieSlices({ numerator, denominator, size, color });
 
     return (
         <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className={className}>
@@ -75,4 +40,43 @@ function polarToCartesian(centerX: number, centerY: number, radius: number, angl
     x: centerX + (radius * Math.cos(angleInRadians)),
     y: centerY + (radius * Math.sin(angleInRadians))
   };
+}
+
+function buildPieSlices({
+  numerator,
+  denominator,
+  size,
+  color
+}: {
+  numerator: number;
+  denominator: number;
+  size: number;
+  color: string;
+}) {
+  const radius = size / 2;
+  const center = size / 2;
+  const anglePerSlice = 360 / denominator;
+  const largeArcFlag = anglePerSlice <= 180 ? "0" : "1";
+
+  return Array.from({ length: denominator }, (_, index) => {
+    const startParams = polarToCartesian(center, center, radius, index * anglePerSlice);
+    const endParams = polarToCartesian(center, center, radius, (index + 1) * anglePerSlice);
+    const d = [
+      "M", center, center,
+      "L", startParams.x, startParams.y,
+      "A", radius, radius, 0, largeArcFlag, 1, endParams.x, endParams.y,
+      "Z"
+    ].join(" ");
+    const isFilled = index < numerator;
+
+    return (
+      <path
+        key={index}
+        d={d}
+        fill={isFilled ? color : 'none'}
+        stroke="#cbd5e1" // slate-300
+        strokeWidth="2"
+      />
+    );
+  });
 }

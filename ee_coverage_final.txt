@@ -1,0 +1,23 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/dmedl/Projects/MathFlow[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+ [32mΓ£ô[39m src/domain/skills/grade6/ee.test.ts [2m([22m[2m26 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m26 passed[39m[22m[90m (26)[39m
+[2m   Start at [22m 22:31:33
+[2m   Duration [22m 427ms[2m (transform 74ms, setup 141ms, import 67ms, tests 10ms, environment 0ms)[22m
+
+[34m % [39m[2mCoverage report from [22m[33mv8[39m
+----------|---------|----------|---------|---------|-------------------
+File      | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+----------|---------|----------|---------|---------|-------------------
+All files |     100 |    97.22 |     100 |     100 |                   
+ ee.ts    |     100 |    97.22 |     100 |     100 | 210               
+----------|---------|----------|---------|---------|-------------------
+npm notice
+npm notice New major version of npm available! 10.9.0 -> 11.7.0
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.7.0
+npm notice To update run: npm install -g npm@11.7.0
+npm notice

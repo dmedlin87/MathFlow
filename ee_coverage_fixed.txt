@@ -1,0 +1,72 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/dmedl/Projects/MathFlow[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+ [31mΓ¥»[39m src/domain/skills/grade6/ee.test.ts [2m([22m[2m26 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 16[2mms[22m[39m
+       [32mΓ£ô[39m generates correctly with middle values[32m 2[2mms[22m[39m
+       [32mΓ£ô[39m handles lower boundary values (2^2)[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m handles upper boundary values (9^4)[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m uses Math.random when no rng is provided[32m 1[2mms[22m[39m
+       [32mΓ£ô[39m generates Type 0 (Addition: x + a = b)[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates Type 1 (Subtraction: x - a = b)[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates Type 2 (Multiplication: ax = b)[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates Type 3 (Division: x/a = b)[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m uses Math.random for all random calls when no rng provided[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates Evaluate mode with substitution[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates Translate mode (more than) with all forms[32m 1[2mms[22m[39m
+       [32mΓ£ô[39m generates Translate mode (less than)[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates Translate mode (product)[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates Translate mode (quotient)[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m uses Math.random when no rng provided[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m verifies distributive property expansion[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m handles boundary values (min and max distributive)[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m uses Math.random when no rng provided[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates Type 0 (At least: >=) with all accepted forms[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates Type 1 (Limit: <=)[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates Type 2 (More than: >)[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates Type 3 (Less than: <)[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m uses Math.random when no rng provided[32m 0[2mms[22m[39m
+[31m       [31m├ù[31m identifies dependent variable in linear form (y = mx + c)[39m[32m 7[2mms[22m[39m
+[31m       [31m├ù[31m identifies dependent variable in quotient form (p = q/r)[39m[32m 1[2mms[22m[39m
+       [32mΓ£ô[39m uses Math.random when no rng provided[32m 0[2mms[22m[39m
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Failed Tests 2 ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+
+ FAIL  src/domain/skills/grade6/ee.test.ts > Grade 6 EE Generators (Deterministic) > SKILL_6_EE_VARIABLES > identifies dependent variable in linear form (y = mx + c)
+AssertionError: expected 'In the equation $y = 2x + 6$, which vΓÇª' to contain 'y = 6x + 6'
+
+Expected: "y = 6x + 6"
+Received: "In the equation $y = 2x + 6$, which variable is the **dependent** variable?"
+
+ Γ¥» src/domain/skills/grade6/ee.test.ts:293:41
+    291|       const item = VariablesGenerator.generate(0.5, rng);
+    292|       expect(item.meta.skill_id).toBe(SKILL_6_EE_VARIABLES.id);
+    293|       expect(item.problem_content.stem).toContain("y = 6x + 6");
+       |                                         ^
+    294|       expect(item.solution_logic.final_answer_canonical).toBe("y");
+    295|       expect(item.solution_logic.steps[0].explanation).toBe(
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/2]ΓÄ»
+
+ FAIL  src/domain/skills/grade6/ee.test.ts > Grade 6 EE Generators (Deterministic) > SKILL_6_EE_VARIABLES > identifies dependent variable in quotient form (p = q/r)
+AssertionError: expected 'In the equation $p = \frac{q}{5}$, whΓÇª' to contain 'p = \frac{q}{4}'
+
+Expected: "p = \frac{q}{4}"
+Received: "In the equation $p = \frac{q}{5}$, which variable is the **dependent** variable?"
+
+ Γ¥» src/domain/skills/grade6/ee.test.ts:303:41
+    301|       const rng = createMockRng([0.8, 0.8, 0.8, 0.5]); // v1=p, v2=q, ΓÇª
+    302|       const item = VariablesGenerator.generate(0.5, rng);
+    303|       expect(item.problem_content.stem).toContain("p = \\frac{q}{4}");
+       |                                         ^
+    304|       expect(item.solution_logic.final_answer_canonical).toBe("p");
+    305|     });
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[2/2]ΓÄ»
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m24 passed[39m[22m[90m (26)[39m
+[2m   Start at [22m 22:09:21
+[2m   Duration [22m 423ms[2m (transform 67ms, setup 133ms, import 61ms, tests 16ms, environment 0ms)[22m
+

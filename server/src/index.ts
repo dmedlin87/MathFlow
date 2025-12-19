@@ -7,6 +7,7 @@ import { skillGeneratorMap } from "@domain/skills/generatorMap.js";
 import { DomainGeneratorAdapter } from "./factory/adapters/DomainGeneratorAdapter.js";
 import { config } from "./config.js";
 import { rateLimiter } from "./middleware/rateLimit.js";
+import { securityHeaders } from "./middleware/securityHeaders.js";
 import type { Generator } from "@domain/types.js";
 
 // Initialize App
@@ -14,6 +15,7 @@ export const app = express();
 const port = config.port;
 
 // Middleware
+app.use(securityHeaders); // Security: Add defensive headers
 app.use(cors());
 app.use(express.json());
 app.disable("x-powered-by"); // Security: Hide server info
