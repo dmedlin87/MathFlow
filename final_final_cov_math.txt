@@ -1,0 +1,47 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/dmedl/Projects/MathFlow[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+(node:50968) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ [31mΓ¥»[39m src/components/MathRenderer.test.tsx [2m([22m[2m15 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 75[2mms[22m[39m
+     [32mΓ£ô[39m renders simple text correctly[32m 20[2mms[22m[39m
+     [32mΓ£ô[39m preserves spacing in textContent[32m 2[2mms[22m[39m
+     [32mΓ£ô[39m renders bold text correctly[32m 5[2mms[22m[39m
+     [32mΓ£ô[39m renders fractions correctly[32m 3[2mms[22m[39m
+     [32mΓ£ô[39m renders mixed content correctly[32m 3[2mms[22m[39m
+     [32mΓ£ô[39m handles empty text[32m 1[2mms[22m[39m
+     [32mΓ£ô[39m renders explanation text with spaces[32m 2[2mms[22m[39m
+       [32mΓ£ô[39m renders inline math[32m 12[2mms[22m[39m
+       [32mΓ£ô[39m renders display math[32m 5[2mms[22m[39m
+[31m       [31m├ù[31m handles KaTeX rendering errors gracefully[39m[32m 7[2mms[22m[39m
+       [32mΓ£ô[39m handles empty math delimiters[32m 2[2mms[22m[39m
+       [32mΓ£ô[39m ignores incomplete fractions like 1/[32m 2[2mms[22m[39m
+       [32mΓ£ô[39m ignores /2[32m 2[2mms[22m[39m
+       [32mΓ£ô[39m handles triple slashes like 1/2/3 by ignoring them as fractions[32m 1[2mms[22m[39m
+     [32mΓ£ô[39m renders complex mixed content[32m 7[2mms[22m[39m
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Failed Tests 1 ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+
+ FAIL  src/components/MathRenderer.test.tsx > MathRenderer > KaTeX Support > handles KaTeX rendering errors gracefully
+Error: expect(received).toBeInTheDocument()
+
+received value must be an HTMLElement or an SVGElement.
+Received has type:  Null
+Received has value: null
+ Γ¥» src/components/MathRenderer.test.tsx:84:34
+     82|             // The error text is rendered in a span with katex-error cΓÇª
+     83|             const errorElement = document.querySelector('.katex-error'ΓÇª
+     84|             expect(errorElement).toBeInTheDocument();
+       |                                  ^
+     85|             expect(errorElement?.textContent).toContain('invalidCommanΓÇª
+     86|             spy.mockRestore();
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/1]ΓÄ»
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m14 passed[39m[22m[90m (15)[39m
+[2m   Start at [22m 16:49:44
+[2m   Duration [22m 1.30s[2m (transform 159ms, setup 130ms, import 258ms, tests 75ms, environment 593ms)[22m
+

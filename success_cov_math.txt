@@ -1,0 +1,20 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/dmedl/Projects/MathFlow[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+(node:29216) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ [32mΓ£ô[39m src/components/MathRenderer.test.tsx [2m([22m[2m15 tests[22m[2m)[22m[32m 67[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m15 passed[39m[22m[90m (15)[39m
+[2m   Start at [22m 16:51:59
+[2m   Duration [22m 1.25s[2m (transform 172ms, setup 125ms, import 268ms, tests 67ms, environment 552ms)[22m
+
+[34m % [39m[2mCoverage report from [22m[33mv8[39m
+------------------|---------|----------|---------|---------|-------------------
+File              | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
+------------------|---------|----------|---------|---------|-------------------
+All files         |     100 |      100 |     100 |     100 |                   
+ MathRenderer.tsx |     100 |      100 |     100 |     100 |                   
+------------------|---------|----------|---------|---------|-------------------

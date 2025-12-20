@@ -1,0 +1,63 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/dmedl/Projects/MathFlow[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+(node:86844) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ [31mΓ¥»[39m src/components/MathRenderer.test.tsx [2m([22m[2m15 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 65[2mms[22m[39m
+     [32mΓ£ô[39m renders simple text correctly[32m 20[2mms[22m[39m
+     [32mΓ£ô[39m preserves spacing in textContent[32m 1[2mms[22m[39m
+     [32mΓ£ô[39m renders bold text correctly[32m 5[2mms[22m[39m
+     [32mΓ£ô[39m renders fractions correctly[32m 3[2mms[22m[39m
+     [32mΓ£ô[39m renders mixed content correctly[32m 3[2mms[22m[39m
+     [32mΓ£ô[39m handles empty text[32m 1[2mms[22m[39m
+     [32mΓ£ô[39m renders explanation text with spaces[32m 3[2mms[22m[39m
+[31m       [31m├ù[31m renders inline math \(...\)[39m[32m 10[2mms[22m[39m
+       [32mΓ£ô[39m renders display math $$...$$[32m 6[2mms[22m[39m
+       [32mΓ£ô[39m handles KaTeX rendering errors gracefully[32m 3[2mms[22m[39m
+       [32mΓ£ô[39m handles empty math delimiters[32m 2[2mms[22m[39m
+       [32mΓ£ô[39m ignores incomplete fractions like 1/[32m 1[2mms[22m[39m
+       [32mΓ£ô[39m ignores /2[32m 1[2mms[22m[39m
+       [32mΓ£ô[39m handles triple slashes like 1/2/3 by ignoring them as fractions[32m 1[2mms[22m[39m
+[31m     [31m├ù[31m renders complex mixed content[39m[32m 3[2mms[22m[39m
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Failed Tests 2 ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+
+ FAIL  src/components/MathRenderer.test.tsx > MathRenderer > KaTeX Support > renders inline math \(...\)
+Error: expect(received).toBeInTheDocument()
+
+received value must be an HTMLElement or an SVGElement.
+Received has type:  Null
+Received has value: null
+ Γ¥» src/components/MathRenderer.test.tsx:69:34
+     67|             expect(screen.getAllByText('Solve').length).toBeGreaterThaΓÇª
+     68|             const katexElement = document.querySelector('.katex');
+     69|             expect(katexElement).toBeInTheDocument();
+       |                                  ^
+     70|         });
+     71| 
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/2]ΓÄ»
+
+ FAIL  src/components/MathRenderer.test.tsx > MathRenderer > renders complex mixed content
+Error: expect(received).toBeInTheDocument()
+
+received value must be an HTMLElement or an SVGElement.
+Received has type:  Null
+Received has value: null
+ Γ¥» src/components/MathRenderer.test.tsx:115:50
+    113|         render(<MathRenderer text="Find **x** in \\( x/2 = 4 \\) whereΓÇª
+    114|         expect(screen.getAllByText('Find').length).toBeGreaterThan(0);
+    115|         expect(document.querySelector('.katex')).toBeInTheDocument();
+       |                                                  ^
+    116|         expect(document.querySelector('strong')).toBeInTheDocument();
+    117|     });
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[2/2]ΓÄ»
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m13 passed[39m[22m[90m (15)[39m
+[2m   Start at [22m 16:45:00
+[2m   Duration [22m 1.31s[2m (transform 157ms, setup 129ms, import 249ms, tests 65ms, environment 621ms)[22m
+

@@ -1,0 +1,186 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/dmedl/Projects/MathFlow[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+(node:56988) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ [31mΓ¥»[39m src/components/MathRenderer.test.tsx [2m([22m[2m15 tests[22m[2m | [22m[31m4 failed[39m[2m)[22m[32m 75[2mms[22m[39m
+     [32mΓ£ô[39m renders simple text correctly[32m 23[2mms[22m[39m
+     [32mΓ£ô[39m preserves spacing in textContent[32m 2[2mms[22m[39m
+     [32mΓ£ô[39m renders bold text correctly[32m 2[2mms[22m[39m
+     [32mΓ£ô[39m renders fractions correctly[32m 3[2mms[22m[39m
+     [32mΓ£ô[39m renders mixed content correctly[32m 3[2mms[22m[39m
+     [32mΓ£ô[39m handles empty text[32m 1[2mms[22m[39m
+     [32mΓ£ô[39m renders explanation text with spaces[32m 6[2mms[22m[39m
+[31m       [31m├ù[31m renders inline math \(...\)[39m[32m 11[2mms[22m[39m
+       [32mΓ£ô[39m renders display math $$...$$[32m 7[2mms[22m[39m
+[31m       [31m├ù[31m handles KaTeX rendering errors gracefully[39m[32m 5[2mms[22m[39m
+       [32mΓ£ô[39m handles empty math delimiters[32m 2[2mms[22m[39m
+       [32mΓ£ô[39m ignores incomplete fractions like 1/[32m 1[2mms[22m[39m
+       [32mΓ£ô[39m ignores /2[32m 1[2mms[22m[39m
+[31m       [31m├ù[31m handles triple slashes like 1/2/3 by ignoring them as fractions[39m[32m 2[2mms[22m[39m
+[31m     [31m├ù[31m renders complex mixed content[39m[32m 4[2mms[22m[39m
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Failed Tests 4 ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+
+ FAIL  src/components/MathRenderer.test.tsx > MathRenderer > KaTeX Support > renders inline math \(...\)
+Error: expect(received).toBeInTheDocument()
+
+received value must be an HTMLElement or an SVGElement.
+Received has type:  Null
+Received has value: null
+ Γ¥» src/components/MathRenderer.test.tsx:68:34
+     66|             // KaTeX renders to a span with class katex
+     67|             const katexElement = document.querySelector('.katex');
+     68|             expect(katexElement).toBeInTheDocument();
+       |                                  ^
+     69|             expect(katexElement?.textContent).toContain('x2');
+     70|         });
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/4]ΓÄ»
+
+ FAIL  src/components/MathRenderer.test.tsx > MathRenderer > KaTeX Support > handles KaTeX rendering errors gracefully
+TestingLibraryElementError: Found multiple elements with the text: /invalidCommand/
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+<span
+  class="sr-only"
+>
+  \\( \\invalidCommand \\)
+</span>
+
+Ignored nodes: comments, script, style
+<span
+  class="katex-error"
+  style="color:#cc0000"
+  title="ParseError: KaTeX parse error: Unexpected character: '\\' at position 19: ΓÇªinvalidCommand \\╠▓"
+>
+   \\invalidCommand \
+</span>
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <span
+      class="inline-flex items-center flex-wrap gap-1 text-2xl"
+    >
+      <span
+        class="sr-only"
+      >
+        \\( \\invalidCommand \\)
+      </span>
+      <span
+        class="mx-1"
+      >
+        \
+      </span>
+      <span
+        class="inline-block mx-1"
+      >
+        <span
+          class="katex-error"
+          style="color:#cc0000"
+          title="ParseError: KaTeX parse error: Unexpected character: '\\' at position 19: ΓÇªinvalidCommand \\╠▓"
+        >
+           \\invalidCommand \
+        </span>
+      </span>
+    </span>
+  </div>
+</body>
+ Γ¥» Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ Γ¥» getElementError node_modules/@testing-library/dom/dist/query-helpers.js:20:35
+ Γ¥» getMultipleElementsFoundError node_modules/@testing-library/dom/dist/query-helpers.js:23:10
+ Γ¥» node_modules/@testing-library/dom/dist/query-helpers.js:55:13
+ Γ¥» node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ Γ¥» src/components/MathRenderer.test.tsx:82:41
+     80|             const spy = vi.spyOn(console, 'error').mockImplementation(ΓÇª
+     81|             render(<MathRenderer text="\\( \\invalidCommand \\)" />);
+     82|             const errorElement = screen.getByText(/invalidCommand/);
+       |                                         ^
+     83|             expect(errorElement).toBeInTheDocument();
+     84|             expect(errorElement).toHaveClass('text-red-500');
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[2/4]ΓÄ»
+
+ FAIL  src/components/MathRenderer.test.tsx > MathRenderer > Fraction Edge Cases > handles triple slashes like 1/2/3 by ignoring them as fractions
+TestingLibraryElementError: Found multiple elements with the text: 1/2/3
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+<span
+  class="sr-only"
+>
+  1/2/3
+</span>
+
+Ignored nodes: comments, script, style
+<span
+  class="mx-1"
+>
+  1/2/3
+</span>
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+<body>
+  <div>
+    <span
+      class="inline-flex items-center flex-wrap gap-1 text-2xl"
+    >
+      <span
+        class="sr-only"
+      >
+        1/2/3
+      </span>
+      <span
+        class="mx-1"
+      >
+        1/2/3
+      </span>
+    </span>
+  </div>
+</body>
+ Γ¥» Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ Γ¥» getElementError node_modules/@testing-library/dom/dist/query-helpers.js:20:35
+ Γ¥» getMultipleElementsFoundError node_modules/@testing-library/dom/dist/query-helpers.js:23:10
+ Γ¥» node_modules/@testing-library/dom/dist/query-helpers.js:55:13
+ Γ¥» node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ Γ¥» src/components/MathRenderer.test.tsx:107:27
+    105|         it('handles triple slashes like 1/2/3 by ignoring them as fracΓÇª
+    106|             render(<MathRenderer text="1/2/3" />);
+    107|             expect(screen.getByText('1/2/3')).toBeInTheDocument();
+       |                           ^
+    108|         });
+    109|     });
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[3/4]ΓÄ»
+
+ FAIL  src/components/MathRenderer.test.tsx > MathRenderer > renders complex mixed content
+Error: expect(received).toBeInTheDocument()
+
+received value must be an HTMLElement or an SVGElement.
+Received has type:  Null
+Received has value: null
+ Γ¥» src/components/MathRenderer.test.tsx:115:50
+    113|         expect(screen.getByText('Find')).toBeInTheDocument();
+    114|         expect(screen.getAllByText('x').length).toBeGreaterThan(0);
+    115|         expect(document.querySelector('.katex')).toBeInTheDocument();
+       |                                                  ^
+    116|         expect(document.querySelector('strong')).toBeInTheDocument();
+    117|     });
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[4/4]ΓÄ»
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m4 failed[39m[22m[2m | [22m[1m[32m11 passed[39m[22m[90m (15)[39m
+[2m   Start at [22m 16:34:50
+[2m   Duration [22m 1.49s[2m (transform 198ms, setup 174ms, import 291ms, tests 75ms, environment 677ms)[22m
+

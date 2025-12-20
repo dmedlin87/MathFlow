@@ -13,7 +13,8 @@ export const MathRenderer = React.memo(({ text }: { text: string }) => {
 
   return (
     <span className="inline-flex items-center flex-wrap gap-1 text-2xl">
-      <span className="sr-only">{text}</span>
+      <span className="sr-only" aria-hidden="false">{text}</span>
+      <span aria-hidden="true" className="inline-flex items-center flex-wrap gap-1">
       {parts.map((part, i) => {
         if (!part) return null;
 
@@ -53,6 +54,7 @@ export const MathRenderer = React.memo(({ text }: { text: string }) => {
         // Regular Text (might contain simple a/b fractions)
         return <ParsedMath key={i} text={part} />;
       })}
+      </span>
     </span>
   );
 });
