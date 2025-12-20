@@ -108,9 +108,30 @@ describe("LearnerState Behavior", () => {
       const state = createInitialState("user1");
       await expect(recommendNextItem(state, Math.random, [])).rejects.toThrow("No skills available");
     });
+
+    it("falls back to random skill when no review due and no learning queue items", async () => {
+      // Given: All skills mastered (>0.8) and recently practiced (no review due)
+      const skillA = mockSkill("A");
+      const state = createInitialState("user1");
+      state.skillState["A"] = {
+        masteryProb: 0.9,
+        stability: 5,
+        lastPracticed: new Date().toISOString(), // Just now
+        misconceptions: [],
+      };
+      const allSkills = [skillA];
+
+      // When: Recommend
+      const result = await recommendNextItem(state, () => 0.5, allSkills);
+
+      // Then: It falls back to random selection of available skills
+      expect(engine.generate).toHaveBeenCalledWith("A", 0.9);
+    });
   });
 
   describe("updateLearnerState", () => {
+    const SKILL_ID = "test_skill";
+
     it("auto-initializes state for unknown skills (Self-Healing)", () => {
       // Given: State with NO knowledge of 'surprise_skill'
       const state = createInitialState("user1");
@@ -130,13 +151,12 @@ describe("LearnerState Behavior", () => {
     it("clamps mastery probability strictly to 0.99 max", () => {
       // Given: Already maxed mastery
       const state = createInitialState("user1");
-      const skillId = "test_skill";
-      state.skillState[skillId] = {
+      state.skillState[SKILL_ID] = {
         masteryProb: 0.99, stability: 0, lastPracticed: "", misconceptions: []
       };
 
       const attempt: Attempt = {
-        id: "1", userId: "user1", skillId, isCorrect: true, // Another success
+        id: "1", userId: "user1", skillId: SKILL_ID, isCorrect: true, // Another success
         itemId: "1", timestamp: "", timeTakenMs: 1000, attemptsCount: 1, hintsUsed: 0, errorTags: []
       };
 
@@ -144,7 +164,100 @@ describe("LearnerState Behavior", () => {
       const newState = updateLearnerState(state, attempt);
 
       // Then: Stays at 0.99, does not exceed 1.0
-      expect(newState.skillState[skillId].masteryProb).toBe(0.99);
+      expect(newState.skillState[SKILL_ID].masteryProb).toBe(0.99);
+    });
+
+    it("correctly calculates BKT increase on CORRECT answer", () => {
+      // Contract:
+      // p = 0.5, slip = 0.1, guess = 0.2, learn = 0.1
+      // numerator = 0.5 * 0.9 = 0.45
+      // denominator = 0.5 * 0.9 + 0.5 * 0.2 = 0.45 + 0.1 = 0.55
+      // posterior = 0.45 / 0.55 ≈ 0.818181
+      // transit = posterior + (1 - posterior) * 0.1
+      //         = 0.818181 + 0.181818 * 0.1
+      //         = 0.818181 + 0.018181 = 0.836363
+
+      const state = createInitialState("user1");
+      state.skillState[SKILL_ID] = {
+        masteryProb: 0.5, stability: 0, lastPracticed: "", misconceptions: []
+      };
+
+      const attempt: Attempt = {
+        id: "1", userId: "user1", skillId: SKILL_ID, isCorrect: true,
+        itemId: "1", timestamp: "", timeTakenMs: 1000, attemptsCount: 1, hintsUsed: 0, errorTags: []
+      };
+
+      const newState = updateLearnerState(state, attempt);
+
+      // We expect ~0.836363
+      expect(newState.skillState[SKILL_ID].masteryProb).toBeCloseTo(0.836363, 4);
+    });
+
+    it("correctly calculates BKT decrease on INCORRECT answer", () => {
+      // Contract:
+      // p = 0.5, slip = 0.1, guess = 0.2, learn = 0.1
+      // numerator = 0.5 * 0.1 = 0.05
+      // denominator = 0.5 * 0.1 + 0.5 * 0.8 = 0.05 + 0.4 = 0.45
+      // posterior = 0.05 / 0.45 ≈ 0.111111
+      // transit = posterior + (1 - posterior) * 0.1
+      //         = 0.111111 + 0.888888 * 0.1
+      //         = 0.111111 + 0.088888 = 0.199999
+
+      const state = createInitialState("user1");
+      state.skillState[SKILL_ID] = {
+        masteryProb: 0.5, stability: 0, lastPracticed: "", misconceptions: []
+      };
+
+      const attempt: Attempt = {
+        id: "1", userId: "user1", skillId: SKILL_ID, isCorrect: false,
+        itemId: "1", timestamp: "", timeTakenMs: 1000, attemptsCount: 1, hintsUsed: 0, errorTags: []
+      };
+
+      const newState = updateLearnerState(state, attempt);
+
+      // We expect ~0.2
+      expect(newState.skillState[SKILL_ID].masteryProb).toBeCloseTo(0.2, 4);
+    });
+
+    it("increments stability counter on high-mastery success", () => {
+      // Given: Mastery is already high (e.g. 0.9)
+      // And: Current stability is 1
+      const state = createInitialState("user1");
+      state.skillState[SKILL_ID] = {
+        masteryProb: 0.9, stability: 1, lastPracticed: "", misconceptions: []
+      };
+
+      // When: Correct answer
+      const attempt: Attempt = {
+        id: "1", userId: "user1", skillId: SKILL_ID, isCorrect: true,
+        itemId: "1", timestamp: "", timeTakenMs: 1000, attemptsCount: 1, hintsUsed: 0, errorTags: []
+      };
+
+      const newState = updateLearnerState(state, attempt);
+
+      // Then: Stability increments (1 -> 2)
+      // Note: Logic in code is `if (newP > 0.8)`. With 0.9 start and correct, it stays > 0.8.
+      expect(newState.skillState[SKILL_ID].stability).toBe(2);
+    });
+
+    it("resets stability counter on failure", () => {
+      // Given: High stability
+      const state = createInitialState("user1");
+      state.skillState[SKILL_ID] = {
+        masteryProb: 0.5, stability: 10, lastPracticed: "", misconceptions: []
+      };
+
+      // When: Incorrect answer
+      const attempt: Attempt = {
+        id: "1", userId: "user1", skillId: SKILL_ID, isCorrect: false,
+        itemId: "1", timestamp: "", timeTakenMs: 1000, attemptsCount: 1, hintsUsed: 0, errorTags: []
+      };
+
+      const newState = updateLearnerState(state, attempt);
+
+      // Then: Stability drops (Code: stability - 0.5, min 0)
+      // 10 -> 9.5
+      expect(newState.skillState[SKILL_ID].stability).toBe(9.5);
     });
   });
 });
