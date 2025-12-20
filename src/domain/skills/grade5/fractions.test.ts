@@ -304,3 +304,60 @@ describe("Grade 5 NF Domain (Deterministic)", () => {
     });
   });
 });
+
+// Additional coverage tests for uncovered branches
+describe("Grade 5 NF Extra Coverage", () => {
+  describe("AddSubUnlikeGenerator", () => {
+    it("uses simpler denominators at difficulty<0.5 (one is multiple of other)", () => {
+      // difficulty < 0.5 -> d2 = d1 * mult
+      // isAddition=true, d1=3, mult=2 -> d2=6
+      // 1/3 + 1/6 = 2/6 + 1/6 = 3/6 = 1/2
+      const rng = createMockRng([
+        0.1, // isAddition=true
+        0.25, // d1=3 (randomInt(2,6): floor(0.25*5)+2=3)
+        0.1, // mult=2 (randomInt(2,3))
+        0.1, // n1=1
+        0.1, // n2=1
+      ]);
+      const item = AddSubUnlikeGenerator.generate(0.4, rng); // difficulty < 0.5
+      expect(item.problem_content.stem).toContain("Add");
+      // d2 should be 6 (3*2)
+      expect(item.problem_content.stem).toContain("6");
+    });
+  });
+
+  describe("ScalingGenerator", () => {
+    it("handles num===den retry (recursive call)", () => {
+      // When num === den, generator retries
+      // First call: num=5, den=5 (equal) -> retry
+      // After exhausting first 3 rng values, fallback returns 0.5
+      const rng = createMockRng([
+        0.5, // factor=6
+        0.5, // num=5
+        0.44, // den=5 (equal!) -> triggers retry
+        // Retry uses fallback 0.5...
+      ]);
+      const item = ScalingGenerator.generate(0.5, rng);
+      // Should successfully generate (retry with fallback RNG)
+      expect([">", "<"]).toContain(item.solution_logic.final_answer_canonical);
+    });
+  });
+
+  describe("FractionWordProblemsGenerator", () => {
+    it("swaps denominators in subtraction word problem when d1>d2", () => {
+      // type=0, isAddition=false, d1=6, d2=3
+      // Since 1/6 < 1/3, d1 > d2 triggers swap: [d1, d2] = [d2, d1]
+      // After swap: d1=3, d2=6. 1/3 - 1/6 = 2/6 - 1/6 = 1/6
+      const rng = createMockRng([
+        0.1, // type=0
+        0.8, // isAddition=false
+        0.9, // d1=6 (randomInt(2,6): floor(0.9*5)+2=6)
+        0.25, // d2=3
+      ]);
+      const item = FractionWordProblemsGenerator.generate(0.5, rng);
+      expect(item.problem_content.stem).toContain("farther");
+      // Should have swapped and produce positive result
+      expect(item.solution_logic.final_answer_canonical).not.toBe("0");
+    });
+  });
+});

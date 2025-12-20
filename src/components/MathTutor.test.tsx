@@ -319,11 +319,10 @@ describe('MathTutor Input Types', () => {
         meta: { id: 'mc1', skill_id: 'test_skill', difficulty: 1 },
         problem_content: { stem: 'What is 2+2?', variables: {} },
         solution_logic: { final_answer_canonical: '4', steps: [] },
-        answer_spec: { 
-          input_type: 'multiple_choice', 
-          options: ['3', '4', '5', '6'],
-          ui: {}, 
-          validation: { canonical: '4' } 
+        answer_spec: {
+          input_type: 'multiple_choice',
+          ui: { choices: ['3', '4', '5', '6'] },
+          validation: { canonical: '4' }
         }
       }),
       submitAttempt: vi.fn().mockImplementation(async (state) => state),
@@ -343,6 +342,73 @@ describe('MathTutor Input Types', () => {
     // Submit button should be disabled when nothing selected
     const submitBtn = screen.getByRole('button', { name: 'Check Answer' });
     expect(submitBtn).toBeDisabled();
+  });
+
+  it('shows loading spinner & disables multiple_choice submit while submitting', async () => {
+    const newState: LearnerState = {
+      userId: 'user1',
+      skillState: { 'test_skill': { masteryProb: 0.5, stability: 0.5, lastPracticed: '2023-01-01', misconceptions: [] } },
+    };
+
+    const deferred = <T,>() => {
+      let resolve!: (value: T | PromiseLike<T>) => void;
+      const promise = new Promise<T>((res) => {
+        resolve = res;
+      });
+      return { promise, resolve };
+    };
+
+    const pending = deferred<LearnerState>();
+
+    const mcService = {
+      getRecommendation: vi.fn().mockResolvedValue({
+        meta: { id: 'mc1', skill_id: 'test_skill', difficulty: 1 },
+        problem_content: { stem: 'What is 2+2?', variables: {} },
+        solution_logic: { final_answer_canonical: '4', steps: [] },
+        answer_spec: {
+          input_type: 'multiple_choice',
+          ui: { choices: ['3', '4', '5', '6'] },
+          validation: { canonical: '4' }
+        }
+      }),
+      submitAttempt: vi.fn(() => pending.promise),
+      diagnose: vi.fn().mockResolvedValue(null)
+    };
+
+    const setLearnerState = vi.fn();
+
+    render(
+      <MathTutor
+        learnerState={mockLearnerState}
+        setLearnerState={setLearnerState}
+        learnerService={mcService as unknown as import('../services/LearnerService').ILearnerService}
+      />
+    );
+
+    await waitFor(() => expect(screen.getByText(/What is 2\+2/)).toBeInTheDocument());
+
+    // Select an incorrect choice to keep the submit button rendered (feedback !== 'correct')
+    fireEvent.click(screen.getByText('3'));
+
+    const submitBtn = screen.getByRole('button', { name: 'Check Answer' });
+    fireEvent.click(submitBtn);
+
+    await waitFor(() => {
+      expect(submitBtn).toBeDisabled();
+      expect(submitBtn).toHaveAttribute('aria-busy', 'true');
+      expect(submitBtn.className).toContain('bg-blue-400');
+      expect(submitBtn).toHaveTextContent('Checking...');
+    });
+
+    // Resolve submission to let component clean up loading state
+    pending.resolve(newState);
+    await waitFor(() => expect(setLearnerState).toHaveBeenCalled());
+
+    // After resolve, loading should clear and button should return to actionable state
+    await waitFor(() => {
+      expect(submitBtn).not.toBeDisabled();
+      expect(submitBtn).toHaveTextContent(/Check Answer|Try Again/);
+    });
   });
 
   it('clears incorrect feedback when input changes', async () => {

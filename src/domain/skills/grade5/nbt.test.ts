@@ -570,6 +570,21 @@ describe("Grade 5 NBT Extra Coverage", () => {
   });
 
   describe("MultDecimalsGenerator", () => {
+    it("handles DecInt with d=1 (one decimal place)", () => {
+      // isDecDec=false (rng >= 0.6), d=1 (rng < 0.5)
+      const rng = createMockRng([
+        0.7, // isDecDec=false
+        0.3, // d=1
+        0.5, // n1 = (0.5*20).toFixed(1) = 10.0
+        0.5, // n2 = randomInt(2,10) = 6
+      ]);
+      const item = MultDecimalsGenerator.generate(0.5, rng);
+      expect(item.problem_content.stem).toContain("\\times");
+      expect(
+        parseFloat(item.solution_logic.final_answer_canonical)
+      ).toBeGreaterThan(0);
+    });
+
     it("handles DecInt with d=2 (two decimal places)", () => {
       // isDecDec=false (rng >= 0.6), d=2 (rng >= 0.5)
       const rng = createMockRng([
@@ -584,6 +599,148 @@ describe("Grade 5 NBT Extra Coverage", () => {
       expect(
         parseFloat(item.solution_logic.final_answer_canonical)
       ).toBeGreaterThan(0);
+    });
+  });
+
+  describe("DivDecimalsGenerator type=2 branch", () => {
+    it("generates decimal divisor via type=2 fallback", () => {
+      // type: floor(rng*3). rng=0.99 -> 2 (type 2 fallback).
+      // quotient: (rng*20 + 0.1).toFixed(2). rng=0.5 -> 10.1.
+      // divisor (type 2): (rng*5 + 0.1).toFixed(1). rng=0.5 -> 2.6.
+      // dividend = 10.1 * 2.6 = 26.26.
+      const rng = createMockRng([
+        0.99, // Type 2
+        0.5, // quotient = 10.1
+        0.5, // divisor = 2.6
+      ]);
+      const item = DivDecimalsGenerator.generate(0.5, rng);
+      expect(item.problem_content.stem).toContain("\\div");
+      expect(item.solution_logic.final_answer_canonical).toBe("10.1");
+    });
+  });
+
+  describe("FracDecConversionGenerator full coverage", () => {
+    it("converts Decimal to Fraction with assertions (Type 1)", () => {
+      // den_idx: floor(rng*8). rng=0.5 -> 4 -> denominator=20.
+      // num: randomInt(1, 19). rng=0.5 -> floor(0.5*19)+1 = 10.
+      // type: rng >= 0.5 -> Type 1 (Dec->Frac).
+      const rng = createMockRng([
+        0.5, // den index 4 -> 20
+        0.5, // num = 10
+        0.6, // Type 1
+      ]);
+      const item = FracDecConversionGenerator.generate(0.5, rng);
+      expect(item.problem_content.stem).toContain("Convert the decimal");
+      expect(item.solution_logic.final_answer_canonical).toBe("10/20");
+      expect(item.answer_spec.input_type).toBe("fraction");
+    });
+
+    it("covers denominator=100 path", () => {
+      // den_idx: floor(rng*8). rng=0.99 -> 7 -> denominator=100.
+      // num: randomInt(1, 99). rng=0.25 -> floor(0.25*99)+1 = 25.
+      // type: rng < 0.5 -> Type 0 (Frac->Dec).
+      const rng = createMockRng([
+        0.99, // den index 7 -> 100
+        0.25, // num = 25
+        0.1, // Type 0
+      ]);
+      const item = FracDecConversionGenerator.generate(0.5, rng);
+      expect(item.problem_content.stem).toContain("\\frac{25}{100}");
+      expect(item.solution_logic.final_answer_canonical).toBe("0.25");
+    });
+
+    it("covers denominator=25 path", () => {
+      // den_idx: floor(rng*8). rng=0.7 -> 5 -> denominator=25.
+      // num: randomInt(1, 24). rng=0.5 -> floor(0.5*24)+1 = 13.
+      // type: rng < 0.5 -> Type 0.
+      const rng = createMockRng([
+        0.7, // den index 5 -> 25
+        0.5, // num = 13
+        0.1, // Type 0
+      ]);
+      const item = FracDecConversionGenerator.generate(0.5, rng);
+      expect(item.problem_content.stem).toContain("\\frac{13}{25}");
+      expect(item.solution_logic.final_answer_canonical).toBe("0.52");
+    });
+
+    it("generates misconception for Frac->Dec (Type 0)", () => {
+      // den_idx: 0 -> denominator=2
+      // num: 1
+      // type: 0
+      const rng = createMockRng([
+        0.0, // den index 0 -> 2
+        0.0, // num = 1
+        0.1, // Type 0
+      ]);
+      const item = FracDecConversionGenerator.generate(0.5, rng);
+      // Type 0 has misconception array
+      expect(item.misconceptions.length).toBeGreaterThan(0);
+      expect(item.misconceptions[0].error_tag).toBe("append_digits");
+    });
+  });
+
+  describe("Fallback RNG branches (Math.random)", () => {
+    it("DivDecimalsGenerator works without RNG argument", () => {
+      const item = DivDecimalsGenerator.generate(0.5);
+      expect(item.meta.skill_id).toBeDefined();
+      expect(item.problem_content.stem).toContain("\\div");
+      expect(item.solution_logic.final_answer_canonical).toBeDefined();
+    });
+
+    it("FracDecConversionGenerator works without RNG argument", () => {
+      const item = FracDecConversionGenerator.generate(0.5);
+      expect(item.meta.skill_id).toBeDefined();
+      expect(item.solution_logic.final_answer_canonical).toBeDefined();
+    });
+
+    it("PowersOf10Generator works without RNG argument", () => {
+      const item = PowersOf10Generator.generate(0.5);
+      expect(item.meta.skill_id).toBeDefined();
+      expect(item.solution_logic.final_answer_canonical).toBeDefined();
+    });
+
+    it("CompareDecimalsGenerator works without RNG argument", () => {
+      const item = CompareDecimalsGenerator.generate(0.5);
+      expect(item.meta.skill_id).toBeDefined();
+      expect([">", "<", "="]).toContain(
+        item.solution_logic.final_answer_canonical
+      );
+    });
+
+    it("DecimalFormsGenerator works without RNG argument", () => {
+      const item = DecimalFormsGenerator.generate(0.5);
+      expect(item.meta.skill_id).toBeDefined();
+      expect(item.solution_logic.final_answer_canonical).toBeDefined();
+    });
+
+    it("RoundDecimalsGenerator works without RNG argument", () => {
+      const item = RoundDecimalsGenerator.generate(0.5);
+      expect(item.meta.skill_id).toBeDefined();
+      expect(item.solution_logic.final_answer_canonical).toBeDefined();
+    });
+
+    it("AddSubDecimalsGenerator works without RNG argument", () => {
+      const item = AddSubDecimalsGenerator.generate(0.5);
+      expect(item.meta.skill_id).toBeDefined();
+      expect(item.solution_logic.final_answer_canonical).toBeDefined();
+    });
+
+    it("MultWholeGenerator works without RNG argument", () => {
+      const item = MultWholeGenerator.generate(0.5);
+      expect(item.meta.skill_id).toBeDefined();
+      expect(item.solution_logic.final_answer_canonical).toBeDefined();
+    });
+
+    it("MultDecimalsGenerator works without RNG argument", () => {
+      const item = MultDecimalsGenerator.generate(0.5);
+      expect(item.meta.skill_id).toBeDefined();
+      expect(item.solution_logic.final_answer_canonical).toBeDefined();
+    });
+
+    it("DivWholeGenerator works without RNG argument", () => {
+      const item = DivWholeGenerator.generate(0.5);
+      expect(item.meta.skill_id).toBeDefined();
+      expect(item.solution_logic.final_answer_canonical).toBeDefined();
     });
   });
 });
