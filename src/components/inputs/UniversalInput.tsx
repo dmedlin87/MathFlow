@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { memo } from 'react';
 import type { MathProblemItem } from '../../domain/types';
 
 interface UniversalInputProps {
@@ -9,7 +9,7 @@ interface UniversalInputProps {
   disabled?: boolean;
 }
 
-export const UniversalInput: React.FC<UniversalInputProps> = ({ item, value, onChange, onSubmit, disabled }) => {
+export const UniversalInput = memo(({ item, value, onChange, onSubmit, disabled }: UniversalInputProps) => {
   const type = item.answer_spec.input_type;
 
   if (type === 'fraction') {
@@ -43,16 +43,23 @@ export const UniversalInput: React.FC<UniversalInputProps> = ({ item, value, onC
       }}
     />
   );
-};
+});
+
+UniversalInput.displayName = 'UniversalInput';
 
 // --- Sub-components ---
 
-const FractionInput: React.FC<{
+const FractionInput = memo(({
+  value,
+  onChange,
+  onSubmit,
+  disabled
+}: {
   value: string;
   onChange: (val: string) => void;
   onSubmit: () => void;
   disabled?: boolean;
-}> = ({ value, onChange, onSubmit, disabled }) => {
+}) => {
   // Parse "num/den" or empty
   const [num, den] = value.includes('/') ? value.split('/') : [value, ''];
 
@@ -96,14 +103,21 @@ const FractionInput: React.FC<{
         />
     </div>
   );
-};
+});
 
-const MultipleChoiceInput: React.FC<{
+FractionInput.displayName = 'FractionInput';
+
+const MultipleChoiceInput = memo(({
+  item,
+  value,
+  onChange,
+  disabled
+}: {
   item: MathProblemItem;
   value: string;
   onChange: (val: string) => void;
   disabled?: boolean;
-}> = ({ item, value, onChange, disabled }) => {
+}) => {
   const choices = item.answer_spec.ui?.choices || [];
 
   if (choices.length === 0) {
@@ -132,4 +146,6 @@ const MultipleChoiceInput: React.FC<{
         ))}
     </div>
   );
-};
+});
+
+MultipleChoiceInput.displayName = 'MultipleChoiceInput';
