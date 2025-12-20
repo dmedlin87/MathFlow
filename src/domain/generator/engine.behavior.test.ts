@@ -24,8 +24,23 @@ describe("Engine Behavior", () => {
       difficulty: 0.5,
       status: "VERIFIED",
       created_at: "",
-      provenance: {} as any,
-      verification_report: {} as any,
+      provenance: {
+        generator_model: "test-gen",
+        critic_model: "test-critic",
+        judge_model: "test-judge",
+        verifier: { type: "none", passed: true },
+        attempt: 1,
+      },
+      verification_report: {
+        rubric_scores: {
+          solvability: 1,
+          ambiguity: 0,
+          procedural_correctness: 1,
+          pedagogical_alignment: 1,
+        },
+        underspecified: false,
+        issues: [],
+      },
     },
     problem_content: { format: "text", stem: "test" },
     solution_logic: {
