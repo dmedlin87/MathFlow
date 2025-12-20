@@ -298,6 +298,20 @@ describe('UniversalInput - Multiple Choice Input', () => {
     expect(noBtn.className).toContain('bg-white');
   });
 
+  it('sets aria-pressed correctly for accessibility', () => {
+    const mockItem = createMockItem('multiple_choice', { choices: ['One', 'Two'] });
+
+    render(
+      <UniversalInput item={mockItem} value="One" onChange={vi.fn()} onSubmit={vi.fn()} />
+    );
+
+    const btnOne = screen.getByRole('button', { name: /One$/ });
+    const btnTwo = screen.getByRole('button', { name: /Two$/ });
+
+    expect(btnOne).toHaveAttribute('aria-pressed', 'true');
+    expect(btnTwo).toHaveAttribute('aria-pressed', 'false');
+  });
+
   it('respects disabled prop on choice buttons', () => {
     const mockItem = createMockItem('multiple_choice', { choices: ['A', 'B'] });
 

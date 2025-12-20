@@ -118,7 +118,8 @@ const MultipleChoiceInput: React.FC<{
                 type="button"
                 onClick={() => onChange(choice)}
                 disabled={disabled}
-                className={`p-4 text-lg font-medium rounded-xl border-2 transition-all text-left ${
+                aria-pressed={value === choice}
+                className={`p-4 text-lg font-medium rounded-xl border-2 transition-all text-left focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
                     value === choice
                         ? 'border-blue-600 bg-blue-50 text-blue-900 shadow-sm'
                         : 'border-gray-200 bg-white text-gray-700 hover:border-gray-300 hover:bg-gray-50'
