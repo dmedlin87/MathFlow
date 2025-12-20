@@ -361,3 +361,58 @@ describe("Grade 5 NF Extra Coverage", () => {
     });
   });
 });
+
+describe("Grade 5 NF Smoke Tests (Default RNG)", () => {
+  it("runs AddSubUnlikeGenerator without provided rng", () => {
+    for (let i = 0; i < 5; i++) AddSubUnlikeGenerator.generate(0.5);
+  });
+  it("runs FracDivGenerator without provided rng", () => {
+    for (let i = 0; i < 5; i++) FracDivGenerator.generate(0.5);
+  });
+  it("runs ScalingGenerator without provided rng", () => {
+    for (let i = 0; i < 5; i++) ScalingGenerator.generate(0.5);
+  });
+  it("runs MultFracGenerator without provided rng", () => {
+    for (let i = 0; i < 5; i++) MultFracGenerator.generate(0.5);
+  });
+  it("runs DivFracGenerator without provided rng", () => {
+    for (let i = 0; i < 5; i++) DivFracGenerator.generate(0.5);
+  });
+  it("runs FractionWordProblemsGenerator without provided rng", () => {
+    for (let i = 0; i < 5; i++) FractionWordProblemsGenerator.generate(0.5);
+  });
+});
+
+describe("Grade 5 NF Branch Coverage", () => {
+  describe("AddSubUnlikeGenerator", () => {
+    it("handles d2 regeneration loop (d1===d2 or multiple)", () => {
+      const rng = createMockRng([
+        0.8, // Sub
+        0.1, // d1=2
+        0.0, // d2=2 (Collision)
+        0.0, // d2=2 (Collision)
+        0.2, // d2=3 (OK)
+        0.1, // n1
+        0.1, // n2
+      ]);
+      // Force entering the loop requires difficulty >= 0.5
+      const item = AddSubUnlikeGenerator.generate(0.8, rng);
+      expect(item).toBeDefined();
+    });
+
+    it("swaps numerators if n1/d1 < n2/d2 in subtraction", () => {
+      // Subtraction. d1=2, d2=3. n1=1, n2=2.
+      // 1/2 (0.5) < 2/3 (0.66). Swap needed.
+      // Result 2/3 - 1/2 = 4/6 - 3/6 = 1/6.
+      const rng = createMockRng([
+        0.8, // Sub
+        0.1, // d1=2
+        0.2, // d2=3
+        0.1, // n1=1
+        0.9, // n2=2
+      ]);
+      const item = AddSubUnlikeGenerator.generate(0.8, rng);
+      expect(item.solution_logic.final_answer_canonical).toBe("1/6");
+    });
+  });
+});

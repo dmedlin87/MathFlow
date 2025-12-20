@@ -170,3 +170,14 @@ describe("OrderOpsGenerator (Deterministic)", () => {
     expect(item.solution_logic.final_answer_canonical).not.toContain("(3 + 4)");
   });
 });
+
+describe("OrderOpsGenerator (Default RNG Fallback)", () => {
+  it("runs without provided rng (coverage for Math.random branch)", () => {
+    // Run multiple times to ensure no crash and potential branch coverage of internal random logic
+    for (let i = 0; i < 10; i++) {
+      const item = OrderOpsGenerator.generate(0.5);
+      expect(item.meta.skill_id).toBe(SKILL_5_OA_ORDER_OPS.id);
+      expect(item.problem_content.stem).toBeTruthy();
+    }
+  });
+});

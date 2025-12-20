@@ -97,6 +97,38 @@ describe('MathTutor UX', () => {
     await waitFor(() => expect(screen.getByText('Try Again')).toBeInTheDocument());
   });
 
+  it('handles diagnosis failure gracefully', async () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {});
+    const errorService = {
+      ...mockLearnerService,
+      diagnose: vi.fn().mockRejectedValue(new Error('Diagnosis service failed'))
+    };
+
+    render(
+      <MathTutor
+        learnerState={mockLearnerState}
+        setLearnerState={() => {}}
+        learnerService={errorService as unknown as import('../services/LearnerService').ILearnerService}
+      />
+    );
+
+    await waitFor(() => expect(screen.getAllByText('1').length).toBeGreaterThan(0));
+
+    const input = screen.getByPlaceholderText('Enter 2');
+    fireEvent.change(input, { target: { value: '999' } });
+    
+    const submitBtn = screen.getByText('Check Answer');
+    fireEvent.click(submitBtn);
+
+    // Should log error
+    await waitFor(() => expect(consoleSpy).toHaveBeenCalledWith('Diagnosis failed', expect.any(Error)));
+    
+    // Should still set attempts and show feedback (incorrect)
+    expect(screen.getByText(/Not quite/)).toBeInTheDocument();
+
+    consoleSpy.mockRestore();
+  });
+
   it('toggles dev mode and auto-solves', async () => {
     render(
         <MathTutor

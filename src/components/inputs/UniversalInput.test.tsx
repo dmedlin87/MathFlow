@@ -92,6 +92,22 @@ describe('UniversalInput - Text Input', () => {
     expect(onSubmit).toHaveBeenCalledTimes(1);
   });
 
+  it('does NOT call onSubmit when other keys are pressed', () => {
+    const mockItem = createMockItem('text');
+    const onChange = vi.fn();
+    const onSubmit = vi.fn();
+
+    render(
+      <UniversalInput item={mockItem} value="test" onChange={onChange} onSubmit={onSubmit} />
+    );
+
+    const input = screen.getByRole('textbox');
+    fireEvent.keyDown(input, { key: 'Escape' });
+    fireEvent.keyDown(input, { key: 'a' });
+
+    expect(onSubmit).not.toHaveBeenCalled();
+  });
+
   it('respects disabled prop', () => {
     const mockItem = createMockItem('text');
     const onChange = vi.fn();
@@ -226,6 +242,21 @@ describe('UniversalInput - Fraction Input', () => {
     fireEvent.keyDown(denInput, { key: 'Enter' });
 
     expect(onSubmit).toHaveBeenCalledTimes(1);
+  });
+
+  it('does NOT call onSubmit on non-Enter key in denominator field', () => {
+    const mockItem = createMockItem('fraction');
+    const onChange = vi.fn();
+    const onSubmit = vi.fn();
+
+    render(
+      <UniversalInput item={mockItem} value="1/2" onChange={onChange} onSubmit={onSubmit} />
+    );
+
+    const denInput = screen.getByLabelText('Denominator');
+    fireEvent.keyDown(denInput, { key: 'Escape' });
+    
+    expect(onSubmit).not.toHaveBeenCalled();
   });
 
   it('respects disabled prop on fraction inputs', () => {

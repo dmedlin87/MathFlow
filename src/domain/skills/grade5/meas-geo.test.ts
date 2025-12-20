@@ -166,3 +166,47 @@ describe("Grade 5 GM Domain (Deterministic)", () => {
     });
   });
 });
+
+describe("MeasGeoGenerator (Default RNG Fallback)", () => {
+  it("runs VolumeCubesGenerator without provided rng", () => {
+    for (let i = 0; i < 5; i++) {
+      const item = VolumeCubesGenerator.generate(0.5);
+      expect(item.problem_content.stem).toBeTruthy();
+    }
+  });
+
+  it("runs VolumeFormulaGenerator without provided rng", () => {
+    for (let i = 0; i < 5; i++) {
+      const item = VolumeFormulaGenerator.generate(0.5);
+      expect(item.problem_content.stem).toBeTruthy();
+    }
+  });
+
+  it("runs CoordPlaneGenerator without provided rng", () => {
+    for (let i = 0; i < 5; i++) {
+      const item = CoordPlaneGenerator.generate(0.5);
+      expect(item.problem_content.stem).toBeTruthy();
+    }
+  });
+
+  it("runs ClassFiguresHierarchyGenerator without provided rng", () => {
+    for (let i = 0; i < 5; i++) {
+      const item = ClassFiguresHierarchyGenerator.generate(0.5);
+      expect(item.problem_content.stem).toBeTruthy();
+    }
+  });
+
+  it("runs UnitConv5Generator without provided rng", () => {
+    for (let i = 0; i < 5; i++) {
+      const item = UnitConv5Generator.generate(0.5);
+      expect(item.problem_content.stem).toBeTruthy();
+    }
+  });
+
+  it("runs LinePlotGenerator without provided rng", () => {
+    for (let i = 0; i < 5; i++) {
+      const item = LinePlotGenerator.generate(0.5);
+      expect(item.problem_content.stem).toBeTruthy();
+    }
+  });
+});

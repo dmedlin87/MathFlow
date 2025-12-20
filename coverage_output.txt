@@ -1,40 +1,57 @@
-npm warn invalid config include="src/domain/skills/grade4/" set in command line options
-npm warn invalid config Must be one or more of: prod, dev, optional, peer
-
-> mathflow@0.0.0 test:coverage
-> vitest run --coverage src/domain/skills/grade4/
-
 
 [1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/dmedl/Projects/MathFlow[39m
       [2mCoverage enabled with [22m[33mv8[39m
 
- [32mΓ£ô[39m src/domain/skills/grade4/decimals.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 5[2mms[22m[39m
- [32mΓ£ô[39m src/domain/skills/grade4/oa.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 6[2mms[22m[39m
- [32mΓ£ô[39m src/domain/skills/grade4/fractions.test.ts [2m([22m[2m31 tests[22m[2m)[22m[32m 10[2mms[22m[39m
- [32mΓ£ô[39m src/domain/skills/grade4/data.test.ts [2m([22m[2m18 tests[22m[2m)[22m[32m 7[2mms[22m[39m
- [32mΓ£ô[39m src/domain/skills/grade4/measurement.test.ts [2m([22m[2m20 tests[22m[2m)[22m[32m 7[2mms[22m[39m
- [32mΓ£ô[39m src/domain/skills/grade4/geometry.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 7[2mms[22m[39m
- [32mΓ£ô[39m src/domain/skills/grade4/nbt.test.ts [2m([22m[2m25 tests[22m[2m)[22m[32m 23[2mms[22m[39m
+(node:29844) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:54484) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:71692) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:60524) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:35040) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:58920) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:88024) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+(node:116212) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+(Use `node --trace-deprecation ...` to show where the warning was created)
+ [32mΓ£ô[39m src/components/inputs/UniversalInput.test.tsx [2m([22m[2m19 tests[22m[2m)[22m[32m 98[2mms[22m[39m
+ [32mΓ£ô[39m src/components/FractionVisualizer.test.tsx [2m([22m[2m6 tests[22m[2m)[22m[32m 36[2mms[22m[39m
+ [32mΓ£ô[39m src/components/visualizers/visualizers.test.tsx [2m([22m[2m12 tests[22m[2m)[22m[32m 57[2mms[22m[39m
+ [32mΓ£ô[39m src/components/MathRenderer.test.tsx [2m([22m[2m15 tests[22m[2m)[22m[32m 75[2mms[22m[39m
+ [32mΓ£ô[39m src/components/SessionSummary.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[32m 44[2mms[22m[39m
+ [32mΓ£ô[39m src/components/MathTutor.coverage.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[32m 77[2mms[22m[39m
+ [32mΓ£ô[39m src/components/InteractiveSteps.test.tsx [2m([22m[2m6 tests[22m[2m)[22m[33m 514[2mms[22m[39m
+ [32mΓ£ô[39m src/components/MathTutor.test.tsx [2m([22m[2m17 tests[22m[2m)[22m[33m 2145[2mms[22m[39m
+     [33m[2mΓ£ô[22m[39m ends session after 5 problems and shows SessionSummary [33m 1525[2mms[22m[39m
 
-[2m Test Files [22m [1m[32m7 passed[39m[22m[90m (7)[39m
-[2m      Tests [22m [1m[32m128 passed[39m[22m[90m (128)[39m
-[2m   Start at [22m 12:31:40
-[2m   Duration [22m 594ms[2m (transform 449ms, setup 1.03s, import 586ms, tests 65ms, environment 1ms)[22m
+[2m Test Files [22m [1m[32m8 passed[39m[22m[90m (8)[39m
+[2m      Tests [22m [1m[32m83 passed[39m[22m[90m (83)[39m
+[2m   Start at [22m 17:13:17
+[2m   Duration [22m 3.92s[2m (transform 899ms, setup 1.22s, import 3.05s, tests 3.05s, environment 5.38s)[22m
 
 [34m % [39m[2mCoverage report from [22m[33mv8[39m
 -------------------|---------|----------|---------|---------|-------------------
 File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 -------------------|---------|----------|---------|---------|-------------------
-All files          |   93.88 |     84.9 |   94.64 |   95.01 |                   
- domain            |   27.77 |    24.13 |    62.5 |   31.25 |                   
-  math-utils.ts    |   13.33 |    18.51 |      50 |   15.38 | 8-12,59-99        
-  test-utils.ts    |     100 |      100 |     100 |     100 |                   
- .../skills/grade4 |   98.06 |       91 |     100 |   98.86 |                   
-  data.ts          |   95.65 |    86.84 |     100 |   97.53 | 281-287           
-  decimals.ts      |     100 |     97.5 |     100 |     100 | 154               
-  fractions.ts     |   98.29 |    97.72 |     100 |   98.24 | 703-704           
-  geometry.ts      |   96.15 |       80 |     100 |     100 | 27,34-61,75       
-  measurement.ts   |     100 |    96.87 |     100 |     100 | 241               
-  nbt.ts           |   99.31 |    90.14 |     100 |     100 | ...03-404,521,622 
-  oa.ts            |   96.59 |    84.09 |     100 |   97.56 | 192-193           
+All files          |   91.57 |    88.16 |   92.64 |   93.05 |                   
+ components        |   97.82 |    96.21 |     100 |    99.4 |                   
+  ...rControls.tsx |     100 |      100 |     100 |     100 |                   
+  ...isualizer.tsx |     100 |      100 |     100 |     100 |                   
+  ...tiveSteps.tsx |     100 |      100 |     100 |     100 |                   
+  MathRenderer.tsx |     100 |      100 |     100 |     100 |                   
+  MathTutor.tsx    |   95.95 |    93.51 |     100 |    98.9 | 97                
+  ...onSummary.tsx |     100 |      100 |     100 |     100 |                   
+ components/inputs |     100 |     90.9 |     100 |     100 |                   
+  ...rsalInput.tsx |     100 |     90.9 |     100 |     100 | 42,94             
+ ...ts/visualizers |     100 |      100 |     100 |     100 |                   
+  Axis.tsx         |     100 |      100 |     100 |     100 |                   
+  BoxPlot.tsx      |     100 |      100 |     100 |     100 |                   
+  DotPlot.tsx      |     100 |      100 |     100 |     100 |                   
+  ...isualizer.tsx |     100 |      100 |     100 |     100 |                   
+ domain            |   33.33 |    25.92 |   16.66 |   34.61 |                   
+  math-utils.ts    |   33.33 |    25.92 |   16.66 |   34.61 | ...28,69-74,83-94 
 -------------------|---------|----------|---------|---------|-------------------
