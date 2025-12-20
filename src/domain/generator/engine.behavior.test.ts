@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { Engine } from "./engine";
-import type { Generator, MathProblemItem } from "../types";
+import type { Generator, MathProblemItem, Provenance, VerificationReport } from "../types";
 
 const mockFetch = vi.fn();
 
@@ -24,8 +24,8 @@ describe("Engine Behavior", () => {
       difficulty: 0.5,
       status: "VERIFIED",
       created_at: "",
-      provenance: {} as any,
-      verification_report: {} as any,
+      provenance: {} as Provenance,
+      verification_report: {} as VerificationReport,
     },
     problem_content: { format: "text", stem: "test" },
     solution_logic: {

@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from "vitest";
 import { recommendNextItem, updateLearnerState, createInitialState } from "./state";
-import type { LearnerState, Skill, Attempt } from "../types";
+import type { Skill, Attempt } from "../types";
 import { engine } from "../generator/engine";
 
 // Mock the engine to prevent actual generation calls
@@ -52,7 +52,7 @@ describe("LearnerState Behavior", () => {
 
       // When: RNG rolls 0.1 (favorable for review)
       const mockRng = () => 0.1;
-      const result = await recommendNextItem(state, mockRng, allSkills);
+      await recommendNextItem(state, mockRng, allSkills);
 
       // Then: It recommends the review skill
       expect(engine.generate).toHaveBeenCalledWith("review_skill", 0.9);
@@ -74,7 +74,7 @@ describe("LearnerState Behavior", () => {
 
        // When: RNG rolls 0.5 (NOT favorable for review)
        const mockRng = () => 0.5;
-       const result = await recommendNextItem(state, mockRng, allSkills);
+       await recommendNextItem(state, mockRng, allSkills);
 
        // Then: It recommends the NEW skill (Learning Queue)
        // Note: "new_skill" has mastery 0.1, so it is in learning queue
@@ -98,7 +98,7 @@ describe("LearnerState Behavior", () => {
       // Review: None
       // Learning Queue: A (ok), B (BLOCKED by A < 0.7)
       // So it MUST pick A
-      const result = await recommendNextItem(state, () => 0.9, allSkills);
+      await recommendNextItem(state, () => 0.9, allSkills);
 
       // Then: It recommends A
       expect(engine.generate).toHaveBeenCalledWith("A", 0.1);
