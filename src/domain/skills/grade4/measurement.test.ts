@@ -59,6 +59,11 @@ describe("grade4 measurement generator", () => {
         2 * (l + w)
       );
     });
+
+    it("uses Math.random when rng is not provided", () => {
+      const item = AreaPerimeterGenerator.generate(0.5);
+      expect(item.meta.skill_id).toBe(SKILL_AREA_PERIMETER.id);
+    });
   });
 
   describe("UnitConversionGenerator", () => {
@@ -113,6 +118,11 @@ describe("grade4 measurement generator", () => {
       expect(item.solution_logic.final_answer_canonical).toMatch(/^\d+$/); // Should be integer degrees
     });
 
+    it("uses Math.random when rng is not provided", () => {
+      const item = AngleMeasureGenerator.generate(0.5);
+      expect(item.meta.skill_id).toBe(SKILL_ANGLES_MEASURE.id);
+    });
+
     it("generates correct skill ID", () => {
       const rng = createMockRng([0.1, 0.5]);
       const item = AngleMeasureGenerator.generate(0.5, rng);
@@ -149,6 +159,27 @@ describe("grade4 measurement generator", () => {
       ).toBeCloseTo(paid - total);
     });
 
+    it("handles paid === total edge case", () => {
+      // Mocking prices and mode to reach line 419: paidAmt = paid === total ? paid + 5 : paid;
+      // price1_int: randomInt(1, 15, 0.1) -> 2
+      // price1_cents: randomInt(0, 99, 0) -> 0
+      // price2_int: randomInt(1, 10, 0.2) -> 3
+      // price2_cents: randomInt(0, 99, 0) -> 0
+      // total = 5.00
+      // mode -> CHANGE (0.4)
+      const rng = createMockRng([0.1, 0, 0.2, 0, 0.4]);
+      const item = MoneyWordProblemGenerator.generate(0.5, rng);
+      const { total, paid } = item.problem_content.variables as any;
+      expect(total).toBe(5);
+      expect(paid).toBe(10); // Should have added 5 to paid
+      expect(parseFloat(item.solution_logic.final_answer_canonical)).toBe(5);
+    });
+
+    it("uses Math.random when rng is not provided", () => {
+      const item = MoneyWordProblemGenerator.generate(0.5);
+      expect(item.meta.skill_id).toBe(SKILL_MONEY_WORD_PROBLEMS.id);
+    });
+
     it("generates correct skill ID", () => {
       const rng = createMockRng([0.1]);
       const item = MoneyWordProblemGenerator.generate(0.5, rng);
@@ -171,6 +202,30 @@ describe("grade4 measurement generator", () => {
       const rng = createMockRng([0.5, 0.5]);
       const item = ProtractorGenerator.generate(0.5, rng);
       expect(item.meta.skill_id).toBe(SKILL_PROTRACTOR_MEASURE.id);
+    });
+
+    it("generates problem for low difficulty (fixed start angle)", () => {
+      const rng = createMockRng([0.5]); // angleSize
+      const item = ProtractorGenerator.generate(0.1, rng);
+      const { start } = item.problem_content.variables as any;
+      expect(start).toBe(0);
+    });
+
+    it("shows acute hint for angle < 90", () => {
+      // angleSize = randomInt(20, 160)
+      // 0.1 -> ~34
+      const rng = createMockRng([0.5, 0.1]);
+      const item = ProtractorGenerator.generate(0.5, rng);
+      const misc = item.misconceptions.find((m) => m.id === "misc_wrong_scale");
+      expect(misc?.hint_ladder[0]).toContain("Acute");
+    });
+
+    it("shows obtuse hint for angle >= 90", () => {
+      // 0.8 -> ~132
+      const rng = createMockRng([0.5, 0.8]);
+      const item = ProtractorGenerator.generate(0.5, rng);
+      const misc = item.misconceptions.find((m) => m.id === "misc_wrong_scale");
+      expect(misc?.hint_ladder[0]).toContain("Obtuse");
     });
   });
 });

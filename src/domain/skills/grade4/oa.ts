@@ -29,6 +29,150 @@ export const SKILL_FACTORS_MULTIPLES: Skill = {
   bktParams: { learningRate: 0.15, slip: 0.1, guess: 0.1 },
 };
 
+const FactorsMultiplesModeA = (
+  difficulty: number,
+  rng?: () => number
+): MathProblemItem => {
+  // Mode A: Find factors of X
+  const candidates = [6, 8, 10, 12, 14, 15, 16, 18, 20, 24, 30, 36, 40];
+  const number = candidates[randomInt(0, candidates.length - 1, rng)];
+  const factors = getFactors(number);
+
+  return {
+    meta: createProblemMeta(SKILL_FACTORS_MULTIPLES.id, difficulty),
+    problem_content: {
+      stem: `List all factors of **${number}**.
+Enter them separated by commas (e.g. 1, 2, 4).`,
+      format: "text",
+      variables: { number },
+    },
+    answer_spec: {
+      answer_mode: "final_only",
+      input_type: "set", // ideal: set of numbers
+    },
+    solution_logic: {
+      final_answer_canonical: factors.join(", "),
+      final_answer_type: "set",
+      steps: [
+        {
+          step_index: 1,
+          explanation: `Find pairs of numbers that multiply to ${number}.`,
+          math: factors
+            .map((f) => f + (number / f >= f ? ` \\times ${number / f}` : ""))
+            .filter((s) => s.includes("times"))
+            .join(", "),
+          answer: factors.join(", "),
+        },
+      ],
+    },
+    misconceptions: [
+      {
+        id: "misc_multiples_mixup",
+        error_tag: "confuse_factors_multiples",
+        trigger: { kind: "regex", value: `${number * 2}.*` }, // If they start listing multiples
+        hint_ladder: [
+          `Factors are numbers that divide ${number} evenly. Multiples are ${number} times something.`,
+        ],
+      },
+    ],
+  };
+};
+
+const FactorsMultiplesModeB = (
+  difficulty: number,
+  rng?: () => number
+): MathProblemItem => {
+  // Mode B: Prime or Composite?
+  const isPrimeTarget = (rng ?? Math.random)() > 0.5;
+  let number = 0;
+  if (isPrimeTarget) {
+    const primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37];
+    number = primes[randomInt(0, primes.length - 1, rng)];
+  } else {
+    const composites = [4, 6, 8, 9, 10, 12, 14, 15, 21, 25, 27];
+    number = composites[randomInt(0, composites.length - 1, rng)];
+  }
+
+  const ans = isPrimeTarget ? "Prime" : "Composite";
+
+  return {
+    meta: createProblemMeta(SKILL_FACTORS_MULTIPLES.id, difficulty),
+    problem_content: {
+      stem: `Is the number **${number}** Prime or Composite?`,
+      format: "text",
+      variables: { number },
+    },
+    answer_spec: {
+      answer_mode: "final_only",
+      input_type: "multiple_choice",
+      ui: {
+        choices: ["Prime", "Composite"],
+      },
+    },
+    solution_logic: {
+      final_answer_canonical: ans,
+      final_answer_type: "multiple_choice",
+      steps: [
+        {
+          step_index: 1,
+          explanation: `Check if ${number} has any factors other than 1 and itself.`,
+          math: isPrimeTarget
+            ? `${number} has distinct factors: 1, ${number}.`
+            : `It has factors: ${getFactors(number).join(", ")}`,
+          answer: ans,
+        },
+      ],
+    },
+    misconceptions: [
+      {
+        id: "misc_prime_odd",
+        error_tag: "prime_is_odd",
+        trigger: { kind: "exact_answer", value: "Prime" }, // If they say Prime for 9, 15 etc
+        hint_ladder: [
+          "Not all odd numbers are prime.",
+          `Can you divide ${number} by 3 or 5?`,
+        ],
+      },
+    ],
+  };
+};
+
+const FactorsMultiplesModeC = (
+  difficulty: number,
+  rng?: () => number
+): MathProblemItem => {
+  // Mode C: Multiples
+  const base = randomInt(2, 9, rng);
+  const targetIndex = randomInt(3, 8, rng); // e.g. 4th multiple
+  const answer = base * targetIndex;
+
+  return {
+    meta: createProblemMeta(SKILL_FACTORS_MULTIPLES.id, difficulty),
+    problem_content: {
+      stem: `What is the ${targetIndex}th multiple of **${base}**?`,
+      format: "text",
+      variables: { base, index: targetIndex },
+    },
+    answer_spec: {
+      answer_mode: "final_only",
+      input_type: "integer",
+    },
+    solution_logic: {
+      final_answer_canonical: String(answer),
+      final_answer_type: "numeric",
+      steps: [
+        {
+          step_index: 1,
+          explanation: `Multiply ${base} by ${targetIndex}.`,
+          math: `${base} \\times ${targetIndex} = ${answer}`,
+          answer: String(answer),
+        },
+      ],
+    },
+    misconceptions: [],
+  };
+};
+
 export const FactorsMultiplesGenerator: Generator = {
   templateId: "T_FACTORS",
   skillId: SKILL_FACTORS_MULTIPLES.id,
@@ -40,139 +184,15 @@ export const FactorsMultiplesGenerator: Generator = {
 
     const mode = (rng ?? Math.random)();
 
-    if (difficulty < 0.3 || mode < 0.33) {
-      // Mode A: Find factors of X
-      // Target distinct composite numbers to avoid trivial 1,X
-      const candidates = [6, 8, 10, 12, 14, 15, 16, 18, 20, 24, 30, 36, 40];
-      const number = candidates[randomInt(0, candidates.length - 1, rng)];
-      const factors = getFactors(number);
-
-      return {
-        meta: createProblemMeta(SKILL_FACTORS_MULTIPLES.id, difficulty),
-        problem_content: {
-          stem: `List all factors of **${number}**.
-Enter them separated by commas (e.g. 1, 2, 4).`,
-          format: "text",
-          variables: { number },
-        },
-        answer_spec: {
-          answer_mode: "final_only",
-          input_type: "set", // ideal: set of numbers
-        },
-        solution_logic: {
-          final_answer_canonical: factors.join(", "),
-          final_answer_type: "set",
-          steps: [
-            {
-              step_index: 1,
-              explanation: `Find pairs of numbers that multiply to ${number}.`,
-              math: factors
-                .map(
-                  (f) => f + (number / f >= f ? ` \\times ${number / f}` : "")
-                )
-                .filter((s) => s.includes("times"))
-                .join(", "),
-              answer: factors.join(", "),
-            },
-          ],
-        },
-        misconceptions: [
-          {
-            id: "misc_multiples_mixup",
-            error_tag: "confuse_factors_multiples",
-            trigger: { kind: "regex", value: `${number * 2}.*` }, // If they start listing multiples
-            hint_ladder: [
-              `Factors are numbers that divide ${number} evenly. Multiples are ${number} times something.`,
-            ],
-          },
-        ],
-      };
-    } else if (difficulty < 0.6 || mode < 0.66) {
-      // Mode B: Prime or Composite?
-      // Mix of primes and composites
-      const isPrimeTarget = (rng ?? Math.random)() > 0.5;
-      let number = 0;
-      if (isPrimeTarget) {
-        const primes = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37];
-        number = primes[randomInt(0, primes.length - 1, rng)];
-      } else {
-        const composites = [4, 6, 8, 9, 10, 12, 14, 15, 21, 25, 27];
-        number = composites[randomInt(0, composites.length - 1, rng)];
-      }
-
-      const ans = isPrimeTarget ? "Prime" : "Composite";
-
-      return {
-        meta: createProblemMeta(SKILL_FACTORS_MULTIPLES.id, difficulty),
-        problem_content: {
-          stem: `Is the number **${number}** Prime or Composite?`,
-          format: "text",
-          variables: { number },
-        },
-        answer_spec: {
-          answer_mode: "final_only",
-          input_type: "multiple_choice",
-          ui: {
-            choices: ["Prime", "Composite"],
-          },
-        },
-        solution_logic: {
-          final_answer_canonical: ans,
-          final_answer_type: "multiple_choice",
-          steps: [
-            {
-              step_index: 1,
-              explanation: `Check if ${number} has any factors other than 1 and itself.`,
-              math: isPrimeTarget
-                ? `${number} has distinct factors: 1, ${number}.`
-                : `It has factors: ${getFactors(number).join(", ")}`,
-              answer: ans,
-            },
-          ],
-        },
-        misconceptions: [
-          {
-            id: "misc_prime_odd",
-            error_tag: "prime_is_odd",
-            trigger: { kind: "exact_answer", value: "Prime" }, // If they say Prime for 9, 15 etc
-            hint_ladder: [
-              "Not all odd numbers are prime.",
-              `Can you divide ${number} by 3 or 5?`,
-            ],
-          },
-        ],
-      };
+    if (difficulty < 0.3) {
+      if (mode < 0.5)
+        return FactorsMultiplesModeA(difficulty, rng); // List Factors
+      else return FactorsMultiplesModeB(difficulty, rng); // Prime/Composite
+    } else if (difficulty < 0.6) {
+      if (mode < 0.5) return FactorsMultiplesModeB(difficulty, rng);
+      else return FactorsMultiplesModeC(difficulty, rng); // Multiples
     } else {
-      // Mode C: Multiples
-      const base = randomInt(2, 9, rng);
-      const targetIndex = randomInt(3, 8, rng); // e.g. 4th multiple
-      const answer = base * targetIndex;
-
-      return {
-        meta: createProblemMeta(SKILL_FACTORS_MULTIPLES.id, difficulty),
-        problem_content: {
-          stem: `What is the ${targetIndex}th multiple of **${base}**?`,
-          format: "text",
-          variables: { base, index: targetIndex },
-        },
-        answer_spec: {
-          answer_mode: "final_only",
-          input_type: "integer",
-        },
-        solution_logic: {
-          final_answer_canonical: String(answer),
-          final_answer_type: "numeric",
-          steps: [
-            {
-              step_index: 1,
-              explanation: `Multiply ${base} by ${targetIndex}.`,
-              math: `${base} \\times ${targetIndex} = ${answer}`,
-              answer: String(answer),
-            },
-          ],
-        },
-        misconceptions: [],
-      };
+      return FactorsMultiplesModeC(difficulty, rng);
     }
   },
 };

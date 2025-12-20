@@ -1,0 +1,90 @@
+npm warn invalid config include="src/domain/skills/grade4/oa.ts" set in command line options
+npm warn invalid config Must be one or more of: prod, dev, optional, peer
+
+> mathflow@0.0.0 test
+> vitest src/domain/skills/grade4/oa.test.ts
+
+
+[1m[44m DEV [49m[22m [34mv4.0.15 [39m[90mC:/Users/dmedl/Projects/MathFlow[39m
+
+ [32mΓ£ô[39m src/domain/skills/grade4/oa.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m11 passed[39m[22m[90m (11)[39m
+[2m   Start at [22m 12:24:20
+[2m   Duration [22m 638ms[2m (transform 84ms, setup 160ms, import 61ms, tests 6ms, environment 0ms)[22m
+
+[1m[42m PASS [49m[22m [32mWaiting for file changes...[39m
+       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m
+c[3J[1m[44m RERUN [49m[22m [34m[2msrc/domain/skills/grade4/oa.test.ts [22m[34mx1 [34m[39m
+       [2m Filename pattern: [22m[34msrc/domain/skills/grade4/oa.test.ts[39m
+
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Failed Suites 1 ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+
+ FAIL  src/domain/skills/grade4/oa.test.ts [ src/domain/skills/grade4/oa.test.ts ]
+Error: Transform failed with 1 error:
+C:/Users/dmedl/Projects/MathFlow/src/domain/skills/grade4/oa.test.ts:99:12: ERROR: The symbol "rng" has already been declared
+  Plugin: vite:esbuild
+  File: C:/Users/dmedl/Projects/MathFlow/src/domain/skills/grade4/oa.test.ts:99:12
+  
+  The symbol "rng" has already been declared
+  97 |        // isPrimeTarget = 0.4 -> false (Composite)
+  98 |        // composites[floor(0.1 * 11)] = 6
+  99 |        const rng = createMockRng([0.5, 0.4, 0.1]);
+     |              ^
+  100|        const itemB = FactorsMultiplesGenerator.generate(0.1, rng);
+  101|        const miscB = itemB.misconceptions.find(
+  
+ Γ¥» failureErrorWithLog node_modules/esbuild/lib/main.js:1467:15
+ Γ¥» node_modules/esbuild/lib/main.js:736:50
+ Γ¥» responseCallbacks.<computed> node_modules/esbuild/lib/main.js:603:9
+ Γ¥» handleIncomingPacket node_modules/esbuild/lib/main.js:658:12
+ Γ¥» Socket.readFromStdout node_modules/esbuild/lib/main.js:581:7
+
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/1]ΓÄ»
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [2mno tests[22m
+[2m   Start at [22m 12:28:12
+[2m   Duration [22m 303ms
+
+[1m[41m FAIL [49m[22m [31mTests failed. Watching for file changes...[39m
+       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m
+c[3J[1m[44m RERUN [49m[22m [34m[2msrc/domain/skills/grade4/oa.test.ts [22m[34mx2 [34m[39m
+       [2m Filename pattern: [22m[34msrc/domain/skills/grade4/oa.test.ts[39m
+
+ [32mΓ£ô[39m src/domain/skills/grade4/oa.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 6[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m11 passed[39m[22m[90m (11)[39m
+[2m   Start at [22m 12:28:18
+[2m   Duration [22m 350ms
+
+[1m[42m PASS [49m[22m [32mWaiting for file changes...[39m
+       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m
+c[3J[1m[44m RERUN [49m[22m [34m[2msrc/domain/skills/grade4/oa.test.ts [22m[34mx3 [34m[39m
+       [2m Filename pattern: [22m[34msrc/domain/skills/grade4/oa.test.ts[39m
+
+ [32mΓ£ô[39m src/domain/skills/grade4/oa.test.ts [2m([22m[2m17 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m17 passed[39m[22m[90m (17)[39m
+[2m   Start at [22m 12:37:38
+[2m   Duration [22m 303ms
+
+[1m[42m PASS [49m[22m [32mWaiting for file changes...[39m
+       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m
+c[3J[1m[44m RERUN [49m[22m [34m[2mpackage.json [22m[34mx4 [34m[39m
+       [2m Filename pattern: [22m[34msrc/domain/skills/grade4/oa.test.ts[39m
+
+ [32mΓ£ô[39m src/domain/skills/grade4/oa.test.ts [2m([22m[2m17 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m17 passed[39m[22m[90m (17)[39m
+[2m   Start at [22m 12:42:48
+[2m   Duration [22m 511ms
+
+[1m[42m PASS [49m[22m [32mWaiting for file changes...[39m
+       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m

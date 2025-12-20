@@ -33,6 +33,16 @@ describe("grade4 geometry generator", () => {
       expect(item.solution_logic.final_answer_canonical).toBe("Obtuse");
     });
 
+    it("classifies RIGHT angle", () => {
+      // 1. Type -> 0.6 (ANGLE)
+      // 2. Deg -> 0.497 (floor(0.497 * 161) + 10 = 80 + 10 = 90)
+      const rng = createMockRng([0.6, 0.497]);
+      const item = GeometryGenerator.generate(0.5, rng);
+      expect(item.solution_logic.final_answer_canonical).toBe("Right");
+      expect(item.problem_content.variables?.deg).toBe(90);
+      expect(item.solution_logic.steps[0].math).toContain("equal to");
+    });
+
     it("identifies PARALLEL lines", () => {
       // 1. Type -> 0.4 (LINE)
       // 2. isParallel (>0.5) -> 0.6 (True)
@@ -116,10 +126,48 @@ describe("grade4 geometry generator", () => {
       const item1 = SymmetryGenerator.generate(0.5, rng1);
       expect(item1.solution_logic.final_answer_canonical).toBe("4");
 
+      // Rectangle (index 1)
+      const rngRect = createMockRng([0.2]);
+      const itemRect = SymmetryGenerator.generate(0.5, rngRect);
+      expect(itemRect.solution_logic.final_answer_canonical).toBe("2");
+
+      // Equilateral Triangle (index 2)
+      const rngEqui = createMockRng([0.3]);
+      const itemEqui = SymmetryGenerator.generate(0.5, rngEqui);
+      expect(itemEqui.solution_logic.final_answer_canonical).toBe("3");
+
       // Isosceles Triangle (index 3)
       const rng2 = createMockRng([0.5]);
       const item2 = SymmetryGenerator.generate(0.5, rng2);
-      expect(["1", "3"]).toContain(item2.solution_logic.final_answer_canonical);
+      expect(item2.solution_logic.final_answer_canonical).toBe("1");
+
+      // Letter A (index 5)
+      const rngA = createMockRng([0.8]);
+      const itemA = SymmetryGenerator.generate(0.5, rngA);
+      expect(itemA.solution_logic.final_answer_canonical).toBe("1");
+
+      // Letter H (index 6)
+      const rngH = createMockRng([0.9]);
+      const itemH = SymmetryGenerator.generate(0.5, rngH);
+      expect(itemH.solution_logic.final_answer_canonical).toBe("2");
+    });
+  });
+
+  describe("Geometry fallback coverage", () => {
+    it("handles missing RNG in GeometryGenerator", () => {
+      // This is mostly to cover the (rng ?? Math.random)() branches
+      const item = GeometryGenerator.generate(0.5);
+      expect(item.meta.skill_id).toBe(SKILL_GEO_LINES_ANGLES.id);
+    });
+
+    it("handles missing RNG in SymmetryGenerator", () => {
+      const item = SymmetryGenerator.generate(0.5);
+      expect(item.meta.skill_id).toBe(SKILL_SYMMETRY.id);
+    });
+
+    it("handles missing RNG in ShapeClassificationGenerator", () => {
+      const item = ShapeClassificationGenerator.generate(0.5);
+      expect(item.meta.skill_id).toBe(SKILL_SHAPE_CLASSIFICATION.id);
     });
   });
 });

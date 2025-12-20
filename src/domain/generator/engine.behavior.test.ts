@@ -24,8 +24,23 @@ describe("Engine Behavior", () => {
       difficulty: 0.5,
       status: "VERIFIED",
       created_at: "",
-      provenance: {} as any,
-      verification_report: {} as any,
+      provenance: {
+        generator_model: "test_gen",
+        critic_model: "test_critic",
+        judge_model: "test_judge",
+        verifier: { type: "none", passed: true },
+        attempt: 1,
+      },
+      verification_report: {
+        rubric_scores: {
+          solvability: 5,
+          ambiguity: 0,
+          procedural_correctness: 5,
+          pedagogical_alignment: 5,
+        },
+        underspecified: false,
+        issues: [],
+      },
     },
     problem_content: { format: "text", stem: "test" },
     solution_logic: {
@@ -124,7 +139,10 @@ describe("Engine Behavior", () => {
     // And: Bank Empty, but Factory Success
     mockFetch
       .mockResolvedValueOnce({ ok: true, json: async () => [] }) // Bank empty
-      .mockResolvedValueOnce({ ok: true, json: async () => ({ items: [factoryItem] }) }); // Factory hit
+      .mockResolvedValueOnce({
+        ok: true,
+        json: async () => ({ items: [factoryItem] }),
+      }); // Factory hit
 
     // When: generate is called
     const result = await engine.generate("test_skill", 0.5);

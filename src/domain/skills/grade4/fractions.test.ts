@@ -62,6 +62,14 @@ describe("grade4-fractions generators", () => {
       // Trigger is sum of denominators
       expect(misc?.trigger.value).toBe(String(vars.den + vars.den));
     });
+
+    it("uses larger ranges when difficulty >= 0.5", () => {
+      const rng = createMockRng([0.999, 0.1, 0.1]); // maxDen -> 20
+      const item = AddLikeFractionGenerator.generate(0.5, rng);
+      const vars = item.problem_content.variables as { den: number };
+      expect(vars.den).toBeGreaterThan(12);
+      expect(vars.den).toBeLessThanOrEqual(20);
+    });
   });
 
   describe("SubLikeFractionGenerator", () => {
@@ -269,6 +277,14 @@ describe("grade4-fractions generators", () => {
       expect(misc).toBeDefined();
       expect(misc?.trigger.value).toBe(String(wrongAns));
     });
+
+    it("uses smaller multipliers for low difficulty", () => {
+      const rng = createMockRng([0, 0, 0.1]); // baseNum, baseDen, multiplier (randomInt(2, 4))
+      const item = EquivFractionGenerator.generate(0.1, rng);
+      const vars = item.problem_content.variables as { multiplier: number };
+      expect(vars.multiplier).toBeGreaterThanOrEqual(2);
+      expect(vars.multiplier).toBeLessThanOrEqual(4);
+    });
   });
 
   describe("FracMultWholeGenerator", () => {
@@ -302,6 +318,62 @@ describe("grade4-fractions generators", () => {
       if (val1 > val2) expect(symbol).toBe(">");
       if (val1 < val2) expect(symbol).toBe("<");
       if (val1 === val2) expect(symbol).toBe("=");
+    });
+
+    it("chooses correct symbols for comparison", () => {
+      // Test equality
+      // den1=2 (0*5+3=3 -> wait, randomInt(3,8) -> 3 + 0*5 = 3)
+      // Actually den1=randomInt(3,8) -> 3 + 0.1*5 = 3.5 -> 3
+      // num1=randomInt(1, den1-1) -> 1 + 0.5*2 = 2
+      // so 2/3
+      // den2=randomInt(3,8) -> 3 + 0.1*5 = 3.5 -> 3
+      // den2 triggers while (den1===den2) -> next rng: 0.2*7+3 = 4.4 -> 4
+      // num2=randomInt(1, den2-1) -> 1 + 0.5*3 = 2.5 -> 2
+      // 2/3 and 2/4 -> 2/3 > 2/4
+
+      // Let's use simpler values for 1/2 = 2/4
+      // den1=4: 3 + 0.2*5 = 4
+      // num1=2: 1 + 0.5*3 = 2.5 -> 2
+      // den2=2: 3 + 0*5 = 3 (Wait, den is 3-8 or 3-10)
+
+      // Let's just use den1=4, num1=2 and den2=8, num2=4
+      // rng: den1(0.2->4), num1(0.5->2), den2(0.8->7), den2 triggers while? No.
+      // 0.2 -> 3 + 0.2*5 = 4
+      // 0.5 -> 1 + 0.5*3 = 2.5 -> 2 (2/4)
+      // 0.8 -> 3 + 0.8*5 = 7
+      // 0.5 -> 1 + 0.5*6 = 4 (4/7) -> 2/4 < 4/7
+
+      // I will just mock the RNG to get 1/4 = 1/4 (Wait, while loop prevents den1===den2)
+      // I need two DIFFERENT denominators that yield same value.
+      // 1/2 (2/4) and 2/4 (Wait, den must be different)
+      // 1/2 and 2/4.
+      // den1=2 is impossible (min 3).
+      // 1/3 and 2/6.
+      // den1=3: 3 + 0*5 = 3
+      // num1=1: 1 + 0*2 = 1 (1/3)
+      // den2=6: 3 + 0.6*5 = 6 (0.6 is good, no while loop)
+      // num2=2: 1 + 0.2*5 = 2 (2/6)
+      const rngEq = createMockRng([0, 0, 0.6, 0.2]);
+      const itemEq = FracCompareUnlikeGenerator.generate(0.5, rngEq);
+      expect(itemEq.solution_logic.final_answer_canonical).toBe("=");
+
+      // Test less than
+      // den1=4, num1=1, den2=2, num2=1 => 1/4 < 1/2
+      const rngLt = createMockRng([0.2, 0, 0, 0]);
+      const itemLt = FracCompareUnlikeGenerator.generate(0.5, rngLt);
+      expect(itemLt.solution_logic.final_answer_canonical).toBe("<");
+    });
+
+    it("covers the while loop when den1 === den2", () => {
+      // 1. den1 -> 4 (0.2 * 5 + 3 = 4)
+      // 2. num1 -> 1
+      // 3. den2 -> 4 (0.2 * 5 + 3 = 4) -> triggers while
+      // 4. den2 -> 5 (0.3 * 7 + 3 = 5.1 -> 5)
+      // 5. num2 -> 1
+      const rng = createMockRng([0.2, 0, 0.2, 0.3, 0]);
+      const item = FracCompareUnlikeGenerator.generate(0.5, rng);
+      const vars = item.problem_content.variables as any;
+      expect(vars.den1).not.toBe(vars.den2);
     });
   });
   describe("FracDecomposeGenerator", () => {
@@ -403,6 +475,48 @@ describe("grade4-fractions generators", () => {
       const val2 = vars.w2 * vars.den + vars.num2;
       expect(ansNum).toBe(val1 + val2);
       expect(ansDen).toBe(vars.den);
+    });
+
+    it("handles simple addition with reduction where sum >= den", () => {
+      // isAddition=true (>0.5), den=5, difficulty=0.1 (<0.5), w1=1, num1=3, w2=1, num2=3
+      // num1+num2 = 6 >= 5 -> triggers reduction
+      const rng = createMockRng([0.6, 0.4, 0.1, 0.6, 0.1, 0.6]);
+      // rng order: isAddition(0.6), den(0.4->3+0.4*9=6.6->6), w1(0.1->1), num1(0.6->1+0.6*4=3.4->3), w2(0.1->1), num2(0.6->1+0.6*4=3.4->3)
+      // Actually: den=randomInt(3,12) -> 3 + 0.4*9 = 6.6 -> 6
+      // num1=randomInt(1, den-1) -> 1 + 0.6*5 = 4
+      // num2=randomInt(1, den-1) -> 1 + 0.6*5 = 4
+      // num1+num2 = 8 >= 6
+      const item = AddSubMixedGenerator.generate(0.1, rng);
+      const vars = item.problem_content.variables as any;
+      expect(vars.num1 + vars.num2).toBeLessThan(vars.den);
+    });
+
+    it("handles subtraction where term1 < term2 (triggers swap)", () => {
+      // isAddition=false(0.1), den=5(0.2), w1=1(0.1), num1=1(0.1), w2=3(0.6), num2=1(0.1)
+      // 1 1/5 < 3 1/5 -> swap
+      const rng = createMockRng([0.1, 0.2, 0.1, 0.1, 0.6, 0.1]);
+      const item = AddSubMixedGenerator.generate(0.8, rng);
+      const vars = item.problem_content.variables as any;
+      expect(vars.w1).toBe(3);
+      expect(vars.w2).toBe(1);
+    });
+
+    it("handles subtraction where term1 === term2 (triggers w1++)", () => {
+      // isAddition=false(0.1), den=5(0.2), w1=2(0.3), num1=1(0.1), w2=2(0.3), num2=1(0.1)
+      const rng = createMockRng([0.1, 0.2, 0.3, 0.1, 0.3, 0.1]);
+      const item = AddSubMixedGenerator.generate(0.8, rng);
+      const vars = item.problem_content.variables as any;
+      expect(vars.w1).toBe(3); // Bumped from 2
+      expect(vars.w2).toBe(2);
+    });
+
+    it("handles simple subtraction where num1 < num2 (triggers adjustment)", () => {
+      // simple=true(0.1), isAddition=false(0.1), den=5(0.2), w1=3(0.6), num1=1(0.1), w2=1(0.1), num2=3(0.6)
+      // 3 1/5 - 1 3/5 -> adjustment to avoid borrowing
+      const rng = createMockRng([0.1, 0.2, 0.6, 0.1, 0.1, 0.6]);
+      const item = AddSubMixedGenerator.generate(0.1, rng);
+      const vars = item.problem_content.variables as any;
+      expect(vars.num1).toBeGreaterThanOrEqual(vars.num2);
     });
   });
 

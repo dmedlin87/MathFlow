@@ -1,0 +1,272 @@
+
+> mathflow@0.0.0 test
+> vitest src/domain/skills/grade4/oa.test.ts
+
+
+[1m[44m DEV [49m[22m [34mv4.0.15 [39m[90mC:/Users/dmedl/Projects/MathFlow[39m
+
+ [31mΓ¥»[39m src/domain/skills/grade4/oa.test.ts [2m([22m[2m11 tests[22m[2m | [22m[31m4 failed[39m[2m)[22m[32m 11[2mms[22m[39m
+       [32mΓ£ô[39m generates List Factors problems correctly[32m 2[2mms[22m[39m
+       [32mΓ£ô[39m covers perfect squares in getFactors[32m 0[2mms[22m[39m
+[31m       [31m├ù[31m generates Prime/Composite problems (Prime case)[39m[32m 4[2mms[22m[39m
+[31m       [31m├ù[31m generates Prime/Composite problems (Composite case)[39m[32m 1[2mms[22m[39m
+[31m       [31m├ù[31m triggers FactorsMultiples misconceptions[39m[32m 1[2mms[22m[39m
+[31m       [31m├ù[31m generates Multiples problems (Mode C)[39m[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates valid additive sequence[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates valid subtract sequence[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates valid comparison word problems and covers misconception[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates arithmetic mode problems[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates remainder interpretation problems and covers misconception[32m 0[2mms[22m[39m
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Failed Tests 4 ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+
+ FAIL  src/domain/skills/grade4/oa.test.ts > grade4-oa generator > FactorsMultiplesGenerator > generates Prime/Composite problems (Prime case)
+AssertionError: expected 'List all factors of **18**.\nEnter thΓÇª' to contain 'Prime or Composite'
+
+- Expected
++ Received
+
+- Prime or Composite
++ List all factors of **18**.
++ Enter them separated by commas (e.g. 1, 2, 4).
+
+ Γ¥» src/domain/skills/grade4/oa.test.ts:69:41
+     67|       const rng = createMockRng([0.5, 0.6, 0.1]);
+     68|       const item = FactorsMultiplesGenerator.generate(0.1, rng);
+     69|       expect(item.problem_content.stem).toContain("Prime or Composite"ΓÇª
+       |                                         ^
+     70|       expect(item.solution_logic.final_answer_canonical).toBe("Prime");
+     71|     });
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/4]ΓÄ»
+
+ FAIL  src/domain/skills/grade4/oa.test.ts > grade4-oa generator > FactorsMultiplesGenerator > generates Prime/Composite problems (Composite case)
+AssertionError: expected '1, 3, 5, 15' to be 'Composite' // Object.is equality
+
+Expected: "Composite"
+Received: "1, 3, 5, 15"
+
+ Γ¥» src/domain/skills/grade4/oa.test.ts:78:58
+     76|       const rng = createMockRng([0.5, 0.4, 0.1]);
+     77|       const item = FactorsMultiplesGenerator.generate(0.1, rng);
+     78|       expect(item.solution_logic.final_answer_canonical).toBe("ComposiΓÇª
+       |                                                          ^
+     79|     });
+     80| 
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[2/4]ΓÄ»
+
+ FAIL  src/domain/skills/grade4/oa.test.ts > grade4-oa generator > FactorsMultiplesGenerator > triggers FactorsMultiples misconceptions
+AssertionError: expected undefined to be defined
+ Γ¥» src/domain/skills/grade4/oa.test.ts:102:21
+    100|         (m) => m.error_tag === "prime_is_odd"
+    101|       );
+    102|       expect(miscB).toBeDefined();
+       |                     ^
+    103|     });
+    104| 
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[3/4]ΓÄ»
+
+ FAIL  src/domain/skills/grade4/oa.test.ts > grade4-oa generator > FactorsMultiplesGenerator > generates Multiples problems (Mode C)
+AssertionError: expected 'List all factors of **8**.\nEnter theΓÇª' to contain 'multiple of'
+
+- Expected
++ Received
+
+- multiple of
++ List all factors of **8**.
++ Enter them separated by commas (e.g. 1, 2, 4).
+
+ Γ¥» src/domain/skills/grade4/oa.test.ts:111:41
+    109|       const rng = createMockRng([0.8, 0.1, 0.1]);
+    110|       const item = FactorsMultiplesGenerator.generate(0.1, rng);
+    111|       expect(item.problem_content.stem).toContain("multiple of");
+       |                                         ^
+    112|     });
+    113|   });
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[4/4]ΓÄ»
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m4 failed[39m[22m[2m | [22m[1m[32m7 passed[39m[22m[90m (11)[39m
+[2m   Start at [22m 12:20:50
+[2m   Duration [22m 663ms[2m (transform 83ms, setup 169ms, import 60ms, tests 11ms, environment 0ms)[22m
+
+[1m[41m FAIL [49m[22m [31mTests failed. Watching for file changes...[39m
+       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m
+c[3J[1m[44m RERUN [49m[22m [34m[2msrc/domain/skills/grade4/oa.ts [22m[34mx1 [34m[39m
+       [2m Filename pattern: [22m[34msrc/domain/skills/grade4/oa.test.ts[39m
+
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Failed Suites 1 ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+
+ FAIL  src/domain/skills/grade4/oa.test.ts [ src/domain/skills/grade4/oa.test.ts ]
+Error: Transform failed with 1 error:
+C:/Users/dmedl/Projects/MathFlow/src/domain/skills/grade4/oa.ts:187:2: ERROR: Unexpected "}"
+  Plugin: vite:esbuild
+  File: C:/Users/dmedl/Projects/MathFlow/src/domain/skills/grade4/oa.ts:187:2
+  
+  Unexpected "}"
+  185|    },
+  186|  };
+  187|    },
+     |    ^
+  188|  };
+  189|  
+  
+ Γ¥» failureErrorWithLog node_modules/esbuild/lib/main.js:1467:15
+ Γ¥» node_modules/esbuild/lib/main.js:736:50
+ Γ¥» responseCallbacks.<computed> node_modules/esbuild/lib/main.js:603:9
+ Γ¥» handleIncomingPacket node_modules/esbuild/lib/main.js:658:12
+ Γ¥» Socket.readFromStdout node_modules/esbuild/lib/main.js:581:7
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/1]ΓÄ»
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [2mno tests[22m
+[2m   Start at [22m 12:21:14
+[2m   Duration [22m 532ms
+
+[1m[41m FAIL [49m[22m [31mTests failed. Watching for file changes...[39m
+       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m
+c[3J[1m[44m RERUN [49m[22m [34m[2msrc/domain/skills/grade4/oa.ts [22m[34mx2 [34m[39m
+       [2m Filename pattern: [22m[34msrc/domain/skills/grade4/oa.test.ts[39m
+
+ [31mΓ¥»[39m src/domain/skills/grade4/oa.test.ts [2m([22m[2m11 tests[22m[2m | [22m[31m2 failed[39m[2m)[22m[32m 16[2mms[22m[39m
+       [32mΓ£ô[39m generates List Factors problems correctly[32m 4[2mms[22m[39m
+       [32mΓ£ô[39m covers perfect squares in getFactors[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates Prime/Composite problems (Prime case)[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates Prime/Composite problems (Composite case)[32m 0[2mms[22m[39m
+[31m       [31m├ù[31m triggers FactorsMultiples misconceptions[39m[32m 4[2mms[22m[39m
+[31m       [31m├ù[31m generates Multiples problems (Mode C)[39m[32m 3[2mms[22m[39m
+       [32mΓ£ô[39m generates valid additive sequence[32m 1[2mms[22m[39m
+       [32mΓ£ô[39m generates valid subtract sequence[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates valid comparison word problems and covers misconception[32m 1[2mms[22m[39m
+       [32mΓ£ô[39m generates arithmetic mode problems[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates remainder interpretation problems and covers misconception[32m 0[2mms[22m[39m
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Failed Tests 2 ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+
+ FAIL  src/domain/skills/grade4/oa.test.ts > grade4-oa generator > FactorsMultiplesGenerator > triggers FactorsMultiples misconceptions
+AssertionError: expected undefined to be defined
+ Γ¥» src/domain/skills/grade4/oa.test.ts:86:20
+     84|         (m) => m.error_tag === "confuse_factors_multiples"
+     85|       );
+     86|       expect(misc).toBeDefined();
+       |                    ^
+     87|       if (misc?.trigger.kind === "regex") {
+     88|         const number = item.problem_content.variables?.number as numbeΓÇª
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/2]ΓÄ»
+
+ FAIL  src/domain/skills/grade4/oa.test.ts > grade4-oa generator > FactorsMultiplesGenerator > generates Multiples problems (Mode C)
+AssertionError: expected 'Is the number **6** Prime or CompositΓÇª' to contain 'multiple of'
+
+Expected: "multiple of"
+Received: "Is the number **6** Prime or Composite?"
+
+ Γ¥» src/domain/skills/grade4/oa.test.ts:111:41
+    109|       const rng = createMockRng([0.8, 0.1, 0.1]);
+    110|       const item = FactorsMultiplesGenerator.generate(0.1, rng);
+    111|       expect(item.problem_content.stem).toContain("multiple of");
+       |                                         ^
+    112|     });
+    113|   });
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[2/2]ΓÄ»
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m2 failed[39m[22m[2m | [22m[1m[32m9 passed[39m[22m[90m (11)[39m
+[2m   Start at [22m 12:21:56
+[2m   Duration [22m 1.02s
+
+[1m[41m FAIL [49m[22m [31mTests failed. Watching for file changes...[39m
+       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m
+c[3J[1m[44m RERUN [49m[22m [34m[2msrc/domain/skills/grade4/oa.test.ts [22m[34mx3 [34m[39m
+       [2m Filename pattern: [22m[34msrc/domain/skills/grade4/oa.test.ts[39m
+
+ [32mΓ£ô[39m src/domain/skills/grade4/oa.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m11 passed[39m[22m[90m (11)[39m
+[2m   Start at [22m 12:22:46
+[2m   Duration [22m 264ms
+
+[1m[42m PASS [49m[22m [32mWaiting for file changes...[39m
+       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m
+c[3J[1m[44m RERUN [49m[22m [34m[2msrc/domain/skills/grade4/oa.test.ts [22m[34mx4 [34m[39m
+       [2m Filename pattern: [22m[34msrc/domain/skills/grade4/oa.test.ts[39m
+
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Failed Suites 1 ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+
+ FAIL  src/domain/skills/grade4/oa.test.ts [ src/domain/skills/grade4/oa.test.ts ]
+Error: Transform failed with 1 error:
+C:/Users/dmedl/Projects/MathFlow/src/domain/skills/grade4/oa.test.ts:99:12: ERROR: The symbol "rng" has already been declared
+  Plugin: vite:esbuild
+  File: C:/Users/dmedl/Projects/MathFlow/src/domain/skills/grade4/oa.test.ts:99:12
+  
+  The symbol "rng" has already been declared
+  97 |        // isPrimeTarget = 0.4 -> false (Composite)
+  98 |        // composites[floor(0.1 * 11)] = 6
+  99 |        const rng = createMockRng([0.5, 0.4, 0.1]);
+     |              ^
+  100|        const itemB = FactorsMultiplesGenerator.generate(0.1, rng);
+  101|        const miscB = itemB.misconceptions.find(
+  
+ Γ¥» failureErrorWithLog node_modules/esbuild/lib/main.js:1467:15
+ Γ¥» node_modules/esbuild/lib/main.js:736:50
+ Γ¥» responseCallbacks.<computed> node_modules/esbuild/lib/main.js:603:9
+ Γ¥» handleIncomingPacket node_modules/esbuild/lib/main.js:658:12
+ Γ¥» Socket.readFromStdout node_modules/esbuild/lib/main.js:581:7
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/1]ΓÄ»
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [2mno tests[22m
+[2m   Start at [22m 12:28:12
+[2m   Duration [22m 301ms
+
+[1m[41m FAIL [49m[22m [31mTests failed. Watching for file changes...[39m
+       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m
+c[3J[1m[44m RERUN [49m[22m [34m[2msrc/domain/skills/grade4/oa.test.ts [22m[34mx5 [34m[39m
+       [2m Filename pattern: [22m[34msrc/domain/skills/grade4/oa.test.ts[39m
+
+ [32mΓ£ô[39m src/domain/skills/grade4/oa.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m11 passed[39m[22m[90m (11)[39m
+[2m   Start at [22m 12:28:18
+[2m   Duration [22m 417ms
+
+[1m[42m PASS [49m[22m [32mWaiting for file changes...[39m
+       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m
+c[3J[1m[44m RERUN [49m[22m [34m[2msrc/domain/skills/grade4/oa.test.ts [22m[34mx6 [34m[39m
+       [2m Filename pattern: [22m[34msrc/domain/skills/grade4/oa.test.ts[39m
+
+ [32mΓ£ô[39m src/domain/skills/grade4/oa.test.ts [2m([22m[2m17 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m17 passed[39m[22m[90m (17)[39m
+[2m   Start at [22m 12:37:38
+[2m   Duration [22m 300ms
+
+[1m[42m PASS [49m[22m [32mWaiting for file changes...[39m
+       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m
+c[3J[1m[44m RERUN [49m[22m [34m[2mpackage.json [22m[34mx7 [34m[39m
+       [2m Filename pattern: [22m[34msrc/domain/skills/grade4/oa.test.ts[39m
+
+ [32mΓ£ô[39m src/domain/skills/grade4/oa.test.ts [2m([22m[2m17 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m1 passed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[32m17 passed[39m[22m[90m (17)[39m
+[2m   Start at [22m 12:42:48
+[2m   Duration [22m 879ms
+
+[1m[42m PASS [49m[22m [32mWaiting for file changes...[39m
+       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m

@@ -1,14 +1,20 @@
 import { describe, it, expect, vi } from "vitest";
-import { recommendNextItem, updateLearnerState, createInitialState } from "./state";
-import type { LearnerState, Skill, Attempt } from "../types";
+import {
+  recommendNextItem,
+  updateLearnerState,
+  createInitialState,
+} from "./state";
+import type { Skill, Attempt } from "../types";
 import { engine } from "../generator/engine";
 
 // Mock the engine to prevent actual generation calls
 vi.mock("../generator/engine", () => ({
   engine: {
-    generate: vi.fn().mockResolvedValue({
-      meta: { id: "mock_problem", skill_id: "mock_skill" },
-    }),
+    generate: vi.fn().mockImplementation((skillId: string) =>
+      Promise.resolve({
+        meta: { id: `mock_${skillId}`, skill_id: skillId },
+      })
+    ),
   },
 }));
 
@@ -16,13 +22,12 @@ describe("LearnerState Behavior", () => {
   const mockSkill = (id: string, prereqs: string[] = []): Skill => ({
     id,
     name: `Skill ${id}`,
-    grade: "4",
-    domain: "test",
+    gradeBand: "3-5",
     description: "test",
     standards: [],
     prereqs,
-    learningObjectives: [],
-    misconceptions: {},
+    templates: ["test_tpl"],
+    misconceptions: [],
   });
 
   describe("recommendNextItem", () => {
@@ -55,30 +60,32 @@ describe("LearnerState Behavior", () => {
       const result = await recommendNextItem(state, mockRng, allSkills);
 
       // Then: It recommends the review skill
+      expect(result.meta.skill_id).toBe("review_skill");
       expect(engine.generate).toHaveBeenCalledWith("review_skill", 0.9);
     });
 
     it("prioritizes Learning Queue when review roll fails (roll > 0.3)", async () => {
-       // Given: Same setup as above (Review due)
-       const skillReview = mockSkill("review_skill");
-       const skillNew = mockSkill("new_skill");
-       const allSkills = [skillReview, skillNew];
+      // Given: Same setup as above (Review due)
+      const skillReview = mockSkill("review_skill");
+      const skillNew = mockSkill("new_skill");
+      const allSkills = [skillReview, skillNew];
 
-       const state = createInitialState("user1");
-       state.skillState["review_skill"] = {
-         masteryProb: 0.9,
-         stability: 0,
-         lastPracticed: new Date(Date.now() - 48 * 3600 * 1000).toISOString(),
-         misconceptions: [],
-       };
+      const state = createInitialState("user1");
+      state.skillState["review_skill"] = {
+        masteryProb: 0.9,
+        stability: 0,
+        lastPracticed: new Date(Date.now() - 48 * 3600 * 1000).toISOString(),
+        misconceptions: [],
+      };
 
-       // When: RNG rolls 0.5 (NOT favorable for review)
-       const mockRng = () => 0.5;
-       const result = await recommendNextItem(state, mockRng, allSkills);
+      // When: RNG rolls 0.5 (NOT favorable for review)
+      const mockRng = () => 0.5;
+      const result = await recommendNextItem(state, mockRng, allSkills);
 
-       // Then: It recommends the NEW skill (Learning Queue)
-       // Note: "new_skill" has mastery 0.1, so it is in learning queue
-       expect(engine.generate).toHaveBeenCalledWith("new_skill", 0.1);
+      // Then: It recommends the NEW skill (Learning Queue)
+      // Note: "new_skill" has mastery 0.1, so it is in learning queue
+      expect(result.meta.skill_id).toBe("new_skill");
+      expect(engine.generate).toHaveBeenCalledWith("new_skill", 0.1);
     });
 
     it("strictly blocks skills with unmet prerequisites", async () => {
@@ -90,8 +97,18 @@ describe("LearnerState Behavior", () => {
       const state = createInitialState("user1");
 
       // Skill A is NOT mastered (0.1)
-      state.skillState["A"] = { masteryProb: 0.1, stability: 0, lastPracticed: "", misconceptions: [] };
-      state.skillState["B"] = { masteryProb: 0.1, stability: 0, lastPracticed: "", misconceptions: [] };
+      state.skillState["A"] = {
+        masteryProb: 0.1,
+        stability: 0,
+        lastPracticed: "",
+        misconceptions: [],
+      };
+      state.skillState["B"] = {
+        masteryProb: 0.1,
+        stability: 0,
+        lastPracticed: "",
+        misconceptions: [],
+      };
 
       // When: We ask for recommendation
       // Logic:
@@ -101,12 +118,15 @@ describe("LearnerState Behavior", () => {
       const result = await recommendNextItem(state, () => 0.9, allSkills);
 
       // Then: It recommends A
+      expect(result.meta.skill_id).toBe("A");
       expect(engine.generate).toHaveBeenCalledWith("A", 0.1);
     });
 
     it("throws error if no skills available at all", async () => {
       const state = createInitialState("user1");
-      await expect(recommendNextItem(state, Math.random, [])).rejects.toThrow("No skills available");
+      await expect(recommendNextItem(state, Math.random, [])).rejects.toThrow(
+        "No skills available"
+      );
     });
   });
 
@@ -115,8 +135,16 @@ describe("LearnerState Behavior", () => {
       // Given: State with NO knowledge of 'surprise_skill'
       const state = createInitialState("user1");
       const attempt: Attempt = {
-        id: "1", userId: "user1", skillId: "surprise_skill", isCorrect: true,
-        itemId: "1", timestamp: new Date().toISOString(), timeTakenMs: 1000, attemptsCount: 1, hintsUsed: 0, errorTags: []
+        id: "1",
+        userId: "user1",
+        skillId: "surprise_skill",
+        isCorrect: true,
+        itemId: "1",
+        timestamp: new Date().toISOString(),
+        timeTakenMs: 1000,
+        attemptsCount: 1,
+        hintsUsed: 0,
+        errorTags: [],
       };
 
       // When: Update is called
@@ -124,7 +152,9 @@ describe("LearnerState Behavior", () => {
 
       // Then: It creates the entry and updates it
       expect(newState.skillState["surprise_skill"]).toBeDefined();
-      expect(newState.skillState["surprise_skill"].masteryProb).toBeGreaterThan(0.1);
+      expect(newState.skillState["surprise_skill"].masteryProb).toBeGreaterThan(
+        0.1
+      );
     });
 
     it("clamps mastery probability strictly to 0.99 max", () => {
@@ -132,12 +162,23 @@ describe("LearnerState Behavior", () => {
       const state = createInitialState("user1");
       const skillId = "test_skill";
       state.skillState[skillId] = {
-        masteryProb: 0.99, stability: 0, lastPracticed: "", misconceptions: []
+        masteryProb: 0.99,
+        stability: 0,
+        lastPracticed: "",
+        misconceptions: [],
       };
 
       const attempt: Attempt = {
-        id: "1", userId: "user1", skillId, isCorrect: true, // Another success
-        itemId: "1", timestamp: "", timeTakenMs: 1000, attemptsCount: 1, hintsUsed: 0, errorTags: []
+        id: "1",
+        userId: "user1",
+        skillId,
+        isCorrect: true, // Another success
+        itemId: "1",
+        timestamp: "",
+        timeTakenMs: 1000,
+        attemptsCount: 1,
+        hintsUsed: 0,
+        errorTags: [],
       };
 
       // When: Update

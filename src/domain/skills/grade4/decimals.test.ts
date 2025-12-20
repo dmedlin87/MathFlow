@@ -61,10 +61,22 @@ describe("grade4-decimals generator", () => {
       // Expect trigger for "1"
       expect(misc?.trigger.value).toBe("1");
     });
+
+    it("defines misconception for hundredths when difficulty >= 0.5", () => {
+      // difficulty 0.9 -> isHundredths=true. num -> floor(0.1*99)+1 = 10.
+      const rng = createMockRng([0.1]);
+      const item = DecimalNotationGenerator.generate(0.9, rng);
+
+      const misc = item.misconceptions.find(
+        (m) => m.error_tag === "ignoring_place_value"
+      );
+      expect(misc).toBeDefined();
+      expect(misc?.trigger.value).toBe("10.0"); // 10/100 -> trigger is "num.0"
+    });
   });
 
   describe("DecimalComparisonGenerator", () => {
-    it("generates same-length decimals for difficulty < 0.5", () => {
+    it("generates same-length decimals for difficulty < 0.5 (Tenths)", () => {
       // Mock: first call randomInt(0,1) -> 0 (Tenths).
       // Then num1, num2.
       // rng: [0, 0.4, 0.7] -> 0 (bool), 4 (num1), 7 (num2)
@@ -82,15 +94,52 @@ describe("grade4-decimals generator", () => {
       expect(item.solution_logic.final_answer_canonical).toBe("<");
     });
 
+    it("generates same-length decimals for difficulty < 0.5 (Hundredths)", () => {
+      // Mock: randomInt(0, 1) -> 1 (Hundredths). floor(0.6 * 2) = 1.
+      // num1: 0.091 -> 10. floor(0.091 * 99) + 1 = 10.
+      // num2: 0.192 -> 20. floor(0.192 * 99) + 1 = 20.
+      const rng = createMockRng([0.6, 0.091, 0.192]);
+      const item = DecimalComparisonGenerator.generate(0.1, rng);
+
+      expect(item.problem_content.stem).toContain(
+        "Compare: **0.10** and **0.20**"
+      );
+      expect(item.solution_logic.final_answer_canonical).toBe("<");
+    });
+
+    it("retries when val1 === val2 in same-length mode", () => {
+      // randomInt(0, 1) -> 0 (Tenths). floor(0.1 * 2) = 0.
+      // num1: 0.112 -> 2. floor(0.112 * 9) + 1 = 2.
+      // num2 (first): 0.112 -> 2. retry.
+      // num2 (second): 0.223 -> 3. floor(0.223 * 9) + 1 = 3.
+      const rng = createMockRng([0.1, 0.112, 0.112, 0.223]);
+      const item = DecimalComparisonGenerator.generate(0.1, rng);
+
+      expect(item.problem_content.stem).toContain(
+        "Compare: **0.2** and **0.3**"
+      );
+      expect(item.solution_logic.final_answer_canonical).toBe("<");
+    });
+
+    it("handles equality when different precision results in same value", () => {
+      // Difficulty >= 0.5. num1 (tenths), num2 (hundredths).
+      // num1: 0.112 -> 2. floor(0.112 * 9) + 1 = 2. -> "0.2"
+      // num2: 0.192 -> 20. floor(0.192 * 99) + 1 = 20. -> "0.20"
+      const rng = createMockRng([0.112, 0.192, 0.4]); // No swap
+      const item = DecimalComparisonGenerator.generate(0.9, rng);
+
+      expect(item.problem_content.stem).toContain(
+        "Compare: **0.2** and **0.20**"
+      );
+      expect(item.solution_logic.final_answer_canonical).toBe("=");
+    });
+
     it("generates different-length decimals for difficulty >= 0.5", () => {
       // Diff >= 0.5. Code calls randomInt(1,9) then randomInt(1,99).
-      // rng: [0.2, 0.19]
-      // num1: 0.2 -> floor(0.2*9)+1 = 2. -> 0.2
-      // num2: 0.19 -> floor(0.19*99)+1 = 18+1=19. -> 0.19
+      // num1: 0.112 -> 2. -> "0.2"
+      // num2: 0.182 -> 19. floor(0.182 * 99) + 1 = 19. -> "0.19"
 
-      // Wait: 0.19 * 99 = 18.81. Floor 18. +1 = 19. Correct.
-
-      const rng = createMockRng([0.2, 0.19]);
+      const rng = createMockRng([0.112, 0.182, 0.4]); // No swap
       const item = DecimalComparisonGenerator.generate(0.9, rng);
 
       expect(item.problem_content.stem).toContain(
@@ -104,7 +153,7 @@ describe("grade4-decimals generator", () => {
       // Case: 0.2 vs 0.19. (0.2 > 0.19).
       // User thinks 0.19 is bigger because 19 > 2.
       // User selects '<' (0.2 < 0.19).
-      const rng = createMockRng([0.2, 0.19, 0.4]); // No swap
+      const rng = createMockRng([0.22, 0.18182, 0.4]); // No swap
       const item = DecimalComparisonGenerator.generate(0.9, rng);
 
       const misc = item.misconceptions.find(
@@ -118,7 +167,7 @@ describe("grade4-decimals generator", () => {
       // After swap: s1=0.19 (4 chars), s2=0.2 (3 chars)
       // 0.19 < 0.2, so correct answer is '<'
       // Trap: user thinks 0.19 > 0.2 because 19 > 2, answers '>'
-      const rng = createMockRng([0.2, 0.19, 0.6]); // Swap triggered
+      const rng = createMockRng([0.22, 0.18182, 0.6]); // Swap triggered
       const item = DecimalComparisonGenerator.generate(0.9, rng);
 
       // s1 should now be the hundredths (0.19)

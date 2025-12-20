@@ -172,4 +172,61 @@ describe("Rate Limiter Middleware", () => {
     limiter.middleware(req as Request, res as Response, next);
     expect(limiter.getClient("unknown")).toBeDefined();
   });
+
+  it("should use socket.remoteAddress if req.ip is an empty string", () => {
+    req = {
+      ip: "",
+      socket: { remoteAddress: "192.168.1.1" } as unknown as Request["socket"],
+    };
+
+    limiter.middleware(req as Request, res as Response, next);
+    expect(limiter.getClient("192.168.1.1")).toBeDefined();
+    expect(limiter.getClient("")).toBeUndefined();
+  });
+
+  it("should replenish tokens exactly at WINDOW_MS", () => {
+    vi.setSystemTime(0);
+    limiter.middleware(req as Request, res as Response, next);
+
+    // Exhaust tokens
+    for (let i = 0; i < MAX_TOKENS - 1; i++) {
+      limiter.middleware(req as Request, res as Response, next);
+    }
+
+    const record = limiter.getClient("127.0.0.1");
+    expect(record?.tokens).toBe(0);
+
+    // Advance to exactly WINDOW_MS
+    vi.setSystemTime(WINDOW_MS);
+    (next as Mock).mockClear();
+    limiter.middleware(req as Request, res as Response, next);
+
+    expect(next).toHaveBeenCalled();
+    expect(record?.tokens).toBe(MAX_TOKENS - 1);
+  });
+
+  it("should trigger cleanup via interval", () => {
+    // Add a client
+    limiter.middleware(req as Request, res as Response, next);
+    expect(limiter.getClient("127.0.0.1")).toBeDefined();
+
+    // Advance time past window AND past default checkInterval (5 mins)
+    vi.advanceTimersByTime(5 * 60 * 1000 + 100);
+
+    // The interval should have fired and cleaned up the stale client
+    expect(limiter.getClient("127.0.0.1")).toBeUndefined();
+  });
+
+  it("should handle rapid-fire requests exactly at the limit", () => {
+    const rapidNext = vi.fn();
+    for (let i = 0; i < MAX_TOKENS; i++) {
+      limiter.middleware(req as Request, res as Response, rapidNext);
+    }
+    expect(rapidNext).toHaveBeenCalledTimes(MAX_TOKENS);
+
+    rapidNext.mockClear();
+    limiter.middleware(req as Request, res as Response, rapidNext);
+    expect(rapidNext).not.toHaveBeenCalled();
+    expect(res.status).toHaveBeenCalledWith(429);
+  });
 });

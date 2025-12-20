@@ -1,8 +1,8 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { getProblems, runFactory, app } from "./index.js";
 import { problemBank } from "./store/ProblemBank.js";
-import { Request, Response, NextFunction } from "express";
-import { MathProblemItem } from "@domain/types.js";
+import { Request, Response } from "express";
+import { MathProblemItem, Generator } from "@domain/types.js";
 import { ContentPipeline } from "./factory/pipeline.js";
 import { skillGeneratorMap } from "@domain/skills/generatorMap.js";
 import { config } from "./config.js";
@@ -150,8 +150,9 @@ describe("Server Security & Error Handling", () => {
       vi.mocked(problemBank.fetch).mockResolvedValue([]);
       vi.mocked(skillGeneratorMap.get).mockReturnValue({
         skillId: "skill-1",
+        templateId: "tpl-1",
         generate: vi.fn(),
-      });
+      } as unknown as Generator);
 
       const newItem = { id: "new-1" } as unknown as MathProblemItem;
       const run = setPipelineRun(async () => newItem);
@@ -169,9 +170,7 @@ describe("Server Security & Error Handling", () => {
 
       vi.mocked(problemBank.fetch).mockResolvedValue([]);
       vi.mocked(skillGeneratorMap.get).mockReturnValue(undefined);
-      const warnSpy = vi
-        .spyOn(console, "warn")
-        .mockImplementation(() => {});
+      const warnSpy = vi.spyOn(console, "warn").mockImplementation(() => {});
 
       await getProblems(req, res, mockNext);
 
@@ -188,19 +187,15 @@ describe("Server Security & Error Handling", () => {
       const res = mockResponse();
       const next = vi.fn();
       const err = new Error("Unhandled");
-      const errorSpy = vi
-        .spyOn(console, "error")
-        .mockImplementation(() => {});
+      const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
 
-      const stack =
-        (app as unknown as { _router?: { stack?: unknown[] } })._router?.stack ??
-        [];
-      const errorLayer = stack.find((layer: { handle?: unknown }) => {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const stack = (app as any)._router?.stack ?? [];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const errorLayer = stack.find((layer: any) => {
         return typeof layer.handle === "function" && layer.handle.length === 4;
       });
-      const errorHandler = errorLayer?.handle as
-        | ((e: unknown, req: Request, res: Response, n: NextFunction) => void)
-        | undefined;
+      const errorHandler = errorLayer?.handle;
 
       expect(errorHandler).toBeTypeOf("function");
       errorHandler?.(err, mockRequest(), res, next);
@@ -209,6 +204,28 @@ describe("Server Security & Error Handling", () => {
       expect(res.json).toHaveBeenCalledWith({
         error: "Internal Server Error",
       });
+      errorSpy.mockRestore();
+    });
+
+    it("should delegate to next(err) if headers are already sent", () => {
+      const res = mockResponse();
+      (res as unknown as { headersSent: boolean }).headersSent = true;
+      const next = vi.fn();
+      const err = new Error("Headers Already Sent");
+      const errorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const stack = (app as any)._router?.stack ?? [];
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const errorLayer = stack.find((layer: any) => {
+        return typeof layer.handle === "function" && layer.handle.length === 4;
+      });
+      const errorHandler = errorLayer?.handle;
+
+      errorHandler?.(err, mockRequest(), res, next);
+
+      expect(next).toHaveBeenCalledWith(err);
+      expect(res.status).not.toHaveBeenCalled();
       errorSpy.mockRestore();
     });
   });
@@ -254,8 +271,9 @@ describe("Server Security & Error Handling", () => {
 
       vi.mocked(skillGeneratorMap.get).mockReturnValue({
         skillId: "skill-1",
+        templateId: "tpl-1",
         generate: vi.fn(),
-      });
+      } as unknown as Generator);
 
       const item = { id: "gen-1" } as unknown as MathProblemItem;
       const run = setPipelineRun(async () => item);
@@ -283,8 +301,9 @@ describe("Server Security & Error Handling", () => {
 
       vi.mocked(skillGeneratorMap.get).mockReturnValue({
         skillId: "skill-1",
+        templateId: "tpl-1",
         generate: vi.fn(),
-      });
+      } as unknown as Generator);
 
       const item = { id: "gen-1" } as unknown as MathProblemItem;
       const run = setPipelineRun(async () => item);
@@ -309,8 +328,9 @@ describe("Server Security & Error Handling", () => {
 
       vi.mocked(skillGeneratorMap.get).mockReturnValue({
         skillId: "skill-1",
+        templateId: "tpl-1",
         generate: vi.fn(),
-      });
+      } as unknown as Generator);
 
       const item = { id: "gen-1" } as unknown as MathProblemItem;
       const run = setPipelineRun(async () => item);
@@ -337,8 +357,9 @@ describe("Server Security & Error Handling", () => {
 
       vi.mocked(skillGeneratorMap.get).mockReturnValue({
         skillId: "skill-1",
+        templateId: "tpl-1",
         generate: vi.fn(),
-      });
+      } as unknown as Generator);
 
       const error = new Error("Pipeline failure");
       setPipelineRun(async () => {

@@ -145,7 +145,7 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
     } finally {
         setIsLoading(false);
     }
-  }, [currentItem, learnerState, userAnswer, learnerService, attempts, startTime]);
+  }, [currentItem, learnerState, userAnswer, learnerService, attempts, startTime, setLearnerState]);
 
 
   const handleNext = () => {

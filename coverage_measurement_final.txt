@@ -1,0 +1,53 @@
+
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90mC:/Users/dmedl/Projects/MathFlow[39m
+      [2mCoverage enabled with [22m[33mv8[39m
+
+ [31mΓ¥»[39m src/domain/skills/grade4/measurement.test.ts [2m([22m[2m20 tests[22m[2m | [22m[31m1 failed[39m[2m)[22m[32m 12[2mms[22m[39m
+       [32mΓ£ô[39m generates Area problem for non-square rectangle[32m 2[2mms[22m[39m
+       [32mΓ£ô[39m generates Area problem for Square[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates Perimeter problem[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m uses Math.random when rng is not provided[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates valid conversion[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates Find TOTAL angle problem[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates Find PART angle problem[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates TURN/CIRCLE problem[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m uses Math.random when rng is not provided[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates correct skill ID[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates TOTAL COST problem[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates CHANGE problem[32m 0[2mms[22m[39m
+[31m       [31m├ù[31m handles paid === total edge case[39m[32m 5[2mms[22m[39m
+       [32mΓ£ô[39m uses Math.random when rng is not provided[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates correct skill ID[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates simple protractor problem[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates correct skill ID[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m generates problem for low difficulty (fixed start angle)[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m shows acute hint for angle < 90[32m 0[2mms[22m[39m
+       [32mΓ£ô[39m shows obtuse hint for angle >= 90[32m 0[2mms[22m[39m
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Failed Tests 1 ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+
+ FAIL  src/domain/skills/grade4/measurement.test.ts > grade4 measurement generator > MoneyWordProblemGenerator > handles paid === total edge case
+AssertionError: expected 7.2 to be 5 // Object.is equality
+
+- Expected
++ Received
+
+- 5
++ 7.2
+
+ Γ¥» src/domain/skills/grade4/measurement.test.ts:176:21
+    174|       const item = MoneyWordProblemGenerator.generate(0.5, rng);
+    175|       const { total, paid } = item.problem_content.variables as any;
+    176|       expect(total).toBe(5);
+       |                     ^
+    177|       expect(paid).toBe(10); // Should have added 5 to paid
+    178|       expect(parseFloat(item.solution_logic.final_answer_canonical)).tΓÇª
+
+ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/1]ΓÄ»
+
+
+[2m Test Files [22m [1m[31m1 failed[39m[22m[90m (1)[39m
+[2m      Tests [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m19 passed[39m[22m[90m (20)[39m
+[2m   Start at [22m 12:20:48
+[2m   Duration [22m 438ms[2m (transform 81ms, setup 136ms, import 73ms, tests 12ms, environment 0ms)[22m
+

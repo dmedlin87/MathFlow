@@ -2,3 +2,12 @@
 > mathflow@0.0.0 lint
 > eslint .
 
+
+C:\Users\dmedl\Projects\MathFlow\server\src\index.test.ts
+  192:29  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  193:45  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  215:29  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  216:45  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+Γ£û 4 problems (4 errors, 0 warnings)
+
