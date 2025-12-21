@@ -3,6 +3,11 @@ import dotenv from "dotenv";
 // Load environment variables from .env file
 dotenv.config();
 
+// SENTINEL SECURITY CHECK: Prevent using default secrets in production
+if (process.env.NODE_ENV === 'production' && !process.env.FACTORY_API_KEY) {
+  throw new Error("CRITICAL: FACTORY_API_KEY must be set in production environment.");
+}
+
 export const config = {
   port: process.env.PORT ? parseInt(process.env.PORT) : 3002,
   rateLimit: {
