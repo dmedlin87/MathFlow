@@ -1,6 +1,23 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
 import { ProblemBank } from "./ProblemBank.js";
 import type { MathProblemItem } from "@domain/types.js";
+import fs from "fs/promises";
+
+// Mock config to ensure we don't hit the real file system
+vi.mock("../config.js", () => ({
+  config: {
+    dataPath: "/mock/data/problems.json",
+  },
+}));
+
+// Mock fs/promises
+vi.mock("fs/promises", () => ({
+  default: {
+    mkdir: vi.fn().mockResolvedValue(undefined),
+    readFile: vi.fn().mockRejectedValue({ code: "ENOENT" }), // Start empty
+    writeFile: vi.fn().mockResolvedValue(undefined),
+  },
+}));
 
 const createItem = (id: string, skillId: string) =>
   ({
@@ -41,6 +58,7 @@ const createItem = (id: string, skillId: string) =>
 
 describe("ProblemBank", () => {
   afterEach(() => {
+    vi.clearAllMocks();
     vi.restoreAllMocks();
   });
 
@@ -142,5 +160,17 @@ describe("ProblemBank", () => {
       "id-1",
       "id-2",
     ]);
+  });
+
+  it("should not duplicate ids when saving the same item twice", async () => {
+    const bank = new ProblemBank();
+    const item = createItem("id-0", "skill-1");
+
+    await bank.save(item);
+    await bank.save(item);
+
+    const result = await bank.fetch("skill-1", 10);
+    expect(result).toHaveLength(1);
+    expect(result[0].meta.id).toBe("id-0");
   });
 });

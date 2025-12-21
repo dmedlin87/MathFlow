@@ -74,7 +74,12 @@ export class ProblemBank {
     if (!this.bySkill.has(skillId)) {
       this.bySkill.set(skillId, []);
     }
-    this.bySkill.get(skillId)?.push(item.meta.id);
+
+    // Fix: Prevent duplicate IDs in the skill index
+    const skillList = this.bySkill.get(skillId);
+    if (skillList && !skillList.includes(item.meta.id)) {
+      skillList.push(item.meta.id);
+    }
 
     await this.persist();
   }
