@@ -134,6 +134,34 @@ describe("Generator Engine", () => {
       expect(item).toBeDefined();
       expect(item.meta.skill_id).toBe("frac_equiv_01");
     });
+
+    it("should fall back to local generator immediately if problems endpoint returns error (500)", async () => {
+      // 1. Problems endpoint fails (500)
+      // Behavior: Should skip factory trigger and go straight to local
+      mockFetch.mockResolvedValueOnce({ ok: false, status: 500 }); // Problems 500
+
+      const item = await testEngine.generate("frac_equiv_01", 0.5);
+
+      expect(mockFetch).toHaveBeenCalledTimes(1); // Only problems fetch
+      // Should be local item
+      expect(item.meta.id).not.toBe("api_item_1");
+      expect(item.problem_content.stem).toContain("missing number");
+    });
+
+    it("should fall back to local generator if factory run returns error (500)", async () => {
+      // 1. Problems endpoint returns empty (200 OK)
+      // 2. Factory run fails (500)
+      mockFetch
+        .mockResolvedValueOnce({ ok: true, json: async () => [] }) // Problems Empty
+        .mockResolvedValueOnce({ ok: false, status: 500 }); // Factory 500
+
+      const item = await testEngine.generate("frac_equiv_01", 0.5);
+
+      expect(mockFetch).toHaveBeenCalledTimes(2); // Problems + Factory
+      // Should be local item
+      expect(item.meta.id).not.toBe("api_item_1");
+      expect(item.problem_content.stem).toContain("missing number");
+    });
   });
 
   describe("Environment Configuration", () => {
