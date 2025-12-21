@@ -298,6 +298,36 @@ describe('UniversalInput - Multiple Choice Input', () => {
     expect(noBtn.className).toContain('bg-white');
   });
 
+  it('sets aria-pressed correctly for accessibility', () => {
+    const mockItem = createMockItem('multiple_choice', { choices: ['One', 'Two'] });
+
+    render(
+      <UniversalInput item={mockItem} value="One" onChange={vi.fn()} onSubmit={vi.fn()} />
+    );
+
+    const btnOne = screen.getByRole('button', { name: /One$/ });
+    const btnTwo = screen.getByRole('button', { name: /Two$/ });
+
+    expect(btnOne).toHaveAttribute('aria-pressed', 'true');
+    expect(btnTwo).toHaveAttribute('aria-pressed', 'false');
+  });
+
+  it('has visible focus styles for keyboard navigation', () => {
+    const mockItem = createMockItem('multiple_choice', { choices: ['One'] });
+
+    render(
+      <UniversalInput item={mockItem} value="" onChange={vi.fn()} onSubmit={vi.fn()} />
+    );
+
+    const btn = screen.getByRole('button', { name: /One$/ });
+    btn.focus();
+
+    expect(btn.className).toContain('focus:outline-none');
+    expect(btn.className).toContain('focus:ring-2');
+    expect(btn.className).toContain('focus:ring-blue-500');
+    expect(btn.className).toContain('focus:ring-offset-2');
+  });
+
   it('respects disabled prop on choice buttons', () => {
     const mockItem = createMockItem('multiple_choice', { choices: ['A', 'B'] });
 
