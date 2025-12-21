@@ -1,6 +1,21 @@
-import { describe, it, expect, vi, afterEach } from "vitest";
+import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
 import { ProblemBank } from "./ProblemBank.js";
 import type { MathProblemItem } from "@domain/types.js";
+import fs from "fs/promises";
+
+// Mock fs/promises
+vi.mock("fs/promises", () => {
+  let mockData = "[]";
+  return {
+    default: {
+      readFile: vi.fn().mockImplementation(async () => mockData),
+      writeFile: vi.fn().mockImplementation(async (path, data) => {
+        mockData = data;
+      }),
+      mkdir: vi.fn().mockResolvedValue(undefined),
+    },
+  };
+});
 
 const createItem = (id: string, skillId: string) =>
   ({
@@ -40,6 +55,18 @@ const createItem = (id: string, skillId: string) =>
   } as MathProblemItem);
 
 describe("ProblemBank", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+
+    // Reset the internal mock state of the mocked module
+    // Since we mocked `fs/promises` default export, we can access it here
+    let mockStore = "[]";
+    (fs.readFile as any).mockImplementation(async () => mockStore);
+    (fs.writeFile as any).mockImplementation(async (path: string, data: string) => {
+      mockStore = data;
+    });
+  });
+
   afterEach(() => {
     vi.restoreAllMocks();
   });
