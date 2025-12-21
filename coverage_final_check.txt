@@ -7,23 +7,23 @@
       [2mCoverage enabled with [22m[33mv8[39m
 
  [32mΓ£ô[39m src/domain/skills/grade5/fractions.test.ts [2m([22m[2m24 tests[22m[2m)[22m[32m 7[2mms[22m[39m
- [32mΓ£ô[39m src/domain/skills/grade6/geometry.test.ts [2m([22m[2m14 tests[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32mΓ£ô[39m src/domain/skills/grade6/geometry.test.ts [2m([22m[2m14 tests[22m[2m)[22m[32m 6[2mms[22m[39m
 
 [2m Test Files [22m [1m[32m2 passed[39m[22m[90m (2)[39m
 [2m      Tests [22m [1m[32m38 passed[39m[22m[90m (38)[39m
-[2m   Start at [22m 17:22:29
-[2m   Duration [22m 435ms[2m (transform 138ms, setup 251ms, import 132ms, tests 13ms, environment 0ms)[22m
+[2m   Start at [22m 18:41:41
+[2m   Duration [22m 812ms[2m (transform 151ms, setup 1.01s, import 142ms, tests 13ms, environment 0ms)[22m
 
 [34m % [39m[2mCoverage report from [22m[33mv8[39m
 -------------------|---------|----------|---------|---------|-------------------
 File               | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s 
 -------------------|---------|----------|---------|---------|-------------------
-All files          |   86.19 |    75.49 |      85 |   88.55 |                   
+All files          |   86.66 |     74.5 |      85 |   88.55 |                   
  domain            |   27.77 |    20.68 |    62.5 |   31.25 |                   
   math-utils.ts    |   13.33 |    14.81 |      50 |   15.38 | 8-12,59-99        
   test-utils.ts    |     100 |      100 |     100 |     100 |                   
- .../skills/grade5 |   97.58 |    96.22 |     100 |   99.16 |                   
-  fractions.ts     |   97.58 |    96.22 |     100 |   99.16 | 493               
+ .../skills/grade5 |   98.38 |    94.33 |     100 |   99.16 |                   
+  fractions.ts     |   98.38 |    94.33 |     100 |   99.16 | 493               
  .../skills/grade6 |     100 |      100 |     100 |     100 |                   
   geometry.ts      |     100 |      100 |     100 |     100 |                   
 -------------------|---------|----------|---------|---------|-------------------
