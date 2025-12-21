@@ -182,50 +182,58 @@ describe("grade4 data generator", () => {
       ).toBeGreaterThan(0);
     });
 
-    it("LinePlotGenerator range with diff === 0.5 returns '1/2'", () => {
-      // With current generator constraints:
-      // counts[0] (1/4) uses randomInt(1,4) -> always >= 1
-      // counts[1] (1/2) uses randomInt(2,5) -> always >= 2
-      // So min is always 1/4 (0.25), and max depends on whether counts[3] > 0
-      // This test exercises the range branch with specific RNG values
+    it("LinePlotGenerator handles diff === 0 (single data point type)", () => {
       const rng = createMockRng([
-        0.5, // counts[0] = 2
-        0.0, // counts[1] = 2
-        0.5, // counts[2] = 2
-        0.0, // counts[3] = 0 (no "1" values)
+        0.0, // counts[0] = 0
+        0.5, // counts[1] = 0.5 * 6 = 3
+        0.0, // counts[2] = 0
+        0.0, // counts[3] = 0
         0.9, // qType -> 3 (Range)
       ]);
       const item = LinePlotGenerator.generate(0.5, rng);
-      expect(item.problem_content.stem).toContain("difference");
-      // With counts[3]=0, max is 3/4, min is 1/4, diff = 0.5
-      expect(item.solution_logic.final_answer_canonical).toBe("1/2");
+      expect(item.solution_logic.final_answer_canonical).toBe("0");
     });
 
-    it("LinePlotGenerator range with diff === 0.25 returns '1/4'", () => {
-      // Similar constraint: can't truly get diff=0.25 since all values have min count >= 1 or 2
-      // This tests the branch exists but may not be reachable
-      // Actually: counts[3] uses randomInt(0,3) -> CAN be 0!
-      // If counts[3]=0, max could be 3/4 (0.75)
-      // If counts[0]=0,1]=0,2]>0,3]=0 -> only 3/4 present -> diff = 0
-      // To get diff=0.25: need e.g., 1/2 and 3/4 only
-      // counts[0]=randomInt(1,4) >= 1, so 1/4 always present
-      // Therefore diff=0.25 is UNREACHABLE in current generator logic
-      const rng = createMockRng([0.5, 0.5, 0.5, 0.5, 0.9]);
+    it("LinePlotGenerator handles diff === 0.25", () => {
+      // 4 counts: [1, 1, 0, 0]
+      // randomInt(0, 4) -> floor(0.3 * 5) = 1
+      // randomInt(0, 5) -> floor(0.2 * 6) = 1
+      const rng = createMockRng([
+        0.3, // counts[0] = 1 (Val: 1/4)
+        0.2, // counts[1] = 1 (Val: 1/2)
+        0.0, // counts[2] = 0
+        0.0, // counts[3] = 0
+        0.9, // qType -> 3 (Range)
+      ]);
       const item = LinePlotGenerator.generate(0.5, rng);
-      expect(item.problem_content.stem).toContain("difference");
+      expect(item.solution_logic.final_answer_canonical).toBe("1/4");
     });
 
-    it("LinePlotGenerator range returns '0' when all data same value", () => {
-      // Since counts[0] (1/4) is randomInt(1,4), it's always >= 1
-      // diff=0 would require all values to be the same
-      // This is UNREACHABLE since multiple value categories always have non-zero counts
-      // counts[0] uses randomInt(1,4) -> always >= 1
-      // counts[1] uses randomInt(2,5) -> always >= 2
-      // So both 1/4 and 1/2 are always present, min diff is at least 0.25
-      // This branch (diff === 0) is UNREACHABLE - defensive code
-      const rng = createMockRng([0.5, 0.5, 0.5, 0.5, 0.9]);
+    it("LinePlotGenerator fallback for all counts zero", () => {
+      const rng = createMockRng([
+        0.0, // counts[0] = 0
+        0.0, // counts[1] = 0
+        0.0, // counts[2] = 0
+        0.0, // counts[3] = 0
+        0.1, // qType -> 1 (Reading)
+        0.1, // targetIdx -> 0 (Reading counts[0])
+      ]);
       const item = LinePlotGenerator.generate(0.5, rng);
-      expect(item.solution_logic.final_answer_canonical).toBeDefined();
+      // Fallback sets counts[0] = 2
+      expect(item.solution_logic.final_answer_canonical).toBe("2");
+    });
+
+    it("DataGraphGenerator throws error for invalid answer", () => {
+      const consoleSpy = vi
+        .spyOn(console, "error")
+        .mockImplementation(() => {});
+      // Force NaN answer by returning NaN from rng
+      const rng = () => NaN;
+      expect(() => DataGraphGenerator.generate(0.5, rng)).toThrow(
+        /produced invalid answer/
+      );
+      expect(consoleSpy).toHaveBeenCalled();
+      consoleSpy.mockRestore();
     });
 
     it("DataGraphGenerator uses Math.random fallback when no rng provided", () => {

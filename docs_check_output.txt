@@ -1,0 +1,10 @@
+
+> mathflow@0.0.0 docs:check:links
+> node scripts/check-links.mjs
+
+Scanning for broken local links...
+ERROR: Broken link in AI_AUDIT\01_SYSTEM_ANALYSIS.md: src/main.tsx -> C:\Users\dmedl\Projects\MathFlow\AI_AUDIT\src\main.tsx not found.
+ERROR: Broken link in AI_AUDIT\01_SYSTEM_ANALYSIS.md: server/src/index.ts -> C:\Users\dmedl\Projects\MathFlow\AI_AUDIT\server\src\index.ts not found.
+ERROR: Broken link in AI_AUDIT\01_SYSTEM_ANALYSIS.md: src/components/MathRenderer.tsx -> C:\Users\dmedl\Projects\MathFlow\AI_AUDIT\src\components\MathRenderer.tsx not found.
+ERROR: Broken link in AI_AUDIT\01_SYSTEM_ANALYSIS.md: server/src/store/ProblemBank.ts -> C:\Users\dmedl\Projects\MathFlow\AI_AUDIT\server\src\store\ProblemBank.ts not found.
+FAILED: Found 4 broken links.

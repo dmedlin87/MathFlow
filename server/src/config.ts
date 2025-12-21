@@ -11,4 +11,6 @@ export const config = {
   defaultDifficulty: process.env.DEFAULT_DIFFICULTY
     ? parseFloat(process.env.DEFAULT_DIFFICULTY)
     : 0.5,
+  dataPath: process.env.DATA_PATH || "./data/problems.json",
+  factoryApiKey: process.env.FACTORY_API_KEY || "test-key-123", // Default for dev
 };

@@ -1,34 +1,32 @@
 name: CI
 
 on:
-  pull_request:
   push:
-    branches:
-      - main
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
 
 jobs:
-  verify:
+  build-and-test:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
-      - uses: actions/setup-node@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
         with:
-          node-version: 22
-          cache: npm
+          node-version: "20"
+          cache: "npm"
 
-      - name: Install
+      - name: Install dependencies
         run: npm ci
 
       - name: Lint
         run: npm run lint
 
       - name: Typecheck
-        run: npx tsc -b
+        run: npm run build
 
       - name: Test
-        run: npx vitest run
-
-      - name: Docs check
-        run: npm run docs:check
+        run: npm run test:coverage

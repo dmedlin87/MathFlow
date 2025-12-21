@@ -8,6 +8,7 @@ import { DomainGeneratorAdapter } from "./factory/adapters/DomainGeneratorAdapte
 import { config } from "./config.js";
 import { rateLimiter } from "./middleware/rateLimit.js";
 import { securityHeaders } from "./middleware/securityHeaders.js";
+import { apiKeyAuth } from "./middleware/apiKeyAuth.js";
 import type { Generator } from "@domain/types.js";
 
 // Initialize App
@@ -135,7 +136,7 @@ export const runFactory = async (
   }
 };
 
-app.post("/api/factory/run", runFactory);
+app.post("/api/factory/run", apiKeyAuth, runFactory);
 
 // Global Error Handler
 app.use((err: unknown, _req: Request, res: Response, next: NextFunction) => {
