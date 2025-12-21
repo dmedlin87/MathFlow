@@ -30,8 +30,18 @@ export const BoxPlot: React.FC<BoxPlotProps> = ({ min, q1, median, q3, max, widt
   const midY = height / 2;
   const boxHeight = 40;
 
+  const f = (n: number) => Number(n.toFixed(2));
+  const description = `Box plot showing data range from ${f(min)} to ${f(max)}. First quartile is ${f(q1)}, median is ${f(median)}, and third quartile is ${f(q3)}.`;
+
   return (
-    <svg width={width} height={height} className="border border-gray-100 rounded-lg bg-white shadow-sm">
+    <svg
+      width={width}
+      height={height}
+      className="border border-gray-100 rounded-lg bg-white shadow-sm"
+      role="img"
+      aria-label={description}
+    >
+      <title>{description}</title>
       <Axis width={width} height={height} padding={padding} ticks={[min, q1, median, q3, max]} xScale={xScale} />
 
       {/* Whiskers */}

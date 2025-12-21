@@ -30,8 +30,25 @@ export const DotPlot: React.FC<DotPlotProps> = ({ data, width = 400, height = 20
   const dotRadius = 6;
   const dotGap = 16;
 
+  // Generate accessible description
+  // Sort keys to ensure order, although Object.entries order is usually insertion order for string keys (except numeric)
+  // Numeric keys in JS objects are sorted.
+  const summary = Object.entries(counts)
+    .sort((a, b) => Number(a[0]) - Number(b[0]))
+    .map(([val, count]) => `${count} at ${val}`)
+    .join(', ');
+
+  const description = `Dot plot showing data distribution: ${summary}.`;
+
   return (
-    <svg width={width} height={height} className="border border-gray-100 rounded-lg bg-white shadow-sm">
+    <svg
+      width={width}
+      height={height}
+      className="border border-gray-100 rounded-lg bg-white shadow-sm"
+      role="img"
+      aria-label={description}
+    >
+      <title>{description}</title>
       <Axis width={width} height={height} padding={padding} ticks={ticks} xScale={xScale} />
 
       {/* Dots */}
