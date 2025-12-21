@@ -22,6 +22,14 @@ interface MathTutorProps {
     learnerService: ILearnerService;
 }
 
+// Type guard for runtime safety (Architecture Fix: No 'as any')
+// Optimization: Moved outside component to avoid recreation on every render
+const isFractionEquivVars = (v: unknown): v is { baseNum: number; baseDen: number } => {
+    if (typeof v !== 'object' || v === null) return false;
+    const r = v as Record<string, unknown>;
+    return typeof r.baseNum === 'number' && typeof r.baseDen === 'number';
+};
+
 export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerState, learnerService }) => {
     // Service is now injected via props
 
@@ -147,6 +155,11 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
     }
   }, [currentItem, learnerState, userAnswer, learnerService, attempts, startTime, setLearnerState]);
 
+  // Stable handler for input changes
+  const handleInputChange = useCallback((val: string) => {
+    setUserAnswer(val);
+    setFeedback(current => current === 'incorrect' ? null : current);
+  }, []);
 
   const handleNext = () => {
     if (sessionStats.total >= 5) {
@@ -188,13 +201,6 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
   // Map variables for visualization
   // In V1, variables are in problem_content.variables
   const vars = currentItem.problem_content.variables;
-
-  // Type guard for runtime safety (Architecture Fix: No 'as any')
-  const isFractionEquivVars = (v: unknown): v is { baseNum: number; baseDen: number } => {
-      if (typeof v !== 'object' || v === null) return false;
-      const r = v as Record<string, unknown>;
-      return typeof r.baseNum === 'number' && typeof r.baseDen === 'number';
-  };
 
   const fracEquivConfig = currentItem.meta.skill_id === 'frac_equiv_01' && isFractionEquivVars(vars)
     ? { baseNum: vars.baseNum, baseDen: vars.baseDen }
@@ -262,13 +268,8 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
                     <UniversalInput
                         item={currentItem}
                         value={userAnswer}
-                        onChange={(val) => {
-                            setUserAnswer(val);
-                            if (feedback === 'incorrect') {
-                                setFeedback(null);
-                            }
-                        }}
-                        onSubmit={() => handleSubmit()}
+                        onChange={handleInputChange}
+                        onSubmit={handleSubmit}
                         disabled={feedback === 'correct'}
                     />
                 </div>
