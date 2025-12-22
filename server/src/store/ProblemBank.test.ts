@@ -2,6 +2,19 @@ import { describe, it, expect, vi, afterEach } from "vitest";
 import { ProblemBank } from "./ProblemBank.js";
 import type { MathProblemItem } from "@domain/types.js";
 
+const mocks = vi.hoisted(() => ({
+  fs: {
+    mkdir: vi.fn(),
+    readFile: vi.fn(),
+    writeFile: vi.fn(),
+  },
+}));
+
+vi.mock("fs/promises", () => ({
+  default: mocks.fs,
+  ...mocks.fs,
+}));
+
 const createItem = (id: string, skillId: string) =>
   ({
     meta: {
@@ -42,6 +55,11 @@ const createItem = (id: string, skillId: string) =>
 describe("ProblemBank", () => {
   afterEach(() => {
     vi.restoreAllMocks();
+    mocks.fs.readFile.mockReset();
+    mocks.fs.writeFile.mockReset();
+    mocks.fs.mkdir.mockReset();
+    // Simulate empty file by default (ENOENT)
+    mocks.fs.readFile.mockRejectedValue({ code: "ENOENT" });
   });
 
   it("should reject saving unverified items", async () => {
