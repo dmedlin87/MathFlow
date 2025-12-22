@@ -1,6 +1,27 @@
-import { describe, it, expect, vi, afterEach } from "vitest";
-import { ProblemBank } from "./ProblemBank.js";
+import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
 import type { MathProblemItem } from "@domain/types.js";
+
+// Use vi.hoisted to create the mock object so it's available before imports
+const mockFs = vi.hoisted(() => ({
+  data: new Map<string, string>(),
+  readFile: vi.fn(),
+  writeFile: vi.fn(),
+  mkdir: vi.fn(),
+}));
+
+// Implement the behavior inside the mock factory or link it to the hoisted object
+vi.mock("fs/promises", () => {
+  return {
+    default: {
+      readFile: mockFs.readFile,
+      writeFile: mockFs.writeFile,
+      mkdir: mockFs.mkdir,
+    },
+  };
+});
+
+// Import ProblemBank AFTER mocking
+import { ProblemBank } from "./ProblemBank.js";
 
 const createItem = (id: string, skillId: string) =>
   ({
@@ -40,12 +61,39 @@ const createItem = (id: string, skillId: string) =>
   } as MathProblemItem);
 
 describe("ProblemBank", () => {
+  beforeEach(() => {
+    // Clear the in-memory FS before each test
+    mockFs.data.clear();
+    mockFs.readFile.mockReset();
+    mockFs.writeFile.mockReset();
+    mockFs.mkdir.mockReset();
+
+    // Re-implement default behavior for readFile to simulate FS
+    mockFs.readFile.mockImplementation(async (path: string) => {
+      if (!mockFs.data.has(path)) {
+        const err: Error & { code?: string } = new Error("ENOENT");
+        err.code = "ENOENT";
+        throw err;
+      }
+      return mockFs.data.get(path);
+    });
+
+    mockFs.writeFile.mockImplementation(async (path: string, content: string) => {
+      mockFs.data.set(path, content);
+    });
+
+    mockFs.mkdir.mockImplementation(async () => {});
+  });
+
   afterEach(() => {
     vi.restoreAllMocks();
   });
 
+  // Use a fake path for tests to verify injection works
+  const TEST_DB_PATH = "/tmp/test-problems.json";
+
   it("should reject saving unverified items", async () => {
-    const bank = new ProblemBank();
+    const bank = new ProblemBank({ dataPath: TEST_DB_PATH });
     const draft = {
       ...createItem("id-1", "skill-1"),
       meta: { ...createItem("id-1", "skill-1").meta, status: "DRAFT" },
@@ -57,13 +105,14 @@ describe("ProblemBank", () => {
   });
 
   it("should return an empty list when no items exist", async () => {
-    const bank = new ProblemBank();
+    const bank = new ProblemBank({ dataPath: TEST_DB_PATH });
     const result = await bank.fetch("skill-1", 1);
     expect(result).toEqual([]);
+    expect(mockFs.readFile).toHaveBeenCalledWith(expect.stringContaining("test-problems.json"), "utf8");
   });
 
   it("should return an empty list when count is zero", async () => {
-    const bank = new ProblemBank();
+    const bank = new ProblemBank({ dataPath: TEST_DB_PATH });
     await bank.save(createItem("id-0", "skill-1"));
 
     const result = await bank.fetch("skill-1", 0);
@@ -72,7 +121,7 @@ describe("ProblemBank", () => {
   });
 
   it("should return a shuffled copy when count exceeds available items", async () => {
-    const bank = new ProblemBank();
+    const bank = new ProblemBank({ dataPath: TEST_DB_PATH });
     const randomSpy = vi.spyOn(Math, "random").mockReturnValue(0);
 
     await bank.save(createItem("id-0", "skill-1"));
@@ -90,7 +139,7 @@ describe("ProblemBank", () => {
   });
 
   it("should shuffle deterministically when count equals available items", async () => {
-    const bank = new ProblemBank();
+    const bank = new ProblemBank({ dataPath: TEST_DB_PATH });
     const randomSpy = vi
       .spyOn(Math, "random")
       .mockReturnValueOnce(0.9)
@@ -111,7 +160,7 @@ describe("ProblemBank", () => {
   });
 
   it("should fallback to linear scan when random selection stalls", async () => {
-    const bank = new ProblemBank();
+    const bank = new ProblemBank({ dataPath: TEST_DB_PATH });
     vi.spyOn(Math, "random").mockReturnValue(0);
 
     await bank.save(createItem("id-0", "skill-1"));
@@ -126,7 +175,7 @@ describe("ProblemBank", () => {
   });
 
   it("should use partial shuffle when count is at least half", async () => {
-    const bank = new ProblemBank();
+    const bank = new ProblemBank({ dataPath: TEST_DB_PATH });
     vi.spyOn(Math, "random").mockReturnValue(0);
 
     await bank.save(createItem("id-0", "skill-1"));

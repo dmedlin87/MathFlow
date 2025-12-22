@@ -8,17 +8,24 @@ import { config } from "../config.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+export interface ProblemBankOptions {
+  dataPath?: string;
+}
+
 export class ProblemBank {
   private items: Map<string, MathProblemItem> = new Map();
   private bySkill: Map<string, string[]> = new Map(); // skillId -> itemIds
   private initialized: boolean = false;
   private dbPath: string;
 
-  constructor() {
+  constructor(options: ProblemBankOptions = {}) {
     // Resolve path relative to server root if it's relative
-    this.dbPath = path.isAbsolute(config.dataPath)
-      ? config.dataPath
-      : path.join(__dirname, "..", "..", config.dataPath);
+    // If options.dataPath is provided, use it. Otherwise use config.dataPath.
+    const rawPath = options.dataPath || config.dataPath;
+
+    this.dbPath = path.isAbsolute(rawPath)
+      ? rawPath
+      : path.join(__dirname, "..", "..", rawPath);
   }
 
   private async ensureInitialized(): Promise<void> {
@@ -40,8 +47,12 @@ export class ProblemBank {
         this.bySkill.get(skillId)?.push(item.meta.id);
       }
       console.log(`[ProblemBank] Loaded ${parsed.length} problems from disk.`);
-    } catch (err: any) {
-      if (err.code === "ENOENT") {
+    } catch (err: unknown) {
+      if (
+        err instanceof Error &&
+        "code" in err &&
+        (err as { code: string }).code === "ENOENT"
+      ) {
         console.log(
           `[ProblemBank] No database found at ${this.dbPath}, starting fresh.`
         );
