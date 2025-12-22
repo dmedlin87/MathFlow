@@ -1,114 +1,100 @@
-# Test Notes & Analysis
+# Test Notes
 
-## Call-Site Map
-
-### `src/domain/generator/engine.ts`
-
-**Export: `Engine` (Class)**
-- **Instantiated by:**
-  - Self (singleton export `engine`)
-  - `src/domain/generator/engine.test.ts` (Tests)
-
-**Export: `engine` (Singleton)**
-- **Used by:**
-  - `src/domain/learner/state.ts` (in `recommendNextItem`)
-  - `src/domain/generator/engine.test.ts` (Tests)
-
-**Method: `generate(skillId, difficulty, rng)`**
-- **Call Sites:**
-  - `src/domain/learner/state.ts`: `return engine.generate(targetSkill.id, difficulty);`
-  - Tests
+## 1. Call-Site Map
 
 ### `src/domain/learner/state.ts`
 
-**Export: `createInitialState(userId)`**
-- **Used by:**
-  - `src/services/LearnerService.ts`
-  - Tests
+**Exported Functions:**
 
-**Export: `updateLearnerState(state, attempt)`**
-- **Used by:**
-  - `src/services/LearnerService.ts`
-  - Tests
+1.  `createInitialState(userId: string): LearnerState`
+    *   **Call Sites:**
+        *   `src/components/MathTutor.tsx` (via `PersistenceService` or direct fallback)
+        *   `src/services/LearnerService.ts`
+        *   `src/App.tsx` (for initialization)
+    *   **Assumptions:** Returns a state with all skills from registry initialized to default values (0.1 mastery, 0 stability).
 
-**Export: `recommendNextItem(state, rng, skills)`**
-- **Used by:**
-  - `src/services/LearnerService.ts`
-  - Tests
+2.  `updateLearnerState(state: LearnerState, attempt: Attempt): LearnerState`
+    *   **Call Sites:**
+        *   `src/services/LearnerService.ts`
+    *   **Assumptions:**
+        *   Calculates new mastery using BKT (Bayesian Knowledge Tracing).
+        *   Updates stability based on correctness and mastery level.
+        *   Clamps mastery between 0.01 and 0.99.
+        *   Handles missing skills in state gracefully.
 
----
+3.  `recommendNextItem(state: LearnerState, rng?: () => number, skills?: Skill[]): Promise<MathProblemItem>`
+    *   **Call Sites:**
+        *   `src/services/LearnerService.ts`
+    *   **Assumptions:**
+        *   Prioritizes "Review Due" items (stability-based interval).
+        *   Then "Learning Queue" (lowest mastery, prereqs met).
+        *   Fallback to random selection.
+        *   Uses `engine.generate` to fetch actual items.
 
-## Contracts
+## 2. Contracts
 
-### `Engine.generate`
-- **Inputs:** `skillId` (string), `difficulty` (number), `rng` (optional function)
-- **Outputs:** Promise<`MathProblemItem`>
-- **Invariants:**
-  - Must return a valid `MathProblemItem` (validated by `validateMathProblemItem`).
-  - **Priority:** API -> Factory (if API empty) -> Local Generator.
-  - If `apiBaseUrl` is not set, skip network and go straight to local.
-  - If local generator missing and network fails/skips, throws Error.
-- **Errors:**
-  - "No generator found for skill: {skillId}" (if local missing and network fallback exhausted).
-
-### `recommendNextItem`
-- **Inputs:** `state` (LearnerState), `rng` (function, default `Math.random`), `skills` (Skill[], default `ALL_SKILLS`)
-- **Outputs:** Promise<`MathProblemItem`>
-- **Invariants:**
-  - Returns a problem for a skill in the provided list.
-  - **Review Logic:** If review items exist and roll < 0.3, pick review item.
-  - **Learning Logic:** Else, pick lowest mastery item from learning queue (mastery < 0.8 & prereqs met).
-  - **Fallback:** Random skill from candidates.
-  - **Difficulty:** Based on mastery (0.9 if review/mastered, else masteryProb).
-- **Errors:**
-  - "No skills available to recommend" (if candidate list empty).
+### `createInitialState`
+*   **Input:** `userId` (string)
+*   **Output:** `LearnerState`
+*   **Invariant:** `skillState` keys must match `ALL_SKILLS` ids. Mastery initialized to 0.1.
 
 ### `updateLearnerState`
-- **Inputs:** `state` (LearnerState), `attempt` (Attempt)
-- **Outputs:** New `LearnerState` (immutable)
-- **Invariants:**
-  - Updates `masteryProb` via BKT (Bayesian Knowledge Tracing).
-  - `masteryProb` clamped to [0.01, 0.99].
-  - `stability` increases on correct (if mastery > 0.8), decreases on incorrect.
-  - Auto-initializes skill state if missing in input state.
-- **Errors:** None (safe handling).
+*   **Input:** `state` (LearnerState), `attempt` (Attempt)
+*   **Output:** New `LearnerState` (immutable update)
+*   **Invariant:** Mastery probability is always clamped [0.01, 0.99].
+*   **Behavior:**
+    *   Correct answer increases mastery (BKT).
+    *   Incorrect answer decreases mastery (BKT).
+    *   Stability increases if mastery > 0.8 and correct.
+    *   Stability drops if incorrect.
 
----
+### `recommendNextItem`
+*   **Input:** `state` (LearnerState), `rng` (optional function), `skills` (optional override)
+*   **Output:** `Promise<MathProblemItem>`
+*   **Error:** Throws if no skills available.
+*   **Behavior:**
+    *   Review Due logic: `(now - lastPracticed) > 24 * (1 + stability)`
+    *   Selection mix: Review (30% if due) > Learning Queue (Lowest Mastery) > Random.
 
-## Test Plan
+## 3. Tests Added (`src/domain/learner/state.coverage.test.ts`)
 
-### `src/domain/generator/engine.behavior.test.ts`
-| Test Name | Behavior | Branch/Line | Type |
-|-----------|----------|-------------|------|
-| `generate returns local item when API config is missing` | Skips fetch block when `apiBaseUrl` is undefined | `engine.ts:35` (if API_BASE check) | Happy Path |
-| `generate falls back to local when API returns empty list` | Enters fetch, gets empty, falls through | `engine.ts:50` (if problems.length > 0) | Boundary |
-| `generate uses factory item if bank is empty but factory returns item` | Enters fetch, gets empty, calls factory, gets item | `engine.ts:56` (factory fetch) | Happy Path |
-| `generate throws when skill missing locally and API off` | Throws specific error | `engine.ts:79` | Invalid |
-| `generate prioritizes API result over local generator when available` | Happy path API hit | `engine.ts:46` | Happy Path |
-| `generate falls back to local generator when API fetch fails` | Network failure recovery | `engine.ts:63` | Resilience |
+| Test Name | Behavior Checked | Type |
+| :--- | :--- | :--- |
+| `recommendNextItem > throws Error when candidateSkills is empty` | Error handling for empty registry | Invalid Input |
+| `recommendNextItem > selects from reviewDue when reviewDue > 0 and roll < 0.3` | Review prioritization logic | Happy Path (Branch) |
+| `recommendNextItem > falls back to random skill...` | Fallback logic when no review/learning queue | Happy Path (Branch) |
+| `recommendNextItem > sets difficulty to 0.9 when masteryProb > 0.8` | Difficulty adaptation | Happy Path |
+| `recommendNextItem > sorts learning queue by mastery` | Learning queue prioritization | Happy Path |
+| `updateLearnerState > initializes state for new skill if missing` | Robustness for missing state | Edge Case |
+| `updateLearnerState > increases stability when mastery > 0.8 and correct` | Stability logic | Happy Path |
+| `updateLearnerState > uses custom BKT params...` | BKT parameter loading | Happy Path |
+| `updateLearnerState > clamps mastery probability...` | Boundary check [0.01, 0.99] | Boundary |
 
-### `src/domain/learner/state.behavior.test.ts`
-| Test Name | Behavior | Branch/Line | Type |
-|-----------|----------|-------------|------|
-| `recommendNextItem picks review item when roll < 0.3` | Forces review path via mock RNG | `state.ts:147` | Happy Path |
-| `recommendNextItem picks learning item when review empty` | Skips review block | `state.ts:150` | Happy Path |
-| `recommendNextItem respects prereqs` | Filters out blocked skills | `state.ts:130` | Boundary |
-| `recommendNextItem defaults to random if all mastered/blocked` | Fallback path | `state.ts:157` | Boundary |
-| `updateLearnerState clamps mastery to 0.99` | Prevents overflow | `state.ts:83` | Boundary |
-| `updateLearnerState auto-inits missing skill` | Handles new skill gracefull | `state.ts:30` | Robustness |
+## 4. Mutation Sanity Results
 
-## Mutation Sanity Check Results
+**Mutation:**
+In `src/domain/learner/state.ts`:
+```typescript
+<<<<<<< SEARCH
+  if (skillState && skillState.masteryProb > 0.8) {
+    difficulty = 0.9; // Challenge on review
+  }
+=======
+  if (skillState && skillState.masteryProb > 0.8) {
+    difficulty = 0.1; // Challenge on review
+  }
+>>>>>>> REPLACE
+```
 
-**Engine Mutation:**
-- Modified `engine.ts` line 46: `if (problems && problems.length > 0)` -> `if (false)`
-- **Result:** `generate prioritizes API result over local generator when available` failed.
-- **Verification:** Proves the branch is covered and meaningful.
+**Result:**
+Failed 3 tests in `src/domain/learner/state.coverage.test.ts`:
+1.  `selects from reviewDue when reviewDue > 0 and roll < 0.3`
+2.  `falls back to random skill when review not selected and learning queue empty`
+3.  `sets difficulty to 0.9 when masteryProb > 0.8`
 
-**LearnerState Mutation:**
-- Modified `state.ts` line 147: `if (reviewDue.length > 0 && roll < 0.3)` -> `if (false)`
-- **Result:** `recommendNextItem picks review item when roll < 0.3` failed.
-- **Verification:** Proves review priority logic is guarded by this test.
+This confirms that the tests are correctly asserting the expected `difficulty` parameter passed to the engine, validation the logic branches.
 
-## Coverage Summary
-- `learner/state.ts`: 100% Stmts / 100% Branch / 100% Funcs / 100% Lines
-- `generator/engine.ts`: 100% Stmts / 100% Branch / 100% Funcs / 100% Lines (After updates)
+## 5. Coverage Summary
+
+*   **Before:** `state.ts` had gaps in review logic and empty skill handling.
+*   **After:** `state.ts` is 100% covered (statements, branches, functions, lines).
