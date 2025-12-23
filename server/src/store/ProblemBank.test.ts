@@ -1,6 +1,22 @@
-import { describe, it, expect, vi, afterEach } from "vitest";
-import { ProblemBank } from "./ProblemBank.js";
+import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
 import type { MathProblemItem } from "@domain/types.js";
+
+// Mock fs/promises BEFORE importing the module under test
+// This ensures that when ProblemBank imports 'fs/promises', it gets the mock.
+// We also need to mock path to avoid issues with absolute paths in tests.
+vi.mock("fs/promises", () => {
+  return {
+    default: {
+      readFile: vi.fn(),
+      writeFile: vi.fn(),
+      mkdir: vi.fn(),
+    },
+  };
+});
+
+// Import the module AFTER mocking
+import { ProblemBank } from "./ProblemBank.js";
+import fs from "fs/promises"; // This is now the mocked version
 
 const createItem = (id: string, skillId: string) =>
   ({
@@ -40,6 +56,17 @@ const createItem = (id: string, skillId: string) =>
   } as MathProblemItem);
 
 describe("ProblemBank", () => {
+  beforeEach(() => {
+    // Reset mocks before each test to ensure clean state
+    vi.resetAllMocks();
+
+    // Default behavior: filesystem is empty (returns empty array JSON)
+    // using vi.mocked to get type safety on the mock
+    vi.mocked(fs.readFile).mockResolvedValue("[]");
+    vi.mocked(fs.mkdir).mockResolvedValue(undefined);
+    vi.mocked(fs.writeFile).mockResolvedValue(undefined);
+  });
+
   afterEach(() => {
     vi.restoreAllMocks();
   });
