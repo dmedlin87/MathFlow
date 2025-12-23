@@ -1,6 +1,17 @@
-import { describe, it, expect, vi, afterEach } from "vitest";
+import { describe, it, expect, vi, afterEach, beforeEach } from "vitest";
 import { ProblemBank } from "./ProblemBank.js";
 import type { MathProblemItem } from "@domain/types.js";
+
+// Hoist mocks to ensure they are available to the factory
+const mocks = vi.hoisted(() => ({
+  readFile: vi.fn(),
+  writeFile: vi.fn(),
+  mkdir: vi.fn(),
+}));
+
+vi.mock("fs/promises", () => ({
+  default: mocks,
+}));
 
 const createItem = (id: string, skillId: string) =>
   ({
@@ -40,6 +51,25 @@ const createItem = (id: string, skillId: string) =>
   } as MathProblemItem);
 
 describe("ProblemBank", () => {
+  let mockStore: Record<string, string>;
+
+  beforeEach(() => {
+    mockStore = {};
+    mocks.readFile.mockImplementation(async (path: string) => {
+      if (!mockStore[path]) {
+        // Emulate ENOENT
+        const err = new Error("ENOENT");
+        (err as any).code = "ENOENT";
+        throw err;
+      }
+      return mockStore[path];
+    });
+    mocks.writeFile.mockImplementation(async (path: string, data: string) => {
+      mockStore[path] = data;
+    });
+    mocks.mkdir.mockResolvedValue(undefined);
+  });
+
   afterEach(() => {
     vi.restoreAllMocks();
   });
