@@ -7,3 +7,8 @@
 **Vulnerability:** The API lacked global rate limiting, allowing a single IP to flood the server with requests.
 **Learning:** Checking limits inside business logic (like checking `limit < 50`) prevents large single requests but doesn't prevent thousands of small requests (volumetric DoS).
 **Prevention:** Implement a global rate limiter at the middleware level (e.g., Token Bucket or Leaky Bucket) to cap requests per IP per time window.
+
+## 2025-01-20 - Insecure Default Config
+**Vulnerability:** The server configuration defaulted to `test-key-123` for the factory API key if the environment variable was missing.
+**Learning:** Relying on insecure defaults "for convenience" creates a massive risk of accidental production deployment with known secrets.
+**Prevention:** Strictly enforce secret presence in production environments (fail fast at startup) while allowing convenient fallbacks only in non-production environments.
