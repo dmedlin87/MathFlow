@@ -6,10 +6,19 @@ export function gcd(a: number, b: number): number {
 
 export function getFactors(n: number): number[] {
   const factors = [];
-  for (let i = 1; i <= n; i++) {
-    if (n % i === 0) factors.push(i);
+  // Optimization: Iterate only up to sqrt(n)
+  // Time complexity reduces from O(n) to O(sqrt(n))
+  const limit = Math.floor(Math.sqrt(n));
+  for (let i = 1; i <= limit; i++) {
+    if (n % i === 0) {
+      factors.push(i);
+      if (i !== n / i) {
+        factors.push(n / i);
+      }
+    }
   }
-  return factors;
+  // Ensure output is sorted to match original behavior (1..n)
+  return factors.sort((a, b) => a - b);
 }
 
 // Helper to get random integer
