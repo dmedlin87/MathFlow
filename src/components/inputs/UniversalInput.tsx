@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import type { MathProblemItem } from '../../domain/types';
 
 interface UniversalInputProps {
@@ -55,6 +55,7 @@ const FractionInput: React.FC<{
 }> = ({ value, onChange, onSubmit, disabled }) => {
   // Parse "num/den" or empty
   const [num, den] = value.includes('/') ? value.split('/') : [value, ''];
+  const denRef = useRef<HTMLInputElement>(null);
 
   const update = (n: string, d: string) => {
     // Only allow numeric input
@@ -80,9 +81,16 @@ const FractionInput: React.FC<{
           aria-label="Numerator"
           disabled={disabled}
           autoFocus
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault();
+              denRef.current?.focus();
+            }
+          }}
         />
         <div className="w-full h-1 bg-gray-800 rounded-full" />
         <input
+          ref={denRef}
           type="text"
           value={den}
           onChange={(e) => update(num, e.target.value)}

@@ -1,3 +1,3 @@
-## 2025-12-16 - Async Button Loading Pattern
-**Learning:** For async actions like answer submission, standardizing on a disabled button with `aria-busy="true"` and a spinner icon provides essential feedback. We encountered dead code in `MathTutor` that was hiding behind conditional logic; cleaning it up enabled stricter type checking.
-**Action:** Use the new loading button pattern for all future async form submissions. Ensure unit tests use `waitFor` to assert the transient "Checking..." state.
+## 2024-05-23 - Fraction Input Focus Flow
+**Learning:** Users naturally hit 'Enter' after typing the numerator in a fraction input, expecting it to jump to the denominator. Standard behavior on the web for multi-part inputs is often tab-based, but 'Enter' is a strong "I'm done with this field" signal for numeric inputs.
+**Action:** When implementing multi-part inputs (like mixed numbers or fractions), always intercept 'Enter' on the first field to focus the next field instead of submitting the form prematurely or doing nothing. This reduces friction and makes the "keyboard-only" flow much smoother.
