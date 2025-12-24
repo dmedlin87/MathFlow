@@ -46,6 +46,7 @@ async function testPersistence() {
   };
 
   console.log("1. Saving item to ProblemBank...");
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   await problemBank.save(testItem as any);
 
   const dbPath = path.join(__dirname, "data", "problems.json");
@@ -57,7 +58,7 @@ async function testPersistence() {
 
     const content = await fs.readFile(dbPath, "utf8");
     const data = JSON.parse(content);
-    const item = data.find((i: any) => i.meta.id === "test-auth-123");
+    const item = data.find((i: { meta: { id: string } }) => i.meta.id === "test-auth-123");
 
     if (item) {
       console.log("- SUCCESS: Item found in JSON file!");
