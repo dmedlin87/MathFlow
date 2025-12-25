@@ -1,0 +1,1400 @@
+
+> mathflow@0.0.0 test:coverage /app
+> vitest run --coverage --reporter=junit -- src/domain/learner/state.behavior.test.ts src/domain/generator/engine.behavior.test.ts
+
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="555" failures="3" errors="0" time="4.629719549">
+    <testsuite name="server/src/index.test.ts" timestamp="2025-12-25T20:46:20.184Z" hostname="devbox" tests="16" failures="0" errors="0" skipped="0" time="0.031904149">
+        <testcase classname="server/src/index.test.ts" name="Server Security &amp; Error Handling &gt; getProblems &gt; should return problems on success" time="0.005242417">
+        </testcase>
+        <testcase classname="server/src/index.test.ts" name="Server Security &amp; Error Handling &gt; getProblems &gt; should cap limit to the configured max" time="0.00067656">
+        </testcase>
+        <testcase classname="server/src/index.test.ts" name="Server Security &amp; Error Handling &gt; getProblems &gt; should default invalid limit to 1" time="0.000497555">
+        </testcase>
+        <testcase classname="server/src/index.test.ts" name="Server Security &amp; Error Handling &gt; getProblems &gt; should validate skillId" time="0.002584645">
+        </testcase>
+        <testcase classname="server/src/index.test.ts" name="Server Security &amp; Error Handling &gt; getProblems &gt; should catch errors and call next(err)" time="0.000807898">
+        </testcase>
+        <testcase classname="server/src/index.test.ts" name="Server Security &amp; Error Handling &gt; getProblems &gt; should generate and save a problem when none exist" time="0.001412227">
+        </testcase>
+        <testcase classname="server/src/index.test.ts" name="Server Security &amp; Error Handling &gt; getProblems &gt; should warn when no generator is found for empty bank" time="0.001239096">
+        </testcase>
+        <testcase classname="server/src/index.test.ts" name="Server Security &amp; Error Handling &gt; Global Error Handler Integration &gt; should return 500 JSON on unhandled error" time="0.001094469">
+        </testcase>
+        <testcase classname="server/src/index.test.ts" name="Server Security &amp; Error Handling &gt; Global Error Handler Integration &gt; should delegate to next(err) if headers are already sent" time="0.000792431">
+        </testcase>
+        <testcase classname="server/src/index.test.ts" name="Server Security &amp; Error Handling &gt; Security Headers &gt; should have x-powered-by disabled" time="0.000384019">
+        </testcase>
+        <testcase classname="server/src/index.test.ts" name="Server Security &amp; Error Handling &gt; runFactory &gt; should validate skillId" time="0.000783628">
+        </testcase>
+        <testcase classname="server/src/index.test.ts" name="Server Security &amp; Error Handling &gt; runFactory &gt; should return 404 when generator is missing" time="0.000613947">
+        </testcase>
+        <testcase classname="server/src/index.test.ts" name="Server Security &amp; Error Handling &gt; runFactory &gt; should normalize count and difficulty inputs" time="0.005374942">
+        </testcase>
+        <testcase classname="server/src/index.test.ts" name="Server Security &amp; Error Handling &gt; runFactory &gt; should clamp difficulty and cap count" time="0.001491598">
+        </testcase>
+        <testcase classname="server/src/index.test.ts" name="Server Security &amp; Error Handling &gt; runFactory &gt; should skip null items from the pipeline" time="0.000955406">
+        </testcase>
+        <testcase classname="server/src/index.test.ts" name="Server Security &amp; Error Handling &gt; runFactory &gt; should surface errors to next(err)" time="0.000584847">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/FractionVisualizer.test.tsx" timestamp="2025-12-25T20:46:20.188Z" hostname="devbox" tests="6" failures="0" errors="0" skipped="0" time="0.066626995">
+        <testcase classname="src/components/FractionVisualizer.test.tsx" name="FractionVisualizer &gt; renders a pie svg with one path per denominator slice" time="0.044085108">
+        </testcase>
+        <testcase classname="src/components/FractionVisualizer.test.tsx" name="FractionVisualizer &gt; fills first N slices with the provided color and leaves the rest unfilled" time="0.005230736">
+        </testcase>
+        <testcase classname="src/components/FractionVisualizer.test.tsx" name="FractionVisualizer &gt; treats numerator greater than denominator as fully filled (current behavior)" time="0.004013373">
+        </testcase>
+        <testcase classname="src/components/FractionVisualizer.test.tsx" name="FractionVisualizer &gt; uses largeArcFlag=1 when a slice is larger than 180 degrees" time="0.004269241">
+        </testcase>
+        <testcase classname="src/components/FractionVisualizer.test.tsx" name="FractionVisualizer &gt; uses largeArcFlag=0 when slice is 180 degrees or less" time="0.00385559">
+        </testcase>
+        <testcase classname="src/components/FractionVisualizer.test.tsx" name="FractionVisualizer &gt; returns null for non-pie visualizer types" time="0.002145808">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/InteractiveSteps.test.tsx" timestamp="2025-12-25T20:46:20.189Z" hostname="devbox" tests="6" failures="0" errors="0" skipped="0" time="0.459053391">
+        <testcase classname="src/components/InteractiveSteps.test.tsx" name="InteractiveSteps &gt; renders the first step correctly" time="0.066105245">
+        </testcase>
+        <testcase classname="src/components/InteractiveSteps.test.tsx" name="InteractiveSteps &gt; advances to next step on correct answer" time="0.180869992">
+        </testcase>
+        <testcase classname="src/components/InteractiveSteps.test.tsx" name="InteractiveSteps &gt; shows error on incorrect answer and does not advance" time="0.018646964">
+        </testcase>
+        <testcase classname="src/components/InteractiveSteps.test.tsx" name="InteractiveSteps &gt; does nothing on empty submit" time="0.011968923">
+        </testcase>
+        <testcase classname="src/components/InteractiveSteps.test.tsx" name="InteractiveSteps &gt; advances through multiple steps including static steps" time="0.162183224">
+        </testcase>
+        <testcase classname="src/components/InteractiveSteps.test.tsx" name="InteractiveSteps &gt; disables input after correct answer" time="0.015976809">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/MathRenderer.test.tsx" timestamp="2025-12-25T20:46:20.190Z" hostname="devbox" tests="15" failures="0" errors="0" skipped="0" time="0.168356357">
+        <testcase classname="src/components/MathRenderer.test.tsx" name="MathRenderer &gt; renders simple text correctly" time="0.042408128">
+        </testcase>
+        <testcase classname="src/components/MathRenderer.test.tsx" name="MathRenderer &gt; preserves spacing in textContent" time="0.003983081">
+        </testcase>
+        <testcase classname="src/components/MathRenderer.test.tsx" name="MathRenderer &gt; renders bold text correctly" time="0.011499839">
+        </testcase>
+        <testcase classname="src/components/MathRenderer.test.tsx" name="MathRenderer &gt; renders fractions correctly" time="0.007462929">
+        </testcase>
+        <testcase classname="src/components/MathRenderer.test.tsx" name="MathRenderer &gt; renders mixed content correctly" time="0.008636973">
+        </testcase>
+        <testcase classname="src/components/MathRenderer.test.tsx" name="MathRenderer &gt; handles empty text" time="0.003192526">
+        </testcase>
+        <testcase classname="src/components/MathRenderer.test.tsx" name="MathRenderer &gt; renders explanation text with spaces" time="0.00615001">
+        </testcase>
+        <testcase classname="src/components/MathRenderer.test.tsx" name="MathRenderer &gt; KaTeX Support &gt; renders inline math" time="0.030539596">
+        </testcase>
+        <testcase classname="src/components/MathRenderer.test.tsx" name="MathRenderer &gt; KaTeX Support &gt; renders display math" time="0.012970308">
+        </testcase>
+        <testcase classname="src/components/MathRenderer.test.tsx" name="MathRenderer &gt; KaTeX Support &gt; handles KaTeX rendering errors gracefully" time="0.005565393">
+        </testcase>
+        <testcase classname="src/components/MathRenderer.test.tsx" name="MathRenderer &gt; KaTeX Support &gt; handles empty math delimiters" time="0.005465033">
+        </testcase>
+        <testcase classname="src/components/MathRenderer.test.tsx" name="MathRenderer &gt; Fraction Edge Cases &gt; ignores incomplete fractions like 1/" time="0.003861862">
+        </testcase>
+        <testcase classname="src/components/MathRenderer.test.tsx" name="MathRenderer &gt; Fraction Edge Cases &gt; ignores /2" time="0.004024258">
+        </testcase>
+        <testcase classname="src/components/MathRenderer.test.tsx" name="MathRenderer &gt; Fraction Edge Cases &gt; handles triple slashes like 1/2/3 by ignoring them as fractions" time="0.003206551">
+        </testcase>
+        <testcase classname="src/components/MathRenderer.test.tsx" name="MathRenderer &gt; renders complex mixed content" time="0.015785474">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/MathTutor.coverage.test.tsx" timestamp="2025-12-25T20:46:20.191Z" hostname="devbox" tests="3" failures="0" errors="0" skipped="0" time="0.196301229">
+        <testcase classname="src/components/MathTutor.coverage.test.tsx" name="MathTutor Error &amp; Edge Cases &gt; handles handleSubmit failure gracefully" time="0.132511523">
+        </testcase>
+        <testcase classname="src/components/MathTutor.coverage.test.tsx" name="MathTutor Error &amp; Edge Cases &gt; submits on Enter key in text input" time="0.028673465">
+        </testcase>
+        <testcase classname="src/components/MathTutor.coverage.test.tsx" name="MathTutor Error &amp; Edge Cases &gt; submits on Enter key in fraction denominator" time="0.032142466">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/MathTutor.test.tsx" timestamp="2025-12-25T20:46:20.192Z" hostname="devbox" tests="18" failures="0" errors="0" skipped="0" time="2.514087424">
+        <testcase classname="src/components/MathTutor.test.tsx" name="MathTutor UX &gt; loads item on mount" time="0.105657491">
+        </testcase>
+        <testcase classname="src/components/MathTutor.test.tsx" name="MathTutor UX &gt; handles correct answer submission" time="0.05574237">
+        </testcase>
+        <testcase classname="src/components/MathTutor.test.tsx" name="MathTutor UX &gt; handles incorrect answer and retry" time="0.095636905">
+        </testcase>
+        <testcase classname="src/components/MathTutor.test.tsx" name="MathTutor UX &gt; handles diagnosis failure gracefully" time="0.040177345">
+        </testcase>
+        <testcase classname="src/components/MathTutor.test.tsx" name="MathTutor UX &gt; toggles dev mode and auto-solves" time="0.039259101">
+        </testcase>
+        <testcase classname="src/components/MathTutor.test.tsx" name="MathTutor Hint Ladder &gt; shows hints from hint_ladder based on attempts" time="0.067882329">
+        </testcase>
+        <testcase classname="src/components/MathTutor.test.tsx" name="MathTutor Hint Ladder &gt; uses diagnosis_explanation when no hint_ladder" time="0.046692685">
+        </testcase>
+        <testcase classname="src/components/MathTutor.test.tsx" name="MathTutor Session Flow &gt; ends session after 5 problems and shows SessionSummary" time="1.647214701">
+        </testcase>
+        <testcase classname="src/components/MathTutor.test.tsx" name="MathTutor Session Flow &gt; shows SessionSummary when End Session clicked" time="0.035472116">
+        </testcase>
+        <testcase classname="src/components/MathTutor.test.tsx" name="MathTutor Session Flow &gt; restarts session when restart clicked" time="0.049744158">
+        </testcase>
+        <testcase classname="src/components/MathTutor.test.tsx" name="MathTutor Input Types &gt; shows disabled submit for multiple_choice with no selection" time="0.029261748">
+        </testcase>
+        <testcase classname="src/components/MathTutor.test.tsx" name="MathTutor Input Types &gt; shows loading spinner &amp; disables multiple_choice submit while submitting" time="0.054869738">
+        </testcase>
+        <testcase classname="src/components/MathTutor.test.tsx" name="MathTutor Input Types &gt; clears incorrect feedback when input changes" time="0.084425128">
+        </testcase>
+        <testcase classname="src/components/MathTutor.test.tsx" name="MathTutor InteractiveSteps &gt; shows InteractiveSteps when incorrect with solution steps" time="0.032291069">
+        </testcase>
+        <testcase classname="src/components/MathTutor.test.tsx" name="MathTutor Coverage Expansion &gt; updates masteredSkills on retry when mastery exceeds 0.85 (L134)" time="0.066544504">
+        </testcase>
+        <testcase classname="src/components/MathTutor.test.tsx" name="MathTutor Coverage Expansion &gt; handles submitAttempt errors gracefully (L144)" time="0.029229796">
+        </testcase>
+        <testcase classname="src/components/MathTutor.test.tsx" name="MathTutor Coverage Expansion &gt; renders FractionVisualizer with frac_equiv_01 skill and valid variables (L194-196)" time="0.01277155">
+        </testcase>
+        <testcase classname="src/components/MathTutor.test.tsx" name="MathTutor Coverage Expansion &gt; handles invalid variables for frac_equiv_01 gracefully (type guard false)" time="0.01690596">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/SessionSummary.test.tsx" timestamp="2025-12-25T20:46:20.194Z" hostname="devbox" tests="5" failures="0" errors="0" skipped="0" time="0.116729914">
+        <testcase classname="src/components/SessionSummary.test.tsx" name="SessionSummary &gt; renders session statistics correctly" time="0.070525417">
+        </testcase>
+        <testcase classname="src/components/SessionSummary.test.tsx" name="SessionSummary &gt; renders mastered skills list" time="0.011631044">
+        </testcase>
+        <testcase classname="src/components/SessionSummary.test.tsx" name="SessionSummary &gt; shows encouragement message when no skills mastered" time="0.007036782">
+        </testcase>
+        <testcase classname="src/components/SessionSummary.test.tsx" name="SessionSummary &gt; handles restart button click" time="0.015220982">
+        </testcase>
+        <testcase classname="src/components/SessionSummary.test.tsx" name="SessionSummary &gt; handles zero total problems safely" time="0.009187064">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/domain/config.test.ts" timestamp="2025-12-25T20:46:20.195Z" hostname="devbox" tests="4" failures="0" errors="0" skipped="0" time="0.004964749">
+        <testcase classname="src/domain/config.test.ts" name="getApiBaseUrl &gt; returns null by default in node when window is not defined" time="0.001920831">
+        </testcase>
+        <testcase classname="src/domain/config.test.ts" name="getApiBaseUrl &gt; returns null when window is not defined even if env is provided" time="0.000237263">
+        </testcase>
+        <testcase classname="src/domain/config.test.ts" name="getApiBaseUrl &gt; returns null when window exists but env is missing" time="0.000163546">
+        </testcase>
+        <testcase classname="src/domain/config.test.ts" name="getApiBaseUrl &gt; returns the VITE_API_BASE_URL when window and env are present" time="0.000349258">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/domain/math-utils.test.ts" timestamp="2025-12-25T20:46:20.195Z" hostname="devbox" tests="13" failures="0" errors="0" skipped="0" time="0.008183434">
+        <testcase classname="src/domain/math-utils.test.ts" name="math-utils &gt; gcd &gt; returns a when b is 0" time="0.001962527">
+        </testcase>
+        <testcase classname="src/domain/math-utils.test.ts" name="math-utils &gt; gcd &gt; computes the greatest common divisor via recursion" time="0.00021846">
+        </testcase>
+        <testcase classname="src/domain/math-utils.test.ts" name="math-utils &gt; gcd &gt; treats gcd(0, a) as gcd(a, 0) (characterization)" time="0.000150542">
+        </testcase>
+        <testcase classname="src/domain/math-utils.test.ts" name="math-utils &gt; getFactors &gt; returns all positive divisors of n" time="0.001160306">
+        </testcase>
+        <testcase classname="src/domain/math-utils.test.ts" name="math-utils &gt; getFactors &gt; returns [1] for n = 1" time="0.000216993">
+        </testcase>
+        <testcase classname="src/domain/math-utils.test.ts" name="math-utils &gt; getFactors &gt; returns [] for n &lt;= 0 (characterization)" time="0.00032982">
+        </testcase>
+        <testcase classname="src/domain/math-utils.test.ts" name="math-utils &gt; checkAnswer &gt; returns true for exact match" time="0.00037643">
+        </testcase>
+        <testcase classname="src/domain/math-utils.test.ts" name="math-utils &gt; checkAnswer &gt; returns true for match with whitespace" time="0.000174879">
+        </testcase>
+        <testcase classname="src/domain/math-utils.test.ts" name="math-utils &gt; checkAnswer &gt; returns false for incorrect answer" time="0.000164499">
+        </testcase>
+        <testcase classname="src/domain/math-utils.test.ts" name="math-utils &gt; checkAnswer &gt; returns true for numeric equivalent (42.0 vs 42)" time="0.000139549">
+        </testcase>
+        <testcase classname="src/domain/math-utils.test.ts" name="math-utils &gt; checkAnswer &gt; returns true for accepted forms" time="0.000247061">
+        </testcase>
+        <testcase classname="src/domain/math-utils.test.ts" name="math-utils &gt; checkAnswer &gt; respects tolerance for decimals" time="0.000314712">
+        </testcase>
+        <testcase classname="src/domain/math-utils.test.ts" name="math-utils &gt; checkAnswer &gt; returns false for empty input" time="0.000144533">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/domain/validation.test.ts" timestamp="2025-12-25T20:46:20.197Z" hostname="devbox" tests="11" failures="0" errors="0" skipped="0" time="0.009336087">
+        <testcase classname="src/domain/validation.test.ts" name="Validation Logic &gt; should validate a correct item" time="0.002103884">
+        </testcase>
+        <testcase classname="src/domain/validation.test.ts" name="Validation Logic &gt; should reject non-object" time="0.001633724">
+        </testcase>
+        <testcase classname="src/domain/validation.test.ts" name="Validation Logic &gt; should reject missing meta" time="0.00030406">
+        </testcase>
+        <testcase classname="src/domain/validation.test.ts" name="Validation Logic &gt; should reject missing fields within meta" time="0.000456139">
+        </testcase>
+        <testcase classname="src/domain/validation.test.ts" name="Validation Logic &gt; should reject non-string meta.skill_id" time="0.000360029">
+        </testcase>
+        <testcase classname="src/domain/validation.test.ts" name="Validation Logic &gt; should reject missing solution logic" time="0.000296498">
+        </testcase>
+        <testcase classname="src/domain/validation.test.ts" name="Validation Logic &gt; should reject missing problem content" time="0.000339808">
+        </testcase>
+        <testcase classname="src/domain/validation.test.ts" name="Validation Logic &gt; should reject non-string problem_content.stem" time="0.000445448">
+        </testcase>
+        <testcase classname="src/domain/validation.test.ts" name="Validation Logic &gt; should reject non-string final_answer_canonical" time="0.000313939">
+        </testcase>
+        <testcase classname="src/domain/validation.test.ts" name="Validation Logic &gt; should reject non-array solution_logic.steps" time="0.0003379">
+        </testcase>
+        <testcase classname="src/domain/validation.test.ts" name="Validation Logic &gt; should reject missing answer_spec" time="0.000283321">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/services/LearnerService.test.ts" timestamp="2025-12-25T20:46:20.199Z" hostname="devbox" tests="7" failures="0" errors="0" skipped="0" time="0.030138672">
+        <testcase classname="src/services/LearnerService.test.ts" name="LocalLearnerService &gt; should simulate network latency" time="0.011294599">
+        </testcase>
+        <testcase classname="src/services/LearnerService.test.ts" name="LocalLearnerService &gt; should return valid initial state" time="0.001081019">
+        </testcase>
+        <testcase classname="src/services/LearnerService.test.ts" name="LocalLearnerService &gt; should submit attempt and return updated state" time="0.001789338">
+        </testcase>
+        <testcase classname="src/services/LearnerService.test.ts" name="LocalLearnerService &gt; should reject non-serializable data (Architecture Violation)" time="0.007480505">
+        </testcase>
+        <testcase classname="src/services/LearnerService.test.ts" name="LocalLearnerService &gt; should return null when answer matches no misconception" time="0.004338759">
+        </testcase>
+        <testcase classname="src/services/LearnerService.test.ts" name="LocalLearnerService &gt; should diagnose known misconceptions" time="0.000776085">
+        </testcase>
+        <testcase classname="src/services/LearnerService.test.ts" name="LocalLearnerService &gt; should get recommendation from domain logic" time="0.001002633">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/utils/logger.test.ts" timestamp="2025-12-25T20:46:20.200Z" hostname="devbox" tests="5" failures="0" errors="0" skipped="0" time="0.009800806">
+        <testcase classname="src/utils/logger.test.ts" name="Logger &gt; should log INFO messages to console.log" time="0.005676359">
+        </testcase>
+        <testcase classname="src/utils/logger.test.ts" name="Logger &gt; should log WARN messages to console.warn" time="0.00045293">
+        </testcase>
+        <testcase classname="src/utils/logger.test.ts" name="Logger &gt; should log ERROR messages to console.error" time="0.00037975">
+        </testcase>
+        <testcase classname="src/utils/logger.test.ts" name="Logger &gt; should log DEBUG messages to console.log" time="0.000385583">
+        </testcase>
+        <testcase classname="src/utils/logger.test.ts" name="Logger &gt; should handle missing context gracefully" time="0.000242698">
+        </testcase>
+    </testsuite>
+    <testsuite name="server/src/factory/pipeline.test.ts" timestamp="2025-12-25T20:46:20.200Z" hostname="devbox" tests="3" failures="0" errors="0" skipped="0" time="0.008528074">
+        <testcase classname="server/src/factory/pipeline.test.ts" name="ContentPipeline &gt; successfully generates and verifies an item" time="0.003385146">
+        </testcase>
+        <testcase classname="server/src/factory/pipeline.test.ts" name="ContentPipeline &gt; retries on rejection and respects maxAttempts" time="0.002001239">
+        </testcase>
+        <testcase classname="server/src/factory/pipeline.test.ts" name="ContentPipeline &gt; uses deterministic verifier if provided" time="0.000919999">
+        </testcase>
+    </testsuite>
+    <testsuite name="server/src/middleware/apiKeyAuth.test.ts" timestamp="2025-12-25T20:46:20.201Z" hostname="devbox" tests="3" failures="0" errors="0" skipped="0" time="0.013890541">
+        <testcase classname="server/src/middleware/apiKeyAuth.test.ts" name="apiKeyAuth Middleware &gt; should call next() if X-API-Key matches config" time="0.006871401">
+        </testcase>
+        <testcase classname="server/src/middleware/apiKeyAuth.test.ts" name="apiKeyAuth Middleware &gt; should return 401 if X-API-Key is missing" time="0.004171393">
+        </testcase>
+        <testcase classname="server/src/middleware/apiKeyAuth.test.ts" name="apiKeyAuth Middleware &gt; should return 401 if X-API-Key is incorrect" time="0.000490515">
+        </testcase>
+    </testsuite>
+    <testsuite name="server/src/middleware/rateLimit.test.ts" timestamp="2025-12-25T20:46:20.201Z" hostname="devbox" tests="13" failures="0" errors="0" skipped="0" time="0.026168319">
+        <testcase classname="server/src/middleware/rateLimit.test.ts" name="Rate Limiter Middleware &gt; should allow requests under the limit" time="0.006949539">
+        </testcase>
+        <testcase classname="server/src/middleware/rateLimit.test.ts" name="Rate Limiter Middleware &gt; should block requests over the limit" time="0.005217814">
+        </testcase>
+        <testcase classname="server/src/middleware/rateLimit.test.ts" name="Rate Limiter Middleware &gt; should include retryAfter seconds based on remaining window" time="0.002290227">
+        </testcase>
+        <testcase classname="server/src/middleware/rateLimit.test.ts" name="Rate Limiter Middleware &gt; should report retryAfter as 1 when one second remains" time="0.001320056">
+        </testcase>
+        <testcase classname="server/src/middleware/rateLimit.test.ts" name="Rate Limiter Middleware &gt; should replenish tokens after window expires" time="0.001095713">
+        </testcase>
+        <testcase classname="server/src/middleware/rateLimit.test.ts" name="Rate Limiter Middleware &gt; should cleanup stale clients" time="0.000776679">
+        </testcase>
+        <testcase classname="server/src/middleware/rateLimit.test.ts" name="Rate Limiter Middleware &gt; should only cleanup clients past the window" time="0.000760317">
+        </testcase>
+        <testcase classname="server/src/middleware/rateLimit.test.ts" name="Rate Limiter Middleware &gt; should extract IP from req.socket if req.ip is missing" time="0.000574031">
+        </testcase>
+        <testcase classname="server/src/middleware/rateLimit.test.ts" name="Rate Limiter Middleware &gt; should fallback to &apos;unknown&apos; if no IP available" time="0.000749623">
+        </testcase>
+        <testcase classname="server/src/middleware/rateLimit.test.ts" name="Rate Limiter Middleware &gt; should use socket.remoteAddress if req.ip is an empty string" time="0.000606741">
+        </testcase>
+        <testcase classname="server/src/middleware/rateLimit.test.ts" name="Rate Limiter Middleware &gt; should replenish tokens exactly at WINDOW_MS" time="0.00129044">
+        </testcase>
+        <testcase classname="server/src/middleware/rateLimit.test.ts" name="Rate Limiter Middleware &gt; should trigger cleanup via interval" time="0.00080433">
+        </testcase>
+        <testcase classname="server/src/middleware/rateLimit.test.ts" name="Rate Limiter Middleware &gt; should handle rapid-fire requests exactly at the limit" time="0.001131157">
+        </testcase>
+    </testsuite>
+    <testsuite name="server/src/middleware/securityHeaders.test.ts" timestamp="2025-12-25T20:46:20.203Z" hostname="devbox" tests="1" failures="0" errors="0" skipped="0" time="0.014055908">
+        <testcase classname="server/src/middleware/securityHeaders.test.ts" name="securityHeaders middleware &gt; should set security headers and call next" time="0.006151437">
+        </testcase>
+    </testsuite>
+    <testsuite name="server/src/store/ProblemBank.test.ts" timestamp="2025-12-25T20:46:20.203Z" hostname="devbox" tests="7" failures="3" errors="0" skipped="0" time="0.051169896">
+        <testcase classname="server/src/store/ProblemBank.test.ts" name="ProblemBank &gt; should reject saving unverified items" time="0.012186828">
+            <system-out>
+[ProblemBank] Loaded 6 problems from disk.
+
+            </system-out>
+        </testcase>
+        <testcase classname="server/src/store/ProblemBank.test.ts" name="ProblemBank &gt; should return an empty list when no items exist" time="0.016647696">
+            <system-out>
+[ProblemBank] Loaded 6 problems from disk.
+
+            </system-out>
+            <failure message="expected [ Array(1) ] to deeply equal []" type="AssertionError">
+AssertionError: expected [ Array(1) ] to deeply equal []
+
+- Expected
++ Received
+
+- []
++ [
++   {
++     &quot;answer_spec&quot;: {
++       &quot;answer_mode&quot;: &quot;final_only&quot;,
++       &quot;input_type&quot;: &quot;integer&quot;,
++     },
++     &quot;meta&quot;: {
++       &quot;created_at&quot;: &quot;2025-01-01T00:00:00.000Z&quot;,
++       &quot;difficulty&quot;: 0.5,
++       &quot;id&quot;: &quot;id-2&quot;,
++       &quot;provenance&quot;: {
++         &quot;attempt&quot;: 1,
++         &quot;critic_model&quot;: &quot;critic&quot;,
++         &quot;generator_model&quot;: &quot;gen&quot;,
++         &quot;judge_model&quot;: &quot;judge&quot;,
++         &quot;verifier&quot;: {
++           &quot;passed&quot;: true,
++           &quot;type&quot;: &quot;none&quot;,
++         },
++       },
++       &quot;skill_id&quot;: &quot;skill-1&quot;,
++       &quot;status&quot;: &quot;VERIFIED&quot;,
++       &quot;verification_report&quot;: {
++         &quot;issues&quot;: [],
++         &quot;rubric_scores&quot;: {
++           &quot;ambiguity&quot;: 1,
++           &quot;pedagogical_alignment&quot;: 1,
++           &quot;procedural_correctness&quot;: 1,
++           &quot;solvability&quot;: 1,
++         },
++         &quot;underspecified&quot;: false,
++       },
++       &quot;version&quot;: 1,
++     },
++     &quot;misconceptions&quot;: [],
++     &quot;problem_content&quot;: {
++       &quot;format&quot;: &quot;text&quot;,
++       &quot;stem&quot;: &quot;q&quot;,
++     },
++     &quot;solution_logic&quot;: {
++       &quot;final_answer_canonical&quot;: &quot;1&quot;,
++       &quot;final_answer_type&quot;: &quot;numeric&quot;,
++       &quot;steps&quot;: [],
++     },
++   },
++ ]
+
+ ❯ server/src/store/ProblemBank.test.ts:62:20
+            </failure>
+        </testcase>
+        <testcase classname="server/src/store/ProblemBank.test.ts" name="ProblemBank &gt; should return an empty list when count is zero" time="0.002453355">
+            <system-out>
+[ProblemBank] Loaded 6 problems from disk.
+
+            </system-out>
+        </testcase>
+        <testcase classname="server/src/store/ProblemBank.test.ts" name="ProblemBank &gt; should return a shuffled copy when count exceeds available items" time="0.006015689">
+            <system-out>
+[ProblemBank] Loaded 6 problems from disk.
+
+            </system-out>
+            <failure message="expected [ Array(8) ] to deeply equal [ &apos;id-1&apos;, &apos;id-2&apos;, &apos;id-0&apos; ]" type="AssertionError">
+AssertionError: expected [ Array(8) ] to deeply equal [ &apos;id-1&apos;, &apos;id-2&apos;, &apos;id-0&apos; ]
+
+- Expected
++ Received
+
+  [
+    &quot;id-1&quot;,
+    &quot;id-2&quot;,
++   &quot;id-3&quot;,
++   &quot;id-4&quot;,
++   &quot;id-0&quot;,
++   &quot;id-1&quot;,
++   &quot;id-2&quot;,
+    &quot;id-0&quot;,
+  ]
+
+ ❯ server/src/store/ProblemBank.test.ts:84:48
+            </failure>
+        </testcase>
+        <testcase classname="server/src/store/ProblemBank.test.ts" name="ProblemBank &gt; should shuffle deterministically when count equals available items" time="0.003813701">
+            <system-out>
+[ProblemBank] Loaded 6 problems from disk.
+
+            </system-out>
+            <failure message="expected [ &apos;id-2&apos;, &apos;id-0&apos;, &apos;id-2&apos; ] to deeply equal [ &apos;id-1&apos;, &apos;id-0&apos;, &apos;id-2&apos; ]" type="AssertionError">
+AssertionError: expected [ &apos;id-2&apos;, &apos;id-0&apos;, &apos;id-2&apos; ] to deeply equal [ &apos;id-1&apos;, &apos;id-0&apos;, &apos;id-2&apos; ]
+
+- Expected
++ Received
+
+  [
+-   &quot;id-1&quot;,
++   &quot;id-2&quot;,
+    &quot;id-0&quot;,
+    &quot;id-2&quot;,
+  ]
+
+ ❯ server/src/store/ProblemBank.test.ts:105:48
+            </failure>
+        </testcase>
+        <testcase classname="server/src/store/ProblemBank.test.ts" name="ProblemBank &gt; should fallback to linear scan when random selection stalls" time="0.003360843">
+            <system-out>
+[ProblemBank] Loaded 6 problems from disk.
+
+            </system-out>
+        </testcase>
+        <testcase classname="server/src/store/ProblemBank.test.ts" name="ProblemBank &gt; should use partial shuffle when count is at least half" time="0.003512805">
+            <system-out>
+[ProblemBank] Loaded 6 problems from disk.
+
+            </system-out>
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/inputs/UniversalInput.test.tsx" timestamp="2025-12-25T20:46:20.208Z" hostname="devbox" tests="22" failures="0" errors="0" skipped="0" time="0.311855001">
+        <testcase classname="src/components/inputs/UniversalInput.test.tsx" name="UniversalInput - Text Input &gt; renders text input for default input types" time="0.047641018">
+        </testcase>
+        <testcase classname="src/components/inputs/UniversalInput.test.tsx" name="UniversalInput - Text Input &gt; calls onChange when user types" time="0.054196759">
+        </testcase>
+        <testcase classname="src/components/inputs/UniversalInput.test.tsx" name="UniversalInput - Text Input &gt; calls onSubmit when Enter key is pressed" time="0.012622455">
+        </testcase>
+        <testcase classname="src/components/inputs/UniversalInput.test.tsx" name="UniversalInput - Text Input &gt; does NOT call onSubmit when other keys are pressed" time="0.010278742">
+        </testcase>
+        <testcase classname="src/components/inputs/UniversalInput.test.tsx" name="UniversalInput - Text Input &gt; respects disabled prop" time="0.008458505">
+        </testcase>
+        <testcase classname="src/components/inputs/UniversalInput.test.tsx" name="UniversalInput - Text Input &gt; uses default placeholder when none provided" time="0.003779621">
+        </testcase>
+        <testcase classname="src/components/inputs/UniversalInput.test.tsx" name="UniversalInput - Fraction Input &gt; renders fraction input with numerator and denominator fields" time="0.008116639">
+        </testcase>
+        <testcase classname="src/components/inputs/UniversalInput.test.tsx" name="UniversalInput - Fraction Input &gt; parses existing value with &quot;/&quot; correctly" time="0.006112943">
+        </testcase>
+        <testcase classname="src/components/inputs/UniversalInput.test.tsx" name="UniversalInput - Fraction Input &gt; parses value without &quot;/&quot; as numerator only" time="0.006400502">
+        </testcase>
+        <testcase classname="src/components/inputs/UniversalInput.test.tsx" name="UniversalInput - Fraction Input &gt; updates with fraction format when denominator is present" time="0.00538037">
+        </testcase>
+        <testcase classname="src/components/inputs/UniversalInput.test.tsx" name="UniversalInput - Fraction Input &gt; updates with numerator only when denominator is empty" time="0.005124433">
+        </testcase>
+        <testcase classname="src/components/inputs/UniversalInput.test.tsx" name="UniversalInput - Fraction Input &gt; filters non-numeric characters except minus sign" time="0.00495902">
+        </testcase>
+        <testcase classname="src/components/inputs/UniversalInput.test.tsx" name="UniversalInput - Fraction Input &gt; calls onSubmit on Enter key in denominator field" time="0.004830586">
+        </testcase>
+        <testcase classname="src/components/inputs/UniversalInput.test.tsx" name="UniversalInput - Fraction Input &gt; does NOT call onSubmit on non-Enter key in denominator field" time="0.004860188">
+        </testcase>
+        <testcase classname="src/components/inputs/UniversalInput.test.tsx" name="UniversalInput - Fraction Input &gt; respects disabled prop on fraction inputs" time="0.004474861">
+        </testcase>
+        <testcase classname="src/components/inputs/UniversalInput.test.tsx" name="UniversalInput - Multiple Choice Input &gt; shows error when choices array is empty" time="0.005710304">
+        </testcase>
+        <testcase classname="src/components/inputs/UniversalInput.test.tsx" name="UniversalInput - Multiple Choice Input &gt; renders all choices as buttons" time="0.051980636">
+        </testcase>
+        <testcase classname="src/components/inputs/UniversalInput.test.tsx" name="UniversalInput - Multiple Choice Input &gt; calls onChange with selected choice when clicked" time="0.013567649">
+        </testcase>
+        <testcase classname="src/components/inputs/UniversalInput.test.tsx" name="UniversalInput - Multiple Choice Input &gt; applies selected styling to current value" time="0.017391327">
+        </testcase>
+        <testcase classname="src/components/inputs/UniversalInput.test.tsx" name="UniversalInput - Multiple Choice Input &gt; sets aria-pressed correctly for accessibility" time="0.014725718">
+        </testcase>
+        <testcase classname="src/components/inputs/UniversalInput.test.tsx" name="UniversalInput - Multiple Choice Input &gt; respects disabled prop on choice buttons" time="0.014766944">
+        </testcase>
+        <testcase classname="src/components/inputs/UniversalInput.test.tsx" name="UniversalInput - Multiple Choice Input &gt; handles undefined choices gracefully (falls back to empty)" time="0.002693846">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/components/visualizers/visualizers.test.tsx" timestamp="2025-12-25T20:46:20.210Z" hostname="devbox" tests="12" failures="0" errors="0" skipped="0" time="0.137530514">
+        <testcase classname="src/components/visualizers/visualizers.test.tsx" name="Visualizers &gt; ProblemVisualizer &gt; renders BoxPlot when spec.type is &apos;box_plot&apos;" time="0.053239111">
+        </testcase>
+        <testcase classname="src/components/visualizers/visualizers.test.tsx" name="Visualizers &gt; ProblemVisualizer &gt; renders DotPlot when spec.type is &apos;dot_plot&apos;" time="0.008267685">
+        </testcase>
+        <testcase classname="src/components/visualizers/visualizers.test.tsx" name="Visualizers &gt; ProblemVisualizer &gt; returns null when spec is undefined or null" time="0.003465865">
+        </testcase>
+        <testcase classname="src/components/visualizers/visualizers.test.tsx" name="Visualizers &gt; ProblemVisualizer &gt; shows fallback message for unimplemented visualizer types" time="0.007973078">
+        </testcase>
+        <testcase classname="src/components/visualizers/visualizers.test.tsx" name="Visualizers &gt; DotPlot &gt; renders SVG with correct dimensions" time="0.008245249">
+        </testcase>
+        <testcase classname="src/components/visualizers/visualizers.test.tsx" name="Visualizers &gt; DotPlot &gt; renders with custom dimensions" time="0.007364825">
+        </testcase>
+        <testcase classname="src/components/visualizers/visualizers.test.tsx" name="Visualizers &gt; DotPlot &gt; renders dots for each data point" time="0.006457816">
+        </testcase>
+        <testcase classname="src/components/visualizers/visualizers.test.tsx" name="Visualizers &gt; DotPlot &gt; renders tick marks for each unique value" time="0.00670323">
+        </testcase>
+        <testcase classname="src/components/visualizers/visualizers.test.tsx" name="Visualizers &gt; BoxPlot &gt; renders SVG with correct dimensions" time="0.009738125">
+        </testcase>
+        <testcase classname="src/components/visualizers/visualizers.test.tsx" name="Visualizers &gt; BoxPlot &gt; renders with custom dimensions" time="0.007531507">
+        </testcase>
+        <testcase classname="src/components/visualizers/visualizers.test.tsx" name="Visualizers &gt; BoxPlot &gt; renders box rectangle" time="0.007492676">
+        </testcase>
+        <testcase classname="src/components/visualizers/visualizers.test.tsx" name="Visualizers &gt; BoxPlot &gt; renders five-number summary labels" time="0.007173083">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/domain/learner/misconceptionEvaluator.test.ts" timestamp="2025-12-25T20:46:20.214Z" hostname="devbox" tests="7" failures="0" errors="0" skipped="0" time="0.011668394">
+        <testcase classname="src/domain/learner/misconceptionEvaluator.test.ts" name="MisconceptionEvaluator &gt; returns null if item has no misconceptions" time="0.002007509">
+        </testcase>
+        <testcase classname="src/domain/learner/misconceptionEvaluator.test.ts" name="MisconceptionEvaluator &gt; returns null if no misconception matches" time="0.000379249">
+        </testcase>
+        <testcase classname="src/domain/learner/misconceptionEvaluator.test.ts" name="MisconceptionEvaluator &gt; matches exact_answer trigger" time="0.001151996">
+        </testcase>
+        <testcase classname="src/domain/learner/misconceptionEvaluator.test.ts" name="MisconceptionEvaluator &gt; matches regex trigger" time="0.00029474">
+        </testcase>
+        <testcase classname="src/domain/learner/misconceptionEvaluator.test.ts" name="MisconceptionEvaluator &gt; handles invalid regex gracefully (logs error and returns null)" time="0.002231218">
+        </testcase>
+        <testcase classname="src/domain/learner/misconceptionEvaluator.test.ts" name="MisconceptionEvaluator &gt; warns on unsupported predicate triggers" time="0.002920494">
+        </testcase>
+        <testcase classname="src/domain/learner/misconceptionEvaluator.test.ts" name="MisconceptionEvaluator &gt; ignores unknown trigger kinds" time="0.000277004">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/domain/learner/scheduler.hardening.test.ts" timestamp="2025-12-25T20:46:20.215Z" hostname="devbox" tests="4" failures="0" errors="0" skipped="0" time="0.013044833">
+        <testcase classname="src/domain/learner/scheduler.hardening.test.ts" name="Scheduler Hardening (Edge Cases) &gt; should NOT crash when skill list is empty" time="0.004642191">
+        </testcase>
+        <testcase classname="src/domain/learner/scheduler.hardening.test.ts" name="Scheduler Hardening (Edge Cases) &gt; should handle circular dependencies by falling back (Fail Open)" time="0.00241936">
+        </testcase>
+        <testcase classname="src/domain/learner/scheduler.hardening.test.ts" name="Scheduler Hardening (Edge Cases) &gt; should fall back to random skill when ALL skills are mastered and recently practiced (Review saturated)" time="0.003140966">
+        </testcase>
+        <testcase classname="src/domain/learner/scheduler.hardening.test.ts" name="Scheduler Hardening (Edge Cases) &gt; should handle missing state for passed skills (Graceful Initialization)" time="0.000497412">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/domain/learner/state.behavior.new.test.ts" timestamp="2025-12-25T20:46:20.215Z" hostname="devbox" tests="3" failures="0" errors="0" skipped="0" time="0.018895302">
+        <testcase classname="src/domain/learner/state.behavior.new.test.ts" name="learner/state behavior (New Coverage) &gt; recommendNextItem - Prioritization Logic &gt; should fallback to Learning Queue when Review Due is empty, even if roll &lt; 0.3" time="0.014365995">
+        </testcase>
+        <testcase classname="src/domain/learner/state.behavior.new.test.ts" name="learner/state behavior (New Coverage) &gt; recommendNextItem - Prioritization Logic &gt; should sort Learning Queue by mastery (lowest first)" time="0.001006531">
+        </testcase>
+        <testcase classname="src/domain/learner/state.behavior.new.test.ts" name="learner/state behavior (New Coverage) &gt; recommendNextItem - Prioritization Logic &gt; should correctly calculate BKT updates" time="0.00108592">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/domain/learner/state.behavior.test.ts" timestamp="2025-12-25T20:46:20.216Z" hostname="devbox" tests="6" failures="0" errors="0" skipped="0" time="0.011301915">
+        <testcase classname="src/domain/learner/state.behavior.test.ts" name="Learner State Behavior &gt; createInitialState &gt; initializes all registry skills with default values" time="0.003959462">
+        </testcase>
+        <testcase classname="src/domain/learner/state.behavior.test.ts" name="Learner State Behavior &gt; updateLearnerState &gt; initializes missing skill state when updating" time="0.000694677">
+        </testcase>
+        <testcase classname="src/domain/learner/state.behavior.test.ts" name="Learner State Behavior &gt; updateLearnerState &gt; increases stability by 1 when mastery is high (&gt;0.8) and attempt is correct" time="0.000272356">
+        </testcase>
+        <testcase classname="src/domain/learner/state.behavior.test.ts" name="Learner State Behavior &gt; updateLearnerState &gt; decreases stability by 0.5 (clamped to 0) when attempt is incorrect" time="0.000249402">
+        </testcase>
+        <testcase classname="src/domain/learner/state.behavior.test.ts" name="Learner State Behavior &gt; recommendNextItem &gt; filters out skills with unmet prerequisites" time="0.002499727">
+        </testcase>
+        <testcase classname="src/domain/learner/state.behavior.test.ts" name="Learner State Behavior &gt; recommendNextItem &gt; sets difficulty to 0.9 for review items (mastery &gt; 0.8)" time="0.001201629">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/domain/learner/state.test.ts" timestamp="2025-12-25T20:46:20.217Z" hostname="devbox" tests="11" failures="0" errors="0" skipped="0" time="0.014779624">
+        <testcase classname="src/domain/learner/state.test.ts" name="Learner State Behavior &gt; createInitialState &gt; initializes state with correct userId and defaults" time="0.002509005">
+        </testcase>
+        <testcase classname="src/domain/learner/state.test.ts" name="Learner State Behavior &gt; updateLearnerState &gt; increases mastery on correct attempt" time="0.000923613">
+        </testcase>
+        <testcase classname="src/domain/learner/state.test.ts" name="Learner State Behavior &gt; updateLearnerState &gt; decreases mastery on incorrect attempt" time="0.000515259">
+        </testcase>
+        <testcase classname="src/domain/learner/state.test.ts" name="Learner State Behavior &gt; updateLearnerState &gt; clamps mastery between 0.01 and 0.99" time="0.000580822">
+        </testcase>
+        <testcase classname="src/domain/learner/state.test.ts" name="Learner State Behavior &gt; updateLearnerState &gt; increases stability on high mastery correct attempt" time="0.000378208">
+        </testcase>
+        <testcase classname="src/domain/learner/state.test.ts" name="Learner State Behavior &gt; updateLearnerState &gt; decreases stability on incorrect attempt" time="0.000324364">
+        </testcase>
+        <testcase classname="src/domain/learner/state.test.ts" name="Learner State Behavior &gt; updateLearnerState &gt; keeps mastery unchanged when correct-update denominator is zero" time="0.000621274">
+        </testcase>
+        <testcase classname="src/domain/learner/state.test.ts" name="Learner State Behavior &gt; updateLearnerState &gt; keeps mastery unchanged when incorrect-update denominator is zero" time="0.00045152">
+        </testcase>
+        <testcase classname="src/domain/learner/state.test.ts" name="Learner State Behavior &gt; updateLearnerState &gt; initializes missing skill state on fly (Safe Falback)" time="0.000511967">
+        </testcase>
+        <testcase classname="src/domain/learner/state.test.ts" name="Learner State Behavior &gt; updateLearnerState &gt; returns a new state reference (Immutability)" time="0.003134834">
+        </testcase>
+        <testcase classname="src/domain/learner/state.test.ts" name="Learner State Behavior &gt; recommendNextItem &gt; excludes mastered skills (&gt;= 0.8) from learning queue" time="0.002044796">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/domain/generator/engine.behavior.test.ts" timestamp="2025-12-25T20:46:20.219Z" hostname="devbox" tests="4" failures="0" errors="0" skipped="0" time="0.01322948">
+        <testcase classname="src/domain/generator/engine.behavior.test.ts" name="Engine Behavior &gt; fetches from Bank if API base URL is configured" time="0.006728782">
+            <system-out>
+{&quot;timestamp&quot;:&quot;2025-12-25T20:46:17.450Z&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;message&quot;:&quot;Registered generator for skill: test-skill&quot;}
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/domain/generator/engine.behavior.test.ts" name="Engine Behavior &gt; falls back to Factory if Bank returns empty list" time="0.001444692">
+            <system-out>
+{&quot;timestamp&quot;:&quot;2025-12-25T20:46:17.455Z&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;message&quot;:&quot;Registered generator for skill: test-skill&quot;}
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/domain/generator/engine.behavior.test.ts" name="Engine Behavior &gt; falls back to Local generator if fetch fails (network error)" time="0.001865776">
+            <system-out>
+{&quot;timestamp&quot;:&quot;2025-12-25T20:46:17.457Z&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;message&quot;:&quot;Registered generator for skill: test-skill&quot;}
+
+            </system-out>
+            <system-err>
+{&quot;timestamp&quot;:&quot;2025-12-25T20:46:17.457Z&quot;,&quot;level&quot;:&quot;WARN&quot;,&quot;message&quot;:&quot;Network fetch failed, falling back to local generator (Dev Mode)&quot;,&quot;context&quot;:{&quot;error&quot;:{}}}
+
+            </system-err>
+        </testcase>
+        <testcase classname="src/domain/generator/engine.behavior.test.ts" name="Engine Behavior &gt; uses Local generator immediately if no API URL is configured" time="0.000839792">
+            <system-out>
+{&quot;timestamp&quot;:&quot;2025-12-25T20:46:17.459Z&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;message&quot;:&quot;Registered generator for skill: test-skill&quot;}
+
+            </system-out>
+        </testcase>
+    </testsuite>
+    <testsuite name="src/domain/generator/engine.coverage.test.ts" timestamp="2025-12-25T20:46:20.219Z" hostname="devbox" tests="2" failures="0" errors="0" skipped="0" time="0.00768446">
+        <testcase classname="src/domain/generator/engine.coverage.test.ts" name="Engine Coverage &gt; falls back to local generator if factory returns ok but items is empty/undefined" time="0.004419462">
+            <system-out>
+{&quot;timestamp&quot;:&quot;2025-12-25T20:46:19.090Z&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;message&quot;:&quot;Registered generator for skill: test_skill&quot;}
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/domain/generator/engine.coverage.test.ts" name="Engine Coverage &gt; falls back to local generator if factory returns ok but items is undefined" time="0.000870816">
+            <system-out>
+{&quot;timestamp&quot;:&quot;2025-12-25T20:46:19.093Z&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;message&quot;:&quot;Registered generator for skill: test_skill&quot;}
+
+            </system-out>
+        </testcase>
+    </testsuite>
+    <testsuite name="src/domain/generator/engine.test.ts" timestamp="2025-12-25T20:46:20.220Z" hostname="devbox" tests="11" failures="0" errors="0" skipped="0" time="0.029461132">
+        <testcase classname="src/domain/generator/engine.test.ts" name="Generator Engine &gt; Client Integration (Network &amp; Fallback) &gt; tries to fetch from API and successfully returns verifying item" time="0.007877844">
+            <system-out>
+{&quot;timestamp&quot;:&quot;2025-12-25T20:46:14.928Z&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;message&quot;:&quot;Registered generator for skill: frac_equiv_01&quot;}
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/domain/generator/engine.test.ts" name="Generator Engine &gt; Client Integration (Network &amp; Fallback) &gt; falls back to local generator if API fetch fails" time="0.001757025">
+            <system-out>
+{&quot;timestamp&quot;:&quot;2025-12-25T20:46:14.934Z&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;message&quot;:&quot;Registered generator for skill: frac_equiv_01&quot;}
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/domain/generator/engine.test.ts" name="Generator Engine &gt; Client Integration (Network &amp; Fallback) &gt; falls back to local generator if API returns empty" time="0.001022532">
+            <system-out>
+{&quot;timestamp&quot;:&quot;2025-12-25T20:46:14.936Z&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;message&quot;:&quot;Registered generator for skill: frac_equiv_01&quot;}
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/domain/generator/engine.test.ts" name="Generator Engine &gt; Client Integration (Network &amp; Fallback) &gt; uses factory item if bank is empty but factory returns item" time="0.003636954">
+            <system-out>
+{&quot;timestamp&quot;:&quot;2025-12-25T20:46:14.937Z&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;message&quot;:&quot;Registered generator for skill: frac_equiv_01&quot;}
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/domain/generator/engine.test.ts" name="Generator Engine &gt; Client Integration (Network &amp; Fallback) &gt; throws error when skill not found locally and API fails" time="0.002924317">
+            <system-out>
+{&quot;timestamp&quot;:&quot;2025-12-25T20:46:14.941Z&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;message&quot;:&quot;Registered generator for skill: frac_equiv_01&quot;}
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/domain/generator/engine.test.ts" name="Generator Engine &gt; Client Integration (Network &amp; Fallback) &gt; should handle invalid API response gracefully" time="0.000849919">
+            <system-out>
+{&quot;timestamp&quot;:&quot;2025-12-25T20:46:14.944Z&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;message&quot;:&quot;Registered generator for skill: frac_equiv_01&quot;}
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/domain/generator/engine.test.ts" name="Generator Engine &gt; Client Integration (Network &amp; Fallback) &gt; should fall back to local generator immediately if problems endpoint returns error (500)" time="0.001424561">
+            <system-out>
+{&quot;timestamp&quot;:&quot;2025-12-25T20:46:14.945Z&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;message&quot;:&quot;Registered generator for skill: frac_equiv_01&quot;}
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/domain/generator/engine.test.ts" name="Generator Engine &gt; Client Integration (Network &amp; Fallback) &gt; should fall back to local generator if factory run returns error (500)" time="0.001179208">
+            <system-out>
+{&quot;timestamp&quot;:&quot;2025-12-25T20:46:14.946Z&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;message&quot;:&quot;Registered generator for skill: frac_equiv_01&quot;}
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/domain/generator/engine.test.ts" name="Generator Engine &gt; Environment Configuration &gt; should detect environment variable" time="0.000631527">
+        </testcase>
+        <testcase classname="src/domain/generator/engine.test.ts" name="Generator Engine &gt; Registry &amp; Behavior &gt; should register and retrieve a generator" time="0.004091406">
+            <system-out>
+{&quot;timestamp&quot;:&quot;2025-12-25T20:46:14.949Z&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;message&quot;:&quot;Registered generator for skill: skill_test_1&quot;}
+
+            </system-out>
+        </testcase>
+        <testcase classname="src/domain/generator/engine.test.ts" name="Generator Engine &gt; Registry &amp; Behavior &gt; should generate an item when generator exists" time="0.001157672">
+            <system-out>
+{&quot;timestamp&quot;:&quot;2025-12-25T20:46:14.953Z&quot;,&quot;level&quot;:&quot;INFO&quot;,&quot;message&quot;:&quot;Registered generator for skill: skill_test_2&quot;}
+
+            </system-out>
+        </testcase>
+    </testsuite>
+    <testsuite name="src/domain/skills/engine.sideeffects.guardrail.test.ts" timestamp="2025-12-25T20:46:20.222Z" hostname="devbox" tests="1" failures="0" errors="0" skipped="0" time="0.007761251">
+        <testcase classname="src/domain/skills/engine.sideeffects.guardrail.test.ts" name="Skill Modules Engine Side-Effect Guardrail &gt; should not import engine or call engine.register inside skills modules" time="0.005463652">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/domain/skills/registry.consistency.test.ts" timestamp="2025-12-25T20:46:20.222Z" hostname="devbox" tests="1" failures="0" errors="0" skipped="0" time="0.024286719">
+        <testcase classname="src/domain/skills/registry.consistency.test.ts" name="Skill Registry Consistency &gt; should contain all exported Skill objects from the skills directory" time="0.022134096">
+        </testcase>
+    </testsuite>
+    <testsuite name="server/src/factory/adapters/DomainGeneratorAdapter.test.ts" timestamp="2025-12-25T20:46:20.222Z" hostname="devbox" tests="3" failures="0" errors="0" skipped="0" time="0.009972205">
+        <testcase classname="server/src/factory/adapters/DomainGeneratorAdapter.test.ts" name="DomainGeneratorAdapter &gt; should have the same skillId as the underlying generator" time="0.002703971">
+        </testcase>
+        <testcase classname="server/src/factory/adapters/DomainGeneratorAdapter.test.ts" name="DomainGeneratorAdapter &gt; should wrap synchronous generate in a promise" time="0.002603228">
+        </testcase>
+        <testcase classname="server/src/factory/adapters/DomainGeneratorAdapter.test.ts" name="DomainGeneratorAdapter &gt; should pass through errors from the underlying generator" time="0.002368065">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/domain/skills/grade4/data.test.ts" timestamp="2025-12-25T20:46:20.223Z" hostname="devbox" tests="19" failures="0" errors="0" skipped="0" time="0.014631039">
+        <testcase classname="src/domain/skills/grade4/data.test.ts" name="grade4 data generator &gt; LinePlotGenerator &gt; generates READING (Type 1) questions" time="0.002953034">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/data.test.ts" name="grade4 data generator &gt; LinePlotGenerator &gt; generates TOTAL LENGTH (Type 2) questions" time="0.000503015">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/data.test.ts" name="grade4 data generator &gt; LinePlotGenerator &gt; generates RANGE (Type 3) questions" time="0.000286205">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/data.test.ts" name="grade4 data generator &gt; LinePlotGenerator &gt; generates correct skill ID" time="0.000419483">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/data.test.ts" name="grade4 data generator &gt; DataGraphGenerator &gt; generates FREQUENCY TABLE (Value Question)" time="0.000679794">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/data.test.ts" name="grade4 data generator &gt; DataGraphGenerator &gt; generates BAR GRAPH (Compare Question)" time="0.000383956">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/data.test.ts" name="grade4 data generator &gt; DataGraphGenerator &gt; generates TOTAL Question" time="0.000325309">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/data.test.ts" name="grade4 data generator &gt; DataGraphGenerator &gt; generates correct skill ID" time="0.000287532">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/data.test.ts" name="grade4 data generator &gt; Additional Data Coverage &gt; LinePlotGenerator returns integer answer for even count at 1/2" time="0.000238753">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/data.test.ts" name="grade4 data generator &gt; Additional Data Coverage &gt; LinePlotGenerator returns fraction answer for odd count at 1/2" time="0.000278444">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/data.test.ts" name="grade4 data generator &gt; Additional Data Coverage &gt; LinePlotGenerator handles range with 0.75 diff" time="0.000316646">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/data.test.ts" name="grade4 data generator &gt; Additional Data Coverage &gt; DataGraphGenerator handles same idx1/idx2 (retry loop)" time="0.000201022">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/data.test.ts" name="grade4 data generator &gt; Additional Data Coverage &gt; DataGraphGenerator handles all data value variations" time="0.000508575">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/data.test.ts" name="grade4 data generator &gt; Additional Data Coverage &gt; LinePlotGenerator handles diff === 0 (single data point type)" time="0.000258569">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/data.test.ts" name="grade4 data generator &gt; Additional Data Coverage &gt; LinePlotGenerator handles diff === 0.25" time="0.000193002">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/data.test.ts" name="grade4 data generator &gt; Additional Data Coverage &gt; LinePlotGenerator fallback for all counts zero" time="0.00018576">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/data.test.ts" name="grade4 data generator &gt; Additional Data Coverage &gt; DataGraphGenerator throws error for invalid answer" time="0.003356261">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/data.test.ts" name="grade4 data generator &gt; Additional Data Coverage &gt; DataGraphGenerator uses Math.random fallback when no rng provided" time="0.000352931">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/data.test.ts" name="grade4 data generator &gt; Additional Data Coverage &gt; LinePlotGenerator uses Math.random fallback when no rng provided" time="0.000248191">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/domain/skills/grade4/decimals.test.ts" timestamp="2025-12-25T20:46:20.225Z" hostname="devbox" tests="11" failures="0" errors="0" skipped="0" time="0.009746434">
+        <testcase classname="src/domain/skills/grade4/decimals.test.ts" name="grade4-decimals generator &gt; DecimalNotationGenerator &gt; generates tenths for difficulty &lt; 0.5" time="0.003135628">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/decimals.test.ts" name="grade4-decimals generator &gt; DecimalNotationGenerator &gt; generates hundredths for difficulty &gt;= 0.5" time="0.00036151">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/decimals.test.ts" name="grade4-decimals generator &gt; DecimalNotationGenerator &gt; defines misconception for whole number bias" time="0.000320664">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/decimals.test.ts" name="grade4-decimals generator &gt; DecimalNotationGenerator &gt; defines misconception for hundredths when difficulty &gt;= 0.5" time="0.000310086">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/decimals.test.ts" name="grade4-decimals generator &gt; DecimalComparisonGenerator &gt; generates same-length decimals for difficulty &lt; 0.5 (Tenths)" time="0.000611033">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/decimals.test.ts" name="grade4-decimals generator &gt; DecimalComparisonGenerator &gt; generates same-length decimals for difficulty &lt; 0.5 (Hundredths)" time="0.00025092">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/decimals.test.ts" name="grade4-decimals generator &gt; DecimalComparisonGenerator &gt; retries when val1 === val2 in same-length mode" time="0.000381714">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/decimals.test.ts" name="grade4-decimals generator &gt; DecimalComparisonGenerator &gt; handles equality when different precision results in same value" time="0.000484756">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/decimals.test.ts" name="grade4-decimals generator &gt; DecimalComparisonGenerator &gt; generates different-length decimals for difficulty &gt;= 0.5" time="0.000253525">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/decimals.test.ts" name="grade4-decimals generator &gt; DecimalComparisonGenerator &gt; detects longer_is_larger misconception" time="0.000435227">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/decimals.test.ts" name="grade4-decimals generator &gt; DecimalComparisonGenerator &gt; detects longer_is_larger with swapped order (s1 longer)" time="0.0003561">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/domain/skills/grade4/fractions.test.ts" timestamp="2025-12-25T20:46:20.226Z" hostname="devbox" tests="31" failures="0" errors="0" skipped="0" time="0.020881005">
+        <testcase classname="src/domain/skills/grade4/fractions.test.ts" name="grade4-fractions generators &gt; AddLikeFractionGenerator &gt; generates valid problems for low difficulty" time="0.003313482">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/fractions.test.ts" name="grade4-fractions generators &gt; AddLikeFractionGenerator &gt; generates misconceptions for adding denominators" time="0.000458218">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/fractions.test.ts" name="grade4-fractions generators &gt; AddLikeFractionGenerator &gt; uses larger ranges when difficulty &gt;= 0.5" time="0.000384045">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/fractions.test.ts" name="grade4-fractions generators &gt; SubLikeFractionGenerator &gt; uses smaller ranges when difficulty &lt; 0.5" time="0.001014205">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/fractions.test.ts" name="grade4-fractions generators &gt; SubLikeFractionGenerator &gt; uses larger ranges when difficulty &gt;= 0.5" time="0.000656354">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/fractions.test.ts" name="grade4-fractions generators &gt; SubLikeFractionGenerator &gt; defines misconceptions for subtracting denominators or adding denominators" time="0.00065602">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/fractions.test.ts" name="grade4-fractions generators &gt; SimplifyFractionGenerator &gt; generates a reducible fraction and provides a lowest-terms answer" time="0.001295791">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/fractions.test.ts" name="grade4-fractions generators &gt; SimplifyFractionGenerator &gt; expands number ranges when difficulty &gt;= 0.5" time="0.000277726">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/fractions.test.ts" name="grade4-fractions generators &gt; SimplifyFractionGenerator &gt; defines the no_simplify misconception trigger" time="0.00048145">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/fractions.test.ts" name="grade4-fractions generators &gt; EquivFractionGenerator &gt; handles difficulty=0 by defaulting to difficulty level 1" time="0.000468642">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/fractions.test.ts" name="grade4-fractions generators &gt; EquivFractionGenerator &gt; generates valid equivalent fraction problems" time="0.000273992">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/fractions.test.ts" name="grade4-fractions generators &gt; EquivFractionGenerator &gt; uses larger multipliers for high difficulty" time="0.000191269">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/fractions.test.ts" name="grade4-fractions generators &gt; EquivFractionGenerator &gt; identifies additive misconception" time="0.000327171">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/fractions.test.ts" name="grade4-fractions generators &gt; EquivFractionGenerator &gt; uses smaller multipliers for low difficulty" time="0.000262632">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/fractions.test.ts" name="grade4-fractions generators &gt; FracMultWholeGenerator &gt; generates valid multiplication problems" time="0.000545463">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/fractions.test.ts" name="grade4-fractions generators &gt; FracCompareUnlikeGenerator &gt; generates valid comparison logic" time="0.000505179">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/fractions.test.ts" name="grade4-fractions generators &gt; FracCompareUnlikeGenerator &gt; chooses correct symbols for comparison" time="0.000262803">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/fractions.test.ts" name="grade4-fractions generators &gt; FracCompareUnlikeGenerator &gt; covers the while loop when den1 === den2" time="0.001113778">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/fractions.test.ts" name="grade4-fractions generators &gt; FracDecomposeGenerator &gt; generates a decomposition problem" time="0.000550269">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/fractions.test.ts" name="grade4-fractions generators &gt; FracDecomposeGenerator &gt; ensures parts sum to total numerator" time="0.000219729">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/fractions.test.ts" name="grade4-fractions generators &gt; FracDecomposeGenerator &gt; defines the sum_equals_product misconception" time="0.000364331">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/fractions.test.ts" name="grade4-fractions generators &gt; AddSubMixedGenerator &gt; generates valid mixed number addition/subtraction" time="0.00070134">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/fractions.test.ts" name="grade4-fractions generators &gt; AddSubMixedGenerator &gt; handles subtraction with borrowing (implicit via value checks)" time="0.000360129">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/fractions.test.ts" name="grade4-fractions generators &gt; AddSubMixedGenerator &gt; handles addition where fraction parts sum &gt;= 1" time="0.000310257">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/fractions.test.ts" name="grade4-fractions generators &gt; AddSubMixedGenerator &gt; handles simple addition with reduction where sum &gt;= den" time="0.000198854">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/fractions.test.ts" name="grade4-fractions generators &gt; AddSubMixedGenerator &gt; handles subtraction where term1 &lt; term2 (triggers swap)" time="0.000264117">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/fractions.test.ts" name="grade4-fractions generators &gt; AddSubMixedGenerator &gt; handles subtraction where term1 === term2 (triggers w1++)" time="0.000233769">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/fractions.test.ts" name="grade4-fractions generators &gt; AddSubMixedGenerator &gt; handles simple subtraction where num1 &lt; num2 (triggers adjustment)" time="0.000187685">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/fractions.test.ts" name="grade4-fractions generators &gt; AddTenthsHundredthsGenerator &gt; generates a valid addition problem" time="0.000687854">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/fractions.test.ts" name="grade4-fractions generators &gt; AddTenthsHundredthsGenerator &gt; verifies order logic (tenths first vs hundredths first)" time="0.000477374">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/fractions.test.ts" name="grade4-fractions generators &gt; AddTenthsHundredthsGenerator &gt; defines the no_simplify / no_convert misconception" time="0.000382464">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/domain/skills/grade4/geometry.test.ts" timestamp="2025-12-25T20:46:20.230Z" hostname="devbox" tests="16" failures="0" errors="0" skipped="0" time="0.011428935">
+        <testcase classname="src/domain/skills/grade4/geometry.test.ts" name="grade4 geometry generator &gt; GeometryGenerator &gt; classifies ACUTE angle" time="0.002954703">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/geometry.test.ts" name="grade4 geometry generator &gt; GeometryGenerator &gt; classifies OBTUSE angle" time="0.000438038">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/geometry.test.ts" name="grade4 geometry generator &gt; GeometryGenerator &gt; classifies RIGHT angle" time="0.000427903">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/geometry.test.ts" name="grade4 geometry generator &gt; GeometryGenerator &gt; identifies PARALLEL lines" time="0.000325528">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/geometry.test.ts" name="grade4 geometry generator &gt; GeometryGenerator &gt; identifies PERPENDICULAR lines" time="0.000236002">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/geometry.test.ts" name="grade4 geometry generator &gt; SymmetryGenerator &gt; identifies correct line count for known shapes" time="0.000627127">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/geometry.test.ts" name="grade4 geometry generator &gt; ShapeClassificationGenerator &gt; generates shape riddles" time="0.001428932">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/geometry.test.ts" name="grade4 geometry generator &gt; ShapeClassificationGenerator &gt; covers Rectangle riddle" time="0.00031753">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/geometry.test.ts" name="grade4 geometry generator &gt; ShapeClassificationGenerator &gt; covers Right Triangle riddle" time="0.000196128">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/geometry.test.ts" name="grade4 geometry generator &gt; ShapeClassificationGenerator &gt; covers Trapezoid riddle" time="0.000221474">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/geometry.test.ts" name="grade4 geometry generator &gt; ShapeClassificationGenerator &gt; covers Rhombus riddle" time="0.000241246">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/geometry.test.ts" name="grade4 geometry generator &gt; Additional Geometry Coverage &gt; SymmetryGenerator covers Circle (Infinite lines)" time="0.000217502">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/geometry.test.ts" name="grade4 geometry generator &gt; Additional Geometry Coverage &gt; SymmetryGenerator covers various shapes" time="0.000442158">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/geometry.test.ts" name="grade4 geometry generator &gt; Geometry fallback coverage &gt; handles missing RNG in GeometryGenerator" time="0.000287906">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/geometry.test.ts" name="grade4 geometry generator &gt; Geometry fallback coverage &gt; handles missing RNG in SymmetryGenerator" time="0.000180265">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/geometry.test.ts" name="grade4 geometry generator &gt; Geometry fallback coverage &gt; handles missing RNG in ShapeClassificationGenerator" time="0.000161492">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/domain/skills/grade4/measurement.test.ts" timestamp="2025-12-25T20:46:20.231Z" hostname="devbox" tests="20" failures="0" errors="0" skipped="0" time="0.01256824">
+        <testcase classname="src/domain/skills/grade4/measurement.test.ts" name="grade4 measurement generator &gt; AreaPerimeterGenerator &gt; generates Area problem for non-square rectangle" time="0.003173101">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/measurement.test.ts" name="grade4 measurement generator &gt; AreaPerimeterGenerator &gt; generates Area problem for Square" time="0.000357765">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/measurement.test.ts" name="grade4 measurement generator &gt; AreaPerimeterGenerator &gt; generates Perimeter problem" time="0.000288017">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/measurement.test.ts" name="grade4 measurement generator &gt; AreaPerimeterGenerator &gt; uses Math.random when rng is not provided" time="0.000193918">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/measurement.test.ts" name="grade4 measurement generator &gt; UnitConversionGenerator &gt; generates valid conversion" time="0.000722153">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/measurement.test.ts" name="grade4 measurement generator &gt; AngleMeasureGenerator &gt; generates Find TOTAL angle problem" time="0.000627517">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/measurement.test.ts" name="grade4 measurement generator &gt; AngleMeasureGenerator &gt; generates Find PART angle problem" time="0.000245847">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/measurement.test.ts" name="grade4 measurement generator &gt; AngleMeasureGenerator &gt; generates TURN/CIRCLE problem" time="0.00041262">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/measurement.test.ts" name="grade4 measurement generator &gt; AngleMeasureGenerator &gt; uses Math.random when rng is not provided" time="0.00021988">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/measurement.test.ts" name="grade4 measurement generator &gt; AngleMeasureGenerator &gt; generates correct skill ID" time="0.000226559">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/measurement.test.ts" name="grade4 measurement generator &gt; MoneyWordProblemGenerator &gt; generates TOTAL COST problem" time="0.00070759">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/measurement.test.ts" name="grade4 measurement generator &gt; MoneyWordProblemGenerator &gt; generates CHANGE problem" time="0.000309992">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/measurement.test.ts" name="grade4 measurement generator &gt; MoneyWordProblemGenerator &gt; handles paid === total edge case" time="0.000327425">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/measurement.test.ts" name="grade4 measurement generator &gt; MoneyWordProblemGenerator &gt; uses Math.random when rng is not provided" time="0.000220166">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/measurement.test.ts" name="grade4 measurement generator &gt; MoneyWordProblemGenerator &gt; generates correct skill ID" time="0.000194896">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/measurement.test.ts" name="grade4 measurement generator &gt; ProtractorGenerator &gt; generates simple protractor problem" time="0.000508602">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/measurement.test.ts" name="grade4 measurement generator &gt; ProtractorGenerator &gt; generates correct skill ID" time="0.000231166">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/measurement.test.ts" name="grade4 measurement generator &gt; ProtractorGenerator &gt; generates problem for low difficulty (fixed start angle)" time="0.000200914">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/measurement.test.ts" name="grade4 measurement generator &gt; ProtractorGenerator &gt; shows acute hint for angle &lt; 90" time="0.000215211">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/measurement.test.ts" name="grade4 measurement generator &gt; ProtractorGenerator &gt; shows obtuse hint for angle &gt;= 90" time="0.000271054">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/domain/skills/grade4/nbt.test.ts" timestamp="2025-12-25T20:46:20.234Z" hostname="devbox" tests="28" failures="0" errors="0" skipped="0" time="0.04143411">
+        <testcase classname="src/domain/skills/grade4/nbt.test.ts" name="Grade 4 NBT Generators (Deterministic) &gt; SKILL_PLACE_VALUE &gt; generates VALUE_OF mode" time="0.025666756">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/nbt.test.ts" name="Grade 4 NBT Generators (Deterministic) &gt; SKILL_PLACE_VALUE &gt; generates DIGIT_IN mode" time="0.001648048">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/nbt.test.ts" name="Grade 4 NBT Generators (Deterministic) &gt; SKILL_COMPARE_MULTI_DIGIT &gt; generates unequal numbers (&gt;)" time="0.000663906">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/nbt.test.ts" name="Grade 4 NBT Generators (Deterministic) &gt; SKILL_COMPARE_MULTI_DIGIT &gt; generates unequal numbers (&lt;)" time="0.000251322">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/nbt.test.ts" name="Grade 4 NBT Generators (Deterministic) &gt; SKILL_COMPARE_MULTI_DIGIT &gt; handles close numbers logic (diff &gt;= 0.5)" time="0.000798255">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/nbt.test.ts" name="Grade 4 NBT Generators (Deterministic) &gt; SKILL_ROUNDING &gt; rounds correctly (Rounding Up case)" time="0.000560725">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/nbt.test.ts" name="Grade 4 NBT Generators (Deterministic) &gt; SKILL_ADD_SUB_MULTI &gt; generates Addition" time="0.00064619">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/nbt.test.ts" name="Grade 4 NBT Generators (Deterministic) &gt; SKILL_ADD_SUB_MULTI &gt; generates Subtraction with Smaller-From-Larger potential" time="0.000301029">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/nbt.test.ts" name="Grade 4 NBT Generators (Deterministic) &gt; SKILL_ADD_SUB_MULTI &gt; generates low difficulty Addition (3 digits)" time="0.000355219">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/nbt.test.ts" name="Grade 4 NBT Generators (Deterministic) &gt; SKILL_MULT (1 &amp; 2 DIGIT) &gt; Mult1Digit generates 4-digit x 1-digit" time="0.000474395">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/nbt.test.ts" name="Grade 4 NBT Generators (Deterministic) &gt; SKILL_MULT (1 &amp; 2 DIGIT) &gt; Mult2Digit generates 2-digit x 2-digit" time="0.000474547">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/nbt.test.ts" name="Grade 4 NBT Generators (Deterministic) &gt; SKILL_MULT (1 &amp; 2 DIGIT) &gt; Mult2Digit covers diff &lt; 0.5 range (max 50)" time="0.000279335">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/nbt.test.ts" name="Grade 4 NBT Generators (Deterministic) &gt; SKILL_DIV_REMAINDERS &gt; generates division with remainder" time="0.000567922">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/nbt.test.ts" name="Grade 4 NBT Generators (Deterministic) &gt; SKILL_DIV_REMAINDERS &gt; handles zero remainder case" time="0.00026041">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/nbt.test.ts" name="Grade 4 NBT Generators (Deterministic) &gt; SKILL_DIV_REMAINDERS &gt; handles high difficulty (4-digit dividend)" time="0.000211448">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/nbt.test.ts" name="Grade 4 NBT Generators (Deterministic) &gt; SKILL_DIV_REMAINDERS &gt; handles low difficulty (2-digit dividend)" time="0.000217507">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/nbt.test.ts" name="Grade 4 NBT Generators (Deterministic) &gt; Additional Branch Coverage &gt; MultiplicationGenerator throws abstract error" time="0.00119998">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/nbt.test.ts" name="Grade 4 NBT Generators (Deterministic) &gt; Additional Branch Coverage &gt; CompareMultiDigitGenerator covers equal numbers correction (difficulty &gt;= 0.5)" time="0.001134404">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/nbt.test.ts" name="Grade 4 NBT Generators (Deterministic) &gt; Additional Branch Coverage &gt; covers Math.random fallbacks (no rng provided)" time="0.000578293">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/nbt.test.ts" name="Grade 4 NBT Generators (Deterministic) &gt; Additional Branch Coverage &gt; PlaceValueGenerator covers high difficulty (millions)" time="0.000329964">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/nbt.test.ts" name="Grade 4 NBT Generators (Deterministic) &gt; Additional Branch Coverage &gt; PlaceValueGenerator covers low difficulty (thousands)" time="0.000233528">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/nbt.test.ts" name="Grade 4 NBT Generators (Deterministic) &gt; Additional Branch Coverage &gt; CompareMultiDigitGenerator returns = for equal numbers" time="0.000240629">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/nbt.test.ts" name="Grade 4 NBT Generators (Deterministic) &gt; Additional Branch Coverage &gt; CompareMultiDigitGenerator covers medium difficulty (100,000s)" time="0.000206382">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/nbt.test.ts" name="Grade 4 NBT Generators (Deterministic) &gt; Additional Branch Coverage &gt; RoundingGenerator covers round-down case (digit &lt; 5)" time="0.000246538">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/nbt.test.ts" name="Grade 4 NBT Generators (Deterministic) &gt; Additional Branch Coverage &gt; RoundingGenerator covers high difficulty paths" time="0.000191034">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/nbt.test.ts" name="Grade 4 NBT Generators (Deterministic) &gt; Additional Branch Coverage &gt; AddSubMultiGenerator covers high difficulty (6 digits)" time="0.00017328">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/nbt.test.ts" name="Grade 4 NBT Generators (Deterministic) &gt; Additional Branch Coverage &gt; Mult1DigitGen covers low difficulty (2-digit)" time="0.000273953">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/nbt.test.ts" name="Grade 4 NBT Generators (Deterministic) &gt; Additional Branch Coverage &gt; Mult2DigitGen covers high difficulty range" time="0.000296997">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/domain/skills/grade4/oa.test.ts" timestamp="2025-12-25T20:46:20.237Z" hostname="devbox" tests="17" failures="0" errors="0" skipped="0" time="0.013713889">
+        <testcase classname="src/domain/skills/grade4/oa.test.ts" name="grade4-oa generator &gt; FactorsMultiplesGenerator &gt; generates List Factors problems correctly" time="0.004704632">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/oa.test.ts" name="grade4-oa generator &gt; FactorsMultiplesGenerator &gt; covers perfect squares in getFactors" time="0.000555516">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/oa.test.ts" name="grade4-oa generator &gt; FactorsMultiplesGenerator &gt; generates Prime/Composite problems (Prime case)" time="0.000548195">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/oa.test.ts" name="grade4-oa generator &gt; FactorsMultiplesGenerator &gt; generates Prime/Composite problems (Composite case)" time="0.000229971">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/oa.test.ts" name="grade4-oa generator &gt; FactorsMultiplesGenerator &gt; triggers FactorsMultiples misconceptions" time="0.00050004">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/oa.test.ts" name="grade4-oa generator &gt; FactorsMultiplesGenerator &gt; generates Multiples problems (Mode C)" time="0.000356262">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/oa.test.ts" name="grade4-oa generator &gt; FactorsMultiplesGenerator &gt; covers difficulty range [0.3, 0.6) in FactorsMultiplesGenerator" time="0.000260306">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/oa.test.ts" name="grade4-oa generator &gt; FactorsMultiplesGenerator &gt; covers difficulty &gt;= 0.6 in FactorsMultiplesGenerator" time="0.000193538">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/oa.test.ts" name="grade4-oa generator &gt; PatternGenerator &gt; generates valid additive sequence" time="0.000650594">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/oa.test.ts" name="grade4-oa generator &gt; PatternGenerator &gt; generates valid subtract sequence" time="0.000321409">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/oa.test.ts" name="grade4-oa generator &gt; MultCompareGenerator &gt; generates valid comparison word problems and covers misconception" time="0.000639847">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/oa.test.ts" name="grade4-oa generator &gt; MultiStepWordGen &gt; generates arithmetic mode problems" time="0.000648952">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/oa.test.ts" name="grade4-oa generator &gt; MultiStepWordGen &gt; generates remainder interpretation problems and covers misconception" time="0.000463159">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/oa.test.ts" name="grade4-oa generator &gt; OA Fallback and Edge Case Coverage &gt; FactorsMultiplesGenerator handles missing RNG" time="0.00018179">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/oa.test.ts" name="grade4-oa generator &gt; OA Fallback and Edge Case Coverage &gt; PatternGenerator handles missing RNG" time="0.000166072">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/oa.test.ts" name="grade4-oa generator &gt; OA Fallback and Edge Case Coverage &gt; MultCompareGenerator handles missing RNG" time="0.000183517">
+        </testcase>
+        <testcase classname="src/domain/skills/grade4/oa.test.ts" name="grade4-oa generator &gt; OA Fallback and Edge Case Coverage &gt; MultiStepWordGen handles missing RNG" time="0.000215239">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/domain/skills/grade5/fractions.test.ts" timestamp="2025-12-25T20:46:20.239Z" hostname="devbox" tests="24" failures="0" errors="0" skipped="0" time="0.015528363">
+        <testcase classname="src/domain/skills/grade5/fractions.test.ts" name="Grade 5 NF Domain (Deterministic) &gt; SKILL_5_NF_ADD_SUB_UNLIKE &gt; adds unlike fractions correctly" time="0.002963847">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/fractions.test.ts" name="Grade 5 NF Domain (Deterministic) &gt; SKILL_5_NF_FRAC_DIV &gt; writes division as fraction" time="0.000534949">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/fractions.test.ts" name="Grade 5 NF Domain (Deterministic) &gt; SKILL_5_NF_SCALING &gt; identifies scaling correctly (&lt;)" time="0.000439991">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/fractions.test.ts" name="Grade 5 NF Domain (Deterministic) &gt; SKILL_5_NF_MULT_FRAC &gt; multiplies fractions correctly" time="0.000689543">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/fractions.test.ts" name="Grade 5 NF Domain (Deterministic) &gt; SKILL_5_NF_DIV_FRAC &gt; divides unit fraction by whole (Case 1)" time="0.000545006">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/fractions.test.ts" name="Grade 5 NF Domain (Deterministic) &gt; SKILL_5_NF_WORD_PROBLEMS &gt; solves recipe word problem (Type 1)" time="0.000863831">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/fractions.test.ts" name="Grade 5 NF Domain (Deterministic) &gt; SKILL_5_NF_WORD_PROBLEMS &gt; solves addition word problem (Type 0, Addition)" time="0.000321459">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/fractions.test.ts" name="Grade 5 NF Domain (Deterministic) &gt; SKILL_5_NF_WORD_PROBLEMS &gt; solves subtraction word problem (Type 0, Subtraction)" time="0.000222717">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/fractions.test.ts" name="Grade 5 NF Domain (Deterministic) &gt; SKILL_5_NF_WORD_PROBLEMS &gt; solves division word problem (Type 2, Sharing)" time="0.000247795">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/fractions.test.ts" name="Grade 5 NF Domain (Deterministic) &gt; SKILL_5_NF_WORD_PROBLEMS &gt; solves division word problem (Type 2, Grouping)" time="0.000295915">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/fractions.test.ts" name="Grade 5 NF Domain (Deterministic) &gt; SKILL_5_NF_DIV_FRAC Extra &gt; divides whole by unit fraction (Case 2)" time="0.000356324">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/fractions.test.ts" name="Grade 5 NF Domain (Deterministic) &gt; SKILL_5_NF_ADD_SUB_UNLIKE Extra &gt; subtracts unlike fractions correctly" time="0.000266332">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/fractions.test.ts" name="Grade 5 NF Domain (Deterministic) &gt; SKILL_5_NF_SCALING Extra &gt; identifies scaling correctly (&gt;)" time="0.000249994">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/fractions.test.ts" name="Grade 5 NF Extra Coverage &gt; AddSubUnlikeGenerator &gt; uses simpler denominators at difficulty&lt;0.5 (one is multiple of other)" time="0.000217166">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/fractions.test.ts" name="Grade 5 NF Extra Coverage &gt; ScalingGenerator &gt; handles num===den retry (recursive call)" time="0.001139946">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/fractions.test.ts" name="Grade 5 NF Extra Coverage &gt; FractionWordProblemsGenerator &gt; swaps denominators in subtraction word problem when d1&gt;d2" time="0.0012642">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/fractions.test.ts" name="Grade 5 NF Smoke Tests (Default RNG) &gt; runs AddSubUnlikeGenerator without provided rng" time="0.000230054">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/fractions.test.ts" name="Grade 5 NF Smoke Tests (Default RNG) &gt; runs FracDivGenerator without provided rng" time="0.000203082">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/fractions.test.ts" name="Grade 5 NF Smoke Tests (Default RNG) &gt; runs ScalingGenerator without provided rng" time="0.000161221">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/fractions.test.ts" name="Grade 5 NF Smoke Tests (Default RNG) &gt; runs MultFracGenerator without provided rng" time="0.000259368">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/fractions.test.ts" name="Grade 5 NF Smoke Tests (Default RNG) &gt; runs DivFracGenerator without provided rng" time="0.000174569">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/fractions.test.ts" name="Grade 5 NF Smoke Tests (Default RNG) &gt; runs FractionWordProblemsGenerator without provided rng" time="0.000160479">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/fractions.test.ts" name="Grade 5 NF Branch Coverage &gt; AddSubUnlikeGenerator &gt; handles d2 regeneration loop (d1===d2 or multiple)" time="0.000245184">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/fractions.test.ts" name="Grade 5 NF Branch Coverage &gt; AddSubUnlikeGenerator &gt; swaps numerators if n1/d1 &lt; n2/d2 in subtraction" time="0.000199287">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/domain/skills/grade5/meas-geo.test.ts" timestamp="2025-12-25T20:46:20.241Z" hostname="devbox" tests="15" failures="0" errors="0" skipped="0" time="0.014916765">
+        <testcase classname="src/domain/skills/grade5/meas-geo.test.ts" name="Grade 5 GM Domain (Deterministic) &gt; Volume with Unit Cubes &gt; calculates volume correctly" time="0.006266546">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/meas-geo.test.ts" name="Grade 5 GM Domain (Deterministic) &gt; Volume Formula &gt; calculates volume with formula correctly" time="0.000485244">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/meas-geo.test.ts" name="Grade 5 GM Domain (Deterministic) &gt; Coordinate Plane (Quadrant I) &gt; generates DIST_AXIS problem (type &lt; 0.5)" time="0.000627904">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/meas-geo.test.ts" name="Grade 5 GM Domain (Deterministic) &gt; Coordinate Plane (Quadrant I) &gt; generates IDENTIFY problem (type &gt;= 0.5)" time="0.000257217">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/meas-geo.test.ts" name="Grade 5 GM Domain (Deterministic) &gt; Classify 2D Figures (Hierarchy) &gt; selects a hierarchy statement correctly" time="0.000578966">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/meas-geo.test.ts" name="Grade 5 GM Domain (Deterministic) &gt; Unit Conversions (Multi-step) &gt; converts meters to centimeters correctly" time="0.00040112">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/meas-geo.test.ts" name="Grade 5 GM Domain (Deterministic) &gt; Line Plots with Fractions &gt; calculates total sum of liquid (type 0)" time="0.000613858">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/meas-geo.test.ts" name="Grade 5 GM Domain (Deterministic) &gt; Line Plots with Fractions &gt; calculates range of weights (type 1)" time="0.000263993">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/meas-geo.test.ts" name="Grade 5 GM Domain (Deterministic) &gt; Line Plots with Fractions &gt; handles whole number sums correctly" time="0.000207883">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/meas-geo.test.ts" name="MeasGeoGenerator (Default RNG Fallback) &gt; runs VolumeCubesGenerator without provided rng" time="0.00047701">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/meas-geo.test.ts" name="MeasGeoGenerator (Default RNG Fallback) &gt; runs VolumeFormulaGenerator without provided rng" time="0.000432509">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/meas-geo.test.ts" name="MeasGeoGenerator (Default RNG Fallback) &gt; runs CoordPlaneGenerator without provided rng" time="0.000402411">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/meas-geo.test.ts" name="MeasGeoGenerator (Default RNG Fallback) &gt; runs ClassFiguresHierarchyGenerator without provided rng" time="0.000311343">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/meas-geo.test.ts" name="MeasGeoGenerator (Default RNG Fallback) &gt; runs UnitConv5Generator without provided rng" time="0.000333229">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/meas-geo.test.ts" name="MeasGeoGenerator (Default RNG Fallback) &gt; runs LinePlotGenerator without provided rng" time="0.000411244">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/domain/skills/grade5/nbt.test.ts" timestamp="2025-12-25T20:46:20.243Z" hostname="devbox" tests="45" failures="0" errors="0" skipped="0" time="0.021995609">
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Domain (Deterministic) &gt; SKILL_5_NBT_POWERS_10 &gt; generates Type 1 (Exponent) correctly" time="0.003199665">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Domain (Deterministic) &gt; SKILL_5_NBT_DECIMAL_FORMS &gt; generates standard form from expanded correctly" time="0.000723159">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Domain (Deterministic) &gt; SKILL_5_NBT_COMPARE_DECIMALS &gt; generates correct comparison (&gt;)" time="0.000824013">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Domain (Deterministic) &gt; SKILL_5_NBT_ROUND_DECIMALS &gt; rounds correctly to nearest tenth" time="0.000649293">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Domain (Deterministic) &gt; SKILL_5_NBT_ADD_SUB_DECIMALS &gt; adds decimals correctly" time="0.000464236">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Domain (Deterministic) &gt; SKILL_5_NBT_MULT_WHOLE &gt; multiplies multi-digit numbers correctly" time="0.000448113">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Domain (Deterministic) &gt; SKILL_5_NBT_MULT_DECIMALS &gt; multiplies decimals correctly" time="0.000336622">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Domain (Deterministic) &gt; SKILL_5_NBT_DIV_WHOLE &gt; divides with remainder correctly" time="0.000452237">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Domain (Deterministic) &gt; SKILL_5_NBT_DIV_DECIMALS &gt; divides decimals correctly" time="0.000400613">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Domain (Deterministic) &gt; SKILL_5_NBT_FRAC_DEC_CONV &gt; converts fraction to decimal" time="0.000606326">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Domain (Deterministic) &gt; SKILL_5_NBT_POWERS_10 Extra &gt; generates Shift Relation (Type 0, Mult)" time="0.000278972">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Domain (Deterministic) &gt; SKILL_5_NBT_POWERS_10 Extra &gt; generates Div by Power of 10 (Type 3)" time="0.000260832">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Domain (Deterministic) &gt; SKILL_5_NBT_COMPARE_DECIMALS Extra &gt; generates equivalence case (Zeros)" time="0.000347229">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Domain (Deterministic) &gt; SKILL_5_NBT_ROUND_DECIMALS Extra &gt; rounds to nearest hundredth" time="0.000231662">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Domain (Deterministic) &gt; SKILL_5_NBT_ADD_SUB_DECIMALS Extra &gt; subtracts decimals with swap logic" time="0.000214335">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Domain (Deterministic) &gt; SKILL_5_NBT_DIV_WHOLE Extra &gt; generates clean division" time="0.00040452">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Domain (Deterministic) &gt; SKILL_5_NBT_DIV_DECIMALS Extra &gt; divides by decimal (Type 1)" time="0.000202746">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Domain (Deterministic) &gt; SKILL_5_NBT_POWERS_10 Extra 2 &gt; generates Mult by Power of 10 (Type 2)" time="0.000209994">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Domain (Deterministic) &gt; SKILL_5_NBT_DECIMAL_FORMS Extra 2 &gt; handles zeros in standard form generation" time="0.000373105">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Domain (Deterministic) &gt; SKILL_5_NBT_COMPARE_DECIMALS Extra 2 &gt; generates Close Numbers case" time="0.000205831">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Domain (Deterministic) &gt; SKILL_5_NBT_ROUND_DECIMALS Extra 2 &gt; rounds to nearest whole number" time="0.000175161">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Domain (Deterministic) &gt; SKILL_5_NBT_MULT_WHOLE Extra &gt; multiplies 4x2 digits" time="0.000171834">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Domain (Deterministic) &gt; SKILL_5_NBT_MULT_DECIMALS Extra &gt; multiplies Decimal x Integer" time="0.000187698">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Domain (Deterministic) &gt; SKILL_5_NBT_FRAC_DEC_CONV Extra &gt; converts Decimal to Fraction (Type 1)" time="0.000336095">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Domain (Deterministic) &gt; SKILL_5_NBT_POWERS_10 Extra 3 &gt; generates Mult by Power of 10 (Type 2, Decimal)" time="0.000206984">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Domain (Deterministic) &gt; SKILL_5_NBT_DIV_DECIMALS Extra 3 &gt; divides by decimal (Type 2)" time="0.000198023">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Extra Coverage &gt; PowersOf10Generator type=0 isMultiplication=false &gt; generates &quot;X is 1/10 of ?&quot; problem" time="0.000366057">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Extra Coverage &gt; CompareDecimalsGenerator &gt; handles n2&lt;0 edge case (type=Close, negative adjustment)" time="0.001134033">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Extra Coverage &gt; MultDecimalsGenerator &gt; handles DecInt with d=1 (one decimal place)" time="0.000288192">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Extra Coverage &gt; MultDecimalsGenerator &gt; handles DecInt with d=2 (two decimal places)" time="0.000251011">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Extra Coverage &gt; DivDecimalsGenerator type=2 branch &gt; generates decimal divisor via type=2 fallback" time="0.000280226">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Extra Coverage &gt; FracDecConversionGenerator full coverage &gt; converts Decimal to Fraction with assertions (Type 1)" time="0.000274848">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Extra Coverage &gt; FracDecConversionGenerator full coverage &gt; covers denominator=100 path" time="0.000286214">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Extra Coverage &gt; FracDecConversionGenerator full coverage &gt; covers denominator=25 path" time="0.000204013">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Extra Coverage &gt; FracDecConversionGenerator full coverage &gt; generates misconception for Frac-&gt;Dec (Type 0)" time="0.000204516">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Extra Coverage &gt; Fallback RNG branches (Math.random) &gt; DivDecimalsGenerator works without RNG argument" time="0.000355113">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Extra Coverage &gt; Fallback RNG branches (Math.random) &gt; FracDecConversionGenerator works without RNG argument" time="0.000207276">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Extra Coverage &gt; Fallback RNG branches (Math.random) &gt; PowersOf10Generator works without RNG argument" time="0.000194678">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Extra Coverage &gt; Fallback RNG branches (Math.random) &gt; CompareDecimalsGenerator works without RNG argument" time="0.000260202">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Extra Coverage &gt; Fallback RNG branches (Math.random) &gt; DecimalFormsGenerator works without RNG argument" time="0.000276652">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Extra Coverage &gt; Fallback RNG branches (Math.random) &gt; RoundDecimalsGenerator works without RNG argument" time="0.000220044">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Extra Coverage &gt; Fallback RNG branches (Math.random) &gt; AddSubDecimalsGenerator works without RNG argument" time="0.000196348">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Extra Coverage &gt; Fallback RNG branches (Math.random) &gt; MultWholeGenerator works without RNG argument" time="0.000186232">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Extra Coverage &gt; Fallback RNG branches (Math.random) &gt; MultDecimalsGenerator works without RNG argument" time="0.000210632">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/nbt.test.ts" name="Grade 5 NBT Extra Coverage &gt; Fallback RNG branches (Math.random) &gt; DivWholeGenerator works without RNG argument" time="0.000248212">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/domain/skills/grade5/oa.jail.test.ts" timestamp="2025-12-25T20:46:20.248Z" hostname="devbox" tests="1" failures="0" errors="0" skipped="0" time="0.005344321">
+        <testcase classname="src/domain/skills/grade5/oa.jail.test.ts" name="Grade 5 OA Bug Jail &gt; reproduces NaN failure deterministically" time="0.003108439">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/domain/skills/grade5/oa.test.ts" timestamp="2025-12-25T20:46:20.248Z" hostname="devbox" tests="9" failures="0" errors="0" skipped="0" time="0.017127143">
+        <testcase classname="src/domain/skills/grade5/oa.test.ts" name="Grade 5 OA Domain &gt; SKILL_5_OA_ORDER_OPS &gt; generates valid problems" time="0.008741663">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/oa.test.ts" name="Grade 5 OA Domain &gt; SKILL_5_OA_PATTERNS &gt; generates valid problems" time="0.002397706">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/oa.test.ts" name="OrderOpsGenerator (Deterministic) &gt; generates EVAL mode with template index 0 (a + b * c)" time="0.000534966">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/oa.test.ts" name="OrderOpsGenerator (Deterministic) &gt; generates EVAL mode with template index 1 ((a + b) * c)" time="0.000319742">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/oa.test.ts" name="OrderOpsGenerator (Deterministic) &gt; generates EVAL mode with template index 2 (a * (b + c))" time="0.000363241">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/oa.test.ts" name="OrderOpsGenerator (Deterministic) &gt; generates EVAL mode with template index 3 (a * b - c) and handles val&lt;0 safety" time="0.000207619">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/oa.test.ts" name="OrderOpsGenerator (Deterministic) &gt; generates WRITE mode with isGroupFirst=true" time="0.000388122">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/oa.test.ts" name="OrderOpsGenerator (Deterministic) &gt; generates WRITE mode with isGroupFirst=false" time="0.000422216">
+        </testcase>
+        <testcase classname="src/domain/skills/grade5/oa.test.ts" name="OrderOpsGenerator (Default RNG Fallback) &gt; runs without provided rng (coverage for Math.random branch)" time="0.001138508">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/domain/skills/grade6/ee.test.ts" timestamp="2025-12-25T20:46:20.249Z" hostname="devbox" tests="28" failures="0" errors="0" skipped="0" time="0.024683">
+        <testcase classname="src/domain/skills/grade6/ee.test.ts" name="Grade 6 EE Generators (Deterministic) &gt; SKILL_6_EE_EXPONENTS &gt; generates correctly with middle values" time="0.003209716">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ee.test.ts" name="Grade 6 EE Generators (Deterministic) &gt; SKILL_6_EE_EXPONENTS &gt; handles lower boundary values (2^2)" time="0.000330797">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ee.test.ts" name="Grade 6 EE Generators (Deterministic) &gt; SKILL_6_EE_EXPONENTS &gt; handles upper boundary values (9^4)" time="0.000408516">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ee.test.ts" name="Grade 6 EE Generators (Deterministic) &gt; SKILL_6_EE_EXPONENTS &gt; uses Math.random when no rng is provided" time="0.005316711">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ee.test.ts" name="Grade 6 EE Generators (Deterministic) &gt; SKILL_6_EE_ONE_STEP_EQ &gt; generates Type 0 (Addition: x + a = b)" time="0.001567237">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ee.test.ts" name="Grade 6 EE Generators (Deterministic) &gt; SKILL_6_EE_ONE_STEP_EQ &gt; generates Type 1 (Subtraction: x - a = b)" time="0.000326043">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ee.test.ts" name="Grade 6 EE Generators (Deterministic) &gt; SKILL_6_EE_ONE_STEP_EQ &gt; generates Type 2 (Multiplication: ax = b)" time="0.000347742">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ee.test.ts" name="Grade 6 EE Generators (Deterministic) &gt; SKILL_6_EE_ONE_STEP_EQ &gt; generates Type 3 (Division: x/a = b)" time="0.00044954">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ee.test.ts" name="Grade 6 EE Generators (Deterministic) &gt; SKILL_6_EE_ONE_STEP_EQ &gt; handles explicit valid boundaries for OneStepEq inputs" time="0.000442322">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ee.test.ts" name="Grade 6 EE Generators (Deterministic) &gt; SKILL_6_EE_ONE_STEP_EQ &gt; uses Math.random for all random calls when no rng provided" time="0.000406072">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ee.test.ts" name="Grade 6 EE Generators (Deterministic) &gt; SKILL_6_EE_EXPRESSIONS &gt; generates Evaluate mode with substitution" time="0.000854988">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ee.test.ts" name="Grade 6 EE Generators (Deterministic) &gt; SKILL_6_EE_EXPRESSIONS &gt; generates Translate mode (more than) with all forms" time="0.001242736">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ee.test.ts" name="Grade 6 EE Generators (Deterministic) &gt; SKILL_6_EE_EXPRESSIONS &gt; generates Translate mode (less than)" time="0.000492279">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ee.test.ts" name="Grade 6 EE Generators (Deterministic) &gt; SKILL_6_EE_EXPRESSIONS &gt; generates Translate mode (product)" time="0.000527227">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ee.test.ts" name="Grade 6 EE Generators (Deterministic) &gt; SKILL_6_EE_EXPRESSIONS &gt; generates Translate mode (quotient)" time="0.00036808">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ee.test.ts" name="Grade 6 EE Generators (Deterministic) &gt; SKILL_6_EE_EXPRESSIONS &gt; uses Math.random for translate path when no rng provided" time="0.000296061">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ee.test.ts" name="Grade 6 EE Generators (Deterministic) &gt; SKILL_6_EE_EQUIV_EXPRESSIONS &gt; verifies distributive property expansion" time="0.000441343">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ee.test.ts" name="Grade 6 EE Generators (Deterministic) &gt; SKILL_6_EE_EQUIV_EXPRESSIONS &gt; handles boundary values (min and max distributive)" time="0.000366227">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ee.test.ts" name="Grade 6 EE Generators (Deterministic) &gt; SKILL_6_EE_EQUIV_EXPRESSIONS &gt; uses Math.random when no rng provided" time="0.00029104">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ee.test.ts" name="Grade 6 EE Generators (Deterministic) &gt; SKILL_6_EE_INEQUALITIES &gt; generates Type 0 (At least: &gt;=) with all accepted forms" time="0.000641481">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ee.test.ts" name="Grade 6 EE Generators (Deterministic) &gt; SKILL_6_EE_INEQUALITIES &gt; generates Type 1 (Limit: &lt;=)" time="0.000290338">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ee.test.ts" name="Grade 6 EE Generators (Deterministic) &gt; SKILL_6_EE_INEQUALITIES &gt; generates Type 2 (More than: &gt;)" time="0.000293425">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ee.test.ts" name="Grade 6 EE Generators (Deterministic) &gt; SKILL_6_EE_INEQUALITIES &gt; generates Type 3 (Less than: &lt;)" time="0.000334006">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ee.test.ts" name="Grade 6 EE Generators (Deterministic) &gt; SKILL_6_EE_INEQUALITIES &gt; uses Math.random when no rng provided" time="0.00025619">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ee.test.ts" name="Grade 6 EE Generators (Deterministic) &gt; SKILL_6_EE_VARIABLES &gt; identifies dependent variable in linear form (y = mx + c)" time="0.000563124">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ee.test.ts" name="Grade 6 EE Generators (Deterministic) &gt; SKILL_6_EE_VARIABLES &gt; identifies dependent variable in quotient form (p = q/r)" time="0.000228366">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ee.test.ts" name="Grade 6 EE Generators (Deterministic) &gt; SKILL_6_EE_VARIABLES &gt; handles variable list wrap-around (q -&gt; x)" time="0.000216033">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ee.test.ts" name="Grade 6 EE Generators (Deterministic) &gt; SKILL_6_EE_VARIABLES &gt; uses Math.random when no rng provided" time="0.000293304">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/domain/skills/grade6/geometry.test.ts" timestamp="2025-12-25T20:46:20.252Z" hostname="devbox" tests="14" failures="0" errors="0" skipped="0" time="0.017385727">
+        <testcase classname="src/domain/skills/grade6/geometry.test.ts" name="Grade 6 Geometry Generators &gt; AreaPolyGenerator (6.G.A.1) &gt; should generate rectangle/parallelogram area problems" time="0.006992697">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/geometry.test.ts" name="Grade 6 Geometry Generators &gt; AreaPolyGenerator (6.G.A.1) &gt; should generate parallelogram area problems" time="0.000382518">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/geometry.test.ts" name="Grade 6 Geometry Generators &gt; AreaPolyGenerator (6.G.A.1) &gt; should generate triangle area problems" time="0.000333873">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/geometry.test.ts" name="Grade 6 Geometry Generators &gt; AreaPolyGenerator (6.G.A.1) &gt; should handle integer vs decimal output for triangles" time="0.000711125">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/geometry.test.ts" name="Grade 6 Geometry Generators &gt; SurfaceAreaGenerator (6.G.A.4) &gt; should generate cube surface area" time="0.000459474">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/geometry.test.ts" name="Grade 6 Geometry Generators &gt; SurfaceAreaGenerator (6.G.A.4) &gt; should generate prism surface area" time="0.000274174">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/geometry.test.ts" name="Grade 6 Geometry Generators &gt; VolumeFracGenerator (6.G.A.2) &gt; should generate volume with fractions" time="0.001383617">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/geometry.test.ts" name="Grade 6 Geometry Generators &gt; PolygonsCoordGenerator (6.G.A.3) &gt; should generate coordinate distance problems" time="0.000456023">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/geometry.test.ts" name="Grade 6 Geometry Generators &gt; PolygonsCoordGenerator (6.G.A.3) &gt; should retry if y1 === y2" time="0.000293972">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/geometry.test.ts" name="Grade 6 Geometry Smoke Tests (Default RNG) &gt; runs AreaPolyGenerator without provided rng" time="0.000516411">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/geometry.test.ts" name="Grade 6 Geometry Smoke Tests (Default RNG) &gt; runs SurfaceAreaGenerator without provided rng" time="0.000358757">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/geometry.test.ts" name="Grade 6 Geometry Smoke Tests (Default RNG) &gt; runs VolumeFracGenerator without provided rng" time="0.000362074">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/geometry.test.ts" name="Grade 6 Geometry Smoke Tests (Default RNG) &gt; runs PolygonsCoordGenerator without provided rng" time="0.000371642">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/geometry.test.ts" name="Grade 6 Geometry Branch Coverage &gt; VolumeFracGenerator &gt; handles integer volume result (den=1)" time="0.00022693">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/domain/skills/grade6/ns.test.ts" timestamp="2025-12-25T20:46:20.254Z" hostname="devbox" tests="20" failures="0" errors="0" skipped="0" time="0.013437974">
+        <testcase classname="src/domain/skills/grade6/ns.test.ts" name="Grade 6 NS Generators &gt; DivFractionsGenerator &gt; generates valid division problems with simplified answers" time="0.00298676">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ns.test.ts" name="Grade 6 NS Generators &gt; DivFractionsGenerator &gt; defines the invert_dividend misconception" time="0.000545753">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ns.test.ts" name="Grade 6 NS Generators &gt; MultiDigitDivGenerator &gt; generates valid problems" time="0.000386606">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ns.test.ts" name="Grade 6 NS Generators &gt; DecimalOpsGenerator &gt; handles Addition (op=0)" time="0.000975024">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ns.test.ts" name="Grade 6 NS Generators &gt; DecimalOpsGenerator &gt; handles Subtraction (op=1) with ordering" time="0.000573089">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ns.test.ts" name="Grade 6 NS Generators &gt; DecimalOpsGenerator &gt; handles Multiplication (op=2)" time="0.000334089">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ns.test.ts" name="Grade 6 NS Generators &gt; DecimalOpsGenerator &gt; handles Division (op=3)" time="0.000347006">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ns.test.ts" name="Grade 6 NS Generators &gt; GcfLcmGenerator &gt; generates GCF" time="0.000395906">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ns.test.ts" name="Grade 6 NS Generators &gt; GcfLcmGenerator &gt; generates LCM" time="0.000229091">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ns.test.ts" name="Grade 6 NS Generators &gt; IntegersGenerator &gt; generates opposites (Type 0)" time="0.000413836">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ns.test.ts" name="Grade 6 NS Generators &gt; IntegersGenerator &gt; generates context problems (Type 1)" time="0.000341749">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ns.test.ts" name="Grade 6 NS Generators &gt; RationalNumberLineGenerator &gt; compares two numbers correctly" time="0.000695919">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ns.test.ts" name="Grade 6 NS Generators &gt; CoordPlaneGenerator &gt; identifies quadrants correctly" time="0.000522984">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ns.test.ts" name="Grade 6 NS Generators &gt; CoordPlaneGenerator &gt; retries if point is on an axis (x=0 or y=0)" time="0.00022989">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ns.test.ts" name="Grade 6 NS Generators &gt; DecimalOpsGenerator Extra Coverage &gt; handles Division with Integer Divisor (divType=&apos;int&apos;)" time="0.000228218">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ns.test.ts" name="Grade 6 NS Generators &gt; DecimalOpsGenerator Extra Coverage &gt; handles Division with Decimal Divisor (divType=&apos;dec&apos;)" time="0.000207439">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ns.test.ts" name="Grade 6 NS Generators &gt; GcfLcmGenerator Edge Cases &gt; handles collision where a === b" time="0.000227769">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ns.test.ts" name="Grade 6 NS Generators &gt; RationalNumberLineGenerator Edge Cases &gt; retries on equality collision" time="0.000243023">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ns.test.ts" name="Grade 6 NS Generators &gt; IntegersGenerator Edge Cases &gt; retries if val is 0 in Opposite type" time="0.000182487">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/ns.test.ts" name="Grade 6 NS Generators &gt; IntegersGenerator Edge Cases &gt; hits both contexts in Type 1" time="0.000216348">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/domain/skills/grade6/rp.test.ts" timestamp="2025-12-25T20:46:20.256Z" hostname="devbox" tests="20" failures="0" errors="0" skipped="0" time="0.012594044">
+        <testcase classname="src/domain/skills/grade6/rp.test.ts" name="Grade 6 RP Generators &gt; RatiosGenerator &gt; Type 0: Generates basic ratio writing problem (Order: Direct)" time="0.003076586">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/rp.test.ts" name="Grade 6 RP Generators &gt; RatiosGenerator &gt; Type 0: covers askForOrder branch (rng ?? Math.random)" time="0.000455132">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/rp.test.ts" name="Grade 6 RP Generators &gt; RatiosGenerator &gt; Type 0: Generates basic ratio writing problem (Order: Reversed)" time="0.000308952">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/rp.test.ts" name="Grade 6 RP Generators &gt; RatiosGenerator &gt; Type 1: Generates equivalent ratio / scale up problem" time="0.000411005">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/rp.test.ts" name="Grade 6 RP Generators &gt; RatiosGenerator &gt; covers fallback RNG" time="0.000265487">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/rp.test.ts" name="Grade 6 RP Generators &gt; RatiosGenerator &gt; covers different subjects" time="0.000217775">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/rp.test.ts" name="Grade 6 RP Generators &gt; UnitRateGenerator &gt; Type &apos;cost&apos;: Generates unit price problem" time="0.000521169">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/rp.test.ts" name="Grade 6 RP Generators &gt; UnitRateGenerator &gt; Type &apos;speed&apos;: Generates speed problem" time="0.000254276">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/rp.test.ts" name="Grade 6 RP Generators &gt; UnitRateGenerator &gt; covers fallback RNG" time="0.000440553">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/rp.test.ts" name="Grade 6 RP Generators &gt; UnitRateGenerator &gt; Type &apos;cost&apos; covers extra coin flip branch (rng ?? Math.random)" time="0.000289598">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/rp.test.ts" name="Grade 6 RP Generators &gt; PercentsGenerator &gt; Type 0: Find part (What is P% of W?)" time="0.000529682">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/rp.test.ts" name="Grade 6 RP Generators &gt; PercentsGenerator &gt; Type 1: Find whole (Part is P% of what?)" time="0.000243988">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/rp.test.ts" name="Grade 6 RP Generators &gt; PercentsGenerator &gt; covers fallback RNG" time="0.000252181">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/rp.test.ts" name="Grade 6 RP Generators &gt; PercentsGenerator &gt; covers different percent indices in Find Whole" time="0.000269347">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/rp.test.ts" name="Grade 6 RP Generators &gt; RatioTablesGenerator &gt; Type 1: Missing bottom-left / intermediate step" time="0.000445408">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/rp.test.ts" name="Grade 6 RP Generators &gt; RatioTablesGenerator &gt; Type 2: Missing bottom-right / final step" time="0.000248417">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/rp.test.ts" name="Grade 6 RP Generators &gt; RatioTablesGenerator &gt; covers fallback RNG" time="0.000293783">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/rp.test.ts" name="Grade 6 RP Generators &gt; UnitConversionRPGenerator &gt; Generates conversion problem" time="0.000382324">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/rp.test.ts" name="Grade 6 RP Generators &gt; UnitConversionRPGenerator &gt; covers fallback RNG" time="0.000210293">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/rp.test.ts" name="Grade 6 RP Generators &gt; UnitConversionRPGenerator &gt; covers all conversion types" time="0.000704683">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/domain/skills/grade6/stats.behavior.test.ts" timestamp="2025-12-25T20:46:20.258Z" hostname="devbox" tests="1" failures="0" errors="0" skipped="0" time="0.007105002">
+        <testcase classname="src/domain/skills/grade6/stats.behavior.test.ts" name="DotPlotGenerator Behavior &gt; fails to accept alternative modes when distribution is bimodal" time="0.004696967">
+        </testcase>
+    </testsuite>
+    <testsuite name="src/domain/skills/grade6/stats.test.ts" timestamp="2025-12-25T20:46:20.258Z" hostname="devbox" tests="13" failures="0" errors="0" skipped="0" time="0.014431174">
+        <testcase classname="src/domain/skills/grade6/stats.test.ts" name="Grade 6 Stats Generators &gt; MeanGenerator &gt; generates a valid mean problem" time="0.002963648">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/stats.test.ts" name="Grade 6 Stats Generators &gt; MeanGenerator &gt; calculates mean correctly with deterministic values" time="0.000541283">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/stats.test.ts" name="Grade 6 Stats Generators &gt; MedianModeRangeGenerator &gt; generates Median problem (Type 0) - Odd count" time="0.000984786">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/stats.test.ts" name="Grade 6 Stats Generators &gt; MedianModeRangeGenerator &gt; generates Median problem (Type 0) - Even count" time="0.000410819">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/stats.test.ts" name="Grade 6 Stats Generators &gt; MedianModeRangeGenerator &gt; generates Mode problem (Type 1)" time="0.000351006">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/stats.test.ts" name="Grade 6 Stats Generators &gt; MedianModeRangeGenerator &gt; generates Range problem (Type 2)" time="0.000368947">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/stats.test.ts" name="Grade 6 Stats Generators &gt; IqrGenerator &gt; generates valid IQR problem" time="0.000548141">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/stats.test.ts" name="Grade 6 Stats Generators &gt; BoxPlotGenerator &gt; generates Range question from Box Plot" time="0.00063881">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/stats.test.ts" name="Grade 6 Stats Generators &gt; BoxPlotGenerator &gt; generates IQR question from Box Plot" time="0.000401281">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/stats.test.ts" name="Grade 6 Stats Generators &gt; DotPlotGenerator &gt; generates Count question" time="0.000501586">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/stats.test.ts" name="Grade 6 Stats Generators &gt; DotPlotGenerator &gt; generates Mode question" time="0.00213141">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/stats.test.ts" name="Grade 6 Stats Generators &gt; DotPlotGenerator &gt; handles multiple modes correctly" time="0.000423714">
+        </testcase>
+        <testcase classname="src/domain/skills/grade6/stats.test.ts" name="Grade 6 Stats Generators &gt; HistogramGenerator &gt; generates correct frequency lookup" time="0.00046395">
+        </testcase>
+    </testsuite>
+</testsuites>
+ ELIFECYCLE  Command failed with exit code 1.
