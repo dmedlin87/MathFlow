@@ -3,6 +3,15 @@ import dotenv from "dotenv";
 // Load environment variables from .env file
 dotenv.config();
 
+const isProduction = process.env.NODE_ENV === "production";
+
+// SECURITY: Enforce strong API key in production
+if (isProduction && !process.env.FACTORY_API_KEY) {
+  throw new Error(
+    "CRITICAL: FACTORY_API_KEY must be set in production environment."
+  );
+}
+
 export const config = {
   port: process.env.PORT ? parseInt(process.env.PORT) : 3002,
   rateLimit: {
