@@ -59,7 +59,14 @@ export const Dashboard: React.FC<DashboardProps> = ({ learnerState, onClose }) =
                                             <span className="font-medium text-gray-800">{skill.name}</span>
                                             <span className="text-sm text-gray-500">{(mastery * 100).toFixed(0)}%</span>
                                         </div>
-                                        <div className="w-full bg-gray-100 rounded-full h-2.5">
+                                        <div
+                                            role="progressbar"
+                                            aria-valuenow={Math.round(mastery * 100)}
+                                            aria-valuemin={0}
+                                            aria-valuemax={100}
+                                            aria-label={`${skill.name} mastery`}
+                                            className="w-full bg-gray-100 rounded-full h-2.5"
+                                        >
                                             <div className={`${color} h-2.5 rounded-full`} style={{ width: `${mastery * 100}%` }}></div>
                                         </div>
                                         <div className="mt-1 flex justify-between text-xs text-gray-400">
