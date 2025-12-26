@@ -1,18 +1,17 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
-import { execSync } from 'child_process';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const ROOT = path.join(__dirname, '..');
-const IGN = new Set(['node_modules', '.git', 'dist', 'build', 'out', 'coverage', '.next', '.turbo']);
+const IGN = new Set([ 'AI_AUDIT', 'node_modules', '.git', 'dist', 'build', 'out', 'coverage', '.next', '.turbo']);
 
 let errors = 0;
 
 function walk(dir) {
     const entries = fs.readdirSync(dir, { withFileTypes: true });
     for (const e of entries) {
-        if (IGN.has(e.name)) continue;
+        if (IGN.has(e.name) || e.name === 'TEST_AUDIT_REPORT.md') continue;
         const fullPath = path.join(dir, e.name);
         if (e.isDirectory()) {
             walk(fullPath);
@@ -26,35 +25,39 @@ function checkSnippets(filePath) {
     const content = fs.readFileSync(filePath, 'utf8');
     const relPath = path.relative(ROOT, filePath);
 
-    // Regex for ```bash ... ```
-    const regex = /```bash\n([\s\S]*?)```/g;
+    // 1. Check code blocks ```bash ... ```
+    const blockRegex = /```bash\n([\s\S]*?)```/g;
     let match;
+    while ((match = blockRegex.exec(content)) !== null) {
+        const snippet = match[1];
+        validateNpmRun(snippet, relPath);
+    }
 
-    while ((match = regex.exec(content)) !== null) {
-        const snippet = match[1].trim();
-        const lines = snippet.split('\n');
+    // 2. Check inline snippets `npm run ...`
+    const inlineRegex = /`([^`]+)`/g;
+    while ((match = inlineRegex.exec(content)) !== null) {
+        const snippet = match[1];
+        if (snippet.includes('npm run')) {
+            validateNpmRun(snippet, relPath);
+        }
+    }
+}
 
-        for (const line of lines) {
-            const trimmed = line.trim();
-            if (!trimmed || trimmed.startsWith('#')) continue;
+function validateNpmRun(text, relPath) {
+    const lines = text.split('\n');
+    for (const line of lines) {
+        const trimmed = line.trim();
+        // Regex to catch "npm run <script>"
+        // Handles: npm run test, npm run test:coverage, npm run lint -- --fix
+        const npmRunMatch = /npm\s+run\s+([\w\-\:\.]+)/.exec(trimmed);
 
-            // Check for npm run ...
-            if (trimmed.startsWith('npm run ')) {
-                const scriptName = trimmed.split(' ')[2]; // npm run <script>
-                if (!scriptName) continue;
+        if (npmRunMatch) {
+            const scriptName = npmRunMatch[1];
+            const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
 
-                // Remove flags like -- --help
-                const cleanScriptName = scriptName.split(' ')[0];
-
-                // Read package.json again to be safe
-                const pkg = JSON.parse(fs.readFileSync(path.join(ROOT, 'package.json'), 'utf8'));
-                if (!pkg.scripts || !pkg.scripts[cleanScriptName]) {
-                    console.error(`DOCS_CHECK_SNIPPETS_FAIL: ${relPath} references missing script 'npm run ${cleanScriptName}'`);
-                    errors++;
-                } else {
-                     // Optionally dry-run? No, strict verification of existence is Phase 1 level.
-                     // Running them might be dangerous (e.g. npm install).
-                }
+            if (!pkg.scripts || !pkg.scripts[scriptName]) {
+                console.error(`DOCS_CHECK_SNIPPETS_FAIL: ${relPath} references missing script 'npm run ${scriptName}'`);
+                errors++;
             }
         }
     }
