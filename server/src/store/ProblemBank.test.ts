@@ -2,6 +2,15 @@ import { describe, it, expect, vi, afterEach } from "vitest";
 import { ProblemBank } from "./ProblemBank.js";
 import type { MathProblemItem } from "@domain/types.js";
 
+// Mock fs/promises to prevent file system access and state pollution
+vi.mock("fs/promises", () => ({
+  default: {
+    readFile: vi.fn().mockRejectedValue({ code: "ENOENT" }),
+    writeFile: vi.fn().mockResolvedValue(undefined),
+    mkdir: vi.fn().mockResolvedValue(undefined),
+  },
+}));
+
 const createItem = (id: string, skillId: string) =>
   ({
     meta: {

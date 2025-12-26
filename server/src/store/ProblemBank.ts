@@ -40,8 +40,8 @@ export class ProblemBank {
         this.bySkill.get(skillId)?.push(item.meta.id);
       }
       console.log(`[ProblemBank] Loaded ${parsed.length} problems from disk.`);
-    } catch (err: any) {
-      if (err.code === "ENOENT") {
+    } catch (err) {
+      if (err && typeof err === "object" && "code" in err && err.code === "ENOENT") {
         console.log(
           `[ProblemBank] No database found at ${this.dbPath}, starting fresh.`
         );

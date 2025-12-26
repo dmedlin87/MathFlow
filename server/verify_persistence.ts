@@ -46,7 +46,7 @@ async function testPersistence() {
   };
 
   console.log("1. Saving item to ProblemBank...");
-  await problemBank.save(testItem as any);
+  await problemBank.save(testItem as unknown as import("./src/domain/types.js").MathProblemItem);
 
   const dbPath = path.join(__dirname, "data", "problems.json");
   console.log(`2. Checking if file exists at ${dbPath}...`);
@@ -57,7 +57,7 @@ async function testPersistence() {
 
     const content = await fs.readFile(dbPath, "utf8");
     const data = JSON.parse(content);
-    const item = data.find((i: any) => i.meta.id === "test-auth-123");
+    const item = data.find((i: { meta: { id: string } }) => i.meta.id === "test-auth-123");
 
     if (item) {
       console.log("- SUCCESS: Item found in JSON file!");
