@@ -1,17 +1,5 @@
 import type { Skill, Generator, MathProblemItem } from "../../types";
-import { randomInt, createProblemMeta } from "../../math-utils";
-
-// Helper to calculate factors
-const getFactors = (n: number): number[] => {
-  const factors: number[] = [];
-  for (let i = 1; i <= Math.sqrt(n); i++) {
-    if (n % i === 0) {
-      factors.push(i);
-      if (i !== n / i) factors.push(n / i);
-    }
-  }
-  return factors.sort((a, b) => a - b);
-};
+import { randomInt, createProblemMeta, getFactors } from "../../math-utils";
 
 // Mock provenance helper (duplicated for isolation)
 
