@@ -11,7 +11,6 @@ function App() {
   // Load state here so we can pass it to Dashboard even if not in Tutor mode? 
   // Ideally MathTutor manages it, but lifting state up is better for Dashboard access.
   // For MVP, simple persistence read in Dashboard is fine or just pass from Tutor if we lift state.
-  // Let's just instantiate persistence read in Dashboard for now to keep it simple, OR lift state.
   // Lifting state is safer.
   const [learnerState, setLearnerState] = useState(() => {
      return PersistenceService.loadState() || createInitialState('user_1');
@@ -21,6 +20,12 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50 font-sans text-gray-900">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-md focus:shadow-lg focus:outline-none focus:ring-2 focus:ring-white"
+      >
+        Skip to content
+      </a>
       <header className="bg-white border-b border-gray-200 p-4">
         <div className="max-w-5xl mx-auto flex items-center justify-between">
             <h1 className="text-xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
@@ -37,7 +42,7 @@ function App() {
             </div>
         </div>
       </header>
-      <main>
+      <main id="main-content">
         {view === 'tutor' ? (
             <MathTutor learnerState={learnerState} setLearnerState={setLearnerState} learnerService={learnerService} />
         ) : (
