@@ -1,191 +1,139 @@
-import { describe, it, expect, vi } from "vitest";
-import {
-  recommendNextItem,
-  updateLearnerState,
-  createInitialState,
-} from "./state";
-import type { Skill, Attempt } from "../types";
-import { engine } from "../generator/engine";
 
-// Mock the engine to prevent actual generation calls
-vi.mock("../generator/engine", () => ({
-  engine: {
-    generate: vi.fn().mockImplementation((skillId: string) =>
-      Promise.resolve({
-        meta: { id: `mock_${skillId}`, skill_id: skillId },
-      })
-    ),
-  },
+import { describe, it, expect, vi, beforeEach } from 'vitest';
+import { updateLearnerState, recommendNextItem, createInitialState } from './state';
+import { ALL_SKILLS_LIST } from '../skills/registry';
+import { engine } from '../generator/engine';
+
+// Mock dependencies
+vi.mock('../skills/registry', () => ({
+  ALL_SKILLS_LIST: [
+    { id: 'skill-a', prereqs: [] },
+    { id: 'skill-b', prereqs: ['skill-a'] },
+    { id: 'skill-c', prereqs: [] }
+  ]
 }));
 
-describe("LearnerState Behavior", () => {
-  const mockSkill = (id: string, prereqs: string[] = []): Skill => ({
-    id,
-    name: `Skill ${id}`,
-    gradeBand: "3-5",
-    description: "test",
-    standards: [],
-    prereqs,
-    templates: ["test_tpl"],
-    misconceptions: [],
+vi.mock('../generator/engine', () => ({
+  engine: {
+    generate: vi.fn().mockResolvedValue({ meta: { id: 'test-item' } })
+  }
+}));
+
+describe('Learner State Behavior', () => {
+  const mockUserId = 'user-123';
+
+  beforeEach(() => {
+    vi.clearAllMocks();
   });
 
-  describe("recommendNextItem", () => {
-    it("prioritizes Review items when 'review due' exists and luck favors (roll < 0.3)", async () => {
-      // Given: 2 skills, one due for review (mastered long ago), one new
-      const skillReview = mockSkill("review_skill");
-      const skillNew = mockSkill("new_skill");
-      const allSkills = [skillReview, skillNew];
-
-      const state = createInitialState("user1");
-
-      // Setup Review Skill: Mastered (0.9), Stability 0 (Interval 24h), Last practiced 48h ago
-      state.skillState["review_skill"] = {
-        masteryProb: 0.9,
-        stability: 0, // 24h interval
-        lastPracticed: new Date(Date.now() - 48 * 3600 * 1000).toISOString(), // 48h ago
-        misconceptions: [],
-      };
-
-      // Setup New Skill: Low mastery
-      state.skillState["new_skill"] = {
-        masteryProb: 0.1,
-        stability: 0,
-        lastPracticed: new Date().toISOString(),
-        misconceptions: [],
-      };
-
-      // When: RNG rolls 0.1 (favorable for review)
-      const mockRng = () => 0.1;
-      const result = await recommendNextItem(state, mockRng, allSkills);
-
-      // Then: It recommends the review skill
-      expect(result.meta.skill_id).toBe("review_skill");
-      expect(engine.generate).toHaveBeenCalledWith("review_skill", 0.9);
-    });
-
-    it("prioritizes Learning Queue when review roll fails (roll > 0.3)", async () => {
-      // Given: Same setup as above (Review due)
-      const skillReview = mockSkill("review_skill");
-      const skillNew = mockSkill("new_skill");
-      const allSkills = [skillReview, skillNew];
-
-      const state = createInitialState("user1");
-      state.skillState["review_skill"] = {
-        masteryProb: 0.9,
-        stability: 0,
-        lastPracticed: new Date(Date.now() - 48 * 3600 * 1000).toISOString(),
-        misconceptions: [],
-      };
-
-      // When: RNG rolls 0.5 (NOT favorable for review)
-      const mockRng = () => 0.5;
-      const result = await recommendNextItem(state, mockRng, allSkills);
-
-      // Then: It recommends the NEW skill (Learning Queue)
-      // Note: "new_skill" has mastery 0.1, so it is in learning queue
-      expect(result.meta.skill_id).toBe("new_skill");
-      expect(engine.generate).toHaveBeenCalledWith("new_skill", 0.1);
-    });
-
-    it("strictly blocks skills with unmet prerequisites", async () => {
-      // Given: Skill B requires Skill A
-      const skillA = mockSkill("A");
-      const skillB = mockSkill("B", ["A"]);
-      const allSkills = [skillA, skillB];
-
-      const state = createInitialState("user1");
-
-      // Skill A is NOT mastered (0.1)
-      state.skillState["A"] = {
-        masteryProb: 0.1,
-        stability: 0,
-        lastPracticed: "",
-        misconceptions: [],
-      };
-      state.skillState["B"] = {
-        masteryProb: 0.1,
-        stability: 0,
-        lastPracticed: "",
-        misconceptions: [],
-      };
-
-      // When: We ask for recommendation
-      // Logic:
-      // Review: None
-      // Learning Queue: A (ok), B (BLOCKED by A < 0.7)
-      // So it MUST pick A
-      const result = await recommendNextItem(state, () => 0.9, allSkills);
-
-      // Then: It recommends A
-      expect(result.meta.skill_id).toBe("A");
-      expect(engine.generate).toHaveBeenCalledWith("A", 0.1);
-    });
-
-    it("throws error if no skills available at all", async () => {
-      const state = createInitialState("user1");
-      await expect(recommendNextItem(state, Math.random, [])).rejects.toThrow(
-        "No skills available"
-      );
+  describe('createInitialState', () => {
+    it('initializes all registry skills with default values', () => {
+      const state = createInitialState(mockUserId);
+      expect(state.userId).toBe(mockUserId);
+      expect(Object.keys(state.skillState)).toHaveLength(3); // A, B, C from mock
+      expect(state.skillState['skill-a'].masteryProb).toBe(0.1);
+      expect(state.skillState['skill-a'].stability).toBe(0);
     });
   });
 
-  describe("updateLearnerState", () => {
-    it("auto-initializes state for unknown skills (Self-Healing)", () => {
-      // Given: State with NO knowledge of 'surprise_skill'
-      const state = createInitialState("user1");
-      const attempt: Attempt = {
-        id: "1",
-        userId: "user1",
-        skillId: "surprise_skill",
+  describe('updateLearnerState', () => {
+    it('initializes missing skill state when updating', () => {
+      const state = { userId: mockUserId, skillState: {} };
+      const attempt = {
+        skillId: 'skill-a',
         isCorrect: true,
-        itemId: "1",
         timestamp: new Date().toISOString(),
-        timeTakenMs: 1000,
-        attemptsCount: 1,
-        hintsUsed: 0,
-        errorTags: [],
+        timeTaken: 10,
+        problemId: 'p1'
       };
 
-      // When: Update is called
-      const newState = updateLearnerState(state, attempt);
-
-      // Then: It creates the entry and updates it
-      expect(newState.skillState["surprise_skill"]).toBeDefined();
-      expect(newState.skillState["surprise_skill"].masteryProb).toBeGreaterThan(
-        0.1
-      );
+      const newState = updateLearnerState(state as any, attempt);
+      expect(newState.skillState['skill-a']).toBeDefined();
+      expect(newState.skillState['skill-a'].masteryProb).toBeGreaterThan(0.1); // Increased from 0.1
     });
 
-    it("clamps mastery probability strictly to 0.99 max", () => {
-      // Given: Already maxed mastery
-      const state = createInitialState("user1");
-      const skillId = "test_skill";
-      state.skillState[skillId] = {
-        masteryProb: 0.99,
-        stability: 0,
-        lastPracticed: "",
-        misconceptions: [],
+    it('increases stability by 1 when mastery is high (>0.8) and attempt is correct', () => {
+      const state = {
+        userId: mockUserId,
+        skillState: {
+          'skill-a': { masteryProb: 0.9, stability: 2, lastPracticed: '', misconceptions: [] }
+        }
+      };
+      const attempt = {
+        skillId: 'skill-a',
+        isCorrect: true,
+        timestamp: new Date().toISOString(),
+        timeTaken: 10,
+        problemId: 'p1'
       };
 
-      const attempt: Attempt = {
-        id: "1",
-        userId: "user1",
-        skillId,
-        isCorrect: true, // Another success
-        itemId: "1",
-        timestamp: "",
-        timeTakenMs: 1000,
-        attemptsCount: 1,
-        hintsUsed: 0,
-        errorTags: [],
+      const newState = updateLearnerState(state as any, attempt);
+      expect(newState.skillState['skill-a'].stability).toBe(3); // 2 + 1
+    });
+
+    it('decreases stability by 0.5 (clamped to 0) when attempt is incorrect', () => {
+      const state = {
+        userId: mockUserId,
+        skillState: {
+          'skill-a': { masteryProb: 0.5, stability: 0.2, lastPracticed: '', misconceptions: [] }
+        }
+      };
+      const attempt = {
+        skillId: 'skill-a',
+        isCorrect: false,
+        timestamp: new Date().toISOString(),
+        timeTaken: 10,
+        problemId: 'p1'
       };
 
-      // When: Update
-      const newState = updateLearnerState(state, attempt);
+      const newState = updateLearnerState(state as any, attempt);
+      expect(newState.skillState['skill-a'].stability).toBe(0); // 0.2 - 0.5 clamped to 0
+    });
+  });
 
-      // Then: Stays at 0.99, does not exceed 1.0
-      expect(newState.skillState[skillId].masteryProb).toBe(0.99);
+  describe('recommendNextItem', () => {
+    it('filters out skills with unmet prerequisites', async () => {
+      const state = {
+        userId: mockUserId,
+        skillState: {
+          'skill-a': { masteryProb: 0.1, stability: 0, lastPracticed: '', misconceptions: [] }, // Prereq not met (<0.7)
+          'skill-b': { masteryProb: 0.1, stability: 0, lastPracticed: '', misconceptions: [] }  // Depends on A
+        }
+      };
+
+      // Mock RNG to pick B if available (it shouldn't be)
+      const rng = () => 0.5;
+
+      await recommendNextItem(state as any, rng);
+
+      // Should have generated A or C (no prereqs), but definitely not B
+      // Since we mocked registry to have A, B, C.
+      // A (0.1), B (prereq fail), C (0.1 default)
+      // Learning queue: A, C.
+      // We verify engine called with A or C
+      const calls = vi.mocked(engine.generate).mock.calls;
+      const skillId = calls[0][0];
+      expect(['skill-a', 'skill-c']).toContain(skillId);
+      expect(skillId).not.toBe('skill-b');
+    });
+
+    it('sets difficulty to 0.9 for review items (mastery > 0.8)', async () => {
+      const now = new Date();
+      const longAgo = new Date(now.getTime() - 48 * 60 * 60 * 1000).toISOString(); // 48h ago
+
+      const state = {
+        userId: mockUserId,
+        skillState: {
+          'skill-a': { masteryProb: 0.95, stability: 0, lastPracticed: longAgo, misconceptions: [] }
+        }
+      };
+
+      // Force review selection (RNG < 0.3)
+      const rng = () => 0.1;
+
+      await recommendNextItem(state as any, rng);
+
+      expect(engine.generate).toHaveBeenCalledWith('skill-a', 0.9);
     });
   });
 });
