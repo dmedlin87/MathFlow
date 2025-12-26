@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useId } from 'react';
 import { Axis } from './Axis';
 
 export interface BoxPlotProps {
@@ -12,6 +12,7 @@ export interface BoxPlotProps {
 }
 
 export const BoxPlot: React.FC<BoxPlotProps> = ({ min, q1, median, q3, max, width = 400, height = 150 }) => {
+  const titleId = useId();
   const padding = 40;
   const graphWidth = width - padding * 2;
   // const graphHeight = height - padding * 2; // Unused for now, but good for future scaling
@@ -30,8 +31,17 @@ export const BoxPlot: React.FC<BoxPlotProps> = ({ min, q1, median, q3, max, widt
   const midY = height / 2;
   const boxHeight = 40;
 
+  const description = `Box plot showing distribution with minimum ${min.toFixed(2)}, first quartile ${q1.toFixed(2)}, median ${median.toFixed(2)}, third quartile ${q3.toFixed(2)}, and maximum ${max.toFixed(2)}.`;
+
   return (
-    <svg width={width} height={height} className="border border-gray-100 rounded-lg bg-white shadow-sm">
+    <svg
+      width={width}
+      height={height}
+      className="border border-gray-100 rounded-lg bg-white shadow-sm"
+      role="img"
+      aria-labelledby={titleId}
+    >
+      <title id={titleId}>{description}</title>
       <Axis width={width} height={height} padding={padding} ticks={[min, q1, median, q3, max]} xScale={xScale} />
 
       {/* Whiskers */}

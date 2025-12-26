@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useId } from 'react';
 import { Axis } from './Axis';
 
 export interface DotPlotProps {
@@ -8,6 +8,7 @@ export interface DotPlotProps {
 }
 
 export const DotPlot: React.FC<DotPlotProps> = ({ data, width = 400, height = 200 }) => {
+  const titleId = useId();
   const padding = 40;
   const graphWidth = width - padding * 2;
   // const graphHeight = height - padding * 2; // Unused for now
@@ -29,9 +30,21 @@ export const DotPlot: React.FC<DotPlotProps> = ({ data, width = 400, height = 20
 
   const dotRadius = 6;
   const dotGap = 16;
+  const totalPoints = data.length;
+
+  // Format numbers for accessibility (clean integers vs decimals)
+  const formatNum = (n: number) => Number.isInteger(n) ? n.toString() : n.toFixed(2);
+  const description = `Dot plot showing ${totalPoints} data points ranging from ${formatNum(min)} to ${formatNum(max)}.`;
 
   return (
-    <svg width={width} height={height} className="border border-gray-100 rounded-lg bg-white shadow-sm">
+    <svg
+      width={width}
+      height={height}
+      className="border border-gray-100 rounded-lg bg-white shadow-sm"
+      role="img"
+      aria-labelledby={titleId}
+    >
+      <title id={titleId}>{description}</title>
       <Axis width={width} height={height} padding={padding} ticks={ticks} xScale={xScale} />
 
       {/* Dots */}
