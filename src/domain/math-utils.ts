@@ -5,11 +5,18 @@ export function gcd(a: number, b: number): number {
 }
 
 export function getFactors(n: number): number[] {
-  const factors = [];
-  for (let i = 1; i <= n; i++) {
-    if (n % i === 0) factors.push(i);
+  if (n <= 0) return [];
+  const factors: number[] = [];
+  const limit = Math.sqrt(n);
+  for (let i = 1; i <= limit; i++) {
+    if (n % i === 0) {
+      factors.push(i);
+      if (i !== n / i) {
+        factors.push(n / i);
+      }
+    }
   }
-  return factors;
+  return factors.sort((a, b) => a - b);
 }
 
 // Helper to get random integer
