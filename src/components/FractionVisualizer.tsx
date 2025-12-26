@@ -73,7 +73,7 @@ function buildPieSlices({
       <path
         key={index}
         d={d}
-        fill="none" // MUTATION: Always unfilled
+        fill={isFilled ? color : "none"}
         stroke="#cbd5e1" // slate-300
         strokeWidth="2"
       />
