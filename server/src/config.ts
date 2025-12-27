@@ -7,9 +7,9 @@ const isProduction = process.env.NODE_ENV === "production";
 const factoryApiKey = process.env.FACTORY_API_KEY;
 
 // SECURITY: Enforce strong API key in production
-if (isProduction && (!factoryApiKey || factoryApiKey === "test-key-123")) {
+if (isProduction && !factoryApiKey) {
   throw new Error(
-    "CRITICAL SECURITY ERROR: FACTORY_API_KEY must be set in production and cannot use the default value.",
+    "CRITICAL SECURITY ERROR: FACTORY_API_KEY must be set in production.",
   );
 }
 
@@ -22,5 +22,13 @@ export const config = {
     ? parseFloat(process.env.DEFAULT_DIFFICULTY)
     : 0.5,
   dataPath: process.env.DATA_PATH || "./data/problems.json",
-  factoryApiKey: factoryApiKey || "test-key-123", // Default for dev/test only
+  // SECURITY: Require explicit API key, fall back to undefined if not set (which blocks access if middleware checks it)
+  // For dev convenience, if not set, user must set it or API will be locked/unusable.
+  // Actually, to avoid breaking dev flow, maybe we should NOT have a hardcoded default that works, but rather require it?
+  // Let's rely on .env.example having a value or just leave it undefined and let Auth fail if missing.
+  // However, existing tests might expect it.
+  factoryApiKey: factoryApiKey,
+  allowedOrigins: process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(",")
+    : "*", // Default to wildcard string for dev convenience
 };

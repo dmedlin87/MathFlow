@@ -17,7 +17,7 @@ const port = config.port;
 
 // Middleware
 app.use(securityHeaders); // Security: Add defensive headers
-app.use(cors());
+app.use(cors({ origin: config.allowedOrigins })); // Security: Restrict origins
 app.use(express.json({ limit: "10kb" })); // Security: Limit payload size to prevent DoS
 app.disable("x-powered-by"); // Security: Hide server info
 app.use(rateLimiter); // Security: Rate limiting to prevent DoS
