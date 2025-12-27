@@ -1,95 +1,85 @@
 # Test Notes
 
-## 1. Call-Site Map
+## Call-Site Map
 
 ### `src/domain/learner/state.ts`
 
-**Export: `createInitialState(userId: string)`**
-- **Callers**:
-    - `src/services/LearnerService.ts` (implied service layer usage)
-    - Tests (`state.test.ts`, `state.behavior.test.ts`)
-- **Assumptions**: `userId` is non-empty string. `ALL_SKILLS_LIST` is non-empty.
-
-**Export: `updateLearnerState(state: LearnerState, attempt: Attempt)`**
-- **Callers**:
-    - `src/services/LearnerService.ts`
-    - Tests
-- **Assumptions**: `attempt.skillId` exists. `state.skillState` may be partial.
-
-**Export: `recommendNextItem(state: LearnerState, rng?, skills?)`**
-- **Callers**:
-    - `src/services/LearnerService.ts`
-    - Tests
-- **Assumptions**: `state.skillState` is valid. `rng` returns [0, 1). `skills` defaults to global registry.
+*   **`createInitialState(userId)`**
+    *   Callers: Tests (e.g., `state.test.ts`), App initialization (implied).
+    *   Assumptions: Creates default state for all registered skills.
+*   **`updateLearnerState(state, attempt)`**
+    *   Callers: `MathTutor.tsx` (submission handler), Tests.
+    *   Assumptions: Uses BKT to update mastery. Updates `lastPracticed` and `stability`. Clamps mastery.
+*   **`recommendNextItem(state, rng, skills)`**
+    *   Callers: `LearnerService.ts`, Tests.
+    *   Assumptions: Prioritizes review (if due) then learning queue (lowest mastery). Handles prereqs.
 
 ### `src/domain/generator/engine.ts`
 
-**Export: `Engine` (Class)**
-- **Methods**: `register`, `generate`
-- **Callers**:
-    - `src/services/LearnerService.ts` (via singleton `engine`)
-    - Tests
-- **Assumptions**: `config.apiBaseUrl` dictates mode (Network vs Local).
+*   **`Engine.register(generator)`**
+    *   Callers: Self-initialization loop in `engine.ts`, Tests.
+*   **`Engine.generate(skillId, difficulty, rng)`**
+    *   Callers: `recommendNextItem` in `state.ts`, Tests.
+    *   Assumptions: Tries API first, falls back to Local. Throws if skill missing locally (and API fails).
 
-## 2. Contracts
-
-### `createInitialState`
-- **Inputs**: `userId` (string)
-- **Outputs**: `LearnerState`
-- **Invariants**: `skillState` has keys for all skills in `ALL_SKILLS_LIST` with default 0.1 mastery.
-- **Errors**: None.
+## Contracts
 
 ### `updateLearnerState`
-- **Inputs**: `state` (LearnerState), `attempt` (Attempt)
-- **Outputs**: New `LearnerState` (immutable update)
-- **Invariants**: `masteryProb` clamped [0.01, 0.99]. `stability` >= 0.
-- **Behavior**:
-    - Correct -> increase mastery (Bayesian update), stability +1 if mastery > 0.8.
-    - Incorrect -> decrease mastery, stability -0.5 (min 0).
-
-### `recommendNextItem`
-- **Inputs**: `state`, `rng` (optional), `skills` (optional)
-- **Outputs**: `MathProblemItem`
-- **Invariants**: Returns a valid item from `engine`.
-- **Errors**: Throws if no skills available.
-- **Behavior**:
-    - Review priority if mastery > 0.8 and interval passed.
-    - Learning queue (mastery < 0.8) sorted by mastery (lowest first).
-    - Prerequisite check (blocks skills if prereqs < 0.7 mastery).
-    - 30% chance of review if available.
+*   **Inputs**: `state` (LearnerState), `attempt` (Attempt)
+*   **Outputs**: New `LearnerState` (immutable update)
+*   **Invariants**: Mastery clamped [0.01, 0.99].
+*   **Behavior**:
+    *   Correct: Increases mastery (BKT). If mastery > 0.8, increments stability.
+    *   Incorrect: Decreases mastery (BKT). Decreases stability.
+    *   Lazy Init: Initializes skill state if missing.
 
 ### `Engine.generate`
-- **Inputs**: `skillId`, `difficulty`, `rng` (optional)
-- **Outputs**: `MathProblemItem` (Promise)
-- **Behavior**:
-    - If `apiBaseUrl` set: Try Fetch Bank -> If empty, Fetch Factory -> If fail/empty, Log warning.
-    - Always: Fallback to Local Generator if network fails or returns no items.
-    - Validates output using `validateMathProblemItem`.
+*   **Inputs**: `skillId`, `difficulty`, `rng?`
+*   **Outputs**: `MathProblemItem` (Promise)
+*   **Errors**: Throws if generator not found (and API unavailable).
+*   **Behavior**:
+    *   Fetch enabled: Call `/problems`, then `/factory/run`. Return valid item.
+    *   Fetch failed/disabled: Use local generator.
+    *   Validation: Always validate output.
 
-## 3. Test Plan
+## Test Plan
 
+### `src/domain/learner/state.behavior.test.ts`
 | Test Name | Behavior | Branch/Line | Type |
-|-----------|----------|-------------|------|
-| `state_init_skills` | `createInitialState` initializes all registry skills | `state.ts:13` | Happy |
-| `update_lazy_init` | `updateLearnerState` initializes missing skill state | `state.ts:30` | Edge |
-| `update_stability_inc` | Stability increments by 1 when mastery > 0.8 and correct | `state.ts:67` | Happy |
-| `update_stability_reset` | Stability drops by 0.5 (clamped 0) when incorrect | `state.ts:76` | Happy |
-| `recommend_prereq_block` | Filters out skills with unmet prereqs (< 0.7) | `state.ts:131` | Logic |
-| `recommend_review_override` | Sets difficulty to 0.9 for review items (> 0.8 mastery) | `state.ts:168` | Logic |
-| `engine_fetch_bank` | Returns Bank item if API configured and fetch succeeds | `engine.ts:40` | Happy |
-| `engine_fetch_factory` | Falls back to Factory if Bank returns empty | `engine.ts:51` | Edge |
-| `engine_fallback_local` | Falls back to Local if API fetch fails (catch block) | `engine.ts:65` | Error |
+| :--- | :--- | :--- | :--- |
+| `updateLearnerState` - Correct | Increases mastery via BKT | `state.ts:58-62` | Happy Path |
+| `updateLearnerState` - Incorrect | Decreases mastery via BKT | `state.ts:68-71` | Happy Path |
+| `updateLearnerState` - Stability Inc | Stability +1 when correct & mastery > 0.8 | `state.ts:65-67` | Branch |
+| `updateLearnerState` - Stability Reset | Stability drops when incorrect | `state.ts:74` | Branch |
+| `updateLearnerState` - Clamping | Mastery clamped to 0.01 and 0.99 | `state.ts:81` | Boundary |
+| `recommendNextItem` - Review | Picks review item if due & roll < 0.3 | `state.ts:145` | Branch |
+| `recommendNextItem` - Learning | Picks lowest mastery from queue | `state.ts:148` | Branch |
+| `recommendNextItem` - Prereqs | Filters out skills if prereqs unmet | `state.ts:128` | Branch |
 
-## 4. Mutation Sanity
-- **Mutation**: Changed `state.ts` line 67: `if (newP > 0.8)` -> `if (newP > 0.99)`.
-- **Result**: `state.behavior.test.ts` failed as expected.
-  - Test: "increases stability by 1 when mastery is high (>0.8) and attempt is correct"
-  - Error: `AssertionError: expected 2 to be 3`.
-- **Conclusion**: The test accurately constrains the stability update logic.
+### `src/domain/generator/engine.behavior.test.ts`
+| Test Name | Behavior | Branch/Line | Type |
+| :--- | :--- | :--- | :--- |
+| `generate` - Local Fallback | Uses local gen if API URL missing | `engine.ts:38` | Branch |
+| `generate` - Network Error | Uses local gen if API fetch fails | `engine.ts:66` | Branch |
+| `generate` - API Success | Returns API item if fetch succeeds | `engine.ts:47` | Happy Path |
+| `generate` - Missing Skill | Throws if local gen missing | `engine.ts:72` | Error |
 
-## 5. Coverage Summary
-- **Before**: Unclear due to missing report, but known gaps in `engine.ts` network paths and `state.ts` edge cases.
-- **After**:
-  - `state.ts`: Explicit tests for lazy init, stability logic, and scheduler prereqs/overrides.
-  - `engine.ts`: Full coverage of Network -> Bank -> Factory -> Local fallback chain.
-  - **Note**: Coverage report generation is flaky in this environment, but behavior tests explicitly target all critical branches.
+# Test Plan Update
+Mutation Sanity Check
+# Mutation Sanity Passed: Mutation: Review Crash caused test failure
+# Final Coverage
+=== Coverage Summary ===
+Global Branch Coverage: 77.04% (245/318)
+
+=== Top 10 Lowest Branch Coverage (Min 1 Branch) ===
+18.52% (5/27) - C:\Users\dmedl\Projects\MathFlow\src\domain\math-utils.ts
+75.00% (33/44) - C:\Users\dmedl\Projects\MathFlow\src\domain\skills\grade4\fractions.ts
+78.13% (25/32) - C:\Users\dmedl\Projects\MathFlow\src\domain\skills\grade4\measurement.ts
+78.95% (30/38) - C:\Users\dmedl\Projects\MathFlow\src\domain\skills\grade4\data.ts
+80.00% (16/20) - C:\Users\dmedl\Projects\MathFlow\src\domain\skills\grade4\geometry.ts
+84.09% (37/44) - C:\Users\dmedl\Projects\MathFlow\src\domain\skills\grade4\oa.ts
+87.32% (62/71) - C:\Users\dmedl\Projects\MathFlow\src\domain\skills\grade4\nbt.ts
+87.50% (35/40) - C:\Users\dmedl\Projects\MathFlow\src\domain\skills\grade4\decimals.ts
+100.00% (2/2) - C:\Users\dmedl\Projects\MathFlow\src\domain\test-utils.ts
+
+=== Zero Branch Files (Top 5 by size) ===

@@ -60,7 +60,7 @@ export function updateLearnerState(
     // P(L|Correct) = (P(L) * (1-s)) / (P(L)*(1-s) + (1-P(L))*g)
     const numerator = currentP * (1 - slip);
     const denominator = currentP * (1 - slip) + (1 - currentP) * guess;
-    newP = 0.99; // MUTATION: Always jump to 0.99
+    newP = denominator > 0 ? numerator / denominator : currentP;
 
     // Stability Increase: If masterful, increase intervals
     // Simple additive for now: +1 day if high mastery
