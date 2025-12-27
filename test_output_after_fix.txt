@@ -1,80 +1,658 @@
 
 > mathflow@0.0.0 test
-> vitest
+> vitest run
 
 
-[1m[44m DEV [49m[22m [34mv4.0.15 [39m[90mC:/Users/dmedl/Projects/MathFlow[39m
+[1m[46m RUN [49m[22m [36mv4.0.15 [39m[90m/app[39m
 
- [32mΓ£ô[39m src/domain/learner/misconceptionEvaluator.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 5[2mms[22m[39m
- [32mΓ£ô[39m src/domain/math-utils.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 3[2mms[22m[39m
- [32mΓ£ô[39m src/domain/skills/grade4-decimals.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 6[2mms[22m[39m
- [32mΓ£ô[39m src/domain/skills/grade4-fractions.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 8[2mms[22m[39m
- [31mΓ¥»[39m src/domain/generator/engine.test.ts [2m([22m[2m7 tests[22m[2m | [22m[31m3 failed[39m[2m)[22m[32m 14[2mms[22m[39m
-[31m       [31m├ù[31m tries to fetch from API and successfully returns verifying item[39m[32m 7[2mms[22m[39m
-       [32mΓ£ô[39m falls back to local generator if API fetch fails[32m 1[2mms[22m[39m
-[31m       [31m├ù[31m falls back to local generator if API returns empty[39m[32m 1[2mms[22m[39m
-[31m       [31m├ù[31m uses factory item if bank is empty but factory returns item[39m[32m 1[2mms[22m[39m
-       [32mΓ£ô[39m throws error when skill not found locally and API fails[32m 1[2mms[22m[39m
-       [32mΓ£ô[39m should register and retrieve a generator[32m 1[2mms[22m[39m
-       [32mΓ£ô[39m should generate an item when generator exists[32m 1[2mms[22m[39m
- [32mΓ£ô[39m src/domain/learner/state.test.ts [2m([22m[2m8 tests[22m[2m)[22m[32m 4[2mms[22m[39m
- [32mΓ£ô[39m server/src/factory/pipeline.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 5[2mms[22m[39m
- [32mΓ£ô[39m src/domain/learner/state.behavior.test.ts [2m([22m[2m12 tests[22m[2m)[22m[32m 13[2mms[22m[39m
- [32mΓ£ô[39m src/services/LearnerService.test.ts [2m([22m[2m7 tests[22m[2m)[22m[33m 4468[2mms[22m[39m
-     [33m[2mΓ£ô[22m[39m should simulate network latency [33m 402[2mms[22m[39m
-     [33m[2mΓ£ô[22m[39m should return valid initial state [33m 411[2mms[22m[39m
-     [33m[2mΓ£ô[22m[39m should submit attempt and return updated state [33m 1213[2mms[22m[39m
-     [33m[2mΓ£ô[22m[39m should reject non-serializable data (Architecture Violation) [33m 404[2mms[22m[39m
-     [33m[2mΓ£ô[22m[39m should return null when answer matches no misconception [33m 404[2mms[22m[39m
-     [33m[2mΓ£ô[22m[39m should diagnose known misconceptions [33m 413[2mms[22m[39m
-     [33m[2mΓ£ô[22m[39m should get recommendation from domain logic [33m 1217[2mms[22m[39m
+[90mstdout[2m | src/domain/generator/engine.test.ts
+[22m[39m{"timestamp":"2025-12-26T21:35:44.696Z","level":"INFO","message":"Registered generator for skill: dec_notation_01"}
+{"timestamp":"2025-12-26T21:35:44.698Z","level":"INFO","message":"Registered generator for skill: dec_compare_01"}
+{"timestamp":"2025-12-26T21:35:44.698Z","level":"INFO","message":"Registered generator for skill: frac_equiv_01"}
+{"timestamp":"2025-12-26T21:35:44.698Z","level":"INFO","message":"Registered generator for skill: frac_add_like_01"}
+{"timestamp":"2025-12-26T21:35:44.698Z","level":"INFO","message":"Registered generator for skill: fractions_sub_like"}
+{"timestamp":"2025-12-26T21:35:44.699Z","level":"INFO","message":"Registered generator for skill: fractions_simplify"}
+{"timestamp":"2025-12-26T21:35:44.699Z","level":"INFO","message":"Registered generator for skill: frac_mult_whole"}
+{"timestamp":"2025-12-26T21:35:44.699Z","level":"INFO","message":"Registered generator for skill: frac_compare_unlike"}
+{"timestamp":"2025-12-26T21:35:44.699Z","level":"INFO","message":"Registered generator for skill: frac_add_tenths_hundredths"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: frac_decompose"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: frac_add_sub_mixed"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: meas_area_perimeter"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: meas_unit_conversion"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: geo_lines_angles"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: geo_symmetry"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: meas_angles"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: meas_data_line_plots"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: geo_shape_class"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: meas_money_word_problems"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: meas_protractor"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: meas_data_graphs"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: nbt_place_value"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: nbt_compare_multi"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: nbt_rounding"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: nbt_add_sub_multi"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: dynamic_mult"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: nbt_div_remainders"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: nbt_mult_1digit"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: nbt_mult_2digit"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: oa_factors_multiples"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: oa_patterns"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: oa_mult_compare"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: oa_multi_step_word"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 5.nf.add_sub_unlike"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 5.nf.frac_div"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 5.nf.scaling"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 5.nf.mult_frac"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 5.nf.div_frac"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 5.nf.word_problems"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 5.gm.volume_cubes"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 5.gm.volume_formula"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 5.gm.coord_plane"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 5.gm.class_figures"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 5.gm.unit_conv"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 5.md.line_plots"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 5.nbt.powers_10"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 5.nbt.decimal_forms"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 5.nbt.compare_decimals"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 5.nbt.round_decimals"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 5.nbt.add_sub_decimals"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 5.nbt.mult_whole"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 5.nbt.mult_decimals"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 5.nbt.div_whole"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 5.nbt.div_decimals"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 5.nbt.frac_dec_conv"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 5.oa.order_ops"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 5.oa.patterns"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 6.ee.exponents"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 6.ee.one_step_eq"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 6.ee.expressions"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 6.ee.equiv_expressions"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 6.ee.inequalities"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 6.ee.variables"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 6.g.area"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 6.g.surface_area"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 6.g.volume_frac"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 6.g.polygons_coord"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 6.ns.div_fractions"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 6.ns.multi_digit_div"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 6.ns.decimal_ops"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 6.ns.gcf_lcm"}
+{"timestamp":"2025-12-26T21:35:44.700Z","level":"INFO","message":"Registered generator for skill: 6.ns.integers"}
+{"timestamp":"2025-12-26T21:35:44.701Z","level":"INFO","message":"Registered generator for skill: 6.ns.rational_line"}
+{"timestamp":"2025-12-26T21:35:44.701Z","level":"INFO","message":"Registered generator for skill: 6.ns.coord_plane"}
+{"timestamp":"2025-12-26T21:35:44.701Z","level":"INFO","message":"Registered generator for skill: 6.rp.ratios"}
+{"timestamp":"2025-12-26T21:35:44.701Z","level":"INFO","message":"Registered generator for skill: 6.rp.unit_rate"}
+{"timestamp":"2025-12-26T21:35:44.701Z","level":"INFO","message":"Registered generator for skill: 6.rp.percents"}
+{"timestamp":"2025-12-26T21:35:44.701Z","level":"INFO","message":"Registered generator for skill: 6.rp.ratio_tables"}
+{"timestamp":"2025-12-26T21:35:44.701Z","level":"INFO","message":"Registered generator for skill: 6.rp.unit_conversion"}
+{"timestamp":"2025-12-26T21:35:44.701Z","level":"INFO","message":"Registered generator for skill: 6.sp.mean"}
+{"timestamp":"2025-12-26T21:35:44.701Z","level":"INFO","message":"Registered generator for skill: 6.sp.median_mode_range"}
+{"timestamp":"2025-12-26T21:35:44.701Z","level":"INFO","message":"Registered generator for skill: 6.sp.iqr"}
+{"timestamp":"2025-12-26T21:35:44.701Z","level":"INFO","message":"Registered generator for skill: 6.sp.box_plots"}
+{"timestamp":"2025-12-26T21:35:44.701Z","level":"INFO","message":"Registered generator for skill: 6.sp.dot_plots"}
+{"timestamp":"2025-12-26T21:35:44.701Z","level":"INFO","message":"Registered generator for skill: 6.sp.histograms"}
 
-ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ» Failed Tests 3 ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»
+[90mstdout[2m | src/domain/learner/state.test.ts
+[22m[39m{"timestamp":"2025-12-26T21:35:44.701Z","level":"INFO","message":"Registered generator for skill: dec_notation_01"}
+{"timestamp":"2025-12-26T21:35:44.702Z","level":"INFO","message":"Registered generator for skill: dec_compare_01"}
+{"timestamp":"2025-12-26T21:35:44.702Z","level":"INFO","message":"Registered generator for skill: frac_equiv_01"}
+{"timestamp":"2025-12-26T21:35:44.702Z","level":"INFO","message":"Registered generator for skill: frac_add_like_01"}
+{"timestamp":"2025-12-26T21:35:44.702Z","level":"INFO","message":"Registered generator for skill: fractions_sub_like"}
+{"timestamp":"2025-12-26T21:35:44.703Z","level":"INFO","message":"Registered generator for skill: fractions_simplify"}
+{"timestamp":"2025-12-26T21:35:44.703Z","level":"INFO","message":"Registered generator for skill: frac_mult_whole"}
+{"timestamp":"2025-12-26T21:35:44.703Z","level":"INFO","message":"Registered generator for skill: frac_compare_unlike"}
+{"timestamp":"2025-12-26T21:35:44.703Z","level":"INFO","message":"Registered generator for skill: frac_add_tenths_hundredths"}
+{"timestamp":"2025-12-26T21:35:44.703Z","level":"INFO","message":"Registered generator for skill: frac_decompose"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: frac_add_sub_mixed"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: meas_area_perimeter"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: meas_unit_conversion"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: geo_lines_angles"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: geo_symmetry"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: meas_angles"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: meas_data_line_plots"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: geo_shape_class"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: meas_money_word_problems"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: meas_protractor"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: meas_data_graphs"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: nbt_place_value"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: nbt_compare_multi"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: nbt_rounding"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: nbt_add_sub_multi"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: dynamic_mult"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: nbt_div_remainders"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: nbt_mult_1digit"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: nbt_mult_2digit"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: oa_factors_multiples"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: oa_patterns"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: oa_mult_compare"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: oa_multi_step_word"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 5.nf.add_sub_unlike"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 5.nf.frac_div"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 5.nf.scaling"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 5.nf.mult_frac"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 5.nf.div_frac"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 5.nf.word_problems"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 5.gm.volume_cubes"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 5.gm.volume_formula"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 5.gm.coord_plane"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 5.gm.class_figures"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 5.gm.unit_conv"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 5.md.line_plots"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 5.nbt.powers_10"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 5.nbt.decimal_forms"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 5.nbt.compare_decimals"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 5.nbt.round_decimals"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 5.nbt.add_sub_decimals"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 5.nbt.mult_whole"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 5.nbt.mult_decimals"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 5.nbt.div_whole"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 5.nbt.div_decimals"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 5.nbt.frac_dec_conv"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 5.oa.order_ops"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 5.oa.patterns"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 6.ee.exponents"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 6.ee.one_step_eq"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 6.ee.expressions"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 6.ee.equiv_expressions"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 6.ee.inequalities"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 6.ee.variables"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 6.g.area"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 6.g.surface_area"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 6.g.volume_frac"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 6.g.polygons_coord"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 6.ns.div_fractions"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 6.ns.multi_digit_div"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 6.ns.decimal_ops"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 6.ns.gcf_lcm"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 6.ns.integers"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 6.ns.rational_line"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 6.ns.coord_plane"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 6.rp.ratios"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 6.rp.unit_rate"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 6.rp.percents"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 6.rp.ratio_tables"}
+{"timestamp":"2025-12-26T21:35:44.704Z","level":"INFO","message":"Registered generator for skill: 6.rp.unit_conversion"}
+{"timestamp":"2025-12-26T21:35:44.705Z","level":"INFO","message":"Registered generator for skill: 6.sp.mean"}
+{"timestamp":"2025-12-26T21:35:44.705Z","level":"INFO","message":"Registered generator for skill: 6.sp.median_mode_range"}
+{"timestamp":"2025-12-26T21:35:44.705Z","level":"INFO","message":"Registered generator for skill: 6.sp.iqr"}
+{"timestamp":"2025-12-26T21:35:44.705Z","level":"INFO","message":"Registered generator for skill: 6.sp.box_plots"}
+{"timestamp":"2025-12-26T21:35:44.705Z","level":"INFO","message":"Registered generator for skill: 6.sp.dot_plots"}
+{"timestamp":"2025-12-26T21:35:44.705Z","level":"INFO","message":"Registered generator for skill: 6.sp.histograms"}
 
- FAIL  src/domain/generator/engine.test.ts > Generator Engine > Client Integration (Network & Fallback) > tries to fetch from API and successfully returns verifying item
-AssertionError: expected "vi.fn()" to be called with arguments: [ StringContaining{ΓÇª} ]
+[90mstdout[2m | src/domain/generator/engine.test.ts[2m > [22m[2mGenerator Engine[2m > [22m[2mClient Integration (Network & Fallback)[2m > [22m[2mtries to fetch from API and successfully returns verifying item
+[22m[39m{"timestamp":"2025-12-26T21:35:44.727Z","level":"INFO","message":"Registered generator for skill: frac_equiv_01"}
 
-Number of calls: 0
+[90mstdout[2m | src/domain/generator/engine.test.ts[2m > [22m[2mGenerator Engine[2m > [22m[2mClient Integration (Network & Fallback)[2m > [22m[2mfalls back to local generator if API fetch fails
+[22m[39m{"timestamp":"2025-12-26T21:35:44.732Z","level":"INFO","message":"Registered generator for skill: frac_equiv_01"}
 
- Γ¥» src/domain/generator/engine.test.ts:41:31
-     39|             const item = await engine.generate('frac_equiv_01', 0.5);
-     40|             
-     41|             expect(mockFetch).toHaveBeenCalledWith(expect.stringContaiΓÇª
-       |                               ^
-     42|             expect(item.meta.id).toBe('api_item_1');
-     43|         });
+[90mstdout[2m | src/domain/generator/engine.test.ts[2m > [22m[2mGenerator Engine[2m > [22m[2mClient Integration (Network & Fallback)[2m > [22m[2mfalls back to local generator if API returns empty
+[22m[39m{"timestamp":"2025-12-26T21:35:44.734Z","level":"INFO","message":"Registered generator for skill: frac_equiv_01"}
 
-ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[1/3]ΓÄ»
+[90mstdout[2m | src/domain/generator/engine.test.ts[2m > [22m[2mGenerator Engine[2m > [22m[2mClient Integration (Network & Fallback)[2m > [22m[2muses factory item if bank is empty but factory returns item
+[22m[39m{"timestamp":"2025-12-26T21:35:44.735Z","level":"INFO","message":"Registered generator for skill: frac_equiv_01"}
 
- FAIL  src/domain/generator/engine.test.ts > Generator Engine > Client Integration (Network & Fallback) > falls back to local generator if API returns empty
-AssertionError: expected "vi.fn()" to be called 2 times, but got 0 times
- Γ¥» src/domain/generator/engine.test.ts:66:31
-     64|             const item = await engine.generate('frac_equiv_01', 0.5);
-     65|             
-     66|             expect(mockFetch).toHaveBeenCalledTimes(2); // Problem fetΓÇª
-       |                               ^
-     67|             expect(item).toBeDefined();
-     68|         });
+[90mstdout[2m | src/domain/generator/engine.test.ts[2m > [22m[2mGenerator Engine[2m > [22m[2mClient Integration (Network & Fallback)[2m > [22m[2mthrows error when skill not found locally and API fails
+[22m[39m{"timestamp":"2025-12-26T21:35:44.736Z","level":"INFO","message":"Registered generator for skill: frac_equiv_01"}
 
-ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[2/3]ΓÄ»
+[90mstdout[2m | src/domain/generator/engine.test.ts[2m > [22m[2mGenerator Engine[2m > [22m[2mClient Integration (Network & Fallback)[2m > [22m[2mshould handle invalid API response gracefully
+[22m[39m{"timestamp":"2025-12-26T21:35:44.739Z","level":"INFO","message":"Registered generator for skill: frac_equiv_01"}
 
- FAIL  src/domain/generator/engine.test.ts > Generator Engine > Client Integration (Network & Fallback) > uses factory item if bank is empty but factory returns item
-AssertionError: expected "vi.fn()" to be called 2 times, but got 0 times
- Γ¥» src/domain/generator/engine.test.ts:85:31
-     83|             const item = await engine.generate('frac_equiv_01', 0.5);
-     84|             
-     85|             expect(mockFetch).toHaveBeenCalledTimes(2);
-       |                               ^
-     86|             expect(item.meta.id).toBe('factory_item_1');
-     87|         });
+[90mstdout[2m | src/domain/generator/engine.test.ts[2m > [22m[2mGenerator Engine[2m > [22m[2mClient Integration (Network & Fallback)[2m > [22m[2mshould fall back to local generator immediately if problems endpoint returns error (500)
+[22m[39m{"timestamp":"2025-12-26T21:35:44.740Z","level":"INFO","message":"Registered generator for skill: frac_equiv_01"}
 
-ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»ΓÄ»[3/3]ΓÄ»
+[90mstdout[2m | src/domain/generator/engine.test.ts[2m > [22m[2mGenerator Engine[2m > [22m[2mClient Integration (Network & Fallback)[2m > [22m[2mshould fall back to local generator if factory run returns error (500)
+[22m[39m{"timestamp":"2025-12-26T21:35:44.741Z","level":"INFO","message":"Registered generator for skill: frac_equiv_01"}
 
+[90mstdout[2m | src/domain/generator/engine.test.ts[2m > [22m[2mGenerator Engine[2m > [22m[2mRegistry & Behavior[2m > [22m[2mshould register and retrieve a generator
+[22m[39m{"timestamp":"2025-12-26T21:35:44.743Z","level":"INFO","message":"Registered generator for skill: skill_test_1"}
 
-[2m Test Files [22m [1m[31m1 failed[39m[22m[2m | [22m[1m[32m8 passed[39m[22m[90m (9)[39m
-[2m      Tests [22m [1m[31m3 failed[39m[22m[2m | [22m[1m[32m66 passed[39m[22m[90m (69)[39m
-[2m   Start at [22m 23:16:26
-[2m   Duration [22m 5.41s[2m (transform 881ms, setup 2.07s, import 960ms, tests 4.53s, environment 1ms)[22m
+[90mstdout[2m | src/domain/generator/engine.test.ts[2m > [22m[2mGenerator Engine[2m > [22m[2mRegistry & Behavior[2m > [22m[2mshould generate an item when generator exists
+[22m[39m{"timestamp":"2025-12-26T21:35:44.744Z","level":"INFO","message":"Registered generator for skill: skill_test_2"}
 
-[1m[41m FAIL [49m[22m [31mTests failed. Watching for file changes...[39m
-       [2mpress [22m[1mh[22m[2m to show help[22m[2m, [22m[2mpress [22m[1mq[22m[2m to quit[22m
+ [32m✓[39m src/domain/generator/engine.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 26[2mms[22m[39m
+ [32m✓[39m src/domain/learner/state.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+ [32m✓[39m src/components/FractionVisualizer.test.tsx [2m([22m[2m6 tests[22m[2m)[22m[32m 57[2mms[22m[39m
+[90mstdout[2m | src/domain/generator/engine.coverage.test.ts
+[22m[39m{"timestamp":"2025-12-26T21:35:45.131Z","level":"INFO","message":"Registered generator for skill: dec_notation_01"}
+{"timestamp":"2025-12-26T21:35:45.132Z","level":"INFO","message":"Registered generator for skill: dec_compare_01"}
+{"timestamp":"2025-12-26T21:35:45.132Z","level":"INFO","message":"Registered generator for skill: frac_equiv_01"}
+{"timestamp":"2025-12-26T21:35:45.132Z","level":"INFO","message":"Registered generator for skill: frac_add_like_01"}
+{"timestamp":"2025-12-26T21:35:45.132Z","level":"INFO","message":"Registered generator for skill: fractions_sub_like"}
+{"timestamp":"2025-12-26T21:35:45.132Z","level":"INFO","message":"Registered generator for skill: fractions_simplify"}
+{"timestamp":"2025-12-26T21:35:45.132Z","level":"INFO","message":"Registered generator for skill: frac_mult_whole"}
+{"timestamp":"2025-12-26T21:35:45.132Z","level":"INFO","message":"Registered generator for skill: frac_compare_unlike"}
+{"timestamp":"2025-12-26T21:35:45.132Z","level":"INFO","message":"Registered generator for skill: frac_add_tenths_hundredths"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: frac_decompose"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: frac_add_sub_mixed"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: meas_area_perimeter"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: meas_unit_conversion"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: geo_lines_angles"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: geo_symmetry"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: meas_angles"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: meas_data_line_plots"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: geo_shape_class"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: meas_money_word_problems"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: meas_protractor"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: meas_data_graphs"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: nbt_place_value"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: nbt_compare_multi"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: nbt_rounding"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: nbt_add_sub_multi"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: dynamic_mult"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: nbt_div_remainders"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: nbt_mult_1digit"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: nbt_mult_2digit"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: oa_factors_multiples"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: oa_patterns"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: oa_mult_compare"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: oa_multi_step_word"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 5.nf.add_sub_unlike"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 5.nf.frac_div"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 5.nf.scaling"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 5.nf.mult_frac"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 5.nf.div_frac"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 5.nf.word_problems"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 5.gm.volume_cubes"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 5.gm.volume_formula"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 5.gm.coord_plane"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 5.gm.class_figures"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 5.gm.unit_conv"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 5.md.line_plots"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 5.nbt.powers_10"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 5.nbt.decimal_forms"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 5.nbt.compare_decimals"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 5.nbt.round_decimals"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 5.nbt.add_sub_decimals"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 5.nbt.mult_whole"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 5.nbt.mult_decimals"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 5.nbt.div_whole"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 5.nbt.div_decimals"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 5.nbt.frac_dec_conv"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 5.oa.order_ops"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 5.oa.patterns"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 6.ee.exponents"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 6.ee.one_step_eq"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 6.ee.expressions"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 6.ee.equiv_expressions"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 6.ee.inequalities"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 6.ee.variables"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 6.g.area"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 6.g.surface_area"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 6.g.volume_frac"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 6.g.polygons_coord"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 6.ns.div_fractions"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 6.ns.multi_digit_div"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 6.ns.decimal_ops"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 6.ns.gcf_lcm"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 6.ns.integers"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 6.ns.rational_line"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 6.ns.coord_plane"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 6.rp.ratios"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 6.rp.unit_rate"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 6.rp.percents"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 6.rp.ratio_tables"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 6.rp.unit_conversion"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 6.sp.mean"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 6.sp.median_mode_range"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 6.sp.iqr"}
+{"timestamp":"2025-12-26T21:35:45.133Z","level":"INFO","message":"Registered generator for skill: 6.sp.box_plots"}
+{"timestamp":"2025-12-26T21:35:45.134Z","level":"INFO","message":"Registered generator for skill: 6.sp.dot_plots"}
+{"timestamp":"2025-12-26T21:35:45.134Z","level":"INFO","message":"Registered generator for skill: 6.sp.histograms"}
+
+[90mstdout[2m | src/domain/generator/engine.coverage.test.ts[2m > [22m[2mEngine Coverage[2m > [22m[2mfalls back to local generator if factory returns ok but items is empty/undefined
+[22m[39m{"timestamp":"2025-12-26T21:35:45.145Z","level":"INFO","message":"Registered generator for skill: test_skill"}
+
+[90mstdout[2m | src/domain/generator/engine.coverage.test.ts[2m > [22m[2mEngine Coverage[2m > [22m[2mfalls back to local generator if factory returns ok but items is undefined
+[22m[39m{"timestamp":"2025-12-26T21:35:45.148Z","level":"INFO","message":"Registered generator for skill: test_skill"}
+
+ [32m✓[39m src/domain/generator/engine.coverage.test.ts [2m([22m[2m2 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+[90mstdout[2m | src/domain/generator/engine.behavior.test.ts
+[22m[39m{"timestamp":"2025-12-26T21:35:45.182Z","level":"INFO","message":"Registered generator for skill: dec_notation_01"}
+{"timestamp":"2025-12-26T21:35:45.184Z","level":"INFO","message":"Registered generator for skill: dec_compare_01"}
+{"timestamp":"2025-12-26T21:35:45.184Z","level":"INFO","message":"Registered generator for skill: frac_equiv_01"}
+{"timestamp":"2025-12-26T21:35:45.184Z","level":"INFO","message":"Registered generator for skill: frac_add_like_01"}
+{"timestamp":"2025-12-26T21:35:45.184Z","level":"INFO","message":"Registered generator for skill: fractions_sub_like"}
+{"timestamp":"2025-12-26T21:35:45.184Z","level":"INFO","message":"Registered generator for skill: fractions_simplify"}
+{"timestamp":"2025-12-26T21:35:45.184Z","level":"INFO","message":"Registered generator for skill: frac_mult_whole"}
+{"timestamp":"2025-12-26T21:35:45.184Z","level":"INFO","message":"Registered generator for skill: frac_compare_unlike"}
+{"timestamp":"2025-12-26T21:35:45.184Z","level":"INFO","message":"Registered generator for skill: frac_add_tenths_hundredths"}
+{"timestamp":"2025-12-26T21:35:45.184Z","level":"INFO","message":"Registered generator for skill: frac_decompose"}
+{"timestamp":"2025-12-26T21:35:45.184Z","level":"INFO","message":"Registered generator for skill: frac_add_sub_mixed"}
+{"timestamp":"2025-12-26T21:35:45.184Z","level":"INFO","message":"Registered generator for skill: meas_area_perimeter"}
+{"timestamp":"2025-12-26T21:35:45.184Z","level":"INFO","message":"Registered generator for skill: meas_unit_conversion"}
+{"timestamp":"2025-12-26T21:35:45.184Z","level":"INFO","message":"Registered generator for skill: geo_lines_angles"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: geo_symmetry"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: meas_angles"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: meas_data_line_plots"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: geo_shape_class"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: meas_money_word_problems"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: meas_protractor"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: meas_data_graphs"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: nbt_place_value"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: nbt_compare_multi"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: nbt_rounding"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: nbt_add_sub_multi"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: dynamic_mult"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: nbt_div_remainders"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: nbt_mult_1digit"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: nbt_mult_2digit"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: oa_factors_multiples"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: oa_patterns"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: oa_mult_compare"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: oa_multi_step_word"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 5.nf.add_sub_unlike"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 5.nf.frac_div"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 5.nf.scaling"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 5.nf.mult_frac"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 5.nf.div_frac"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 5.nf.word_problems"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 5.gm.volume_cubes"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 5.gm.volume_formula"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 5.gm.coord_plane"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 5.gm.class_figures"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 5.gm.unit_conv"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 5.md.line_plots"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 5.nbt.powers_10"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 5.nbt.decimal_forms"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 5.nbt.compare_decimals"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 5.nbt.round_decimals"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 5.nbt.add_sub_decimals"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 5.nbt.mult_whole"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 5.nbt.mult_decimals"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 5.nbt.div_whole"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 5.nbt.div_decimals"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 5.nbt.frac_dec_conv"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 5.oa.order_ops"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 5.oa.patterns"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 6.ee.exponents"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 6.ee.one_step_eq"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 6.ee.expressions"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 6.ee.equiv_expressions"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 6.ee.inequalities"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 6.ee.variables"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 6.g.area"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 6.g.surface_area"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 6.g.volume_frac"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 6.g.polygons_coord"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 6.ns.div_fractions"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 6.ns.multi_digit_div"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 6.ns.decimal_ops"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 6.ns.gcf_lcm"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 6.ns.integers"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 6.ns.rational_line"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 6.ns.coord_plane"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 6.rp.ratios"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 6.rp.unit_rate"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 6.rp.percents"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 6.rp.ratio_tables"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 6.rp.unit_conversion"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 6.sp.mean"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 6.sp.median_mode_range"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 6.sp.iqr"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 6.sp.box_plots"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 6.sp.dot_plots"}
+{"timestamp":"2025-12-26T21:35:45.185Z","level":"INFO","message":"Registered generator for skill: 6.sp.histograms"}
+
+[90mstdout[2m | src/domain/generator/engine.behavior.test.ts[2m > [22m[2mEngine Behavior[2m > [22m[2mfetches from Bank if API base URL is configured
+[22m[39m{"timestamp":"2025-12-26T21:35:45.193Z","level":"INFO","message":"Registered generator for skill: test-skill"}
+
+[90mstdout[2m | src/domain/generator/engine.behavior.test.ts[2m > [22m[2mEngine Behavior[2m > [22m[2mfalls back to Factory if Bank returns empty list
+[22m[39m{"timestamp":"2025-12-26T21:35:45.198Z","level":"INFO","message":"Registered generator for skill: test-skill"}
+
+[90mstdout[2m | src/domain/generator/engine.behavior.test.ts[2m > [22m[2mEngine Behavior[2m > [22m[2mfalls back to Local generator if fetch fails (network error)
+[22m[39m{"timestamp":"2025-12-26T21:35:45.199Z","level":"INFO","message":"Registered generator for skill: test-skill"}
+
+[90mstderr[2m | src/domain/generator/engine.behavior.test.ts[2m > [22m[2mEngine Behavior[2m > [22m[2mfalls back to Local generator if fetch fails (network error)
+[22m[39m{"timestamp":"2025-12-26T21:35:45.199Z","level":"WARN","message":"Network fetch failed, falling back to local generator (Dev Mode)","context":{"error":{}}}
+
+[90mstdout[2m | src/domain/generator/engine.behavior.test.ts[2m > [22m[2mEngine Behavior[2m > [22m[2muses Local generator immediately if no API URL is configured
+[22m[39m{"timestamp":"2025-12-26T21:35:45.201Z","level":"INFO","message":"Registered generator for skill: test-skill"}
+
+ [32m✓[39m src/domain/generator/engine.behavior.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [32m✓[39m src/domain/learner/state.behavior.new.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m src/components/inputs/UniversalInput.test.tsx [2m([22m[2m24 tests[22m[2m)[22m[33m 391[2mms[22m[39m
+ [32m✓[39m src/components/InteractiveSteps.test.tsx [2m([22m[2m6 tests[22m[2m)[22m[33m 454[2mms[22m[39m
+ [32m✓[39m src/components/visualizers/visualizers.test.tsx [2m([22m[2m14 tests[22m[2m)[22m[32m 260[2mms[22m[39m
+ [32m✓[39m src/components/MathTutor.coverage.test.tsx [2m([22m[2m3 tests[22m[2m)[22m[32m 159[2mms[22m[39m
+ [32m✓[39m src/components/MathRenderer.test.tsx [2m([22m[2m15 tests[22m[2m)[22m[32m 140[2mms[22m[39m
+ [32m✓[39m src/components/MathTutor.test.tsx [2m([22m[2m18 tests[22m[2m)[22m[33m 2152[2mms[22m[39m
+     [33m[2m✓[22m[39m ends session after 5 problems and shows SessionSummary [33m 1525[2mms[22m[39m
+ [32m✓[39m src/components/Dashboard.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[32m 124[2mms[22m[39m
+ [32m✓[39m src/domain/skills/grade4/nbt.test.ts [2m([22m[2m28 tests[22m[2m)[22m[32m 40[2mms[22m[39m
+ [32m✓[39m src/domain/skills/registry.consistency.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 28[2mms[22m[39m
+ [32m✓[39m src/components/SessionSummary.test.tsx [2m([22m[2m5 tests[22m[2m)[22m[32m 96[2mms[22m[39m
+ [32m✓[39m server/src/middleware/rateLimit.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 36[2mms[22m[39m
+[90mstdout[2m | src/App.test.tsx
+[22m[39m{"timestamp":"2025-12-26T21:35:51.074Z","level":"INFO","message":"Registered generator for skill: dec_notation_01"}
+{"timestamp":"2025-12-26T21:35:51.075Z","level":"INFO","message":"Registered generator for skill: dec_compare_01"}
+{"timestamp":"2025-12-26T21:35:51.075Z","level":"INFO","message":"Registered generator for skill: frac_equiv_01"}
+{"timestamp":"2025-12-26T21:35:51.075Z","level":"INFO","message":"Registered generator for skill: frac_add_like_01"}
+{"timestamp":"2025-12-26T21:35:51.075Z","level":"INFO","message":"Registered generator for skill: fractions_sub_like"}
+{"timestamp":"2025-12-26T21:35:51.075Z","level":"INFO","message":"Registered generator for skill: fractions_simplify"}
+{"timestamp":"2025-12-26T21:35:51.075Z","level":"INFO","message":"Registered generator for skill: frac_mult_whole"}
+{"timestamp":"2025-12-26T21:35:51.075Z","level":"INFO","message":"Registered generator for skill: frac_compare_unlike"}
+{"timestamp":"2025-12-26T21:35:51.075Z","level":"INFO","message":"Registered generator for skill: frac_add_tenths_hundredths"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: frac_decompose"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: frac_add_sub_mixed"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: meas_area_perimeter"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: meas_unit_conversion"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: geo_lines_angles"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: geo_symmetry"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: meas_angles"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: meas_data_line_plots"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: geo_shape_class"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: meas_money_word_problems"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: meas_protractor"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: meas_data_graphs"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: nbt_place_value"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: nbt_compare_multi"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: nbt_rounding"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: nbt_add_sub_multi"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: dynamic_mult"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: nbt_div_remainders"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: nbt_mult_1digit"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: nbt_mult_2digit"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: oa_factors_multiples"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: oa_patterns"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: oa_mult_compare"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: oa_multi_step_word"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: 5.nf.add_sub_unlike"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: 5.nf.frac_div"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: 5.nf.scaling"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: 5.nf.mult_frac"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: 5.nf.div_frac"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: 5.nf.word_problems"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: 5.gm.volume_cubes"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: 5.gm.volume_formula"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: 5.gm.coord_plane"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: 5.gm.class_figures"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: 5.gm.unit_conv"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: 5.md.line_plots"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: 5.nbt.powers_10"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: 5.nbt.decimal_forms"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: 5.nbt.compare_decimals"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: 5.nbt.round_decimals"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: 5.nbt.add_sub_decimals"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: 5.nbt.mult_whole"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: 5.nbt.mult_decimals"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: 5.nbt.div_whole"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: 5.nbt.div_decimals"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: 5.nbt.frac_dec_conv"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: 5.oa.order_ops"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: 5.oa.patterns"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: 6.ee.exponents"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: 6.ee.one_step_eq"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: 6.ee.expressions"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: 6.ee.equiv_expressions"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: 6.ee.inequalities"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: 6.ee.variables"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: 6.g.area"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: 6.g.surface_area"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: 6.g.volume_frac"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: 6.g.polygons_coord"}
+{"timestamp":"2025-12-26T21:35:51.076Z","level":"INFO","message":"Registered generator for skill: 6.ns.div_fractions"}
+{"timestamp":"2025-12-26T21:35:51.077Z","level":"INFO","message":"Registered generator for skill: 6.ns.multi_digit_div"}
+{"timestamp":"2025-12-26T21:35:51.077Z","level":"INFO","message":"Registered generator for skill: 6.ns.decimal_ops"}
+{"timestamp":"2025-12-26T21:35:51.077Z","level":"INFO","message":"Registered generator for skill: 6.ns.gcf_lcm"}
+{"timestamp":"2025-12-26T21:35:51.077Z","level":"INFO","message":"Registered generator for skill: 6.ns.integers"}
+{"timestamp":"2025-12-26T21:35:51.077Z","level":"INFO","message":"Registered generator for skill: 6.ns.rational_line"}
+{"timestamp":"2025-12-26T21:35:51.077Z","level":"INFO","message":"Registered generator for skill: 6.ns.coord_plane"}
+{"timestamp":"2025-12-26T21:35:51.077Z","level":"INFO","message":"Registered generator for skill: 6.rp.ratios"}
+{"timestamp":"2025-12-26T21:35:51.077Z","level":"INFO","message":"Registered generator for skill: 6.rp.unit_rate"}
+{"timestamp":"2025-12-26T21:35:51.077Z","level":"INFO","message":"Registered generator for skill: 6.rp.percents"}
+{"timestamp":"2025-12-26T21:35:51.077Z","level":"INFO","message":"Registered generator for skill: 6.rp.ratio_tables"}
+{"timestamp":"2025-12-26T21:35:51.077Z","level":"INFO","message":"Registered generator for skill: 6.rp.unit_conversion"}
+{"timestamp":"2025-12-26T21:35:51.077Z","level":"INFO","message":"Registered generator for skill: 6.sp.mean"}
+{"timestamp":"2025-12-26T21:35:51.077Z","level":"INFO","message":"Registered generator for skill: 6.sp.median_mode_range"}
+{"timestamp":"2025-12-26T21:35:51.077Z","level":"INFO","message":"Registered generator for skill: 6.sp.iqr"}
+{"timestamp":"2025-12-26T21:35:51.077Z","level":"INFO","message":"Registered generator for skill: 6.sp.box_plots"}
+{"timestamp":"2025-12-26T21:35:51.077Z","level":"INFO","message":"Registered generator for skill: 6.sp.dot_plots"}
+{"timestamp":"2025-12-26T21:35:51.077Z","level":"INFO","message":"Registered generator for skill: 6.sp.histograms"}
+
+ [32m✓[39m src/App.test.tsx [2m([22m[2m2 tests[22m[2m)[22m[32m 96[2mms[22m[39m
+ [32m✓[39m server/src/index.test.ts [2m([22m[2m16 tests[22m[2m)[22m[32m 22[2mms[22m[39m
+ [32m✓[39m src/domain/skills/grade4/fractions.test.ts [2m([22m[2m31 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+[90mstdout[2m | server/src/store/ProblemBank.test.ts[2m > [22m[2mProblemBank[2m > [22m[2mshould reject saving unverified items
+[22m[39m[ProblemBank] Loaded 0 problems from disk.
+
+[90mstdout[2m | server/src/store/ProblemBank.test.ts[2m > [22m[2mProblemBank[2m > [22m[2mshould return an empty list when no items exist
+[22m[39m[ProblemBank] Loaded 0 problems from disk.
+
+[90mstdout[2m | server/src/store/ProblemBank.test.ts[2m > [22m[2mProblemBank[2m > [22m[2mshould return an empty list when count is zero
+[22m[39m[ProblemBank] Loaded 0 problems from disk.
+
+[90mstdout[2m | server/src/store/ProblemBank.test.ts[2m > [22m[2mProblemBank[2m > [22m[2mshould return a shuffled copy when count exceeds available items
+[22m[39m[ProblemBank] Loaded 0 problems from disk.
+
+[90mstdout[2m | server/src/store/ProblemBank.test.ts[2m > [22m[2mProblemBank[2m > [22m[2mshould shuffle deterministically when count equals available items
+[22m[39m[ProblemBank] Loaded 0 problems from disk.
+
+[90mstdout[2m | server/src/store/ProblemBank.test.ts[2m > [22m[2mProblemBank[2m > [22m[2mshould fallback to linear scan when random selection stalls
+[22m[39m[ProblemBank] Loaded 0 problems from disk.
+
+[90mstdout[2m | server/src/store/ProblemBank.test.ts[2m > [22m[2mProblemBank[2m > [22m[2mshould use partial shuffle when count is at least half
+[22m[39m[ProblemBank] Loaded 0 problems from disk.
+
+ [32m✓[39m server/src/store/ProblemBank.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 35[2mms[22m[39m
+ [32m✓[39m src/domain/skills/grade5/nbt.test.ts [2m([22m[2m45 tests[22m[2m)[22m[32m 31[2mms[22m[39m
+ [32m✓[39m src/services/LearnerService.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 21[2mms[22m[39m
+ [32m✓[39m src/domain/skills/grade6/rp.test.ts [2m([22m[2m20 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+ [32m✓[39m src/domain/skills/grade6/ee.test.ts [2m([22m[2m28 tests[22m[2m)[22m[32m 17[2mms[22m[39m
+ [32m✓[39m src/domain/skills/grade5/fractions.test.ts [2m([22m[2m24 tests[22m[2m)[22m[32m 15[2mms[22m[39m
+ [32m✓[39m src/domain/skills/grade4/data.test.ts [2m([22m[2m19 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+ [32m✓[39m src/domain/learner/scheduler.hardening.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+[90mstdout[2m | src/domain/skills/grade5/oa.test.ts
+[22m[39m{"timestamp":"2025-12-26T21:35:52.420Z","level":"INFO","message":"Registered generator for skill: dec_notation_01"}
+{"timestamp":"2025-12-26T21:35:52.420Z","level":"INFO","message":"Registered generator for skill: dec_compare_01"}
+{"timestamp":"2025-12-26T21:35:52.421Z","level":"INFO","message":"Registered generator for skill: frac_equiv_01"}
+{"timestamp":"2025-12-26T21:35:52.421Z","level":"INFO","message":"Registered generator for skill: frac_add_like_01"}
+{"timestamp":"2025-12-26T21:35:52.421Z","level":"INFO","message":"Registered generator for skill: fractions_sub_like"}
+{"timestamp":"2025-12-26T21:35:52.421Z","level":"INFO","message":"Registered generator for skill: fractions_simplify"}
+{"timestamp":"2025-12-26T21:35:52.421Z","level":"INFO","message":"Registered generator for skill: frac_mult_whole"}
+{"timestamp":"2025-12-26T21:35:52.421Z","level":"INFO","message":"Registered generator for skill: frac_compare_unlike"}
+{"timestamp":"2025-12-26T21:35:52.421Z","level":"INFO","message":"Registered generator for skill: frac_add_tenths_hundredths"}
+{"timestamp":"2025-12-26T21:35:52.421Z","level":"INFO","message":"Registered generator for skill: frac_decompose"}
+{"timestamp":"2025-12-26T21:35:52.421Z","level":"INFO","message":"Registered generator for skill: frac_add_sub_mixed"}
+{"timestamp":"2025-12-26T21:35:52.421Z","level":"INFO","message":"Registered generator for skill: meas_area_perimeter"}
+{"timestamp":"2025-12-26T21:35:52.421Z","level":"INFO","message":"Registered generator for skill: meas_unit_conversion"}
+{"timestamp":"2025-12-26T21:35:52.421Z","level":"INFO","message":"Registered generator for skill: geo_lines_angles"}
+{"timestamp":"2025-12-26T21:35:52.421Z","level":"INFO","message":"Registered generator for skill: geo_symmetry"}
+{"timestamp":"2025-12-26T21:35:52.421Z","level":"INFO","message":"Registered generator for skill: meas_angles"}
+{"timestamp":"2025-12-26T21:35:52.421Z","level":"INFO","message":"Registered generator for skill: meas_data_line_plots"}
+{"timestamp":"2025-12-26T21:35:52.421Z","level":"INFO","message":"Registered generator for skill: geo_shape_class"}
+{"timestamp":"2025-12-26T21:35:52.421Z","level":"INFO","message":"Registered generator for skill: meas_money_word_problems"}
+{"timestamp":"2025-12-26T21:35:52.421Z","level":"INFO","message":"Registered generator for skill: meas_protractor"}
+{"timestamp":"2025-12-26T21:35:52.421Z","level":"INFO","message":"Registered generator for skill: meas_data_graphs"}
+{"timestamp":"2025-12-26T21:35:52.421Z","level":"INFO","message":"Registered generator for skill: nbt_place_value"}
+{"timestamp":"2025-12-26T21:35:52.421Z","level":"INFO","message":"Registered generator for skill: nbt_compare_multi"}
+{"timestamp":"2025-12-26T21:35:52.421Z","level":"INFO","message":"Registered generator for skill: nbt_rounding"}
+{"timestamp":"2025-12-26T21:35:52.421Z","level":"INFO","message":"Registered generator for skill: nbt_add_sub_multi"}
+{"timestamp":"2025-12-26T21:35:52.421Z","level":"INFO","message":"Registered generator for skill: dynamic_mult"}
+{"timestamp":"2025-12-26T21:35:52.421Z","level":"INFO","message":"Registered generator for skill: nbt_div_remainders"}
+{"timestamp":"2025-12-26T21:35:52.421Z","level":"INFO","message":"Registered generator for skill: nbt_mult_1digit"}
+{"timestamp":"2025-12-26T21:35:52.421Z","level":"INFO","message":"Registered generator for skill: nbt_mult_2digit"}
+{"timestamp":"2025-12-26T21:35:52.421Z","level":"INFO","message":"Registered generator for skill: oa_factors_multiples"}
+{"timestamp":"2025-12-26T21:35:52.421Z","level":"INFO","message":"Registered generator for skill: oa_patterns"}
+{"timestamp":"2025-12-26T21:35:52.421Z","level":"INFO","message":"Registered generator for skill: oa_mult_compare"}
+{"timestamp":"2025-12-26T21:35:52.421Z","level":"INFO","message":"Registered generator for skill: oa_multi_step_word"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 5.nf.add_sub_unlike"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 5.nf.frac_div"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 5.nf.scaling"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 5.nf.mult_frac"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 5.nf.div_frac"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 5.nf.word_problems"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 5.gm.volume_cubes"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 5.gm.volume_formula"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 5.gm.coord_plane"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 5.gm.class_figures"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 5.gm.unit_conv"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 5.md.line_plots"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 5.nbt.powers_10"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 5.nbt.decimal_forms"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 5.nbt.compare_decimals"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 5.nbt.round_decimals"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 5.nbt.add_sub_decimals"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 5.nbt.mult_whole"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 5.nbt.mult_decimals"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 5.nbt.div_whole"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 5.nbt.div_decimals"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 5.nbt.frac_dec_conv"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 5.oa.order_ops"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 5.oa.patterns"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 6.ee.exponents"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 6.ee.one_step_eq"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 6.ee.expressions"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 6.ee.equiv_expressions"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 6.ee.inequalities"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 6.ee.variables"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 6.g.area"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 6.g.surface_area"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 6.g.volume_frac"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 6.g.polygons_coord"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 6.ns.div_fractions"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 6.ns.multi_digit_div"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 6.ns.decimal_ops"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 6.ns.gcf_lcm"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 6.ns.integers"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 6.ns.rational_line"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 6.ns.coord_plane"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 6.rp.ratios"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 6.rp.unit_rate"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 6.rp.percents"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 6.rp.ratio_tables"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 6.rp.unit_conversion"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 6.sp.mean"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 6.sp.median_mode_range"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 6.sp.iqr"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 6.sp.box_plots"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 6.sp.dot_plots"}
+{"timestamp":"2025-12-26T21:35:52.422Z","level":"INFO","message":"Registered generator for skill: 6.sp.histograms"}
+
+ [32m✓[39m src/domain/skills/grade5/oa.test.ts [2m([22m[2m9 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m src/domain/skills/grade6/ns.test.ts [2m([22m[2m20 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m src/domain/skills/grade5/meas-geo.test.ts [2m([22m[2m15 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+ [32m✓[39m src/domain/skills/grade4/oa.test.ts [2m([22m[2m17 tests[22m[2m)[22m[32m 13[2mms[22m[39m
+ [32m✓[39m src/domain/skills/grade4/measurement.test.ts [2m([22m[2m20 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m server/src/middleware/apiKeyAuth.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 14[2mms[22m[39m
+ [32m✓[39m src/domain/skills/grade6/stats.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m src/domain/skills/grade4/decimals.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32m✓[39m src/domain/skills/grade4/geometry.test.ts [2m([22m[2m16 tests[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m src/domain/skills/grade6/geometry.test.ts [2m([22m[2m14 tests[22m[2m)[22m[32m 11[2mms[22m[39m
+ [32m✓[39m src/domain/learner/misconceptionEvaluator.test.ts [2m([22m[2m7 tests[22m[2m)[22m[32m 16[2mms[22m[39m
+ [32m✓[39m server/src/factory/adapters/DomainGeneratorAdapter.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32m✓[39m src/domain/learner/state.behavior.test.ts [2m([22m[2m6 tests[22m[2m)[22m[32m 10[2mms[22m[39m
+ [32m✓[39m src/utils/logger.test.ts [2m([22m[2m5 tests[22m[2m)[22m[32m 18[2mms[22m[39m
+ [32m✓[39m server/src/factory/pipeline.test.ts [2m([22m[2m3 tests[22m[2m)[22m[32m 7[2mms[22m[39m
+ [32m✓[39m src/domain/validation.test.ts [2m([22m[2m11 tests[22m[2m)[22m[32m 9[2mms[22m[39m
+ [32m✓[39m server/src/middleware/securityHeaders.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 6[2mms[22m[39m
+ [32m✓[39m src/domain/skills/engine.sideeffects.guardrail.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 12[2mms[22m[39m
+ [32m✓[39m src/domain/math-utils.test.ts [2m([22m[2m13 tests[22m[2m)[22m[32m 8[2mms[22m[39m
+ [32m✓[39m src/domain/skills/grade6/stats.behavior.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 5[2mms[22m[39m
+ [32m✓[39m src/domain/skills/grade5/oa.jail.test.ts [2m([22m[2m1 test[22m[2m)[22m[32m 4[2mms[22m[39m
+ [32m✓[39m src/domain/config.test.ts [2m([22m[2m4 tests[22m[2m)[22m[32m 4[2mms[22m[39m
+
+[2m Test Files [22m [1m[32m50 passed[39m[22m[90m (50)[39m
+[2m      Tests [22m [1m[32m563 passed[39m[22m[90m (563)[39m
+[2m   Start at [22m 21:35:42
+[2m   Duration [22m 11.73s[2m (transform 3.50s, setup 4.84s, import 8.59s, tests 4.54s, environment 6.36s)[22m
+
