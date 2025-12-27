@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import type { MathProblemItem, Attempt, LearnerState } from '../domain/types';
 import { checkAnswer } from '../domain/math-utils';
 // LocalLearnerService removed (injected)
@@ -169,6 +169,24 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
      if (learnerState) loadNextItem(learnerState);
   };
 
+  // Optimization: Stable input change handler to prevent unnecessary re-renders
+  const handleInputChange = useCallback((val: string) => {
+    setUserAnswer(val);
+    // Clear incorrect feedback on input change, but use functional update to avoid dependency
+    setFeedback(prev => prev === 'incorrect' ? null : prev);
+  }, []);
+
+  // Optimization: Memoize steps to prevent InteractiveSteps from re-rendering on every keystroke
+  const steps = useMemo(() => {
+      if (!currentItem?.solution_logic.steps) return undefined;
+      return currentItem.solution_logic.steps.map((s, i) => ({
+          id: `step_${s.step_index}_${i}`,
+          text: s.explanation,
+          answer: s.answer,
+          explanation: s.math
+      }));
+  }, [currentItem]);
+
   // Hoisted handleAutoSolve before early returns, depends on stable handleSubmit
   const handleAutoSolve = useCallback(() => {
     if (!currentItem) return;
@@ -262,12 +280,7 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
                     <UniversalInput
                         item={currentItem}
                         value={userAnswer}
-                        onChange={(val) => {
-                            setUserAnswer(val);
-                            if (feedback === 'incorrect') {
-                                setFeedback(null);
-                            }
-                        }}
+                        onChange={handleInputChange}
                         onSubmit={() => handleSubmit()}
                         disabled={feedback === 'correct'}
                     />
@@ -369,15 +382,8 @@ export const MathTutor: React.FC<MathTutorProps> = ({ learnerState, setLearnerSt
                 </motion.div>
             )}
 
-            {currentItem.solution_logic.steps && feedback === 'incorrect' && (
-                <InteractiveSteps 
-                    steps={currentItem.solution_logic.steps.map((s, i) => ({
-                        id: `step_${s.step_index}_${i}`,
-                        text: s.explanation,
-                        answer: s.answer,
-                        explanation: s.math
-                    }))} 
-                />
+            {steps && feedback === 'incorrect' && (
+                <InteractiveSteps steps={steps} />
             )}
         </motion.div>
       </AnimatePresence>
