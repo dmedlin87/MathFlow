@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { Engine } from "./engine";
 import { Generator } from "../types";
+import { validateMathProblemItem } from "../validation";
 
 // Mock validation to pass through
 vi.mock("../validation", () => ({
@@ -136,5 +137,77 @@ describe("Engine Behavior", () => {
     expect(result.meta.id).toBe('factory-item');
     expect(fetchMock).toHaveBeenCalledTimes(2);
     expect(fetchMock).toHaveBeenNthCalledWith(2, expect.stringContaining("/factory/run"), expect.anything());
+  });
+
+  it("falls back to Local generator if API returns invalid item (validation failure)", async () => {
+    const config = { apiBaseUrl: "http://test-api.com" };
+    engine = new Engine(config);
+    engine.register(mockGenerator);
+
+    const mockInvalidItem = {
+        meta: { id: "invalid-item" }
+        // missing required fields
+    };
+
+    const fetchMock = vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => [mockInvalidItem]
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    // Mock validation to throw specifically for this item
+    (validateMathProblemItem as ReturnType<typeof vi.fn>).mockImplementationOnce(() => {
+        throw new Error("Validation Failed");
+    });
+
+    const result = await engine.generate('test-skill', 0.5);
+
+    // Should fall back to local
+    expect(result.meta.id).toBe('local-item');
+    expect(mockGenerator.generate).toHaveBeenCalled();
+  });
+
+  it("falls back to Local generator if factory returns empty items list", async () => {
+    const config = { apiBaseUrl: "http://test-api.com" };
+    engine = new Engine(config);
+    engine.register(mockGenerator);
+
+    const fetchMock = vi.fn()
+        .mockResolvedValueOnce({ // /problems -> empty
+            ok: true,
+            json: async () => []
+        })
+        .mockResolvedValueOnce({ // /factory/run -> empty items
+            ok: true,
+            json: async () => ({ items: [] })
+        });
+    vi.stubGlobal('fetch', fetchMock);
+
+    const result = await engine.generate('test-skill', 0.5);
+
+    expect(result.meta.id).toBe('local-item');
+    expect(fetchMock).toHaveBeenCalledTimes(2); // Tried both API endpoints
+  });
+
+  it("falls back to Local generator if factory returns response without items", async () => {
+    const config = { apiBaseUrl: "http://test-api.com" };
+    engine = new Engine(config);
+    engine.register(mockGenerator);
+
+    const fetchMock = vi.fn()
+        .mockResolvedValueOnce({ // /problems -> empty
+            ok: true,
+            json: async () => []
+        })
+        .mockResolvedValueOnce({ // /factory/run -> missing items field
+            ok: true,
+            json: async () => ({})
+        });
+    vi.stubGlobal('fetch', fetchMock);
+
+    const result = await engine.generate('test-skill', 0.5);
+
+    expect(result.meta.id).toBe('local-item');
+    expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 });
