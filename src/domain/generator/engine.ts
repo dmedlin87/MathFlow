@@ -75,7 +75,7 @@ export class Engine {
     if (!generator) {
       throw new Error(`No generator found for skill: ${skillId}`);
     }
-    return validateMathProblemItem({ ...generator.generate(difficulty, rng), meta: { ...generator.generate(difficulty, rng).meta, id: "MUTATED_LOCAL_ID" } });
+    return validateMathProblemItem(generator.generate(difficulty, rng));
   }
 }
 
