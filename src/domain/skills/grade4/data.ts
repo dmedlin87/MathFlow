@@ -34,7 +34,7 @@ export const LinePlotGenerator: Generator = {
     ];
 
     // Ensure at least some data exists
-    if (counts.every((c) => c === 0)) counts[0] = 2;
+    if (counts.every((c) => c === 0)) (counts as number[])[0] = 2;
 
     // Create a flat list for the problem stem
     const dataList: string[] = [];
