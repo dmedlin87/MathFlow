@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useId } from 'react';
 
 interface FractionVisualizerProps {
   numerator: number;
@@ -18,12 +18,23 @@ export const FractionVisualizer = React.memo(({
   color = '#3b82f6', // blue-500
   className = ''
 }: FractionVisualizerProps) => { // Explicitly type props here
+  const titleId = useId();
+
   if (type === 'pie') {
     // Only support simple visual handling for num <= den or slightly over.
     const slices = buildPieSlices({ numerator, denominator, size, color });
+    const description = `Pie chart showing ${numerator} out of ${denominator} parts filled`;
 
     return (
-        <svg width={size} height={size} viewBox={`0 0 ${size} ${size}`} className={className}>
+        <svg
+          width={size}
+          height={size}
+          viewBox={`0 0 ${size} ${size}`}
+          className={className}
+          role="img"
+          aria-labelledby={titleId}
+        >
+            <title id={titleId}>{description}</title>
             {slices}
         </svg>
     );
