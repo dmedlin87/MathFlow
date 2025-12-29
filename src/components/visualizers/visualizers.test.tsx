@@ -105,7 +105,6 @@ describe("Visualizers", () => {
       // Since title element text isn't directly "visible" text in all queries, we might find it by text if we query carefully,
       // but easier to check if the title element exists and has content.
       const titleId = svg.getAttribute("aria-labelledby");
-      // eslint-disable-next-line testing-library/no-node-access
       const title = document.getElementById(titleId!);
       expect(title).toBeInTheDocument();
       expect(title).toHaveTextContent("Dot plot showing 3 data points ranging from 1 to 3");
@@ -166,7 +165,6 @@ describe("Visualizers", () => {
       expect(svg).toHaveAttribute("aria-labelledby");
 
       const titleId = svg.getAttribute("aria-labelledby");
-      // eslint-disable-next-line testing-library/no-node-access
       const title = document.getElementById(titleId!);
       expect(title).toBeInTheDocument();
       // "Box plot showing distribution with minimum 0.00, first quartile 25.12, median 50.57, third quartile 75.00, and maximum 100.00."

@@ -1,4 +1,5 @@
 import express, { Request, Response, NextFunction } from "express";
+import compression from "compression";
 import cors from "cors";
 import { problemBank } from "./store/ProblemBank.js";
 import { ContentPipeline } from "./factory/pipeline.js";
@@ -17,6 +18,7 @@ const port = config.port;
 
 // Middleware
 app.use(securityHeaders); // Security: Add defensive headers
+app.use(compression()); // Performance: Compress responses (GZIP)
 app.use(cors());
 app.use(express.json({ limit: "10kb" })); // Security: Limit payload size to prevent DoS
 app.disable("x-powered-by"); // Security: Hide server info
