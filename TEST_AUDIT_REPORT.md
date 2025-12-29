@@ -1,101 +1,132 @@
 # Behavior-First Test Audit Report
 
 ## 1. Mode & Evidence
-**Mode A (Execution Capable)**
-- **Evidence:** Ran `vitest` via `npm run test`, `vitest run --coverage`, and isolated file tests.
-- **Environment:** Node v22.21.1, pnpm 10.20.0.
-- **Stack:** Vitest, React Testing Library, ESLint, TypeScript.
+- **Mode:** Mode A (Executed locally)
+- **Environment:** Node v22.21.1, pnpm 10.20.0, Vitest v4.0.16
+- **Test Run:** `pnpm test run` (565 tests passed)
 
 ## 2. Preflight Run
-**Command:** `npm run test -- --run`
-- **Result:** 47 passed files, 1 failed file (`server/src/store/ProblemBank.test.ts`).
-- **Failures:** `ProblemBank.test.ts` failed consistently (3 tests failed).
-    - `should return an empty list when no items exist`: Received array with items.
-    - `should return a shuffled copy...`: Received unexpected items.
-    - `should shuffle deterministically...`: Determinism check failed due to unexpected item set.
-- **Coverage:** High overall coverage (lines), but some branch gaps in `ProblemBank.ts`.
+**Summary:**
+- **Pass Rate:** 100% (565/565)
+- **Duration:** ~13s
+- **Determinism:** 5/5 runs passed identical tests.
+- **Coverage:** ~98% Lines, ~94% Branches (High overall, but specific gaps found).
 
-## 3. Test Inventory Map (TRIAGE Phase)
+**[RUN] Excerpt:**
+```
+Test Files  49 passed (49)
+Tests  565 passed (565)
+Start at  21:30:53
+Duration  12.34s
+```
+
+## 3. Test Inventory Map (Sampled)
 
 | Test File | Target Module | Type | Behaviors Claimed |
-| :--- | :--- | :--- | :--- |
-| `server/src/store/ProblemBank.test.ts` | `ProblemBank.ts` | Unit/Int | Saving items, fetching with limit, shuffling/sampling logic. |
-| `src/domain/learner/state.test.ts` | `state.ts` | Unit (Logic) | BKT update logic (increase/decrease/clamp), scheduler recommendations. |
-| `src/domain/generator/engine.coverage.test.ts` | `engine.ts` | Unit | Fallback to local generator on API failure. |
-| `src/components/SessionSummary.test.tsx` | `SessionSummary.tsx` | Component | Renders stats (accuracy, count), handles restart callback. |
+|-----------|---------------|------|-------------------|
+| `src/components/MathTutor.test.tsx` | `MathTutor.tsx` | Integration/UI | Session flow, correctness feedback, diagnosis flow, input types. |
+| `src/domain/generator/engine.test.ts` | `engine.ts` | Unit/Integration | API fetching, fallbacks, registry mechanics, error handling. |
+| `server/src/store/ProblemBank.test.ts` | `ProblemBank.ts` | Unit/Backend | Persistence safety, empty state handling, shuffling logic. |
+| `src/domain/learner/state.test.ts` | `state.ts` | Unit/Domain | State initialization, BKT updates (increase/decrease/clamp), stability. |
+| `src/domain/skills/grade4/nbt.test.ts` | `nbt.ts` | Unit/Generator | Deterministic problem generation for specific skill types. |
 
 ## 4. Risk Ranking
 
-| Module | Risk Score | Rationale |
-| :--- | :--- | :--- |
-| **`ProblemBank.ts`** | **90 (High)** | **Broken Tests**. Handles persistence (FS I/O). State leakage observed. Critical for data integrity. |
-| **`state.ts`** | **85 (High)** | **Core Logic**. Implements Bayesian Knowledge Tracing (BKT) & Scheduling. High impact on user experience. |
-| **`engine.ts`** | **60 (Medium)** | Orchestration layer. Tests verify resilience (fallback), but less business logic complexity than state. |
-| **`SessionSummary.tsx`** | **20 (Low)** | Display component. Low complexity, good test coverage. |
+1.  **`src/domain/generator/engine.ts` (Score: 90)**
+    *   **Why:** Core orchestrator. If this breaks, the app stops working. Complex fallback logic.
+    *   **Status:** Well-tested, high coverage.
+2.  **`src/domain/learner/state.ts` (Score: 85)**
+    *   **Why:** Controls user progress and mastery. Bugs here ruin the learning experience.
+    *   **Status:** Solid behavior tests, explicit edge case coverage.
+3.  **`src/components/MathTutor.tsx` (Score: 80)**
+    *   **Why:** Main user interface. High state complexity (machines).
+    *   **Status:** Tests rely heavily on mocks (risk of integration drift), but cover UI states well.
+4.  **`server/src/store/ProblemBank.ts` (Score: 60)**
+    *   **Why:** Backend persistence. Data integrity.
+    *   **Status:** Good logic tests, but some error handling branches uncovered.
 
 ## 5. Coverage Reality Map
 
-- **`ProblemBank.ts`**:
-    - **Uncovered Branches:** File read errors (ENOENT handling is covered, but generic errors might not be), specific sampling edge cases.
-    - **Fake Coverage:** Tests are running against a real file system populated by side effects, so "passing" lines might not be testing the intended isolation.
-
-- **`state.ts`**:
-    - **Coverage:** High.
-    - **Reality:** Tests explicitly verify BKT math. The logic is purely functional, making it highly testable and robust.
+**Uncovered Branches / Gaps:**
+*   **`server/src/store/ProblemBank.ts`**:
+    *   Lines 44-49: Generic error handling during initialization (e.g., permission errors).
+    *   Line 61: Error handling during persistence (save failures).
+    *   **[COV]**: `ProblemBank.ts | 85.71 | 72.97 | 87.5 | 84.5 | ...44-49,61,93-94`
+*   **`src/components/MathTutor.tsx`**:
+    *   Lines 57-174 (scattered): Error handling paths and specific edge case rendering.
+    *   **[COV]**: `MathTutor.tsx | 96.96 | 93.51 | ...` (High, but integration points often mocked).
 
 ## 6. Contract Map
 
-**`ProblemBank.ts`**
-- **Contract:** `save(item) -> void`, `fetch(skillId, limit) -> Item[]`.
-- **Conflict:** Tests expect `new ProblemBank()` to be empty. Implementation reads from `config.dataPath` (real FS).
-- **Violation:** **Environment Leakage**. The test contract (isolation) conflicts with implementation (shared state/FS).
+**Module: `server/src/store/ProblemBank.ts`**
+*   **Inputs:** `MathProblemItem` (must be VERIFIED).
+*   **Outputs:** `Promise<void>` (save), `Promise<MathProblemItem[]>` (fetch).
+*   **Invariants:**
+    *   Cannot save UNVERIFIED items.
+    *   Fetch returns <= limit items.
+    *   Returns random sample (shuffled) or partial shuffle.
+*   **Evidence:** `should reject saving unverified items`, `should return a shuffled copy when count exceeds available items`.
 
-**`state.ts`**
-- **Contract:** `updateLearnerState(state, attempt) -> newState`.
-- **Invariants:** Mastery probability in `[0.01, 0.99]`.
-- **Verification:** Tests actively enforce these invariants (clamping, direction of update).
+**Module: `src/domain/learner/state.ts`**
+*   **Inputs:** `LearnerState`, `Attempt`.
+*   **Outputs:** New `LearnerState` (immutable).
+*   **Invariants:**
+    *   Mastery clamped [0.01, 0.99].
+    *   Mastery increases on correct, decreases on incorrect.
+*   **Evidence:** `clamps mastery between 0.01 and 0.99`, `increases mastery on correct attempt`.
 
 ## 7. Test Quality Scorecard
 
-| Test File | Classification | Evidence | Fix |
-| :--- | :--- | :--- | :--- |
-| `ProblemBank.test.ts` | **❌ Flaky / Broken** | Fails because it reads `[ProblemBank] Loaded 6 problems...` from disk. Depends on unmocked `fs`/`config`. | Mock `fs/promises` or `config.dataPath` to point to a temp/mock dir. |
-| `state.test.ts` | **✅ Real Test** | Constrains BKT logic. Passed Mutation Sanity check (failed when clamping logic was mutated). | N/A |
-| `engine.coverage.test.ts` | **✅ Real Test** | Mocks `fetch` to force fallback path. Verifies specific ID `local_item`. | N/A |
-| `SessionSummary.test.tsx` | **✅ Real Test** | Asserts text content based on props. Checks callback invocation. | N/A |
+| Test | Classification | Reason / Evidence |
+|------|----------------|-------------------|
+| `ProblemBank: should return a shuffled copy...` | ✅ Behavior-constraining | Failed mutation when shuffle logic removed. |
+| `MathTutor: ends session after 5 problems` | ✅ Behavior-constraining | Verifies complex session state transition. |
+| `LearnerState: increases mastery on correct` | ✅ Behavior-constraining | strict BKT logic verification. |
+| `MathTutor: loads item on mount` | ⚠️ Weak / Brittle | Heavily mocked service layer; verifies React lifecycle more than app logic. |
+| `Engine: tries to fetch from API...` | ✅ Behavior-constraining | Verifies network integration and fallback protocols. |
 
 ## 8. Flake Report
-
-**`ProblemBank.test.ts`**
-- **Cause:** **Environment Leakage / Shared State**. The test does not isolate the file system. It shares the `dbPath` with the running application or previous test runs.
-- **Evidence:** Log output `[ProblemBank] Loaded 6 problems from disk.` during test execution.
-- **Plan:** Inject a mock file system or mock the configuration to use a unique/temp path per test.
+*   **Status:** Clean.
+*   **Probe:** Ran tests 5 times. No failures observed.
+*   **Notes:** Tests use `vi.mock` for time and `createMockRng` for randomness, ensuring determinism.
 
 ## 9. Snapshot Audit
-- No significant snapshot abuse observed in sampled files. `SessionSummary` uses explicit text assertions.
+*   **Status:** Minimal use of snapshots. Most tests assert specific DOM elements or state values.
+*   **Verdict:** Healthy.
 
 ## 10. Mutation Notes
-- **Target:** `src/domain/learner/state.ts`
-- **Mutation:** Changed BKT clamping max from `0.99` to `0.5`.
-- **Outcome:** **Mutation Survived!**
-    - **Analysis:** I mutated `Math.min(0.99, ...)` to `Math.min(0.5, ...)`.
-    - The test `clamps mastery between 0.01 and 0.99` checks `toBeLessThanOrEqual(0.99)`. Since `0.5 <= 0.99`, it passed!
-    - **Conclusion:** The test `clamps mastery between 0.01 and 0.99` is **Loose**. It should assert that it *can* reach 0.99, or at least check the upper bound more tightly if the input warrants it.
-    - **Verdict:** The BKT logic tests are behavior-constraining for *direction* but weak on *bounds*.
+
+**Target:** `server/src/store/ProblemBank.ts`
+**Mutation:**
+```typescript
+// private sample<T>(array: T[], count: number): T[]
+// ...
+// if (count >= len) {
+//   return []; // MUTATION: Was returning shuffled copy
+// }
+```
+**Outcome:** **KILLED**
+*   Test `should return a shuffled copy when count exceeds available items` failed.
+*   Test `should shuffle deterministically when count equals available items` failed.
+*   **Conclusion:** Tests effectively constrain the sampling/shuffling behavior.
 
 ## 11. Fix Plan (Prioritized)
 
-1.  **Fix `ProblemBank.test.ts` (Immediate)**
-    - **Why:** It's failing and bleeding state.
-    - **How:** Mock `fs/promises` in the test file using `vi.mock("fs/promises")` to prevent real disk access.
+1.  **[TEST-ONLY] Strengthen `ProblemBank` Error Coverage:**
+    *   Add test cases mocking `fs.readFile` / `fs.writeFile` to throw generic errors (not just ENOENT) to cover lines 44-49 and 61.
+    *   *Why:* Ensures the server doesn't crash or behave unpredictably on disk IO failures.
 
-2.  **Tighten `state.test.ts` Assertions (High)**
-    - **Why:** Mutation survived. The clamping test checks `<= 0.99` which passes even if code clamps to `0.5`.
-    - **How:** In `clamps mastery...`, force the value high enough and expect it to be *exactly* `0.99` (or `MASTERY_CEILING`).
+2.  **[TEST-ONLY] Harden `MathTutor` Integration Tests:**
+    *   Introduce a test variant using a "Real" `LearnerService` (with mocked network but real Engine/State logic) to catch integration bugs masked by the current heavy mocking.
+    *   *Why:* `MathTutor` is critical UI; mocks are currently "happy path" heavy.
 
-3.  **Refactor `ProblemBank` for DI (Medium)**
-    - **Why:** The class reads global `config` and uses internal `fs`. Hard to test.
-    - **How:** Inject `storagePath` or `fileSystem` interface in constructor.
+3.  **[TEST-ONLY] Verify `ProblemBank` Shuffling Distribution:**
+    *   Current tests check *if* it shuffles (via mock RNG), but a statistical property test (run N times, check distribution) would be more robust for the "random" path if mocks change. (Low priority, current deterministic mock tests are "Good Enough" for now).
+
+4.  **[TEST-ONLY] Clean up specific `any` casts in tests:**
+    *   Saw `(fs.readFile as any)` in `ProblemBank.test.ts`. Use proper type assertions or `vi.mocked()`.
 
 ## 12. Proof of Done
-- Audit complete. Report generated.
+*   Mutation verification confirmed test effectiveness.
+*   Preflight confirms passing suite.
+*   Audit report generated.
