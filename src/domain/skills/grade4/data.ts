@@ -26,7 +26,7 @@ export const LinePlotGenerator: Generator = {
     // const den = 4; // Use 4ths for simplicity
     const values = ["1/4", "1/2", "3/4", "1"]; // 1/2 is 2/4, 1 is 4/4
     // Generate random counts for each value
-    const counts = [
+    const counts: number[] = [
       randomInt(0, 4, rng),
       randomInt(0, 5, rng),
       randomInt(0, 4, rng),
@@ -34,7 +34,7 @@ export const LinePlotGenerator: Generator = {
     ];
 
     // Ensure at least some data exists
-    if (counts.every((c) => c === 0)) counts[0] = 2;
+    if (counts.every((c) => c === 0)) (counts as number[])[0] = 2;
 
     // Create a flat list for the problem stem
     const dataList: string[] = [];
