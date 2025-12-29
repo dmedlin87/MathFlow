@@ -23,4 +23,7 @@ export const config = {
     : 0.5,
   dataPath: process.env.DATA_PATH || "./data/problems.json",
   factoryApiKey: factoryApiKey || "test-key-123", // Default for dev/test only
+  allowedOrigins: process.env.ALLOWED_ORIGINS
+    ? process.env.ALLOWED_ORIGINS.split(",").map((origin) => origin.trim())
+    : "*", // Default to * for dev/test, but should be set in prod
 };
