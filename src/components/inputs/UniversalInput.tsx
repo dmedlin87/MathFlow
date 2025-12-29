@@ -9,63 +9,62 @@ interface UniversalInputProps {
   disabled?: boolean;
 }
 
-export const UniversalInput: React.FC<UniversalInputProps> = ({
-  item,
-  value,
-  onChange,
-  onSubmit,
-  disabled,
-}) => {
-  const type = item.answer_spec.input_type;
+// Optimization: Memoize to prevent unnecessary re-renders when parent state (like feedback message)
+// updates but input props remain stable (e.g. during async submission loading states).
+export const UniversalInput = React.memo<UniversalInputProps>(
+  ({ item, value, onChange, onSubmit, disabled }) => {
+    const type = item.answer_spec.input_type;
 
-  if (type === "fraction") {
+    if (type === "fraction") {
+      return (
+        <FractionInput
+          value={value}
+          onChange={onChange}
+          disabled={disabled}
+          onSubmit={onSubmit}
+        />
+      );
+    }
+
+    if (type === "multiple_choice") {
+      return (
+        <MultipleChoiceInput
+          item={item}
+          value={value}
+          onChange={onChange}
+          disabled={disabled}
+        />
+      );
+    }
+
+    // Default Text/Numeric Input
     return (
-      <FractionInput
+      <input
+        type="text"
         value={value}
-        onChange={onChange}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full text-lg p-3 border-2 border-gray-200 rounded-lg outline-none focus:border-blue-500 transition-colors"
+        placeholder={item.answer_spec.ui?.placeholder || "Enter your answer"}
+        aria-label={item.answer_spec.ui?.placeholder || "Enter your answer"}
         disabled={disabled}
-        onSubmit={onSubmit}
+        autoFocus
+        onKeyDown={(e) => {
+          if (e.key === "Enter") onSubmit();
+        }}
       />
     );
-  }
-
-  if (type === "multiple_choice") {
-    return (
-      <MultipleChoiceInput
-        item={item}
-        value={value}
-        onChange={onChange}
-        disabled={disabled}
-      />
-    );
-  }
-
-  // Default Text/Numeric Input
-  return (
-    <input
-      type="text"
-      value={value}
-      onChange={(e) => onChange(e.target.value)}
-      className="w-full text-lg p-3 border-2 border-gray-200 rounded-lg outline-none focus:border-blue-500 transition-colors"
-      placeholder={item.answer_spec.ui?.placeholder || "Enter your answer"}
-      aria-label={item.answer_spec.ui?.placeholder || "Enter your answer"}
-      disabled={disabled}
-      autoFocus
-      onKeyDown={(e) => {
-        if (e.key === "Enter") onSubmit();
-      }}
-    />
-  );
-};
+  },
+);
 
 // --- Sub-components ---
 
-const FractionInput: React.FC<{
+// Optimization: Memoize internal components as well
+const FractionInput = React.memo<{
   value: string;
   onChange: (val: string) => void;
   onSubmit: () => void;
   disabled?: boolean;
-}> = ({ value, onChange, onSubmit, disabled }) => {
+}>(({ value, onChange, onSubmit, disabled }) => {
   // Parse "num/den" or empty
   const [num, den] = value.includes("/") ? value.split("/") : [value, ""];
   const denRef = useRef<HTMLInputElement>(null);
@@ -122,14 +121,15 @@ const FractionInput: React.FC<{
       />
     </div>
   );
-};
+});
 
-const MultipleChoiceInput: React.FC<{
+// Optimization: Memoize internal components as well
+const MultipleChoiceInput = React.memo<{
   item: MathProblemItem;
   value: string;
   onChange: (val: string) => void;
   disabled?: boolean;
-}> = ({ item, value, onChange, disabled }) => {
+}>(({ item, value, onChange, disabled }) => {
   const choices = item.answer_spec.ui?.choices || [];
 
   if (choices.length === 0) {
@@ -163,4 +163,4 @@ const MultipleChoiceInput: React.FC<{
       ))}
     </div>
   );
-};
+});
