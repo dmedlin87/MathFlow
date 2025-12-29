@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { Engine } from "./engine";
-import { Generator } from "../types";
+import type { Generator } from "../types";
 
 // Mock validation to pass through
 vi.mock("../validation", () => ({
@@ -23,6 +23,7 @@ describe("Engine Strict Behavior", () => {
     vi.resetAllMocks();
     mockGenerator = {
         skillId: 'test-skill',
+        templateId: 'test-template',
         generate: vi.fn().mockReturnValue({
             meta: { id: 'local-item', skill_id: 'test-skill' },
             problem_content: { stem: 'Local Problem' },
