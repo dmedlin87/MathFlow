@@ -1,8 +1,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { Engine } from "./engine";
 import { Generator } from "../types";
+import { validateMathProblemItem } from "../validation";
 
-// Mock validation to pass through
+// Mock validation to pass through by default, but allow overrides
 vi.mock("../validation", () => ({
   validateMathProblemItem: vi.fn((item) => item),
 }));
@@ -29,6 +30,7 @@ describe("Engine Strict Behavior", () => {
             solution_logic: { final_answer_canonical: '42' }
         })
     };
+    (validateMathProblemItem as ReturnType<typeof vi.fn>).mockImplementation((item) => item);
   });
 
   afterEach(() => {
@@ -74,5 +76,45 @@ describe("Engine Strict Behavior", () => {
 
     expect(result.meta.id).toBe('local-item');
     expect(mockGenerator.generate).toHaveBeenCalled();
+  });
+
+  it("falls back to local generator if network response fails schema validation", async () => {
+      const config = { apiBaseUrl: "http://test-api.com" };
+      engine = new Engine(config);
+      engine.register(mockGenerator);
+
+      // Mock validation to throw on the FIRST call (network item), then pass on subsequent calls (local item)
+      (validateMathProblemItem as ReturnType<typeof vi.fn>)
+          .mockImplementationOnce(() => { throw new Error("Validation Error"); })
+          .mockImplementationOnce((item) => item);
+
+      const fetchMock = vi.fn().mockResolvedValue({
+          ok: true,
+          json: async () => [{
+              meta: { id: 'bad-network-item' } // Malformed item
+          }]
+      });
+      vi.stubGlobal('fetch', fetchMock);
+
+      const result = await engine.generate('test-skill', 0.5);
+
+      // Should fall back to local
+      expect(result.meta.id).toBe('local-item');
+      expect(mockGenerator.generate).toHaveBeenCalled();
+      // Verify validation was attempted on the network item
+      expect(validateMathProblemItem).toHaveBeenCalledTimes(2); // 1st: network (fail), 2nd: local (pass)
+  });
+
+  it("throws error if local generator output fails validation", async () => {
+      const config = { apiBaseUrl: "" }; // No network
+      engine = new Engine(config);
+      engine.register(mockGenerator);
+
+      // Mock validation to throw ALWAYS
+      (validateMathProblemItem as ReturnType<typeof vi.fn>).mockImplementation(() => {
+          throw new Error("Local Validation Error");
+      });
+
+      await expect(engine.generate('test-skill', 0.5)).rejects.toThrow("Local Validation Error");
   });
 });
