@@ -55,4 +55,23 @@ describe('SessionSummary', () => {
         
         expect(screen.getByText('0%')).toBeInTheDocument();
     });
+
+    it('has correct accessibility attributes', () => {
+        render(<SessionSummary stats={mockStats} onRestart={onRestartMock} />);
+
+        const dialog = screen.getByRole('dialog');
+        expect(dialog).toBeInTheDocument();
+        expect(dialog).toHaveAttribute('aria-modal', 'true');
+        expect(dialog).toHaveAttribute('aria-labelledby', 'session-summary-title');
+
+        const title = screen.getByText('Session Complete! 🎓');
+        expect(title).toHaveAttribute('id', 'session-summary-title');
+    });
+
+    it('focuses the restart button on mount', () => {
+        render(<SessionSummary stats={mockStats} onRestart={onRestartMock} />);
+
+        const button = screen.getByText('Start New Session');
+        expect(button).toHaveFocus();
+    });
 });

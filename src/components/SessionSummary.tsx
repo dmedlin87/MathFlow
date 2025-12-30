@@ -15,13 +15,23 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({ stats, onRestart
   const accuracy = stats.total > 0 ? Math.round((stats.correct / stats.total) * 100) : 0;
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm">
+    <div
+      className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 backdrop-blur-sm"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="session-summary-title"
+    >
       <motion.div 
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         className="max-w-md w-full p-8 bg-white rounded-2xl shadow-2xl text-center"
       >
-        <h2 className="text-3xl font-bold mb-6 text-gray-800">Session Complete! 🎓</h2>
+        <h2
+          id="session-summary-title"
+          className="text-3xl font-bold mb-6 text-gray-800"
+        >
+          Session Complete! 🎓
+        </h2>
         
         <div className="grid grid-cols-2 gap-6 mb-8">
           <div className="p-6 bg-blue-50 rounded-xl">
@@ -50,7 +60,8 @@ export const SessionSummary: React.FC<SessionSummaryProps> = ({ stats, onRestart
 
         <button
           onClick={onRestart}
-          className="w-full py-4 bg-gray-900 text-white rounded-lg font-bold text-lg hover:bg-black transition-colors transform hover:scale-[1.02] active:scale-[0.98]"
+          autoFocus
+          className="w-full py-4 bg-gray-900 text-white rounded-lg font-bold text-lg hover:bg-black transition-colors transform hover:scale-[1.02] active:scale-[0.98] focus:outline-none focus:ring-4 focus:ring-gray-300"
         >
           Start New Session
         </button>
