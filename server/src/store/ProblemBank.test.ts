@@ -70,10 +70,19 @@ describe("ProblemBank", () => {
     // Reset the internal mock state of the mocked module
     // Since we mocked `fs/promises` default export, we can access it here
     let mockStore = "[]";
-    (fs.readFile as any).mockImplementation(async () => mockStore);
-    (fs.writeFile as any).mockImplementation(async (path: string, data: string) => {
-      mockStore = data;
-    });
+    vi.mocked(fs.readFile).mockImplementation(async () => mockStore);
+    vi.mocked(fs.writeFile).mockImplementation(
+      async (path: string | Buffer | URL | number, data: string | Uint8Array | object) => {
+        if (typeof data === "string") {
+          mockStore = data;
+        } else if (Buffer.isBuffer(data)) {
+          mockStore = data.toString("utf-8");
+        } else {
+          // Fallback for other types if necessary, or throw
+          mockStore = JSON.stringify(data);
+        }
+      }
+    );
   });
 
   afterEach(() => {
