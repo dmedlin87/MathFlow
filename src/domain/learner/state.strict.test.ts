@@ -2,7 +2,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import type { Skill } from "../types";
 
 // Use vi.hoisted to create variables accessible inside vi.mock
-const { MOCK_SKILL_CUSTOM_BKT, MOCK_SKILL_DEFAULT } = vi.hoisted(() => {
+const { MOCK_SKILL_CUSTOM_BKT, MOCK_SKILL_DEFAULT, MOCK_SKILL_PREREQ, MOCK_SKILL_BLOCKED } = vi.hoisted(() => {
   const customBkt: Skill = {
     id: "skill_custom_bkt",
     name: "Custom BKT Skill",
@@ -27,11 +27,34 @@ const { MOCK_SKILL_CUSTOM_BKT, MOCK_SKILL_DEFAULT } = vi.hoisted(() => {
     // No bktParams
   };
 
-  return { MOCK_SKILL_CUSTOM_BKT: customBkt, MOCK_SKILL_DEFAULT: defaultSkill };
+  const prereqSkill: Skill = {
+    id: "skill_prereq",
+    name: "Prereq Skill",
+    gradeBand: "3-5",
+    templates: [],
+    prereqs: [],
+    misconceptions: [],
+  };
+
+  const blockedSkill: Skill = {
+    id: "skill_blocked",
+    name: "Blocked Skill",
+    gradeBand: "3-5",
+    templates: [],
+    prereqs: ["skill_prereq"],
+    misconceptions: [],
+  };
+
+  return {
+    MOCK_SKILL_CUSTOM_BKT: customBkt,
+    MOCK_SKILL_DEFAULT: defaultSkill,
+    MOCK_SKILL_PREREQ: prereqSkill,
+    MOCK_SKILL_BLOCKED: blockedSkill
+  };
 });
 
 vi.mock("../skills/registry", () => ({
-  ALL_SKILLS_LIST: [MOCK_SKILL_CUSTOM_BKT, MOCK_SKILL_DEFAULT],
+  ALL_SKILLS_LIST: [MOCK_SKILL_CUSTOM_BKT, MOCK_SKILL_DEFAULT, MOCK_SKILL_PREREQ, MOCK_SKILL_BLOCKED],
 }));
 
 import { updateLearnerState, recommendNextItem } from "./state";
@@ -62,7 +85,7 @@ describe("learner/state strict behavior", () => {
     vi.unstubAllGlobals();
   });
 
-  describe("updateLearnerState - Custom BKT Parameters", () => {
+  describe("updateLearnerState - BKT Parameters & Defaults", () => {
     it("uses custom BKT parameters from registry when skill is found", () => {
       const startState = createTestState({
         skillState: {
@@ -117,6 +140,93 @@ describe("learner/state strict behavior", () => {
 
       expect(newP).toBeCloseTo(0.83636, 4);
     });
+
+    it("uses default parameters when skill ID is not in registry", () => {
+      const unknownSkillId = "skill_unknown";
+      const startState = createTestState({
+        skillState: {
+          [unknownSkillId]: createSkillState({ masteryProb: 0.5 }),
+        },
+      });
+
+      const attempt = {
+        id: "att_unknown",
+        userId: "u1",
+        itemId: "i_unk",
+        skillId: unknownSkillId,
+        timestamp: FIXED_DATE.toISOString(),
+        isCorrect: true,
+        timeTakenMs: 1000,
+        attemptsCount: 1,
+        errorTags: [],
+        hintsUsed: 0,
+      };
+
+      // Should use default params (same as MOCK_SKILL_DEFAULT) -> 0.83636
+      const newState = updateLearnerState(startState, attempt);
+      const newP = newState.skillState[unknownSkillId].masteryProb;
+
+      expect(newP).toBeCloseTo(0.83636, 4);
+    });
+  });
+
+  describe("updateLearnerState - Edge Cases", () => {
+    it("does not decrease stability below 0", () => {
+      const startState = createTestState({
+        skillState: {
+          [MOCK_SKILL_DEFAULT.id]: createSkillState({ masteryProb: 0.5, stability: 0.2 }),
+        },
+      });
+
+      const attempt = {
+        id: "att_neg",
+        userId: "u1",
+        itemId: "i_neg",
+        skillId: MOCK_SKILL_DEFAULT.id,
+        timestamp: FIXED_DATE.toISOString(),
+        isCorrect: false,
+        timeTakenMs: 1000,
+        attemptsCount: 1,
+        errorTags: [],
+        hintsUsed: 0,
+      };
+
+      // Stability decrease is 0.5. 0.2 - 0.5 = -0.3. Clamped to 0.
+      const newState = updateLearnerState(startState, attempt);
+      expect(newState.skillState[MOCK_SKILL_DEFAULT.id].stability).toBe(0);
+    });
+
+    it("lazily initializes missing skill state before updating", () => {
+      // Start with state that doesn't have the skill
+      const startState = createTestState({ skillState: {} });
+
+      const attempt = {
+        id: "att_lazy",
+        userId: "u1",
+        itemId: "i_lazy",
+        skillId: MOCK_SKILL_DEFAULT.id,
+        timestamp: FIXED_DATE.toISOString(),
+        isCorrect: true,
+        timeTakenMs: 1000,
+        attemptsCount: 1,
+        errorTags: [],
+        hintsUsed: 0,
+      };
+
+      const newState = updateLearnerState(startState, attempt);
+
+      // Should now exist
+      const skillState = newState.skillState[MOCK_SKILL_DEFAULT.id];
+      expect(skillState).toBeDefined();
+      // Started at 0.1 (default) -> Updated for correct answer
+      // P(L)=0.1, slip=0.1, guess=0.2, LR=0.1
+      // Correct:
+      // num = 0.1 * 0.9 = 0.09
+      // den = 0.1 * 0.9 + 0.9 * 0.2 = 0.09 + 0.18 = 0.27
+      // post = 0.09 / 0.27 = 0.3333
+      // transit = 0.3333 + (1-0.3333)*0.1 = 0.3333 + 0.0666 = 0.3999
+      expect(skillState.masteryProb).toBeCloseTo(0.4, 1);
+    });
   });
 
   describe("recommendNextItem - Stability Boundary", () => {
@@ -164,10 +274,47 @@ describe("learner/state strict behavior", () => {
       });
   });
 
-  describe("recommendNextItem - Empty Skills", () => {
-      it("throws error if skills list is empty", async () => {
-          const state = createTestState({ skillState: {} });
-          await expect(recommendNextItem(state, Math.random, [])).rejects.toThrow("No skills available to recommend");
-      });
+  describe("recommendNextItem - Prerequisites & Defaults", () => {
+    it("excludes skills with missing prereq state from the learning queue (prioritizing valid skills)", async () => {
+        const state = createTestState({
+            skillState: {
+                [MOCK_SKILL_BLOCKED.id]: createSkillState({ masteryProb: 0.1 }), // Blocked (lower mastery)
+                [MOCK_SKILL_DEFAULT.id]: createSkillState({ masteryProb: 0.5 }), // Valid (higher mastery)
+                // MOCK_SKILL_PREREQ is missing from state
+            }
+        });
+
+        const rng = vi.fn().mockReturnValue(0.9); // Prefer Learning Queue
+
+        // Pass both skills.
+        // If BLOCKED was in learning queue, it would be picked (0.1 < 0.5).
+        // Since it is blocked, it should be filtered out, leaving DEFAULT as the best candidate.
+        await recommendNextItem(state, rng, [MOCK_SKILL_BLOCKED, MOCK_SKILL_DEFAULT]);
+
+        expect(engine.generate).toHaveBeenCalledWith(MOCK_SKILL_DEFAULT.id, 0.5);
+    });
+
+    it("uses ALL_SKILLS from registry if skills argument is omitted", async () => {
+        const state = createTestState({
+            skillState: {
+                [MOCK_SKILL_DEFAULT.id]: createSkillState({ masteryProb: 0.5 }),
+            }
+        });
+
+        const rng = vi.fn().mockReturnValue(0.9);
+
+        // Call without the 3rd argument
+        await recommendNextItem(state, rng);
+
+        // Should have picked something from ALL_SKILLS_LIST
+        // Since we mocked ALL_SKILLS_LIST, we know what's in there.
+        // MOCK_SKILL_DEFAULT is the only clear candidate (others are custom/blocked/prereq)
+        expect(engine.generate).toHaveBeenCalled();
+    });
+
+    it("throws error if skills list is empty", async () => {
+        const state = createTestState({ skillState: {} });
+        await expect(recommendNextItem(state, Math.random, [])).rejects.toThrow("No skills available to recommend");
+    });
   });
 });

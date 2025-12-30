@@ -1,70 +1,57 @@
-# Test Audit Notes
+# Test Audit Report
 
-## Call-Site Map
+## 1. Preflight Run
+- Commands: `npm install`, `pnpm run test:coverage`
+- Baseline: High coverage (~99%) across most files.
+- Targets: `src/domain/learner/state.ts` (100%), `src/domain/generator/engine.ts` (100%).
+
+## 2. Call-Site Map & Contracts
 
 ### `src/domain/learner/state.ts`
 
-- **`createInitialState(userId)`**
-  - **Callers:** `LearnerService.ts` (constructor/init), `MathTutor.tsx` (initial state).
-  - **Inputs:** `userId` (string).
-  - **Outputs:** `LearnerState` object with initialized skills (0.1 mastery).
+**Exported Functions:**
+1.  `updateLearnerState(state, attempt)`
+    -   **Inputs:** `LearnerState` object, `Attempt` object.
+    -   **Outputs:** New `LearnerState` (immutable).
+    -   **Behavior:** Updates mastery (BKT), stability, and last practiced time. Handles missing skills gracefully.
+    -   **Invariants:** `masteryProb` [0.01, 0.99], `stability` >= 0.
 
-- **`updateLearnerState(state, attempt)`**
-  - **Callers:** `LearnerService.ts` (`recordAttempt`).
-  - **Inputs:** `LearnerState`, `Attempt`.
-  - **Outputs:** New `LearnerState` (immutable).
-  - **Invariants:** Mastery clamped [0.01, 0.99]. Stability increments on correct (>0.8 mastery) or resets.
-
-- **`recommendNextItem(state, rng, skills)`**
-  - **Callers:** `LearnerService.ts` (`getNextProblem`).
-  - **Inputs:** `LearnerState`, RNG function, optional `skills` list.
-  - **Outputs:** Promise<`MathProblemItem`>.
-  - **Invariants:** Returns valid item or throws. Prioritizes review (30%) or learning queue.
+2.  `recommendNextItem(state, rng?, skills?)`
+    -   **Inputs:** `LearnerState`, optional RNG, optional `skills` list.
+    -   **Outputs:** `Promise<MathProblemItem>`.
+    -   **Behavior:** Prioritizes Review > Learning > Fallback. Filters learning items by prerequisites.
+    -   **Errors:** Throws if no skills available.
 
 ### `src/domain/generator/engine.ts`
 
-- **`engine.generate(skillId, difficulty, rng)`**
-  - **Callers:** `recommendNextItem`, `LearnerService.ts`.
-  - **Inputs:** `skillId`, `difficulty` (0-1), RNG.
-  - **Outputs:** Promise<`MathProblemItem`>.
-  - **Invariants:** Validates item schema. Fallbacks: API -> Factory -> Local.
+**Exported Class:** `Engine`
+1.  `generate(skillId, difficulty, rng?)`
+    -   **Inputs:** `skillId`, `difficulty`, optional RNG.
+    -   **Outputs:** `Promise<MathProblemItem>`.
+    -   **Behavior:** Tries Network -> Fallback to Local. Validate schema at each step.
+    -   **Errors:** Throws if local generator not found or local generation fails validation.
 
-## Contracts
+## 3. Test Plan Execution
 
-### `updateLearnerState`
-- **Inputs:** `state` (valid), `attempt` (valid).
-- **Outputs:** New state with updated BKT mastery and stability.
-- **Invariants:**
-  - Mastery stays within [0.01, 0.99].
-  - Uses skill-specific BKT parameters if available in registry.
-  - Handles missing skill state by initializing it.
+I added strict behavior tests to constrain edge cases that were implementation details but not explicitly tested contracts.
 
-### `recommendNextItem`
-- **Inputs:** `state`, `rng`, `skills` (list of Skill objects).
-- **Outputs:** `MathProblemItem`.
-- **Errors:** Throws if `skills` list is empty or no skills available.
-- **Invariants:**
-  - Review only if >0.8 mastery AND stability interval passed.
-  - Learning Queue sorted by mastery (asc).
+| Test File | Test Name | Behavior Constrained | Result |
+|-----------|-----------|----------------------|--------|
+| `state.strict.test.ts` | `updateLearnerState - Unknown Skill` | Uses default BKT params if skill ID is not in registry. | PASS |
+| `state.strict.test.ts` | `updateLearnerState - Stability Floor` | Stability is clamped at 0 (never negative). | PASS |
+| `state.strict.test.ts` | `updateLearnerState - Lazy Init` | Initializes missing skill state before updating. | PASS |
+| `state.strict.test.ts` | `recommendNextItem - Prerequisites` | Excludes blocked skills from Learning Queue (prioritizes valid skills). | PASS |
+| `state.strict.test.ts` | `recommendNextItem - Defaults` | Uses `ALL_SKILLS` if `skills` arg is omitted. | PASS |
+| `engine.strict.test.ts` | `generate - Network Validation Fail` | Falls back to local if network returns valid JSON but invalid Schema. | PASS |
+| `engine.strict.test.ts` | `generate - Local Validation Fail` | Throws error if local generator produces invalid item. | PASS |
 
-## Tests Added
+## 4. Mutation Sanity
+- **Mutation:** Removed `Math.max(0, ...)` from stability update in `src/domain/learner/state.ts`.
+- **Expected Result:** Stability becomes negative (-0.3).
+- **Observed Result:** Test `does not decrease stability below 0` FAILED.
+- **Conclusion:** Test meaningfully constrains the stability floor behavior.
 
-### `src/domain/learner/state.strict.test.ts`
-| Test Name | Behavior Checked | Branch Covered |
-|-----------|------------------|----------------|
-| `uses custom BKT parameters...` | Verify `updateLearnerState` respects `bktParams` from registry. | Custom BKT params branch. |
-| `uses default BKT parameters...` | Verify fallback to defaults. | Default BKT params branch. |
-| `does NOT recommend for review...` | Verify stability interval boundary (just under). | Review logic (time check). |
-| `recommends for review...` | Verify stability interval boundary (just over). | Review logic (time check). |
-| `throws error if skills list is empty` | Verify error handling. | Empty candidate list branch. |
-
-### `src/domain/generator/engine.strict.test.ts`
-| Test Name | Behavior Checked | Branch Covered |
-|-----------|------------------|----------------|
-| `falls back to local... (empty items)` | Verify Factory fallback when API returns OK but no items. | `runData.items.length > 0` check. |
-| `falls back to local... (json error)` | Verify fetch error handling (malformed JSON). | `catch` block in `generate`. |
-
-## Mutation Sanity
-- **Mutation:** Modified `src/domain/learner/state.ts` to ignore `skillDef.bktParams` and always use `0.1`.
-- **Result:** `state.strict.test.ts` FAILED on `uses custom BKT parameters...` (expected 0.95, got 0.91).
-- **Conclusion:** The test actively constrains the BKT parameter logic.
+## 5. Coverage Summary
+- `src/domain/learner/state.ts`: 100% (Maintained)
+- `src/domain/generator/engine.ts`: 100% (Maintained)
+- **Note:** While coverage percentage didn't change (as it was already 100%), the *quality* of coverage improved by verifying specific branch behaviors (fallback logic, clamping) rather than just execution paths.
