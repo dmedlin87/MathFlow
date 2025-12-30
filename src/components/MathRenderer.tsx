@@ -60,35 +60,34 @@ export const MathRenderer = React.memo(({ text }: { text: string }) => {
 });
 
 const ParsedMath: React.FC<{ text: string }> = ({ text }) => {
-  // Split by spaces to handle operators
-  const tokens = useMemo(() => text.split(' '), [text]);
+  // Optimize: Split by fraction pattern to reduce DOM nodes (span soup)
+  // Only create separate spans for fractions; keep text grouped.
+  // Pattern: alphanumeric/alphanumeric (e.g. 1/2, 3x/4y).
+  // We use lookbehind/lookahead to avoid matching parts of larger sequences like 1/2/3
+  const parts = useMemo(() => text.split(/((?<!\/)[\w.]+\/[\w.]+(?!\/))/g), [text]);
   
   return (
     <>
-      {tokens.map((token, i) => {
-        // Check for fraction pattern: something/something
-        // Allowing '?' as a valid part
-        if (token.includes('/') && !token.includes('=') && token.split('/').length === 2) {
-          const [num, den] = token.split('/');
-          // Basic validation to avoid false positives (like dates or paths)
+      {parts.map((part, i) => {
+        if (!part) return null;
+
+        // Check if it's a fraction (double check format)
+        if (part.includes('/') && part.split('/').length === 2) {
+          const [num, den] = part.split('/');
+          // Ensure valid numerator/denominator to avoid rendering invalid fractions like "1/" or "/2"
           if (num.length > 0 && den.length > 0) {
             return (
-              <React.Fragment key={i}>
-                <span className="inline-flex flex-col items-center align-middle mx-1" style={{ verticalAlign: 'middle' }}>
-                  <span className="border-b-2 border-current px-1 min-w-[1em] text-center">{num}</span>
-                  <span className="px-1 min-w-[1em] text-center">{den}</span>
-                </span>
-                {i < tokens.length - 1 && ' '}
-              </React.Fragment>
+              <span key={i} className="inline-flex flex-col items-center align-middle mx-1" style={{ verticalAlign: 'middle' }}>
+                <span className="border-b-2 border-current px-1 min-w-[1em] text-center">{num}</span>
+                <span className="px-1 min-w-[1em] text-center">{den}</span>
+              </span>
             );
           }
         }
-        // Operators or regular text
+
+        // Regular text
         return (
-          <React.Fragment key={i}>
-            <span className="mx-1">{token}</span>
-            {i < tokens.length - 1 && ' '}
-          </React.Fragment>
+          <span key={i} className="mx-1">{part}</span>
         );
       })}
     </>
