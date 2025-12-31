@@ -16,18 +16,17 @@ vi.mock('../domain/skills/registry', () => ({
 describe('Dashboard Component', () => {
   const mockLearnerState: LearnerState = {
     userId: 'test_user',
-    gradeLevel: '4',
     skillState: {
       skill_1: {
         masteryProb: 0.85,
         stability: 0.5,
-        lastPracticed: Date.now(),
+        lastPracticed: new Date().toISOString(),
         misconceptions: [],
       },
       skill_2: {
         masteryProb: 0.2,
         stability: 0.1,
-        lastPracticed: Date.now(),
+        lastPracticed: new Date().toISOString(),
         misconceptions: [],
       },
     },
