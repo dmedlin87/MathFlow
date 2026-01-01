@@ -1,6 +1,6 @@
 import type { LearnerState, Attempt, MathProblemItem, Skill } from "../types";
 import { engine } from "../generator/engine";
-import { ALL_SKILLS_LIST } from "../skills/registry";
+import { ALL_SKILLS_LIST, ALL_SKILLS_MAP } from "../skills/registry";
 
 // Scheduler uses the central registry
 const ALL_SKILLS = ALL_SKILLS_LIST;
@@ -46,8 +46,8 @@ export function updateLearnerState(
 
   // BKT Parameters (Default vs Skill Override)
   // Ideally we need to look up the skill object.
-  // For now, let's look it up from ALL_SKILLS which is imported in this file.
-  const skillDef = ALL_SKILLS.find((s) => s.id === attempt.skillId);
+  // Optimized lookup using Map (O(1)) instead of find (O(n))
+  const skillDef = ALL_SKILLS_MAP.get(attempt.skillId);
 
   const learningRate = skillDef?.bktParams?.learningRate ?? 0.1;
   const slip = skillDef?.bktParams?.slip ?? 0.1;
