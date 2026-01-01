@@ -1,94 +1,92 @@
 # Behavior-First Test Audit Report
 
 ## 1. Mode & Evidence
-- **Mode:** Mode A (Full Execution Capability)
-- **Execution:** Ran all 563 tests.
-- **Evidence:** [RUN] logs and [CODE] snippets provided below.
+- **Mode**: A (Execution Capable)
+- **Environment**: Node v22.21.1, pnpm v10.20.0
+- **Evidence**:
+  - `pnpm test` executed successfully (572 tests passed).
+  - Coverage report generated.
+  - Mutation testing performed manually.
 
 ## 2. Preflight Run
-- **Initial Status:** 6 failing files, 10 failing tests.
-- **Root Cause:** Intentional "sabotage" mutations left in the codebase (hardcoded IDs, hardcoded BKT values, hardcoded visual properties).
-- **Resolution:** Fixed the sabotage, leading to 100% pass rate (563/563 passed).
+- **Command**: `pnpm test`
+- **Result**: 51 files, 572 tests passed.
+- **Coverage**: ~98% Statements.
+  - **Low Coverage Areas**:
+    - `src/components/Dashboard.tsx` (56%)
+    - `src/services/persistence.ts` (42%)
+    - `server/src/store/ProblemBank.ts` (85%)
 
-## 3. Test Inventory Map (Sampled)
-
-| File | Module | Behaviors Claimed |
-|---|---|---|
-| `src/domain/generator/engine.behavior.test.ts` | `Engine` | Validates fallback to local generator on network error/config missing. |
-| `src/domain/generator/engine.coverage.test.ts` | `Engine` | Validates fallback on empty/undefined factory responses. |
-| `src/domain/generator/engine.test.ts` | `Engine` | Validates generator registration and metadata structure. |
-| `src/domain/learner/state.behavior.new.test.ts` | `LearnerState` | Validates BKT (Bayesian Knowledge Tracing) math correctness. |
-| `src/domain/learner/state.test.ts` | `LearnerState` | Validates mastery updates and stability logic. |
-| `src/components/FractionVisualizer.test.tsx` | `FractionVisualizer` | Validates SVG rendering and fill logic based on props. |
-| `src/domain/math-utils.test.ts` | `math-utils` | Validates `gcd`, `getFactors`, and `checkAnswer` logic. |
-| `src/components/inputs/UniversalInput.test.tsx` | `UniversalInput` | Validates user input handling, key events, and accessibility. |
-| `src/domain/skills/grade4/fractions.test.ts` | `Grade4Fractions` | Validates generator logic, randomness control, and math correctness. |
-| `src/services/LearnerService.test.ts` | `LearnerService` | Validates service wrapper latency simulation and state persistence. |
+## 3. Test Inventory Map
+| Test File | Target Module | Behaviors Claimed |
+|-----------|---------------|-------------------|
+| `src/domain/generator/engine.test.ts` | `Engine` | Registry, Network Fallback (API -> Factory -> Local), Error Handling |
+| `src/domain/learner/state.test.ts` | `LearnerState` | Initialization, BKT Updates (Correct/Incorrect), Prereq Checks |
+| `src/components/MathTutor.test.tsx` | `MathTutor` | Session Flow, Diagnosis Feedback, Hint Ladder, Input Handling |
+| `server/src/store/ProblemBank.test.ts` | `ProblemBank` | Save Verification, Fetch logic (Random/Shuffle), Fallbacks |
+| `src/domain/skills/grade5/nbt.test.ts` | `NBT Generators` | Content Generation, Format Compliance |
+| `src/components/MathRenderer.test.tsx` | `MathRenderer` | Text/Math/Fraction Rendering (Regex-based) |
+| `server/src/middleware/rateLimit.test.ts` | `RateLimit` | Request Limiting, Headers |
 
 ## 4. Risk Ranking
-
-1.  **`src/domain/learner/state.ts` (Score: 90)**
-    *   **Reason:** Core progression logic (BKT). High impact on user experience. Previously sabotaged.
-2.  **`src/domain/generator/engine.ts` (Score: 85)**
-    *   **Reason:** Central dispatch for problem generation. Complex fallback logic. Previously sabotaged.
-3.  **`src/domain/math-utils.ts` (Score: 80)**
-    *   **Reason:** Shared utility for answer validation. Security/correctness critical.
-4.  **`src/components/FractionVisualizer.tsx` (Score: 60)**
-    *   **Reason:** Visual correctness is hard to test without snapshots (relies on attribute assertions).
+1. **[90] `src/domain/learner/state.ts`**
+   - **Why**: Core progression logic (BKT). High impact on user experience. Complex state transitions.
+   - **Weakness**: Mutation revealed prioritization logic is not behaviorally constrained.
+2. **[85] `src/domain/generator/engine.ts`**
+   - **Why**: High publicness (used everywhere). Complex network/fallback logic.
+   - **Strength**: Good tests for fallback hierarchy.
+3. **[70] `server/src/store/ProblemBank.ts`**
+   - **Why**: Data persistence.
+   - **Weakness**: Relies on mocked FS; potential for drift.
+4. **[65] `src/components/MathTutor.tsx`**
+   - **Why**: Main UI integration point.
+   - **Strength**: Comprehensive interaction tests.
 
 ## 5. Coverage Reality Map
-- **High coverage:** Most files are well covered.
-- **Fake Coverage:** None detected in the sample. Tests assert meaningful values.
+- **Uncovered Branches**:
+  - `src/domain/learner/state.ts`: Prioritization logic (sorting) is covered by lines but not constraints (Mutation Survived).
+  - `server/src/store/ProblemBank.ts`: FS error handling branches.
+- **Fake Coverage**:
+  - `MathTutor` tests heavily mock `LearnerService`, potentially masking integration issues with real `Engine`/`State`.
 
 ## 6. Contract Map
-
-| Function | Contract | Call-Site Evidence |
-|---|---|---|
-| `Engine.generate` | Returns `MathProblemItem` with valid ID. | `engine.behavior.test.ts` asserts `item.meta.id`. |
-| `updateLearnerState` | Returns new state with updated `masteryProb`. | `state.test.ts` asserts `newProb` value. |
-| `FractionVisualizer` | Renders `<path>` elements with `fill`. | `FractionVisualizer.test.tsx` asserts `fill` attribute. |
-| `gcd` | Returns greatest common divisor. | `math-utils.test.ts` asserts `gcd(12, 8) === 4`. |
+| Function | Implied Contract | Evidence |
+|----------|------------------|----------|
+| `Engine.generate` | Returns `MathProblemItem` or throws. Fallback: API -> Factory -> Local. | `engine.test.ts` "falls back to local..." |
+| `updateLearnerState` | Returns NEW state (immutability). Updates BKT params. Clamps values. | `state.test.ts` "returns a new state reference" |
+| `recommendNextItem` | Returns item based on mastery/review. Excludes mastered. | `state.test.ts` "excludes mastered skills" |
+| `ProblemBank.save` | Rejects items with `status !== VERIFIED`. | `ProblemBank.test.ts` "should reject saving unverified items" |
 
 ## 7. Test Quality Scorecard
-
-| Test File | Classification | Evidence |
-|---|---|---|
-| `engine.behavior.test.ts` | ✅ Behavior-constraining | Failed immediately when ID was mutated. |
-| `state.test.ts` | ✅ Behavior-constraining | Failed immediately when BKT logic was mutated. |
-| `FractionVisualizer.test.tsx` | ✅ Behavior-constraining | Failed immediately when fill logic was mutated. |
-| `math-utils.test.ts` | ✅ Behavior-constraining | Failed when `gcd` was mutated to return constant. |
-| `UniversalInput.test.tsx` | ✅ Behavior-constraining | Validates `onSubmit` only on specific events. |
-| `grade4/fractions.test.ts` | ✅ Behavior-constraining | Uses `createMockRng` to enforce deterministic output. |
-| `LearnerService.test.ts` | ⚠️ Weak (Mock-heavy) | Mocks `state.ts` entirely; verifies wrapper only. |
+| Test File | Classification | Evidence | Fix |
+|-----------|----------------|----------|-----|
+| `state.test.ts` | ⚠️ Weak | Mutation Survived (Priority Logic) | Add test with 2 unmastered skills (Low vs High mastery) |
+| `engine.test.ts` | ✅ Real | Meaningful fallbacks verified | N/A |
+| `MathTutor.test.tsx` | ✅ Real | Constraints UI states correctly | N/A |
+| `MathRenderer.test.tsx` | ✅ Real | No snapshots; regex assertions | N/A |
+| `ProblemBank.test.ts` | ⚠️ Weak | Heavy FS mocking | Use temporary real files or stricter mocks |
 
 ## 8. Flake Report
-- **Status:** No flakes observed during 3-run probe and extensive triage execution.
-- **Determinism:** High. Generators use injected RNGs or mocks.
+- **Status**: Clean.
+- **Probe**: 3 full runs, 0 flakes.
+- **Determinism**: `ProblemBank` uses `vi.spyOn(Math, 'random')`. `Engine` mocks `fetch`.
 
 ## 9. Snapshot Audit
-- **Status:** No snapshot abuse found. Assertions are specific (e.g., `toBeCloseTo`, `toHaveAttribute`).
+- **Status**: Excellent.
+- **Findings**: No snapshot usage in sampled files. Explicit assertions used instead.
 
 ## 10. Mutation Notes
+- **Mutant**: `src/domain/learner/state.ts`: Reversed sort order in `recommendNextItem` (Prioritize Highest Mastery vs Lowest).
+- **Result**: **SURVIVED**.
+- **Implication**: The test `excludes mastered skills` only provides 1 unmastered option, so sorting is irrelevant. The suite does not enforce "Learning Queue prioritizes lowest mastery".
 
-### 1. Fixes Applied (Reversing Sabotage)
-- **`src/domain/generator/engine.ts`**: Removed `id: "MUTATED_LOCAL_ID"`.
-    - *Result:* 4 failing test files PASSED.
-- **`src/domain/learner/state.ts`**: Removed `newP = 0.99`.
-    - *Result:* 2 failing test files PASSED.
-- **`src/components/FractionVisualizer.tsx`**: Removed `fill="none"`.
-    - *Result:* 1 failing test file PASSED.
-
-### 2. New Mutation (Sanity Check)
-- **Target:** `src/domain/math-utils.ts` (`gcd` function).
-- **Mutation:** Forced `return 1`.
-- **Outcome:** `src/domain/math-utils.test.ts` FAILED (3 assertions).
-- **Verdict:** Tests are real.
-
-## 11. Fix Plan (Done)
-1.  ✅ **Fixed `engine.ts`**: Restored dynamic ID generation.
-2.  ✅ **Fixed `state.ts`**: Restored BKT probability calculation.
-3.  ✅ **Fixed `FractionVisualizer.tsx`**: Restored conditional fill logic.
+## 11. Fix Plan (Prioritized)
+1. **[High] Fix `state.test.ts` Prioritization Constraint**:
+   - **Issue**: Mutation survived.
+   - **Fix**: Add test case with 2 unmastered skills (e.g., 0.2 and 0.4 mastery) and assert the 0.2 one is recommended.
+2. **[Medium] Verify `ProblemBank` FS Integration**:
+   - **Issue**: Heavy mocking.
+   - **Fix**: Add a "contract test" that runs against a real temp file.
 
 ## 12. Proof of Done
-- **All tests passing:** `563 passed` (See logs).
-- **Mutation verified:** `math-utils` mutation caused failure, confirming test validity.
+- Audit completed. Report generated. No code changes made (Audit mode).
