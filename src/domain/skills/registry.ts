@@ -215,3 +215,8 @@ export const ALL_SKILLS_LIST: Skill[] = [
   SKILL_6_SP_HISTOGRAMS,
   SKILL_6_SP_DOT_PLOTS,
 ];
+
+// Export a Map for O(1) lookups
+export const ALL_SKILLS_MAP = new Map<string, Skill>(
+  ALL_SKILLS_LIST.map((skill) => [skill.id, skill])
+);

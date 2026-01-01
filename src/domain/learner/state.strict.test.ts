@@ -32,6 +32,10 @@ const { MOCK_SKILL_CUSTOM_BKT, MOCK_SKILL_DEFAULT } = vi.hoisted(() => {
 
 vi.mock("../skills/registry", () => ({
   ALL_SKILLS_LIST: [MOCK_SKILL_CUSTOM_BKT, MOCK_SKILL_DEFAULT],
+  ALL_SKILLS_MAP: new Map([
+    [MOCK_SKILL_CUSTOM_BKT.id, MOCK_SKILL_CUSTOM_BKT],
+    [MOCK_SKILL_DEFAULT.id, MOCK_SKILL_DEFAULT],
+  ]),
 }));
 
 import { updateLearnerState, recommendNextItem } from "./state";
