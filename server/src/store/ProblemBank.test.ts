@@ -5,26 +5,14 @@ import fs from "fs/promises";
 
 // Mock fs/promises
 vi.mock("fs/promises", () => {
-  let mockData = "[]";
   return {
     default: {
-      readFile: vi.fn().mockImplementation(async () => mockData),
-      writeFile: vi.fn().mockImplementation(async (path, data) => {
-        mockData = data;
-      }),
-      mkdir: vi.fn().mockResolvedValue(undefined),
+      readFile: vi.fn(),
+      writeFile: vi.fn(),
+      mkdir: vi.fn(),
     },
   };
 });
-
-// Mock fs/promises to prevent file system access and state pollution
-vi.mock("fs/promises", () => ({
-  default: {
-    readFile: vi.fn().mockRejectedValue({ code: "ENOENT" }),
-    writeFile: vi.fn().mockResolvedValue(undefined),
-    mkdir: vi.fn().mockResolvedValue(undefined),
-  },
-}));
 
 const createItem = (id: string, skillId: string) =>
   ({
@@ -67,13 +55,17 @@ describe("ProblemBank", () => {
   beforeEach(() => {
     vi.clearAllMocks();
 
-    // Reset the internal mock state of the mocked module
-    // Since we mocked `fs/promises` default export, we can access it here
+    // Default behavior: return empty array (simulates empty DB)
     let mockStore = "[]";
-    (fs.readFile as any).mockImplementation(async () => mockStore);
-    (fs.writeFile as any).mockImplementation(async (path: string, data: string) => {
-      mockStore = data;
+    vi.mocked(fs.readFile).mockImplementation(async () => mockStore);
+    vi.mocked(fs.writeFile).mockImplementation(async (_path, data) => {
+      // We can assume data is string because readFile returns string in utf-8 mode
+      // But verify strictly if needed. Here we just update the closure.
+      if (typeof data === 'string') {
+        mockStore = data;
+      }
     });
+    vi.mocked(fs.mkdir).mockResolvedValue(undefined);
   });
 
   afterEach(() => {
