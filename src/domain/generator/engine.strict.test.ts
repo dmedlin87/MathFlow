@@ -23,6 +23,7 @@ describe("Engine Strict Behavior", () => {
     vi.resetAllMocks();
     mockGenerator = {
         skillId: 'test-skill',
+        templateId: 'test-template',
         generate: vi.fn().mockReturnValue({
             meta: { id: 'local-item', skill_id: 'test-skill' },
             problem_content: { stem: 'Local Problem' },
