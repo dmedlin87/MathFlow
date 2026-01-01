@@ -170,4 +170,27 @@ describe("learner/state strict behavior", () => {
           await expect(recommendNextItem(state, Math.random, [])).rejects.toThrow("No skills available to recommend");
       });
   });
+
+  describe("updateLearnerState - Missing Registry Entry", () => {
+    it("uses default BKT parameters when skill is NOT in registry", () => {
+      // "unknown_skill" is not in the mocked ALL_SKILLS_LIST
+      const startState = createTestState({
+        skillState: {
+          "unknown_skill": createSkillState({ masteryProb: 0.5 }),
+        },
+      });
+
+      const attempt = {
+        id: "att_3", userId: "u1", itemId: "i3", skillId: "unknown_skill",
+        timestamp: FIXED_DATE.toISOString(), isCorrect: true, timeTakenMs: 1000,
+        attemptsCount: 1, errorTags: [], hintsUsed: 0,
+      };
+
+      // Default Params -> 0.83636
+      const newState = updateLearnerState(startState, attempt);
+      const newP = newState.skillState["unknown_skill"].masteryProb;
+
+      expect(newP).toBeCloseTo(0.83636, 4);
+    });
+  });
 });
