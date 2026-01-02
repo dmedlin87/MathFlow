@@ -2,13 +2,27 @@ import React, { useMemo } from 'react';
 import katex from 'katex';
 import 'katex/dist/katex.min.css';
 
+// Regex to split by LaTeX delimiters or bold markdown
+// DELIMITERS: \( ... \) or $$ ... $$ or ** ... **
+const LATEX_REGEX = /(\\\(.*?\\\)|(?:\$\$.*?\$\$)|(?:\*\*.*?\*\*))/g;
+
+// Helper to determine if a token is a simple fraction
+const isFraction = (token: string): boolean => {
+  return (
+    token.includes('/') &&
+    !token.includes('=') &&
+    token.split('/').length === 2 &&
+    // Ensure both parts are non-empty strings (e.g. not just "/")
+    token.split('/')[0].length > 0 &&
+    token.split('/')[1].length > 0
+  );
+};
+
 // Simple parser that supports both KaTeX and our legacy fraction format
 // Optimized with React.memo to prevent unnecessary re-renders
 export const MathRenderer = React.memo(({ text }: { text: string }) => {
-  // Regex to split by LaTeX delimiters or bold markdown
-  // DELIMITERS: \( ... \) or $$ ... $$ or ** ... **
   const parts = useMemo(() => {
-    return text.split(/(\\\(.*?\\\)|(?:\$\$.*?\$\$)|(?:\*\*.*?\*\*))/g);
+    return text.split(LATEX_REGEX);
   }, [text]);
 
   return (
@@ -59,35 +73,72 @@ export const MathRenderer = React.memo(({ text }: { text: string }) => {
   );
 });
 
+interface TextNode {
+  type: 'text';
+  content: string;
+}
+
+interface FractionNode {
+  type: 'fraction';
+  num: string;
+  den: string;
+}
+
+type ParsedNode = TextNode | FractionNode;
+
 const ParsedMath: React.FC<{ text: string }> = ({ text }) => {
-  // Split by spaces to handle operators
-  const tokens = useMemo(() => text.split(' '), [text]);
+  // Optimization: Group consecutive text tokens into single spans to reduce DOM node count.
+  const nodes = useMemo(() => {
+    const tokens = text.split(' ');
+    const grouped: ParsedNode[] = [];
+    let currentTextBuffer: string[] = [];
+
+    const flushBuffer = () => {
+      if (currentTextBuffer.length > 0) {
+        // Join with spaces since we split by space
+        grouped.push({ type: 'text', content: currentTextBuffer.join(' ') });
+        currentTextBuffer = [];
+      }
+    };
+
+    tokens.forEach((token) => {
+      if (isFraction(token)) {
+        flushBuffer();
+        const [num, den] = token.split('/');
+        grouped.push({ type: 'fraction', num, den });
+      } else {
+        currentTextBuffer.push(token);
+      }
+    });
+    flushBuffer();
+    return grouped;
+  }, [text]);
   
   return (
     <>
-      {tokens.map((token, i) => {
-        // Check for fraction pattern: something/something
-        // Allowing '?' as a valid part
-        if (token.includes('/') && !token.includes('=') && token.split('/').length === 2) {
-          const [num, den] = token.split('/');
-          // Basic validation to avoid false positives (like dates or paths)
-          if (num.length > 0 && den.length > 0) {
-            return (
-              <React.Fragment key={i}>
-                <span className="inline-flex flex-col items-center align-middle mx-1" style={{ verticalAlign: 'middle' }}>
-                  <span className="border-b-2 border-current px-1 min-w-[1em] text-center">{num}</span>
-                  <span className="px-1 min-w-[1em] text-center">{den}</span>
-                </span>
-                {i < tokens.length - 1 && ' '}
-              </React.Fragment>
-            );
-          }
+      {nodes.map((node, i) => {
+        if (node.type === 'fraction') {
+          return (
+            <React.Fragment key={i}>
+              <span className="inline-flex flex-col items-center align-middle mx-1" style={{ verticalAlign: 'middle' }}>
+                <span className="border-b-2 border-current px-1 min-w-[1em] text-center">{node.num}</span>
+                <span className="px-1 min-w-[1em] text-center">{node.den}</span>
+              </span>
+              {/* Add space after if not last */}
+              {i < nodes.length - 1 && ' '}
+            </React.Fragment>
+          );
         }
-        // Operators or regular text
+
         return (
           <React.Fragment key={i}>
-            <span className="mx-1">{token}</span>
-            {i < tokens.length - 1 && ' '}
+            {/*
+               We use mx-1 to match previous visual style, but apply it to the whole group.
+               Since internal spaces are preserved in 'content', this renders standard text.
+               The mx-1 gives margin to the block against other blocks (like fractions).
+            */}
+            <span className="mx-1">{node.content}</span>
+            {i < nodes.length - 1 && ' '}
           </React.Fragment>
         );
       })}
