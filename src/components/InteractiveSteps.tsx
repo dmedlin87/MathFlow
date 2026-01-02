@@ -110,7 +110,8 @@ function isCorrectAnswer(value: string, step: Step) {
 }
 
 function getAnswerClassName(feedback: 'correct' | 'incorrect' | null | undefined) {
-  if (feedback === 'correct') return 'p-2 border rounded w-32 border-green-500 bg-green-50';
-  if (feedback === 'incorrect') return 'p-2 border rounded w-32 border-red-500 bg-red-50';
-  return 'p-2 border rounded w-32 border-gray-300';
+  const base = 'p-2 border rounded w-32 outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 transition-colors';
+  if (feedback === 'correct') return `${base} border-green-500 bg-green-50`;
+  if (feedback === 'incorrect') return `${base} border-red-500 bg-red-50`;
+  return `${base} border-gray-300`;
 }

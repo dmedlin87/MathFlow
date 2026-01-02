@@ -1,3 +1,3 @@
-## 2025-12-16 - Async Button Loading Pattern
-**Learning:** For async actions like answer submission, standardizing on a disabled button with `aria-busy="true"` and a spinner icon provides essential feedback. We encountered dead code in `MathTutor` that was hiding behind conditional logic; cleaning it up enabled stricter type checking.
-**Action:** Use the new loading button pattern for all future async form submissions. Ensure unit tests use `waitFor` to assert the transient "Checking..." state.
+## 2024-05-23 - Focus State Consistency
+**Learning:** Input fields were using `outline-none` with only a border color change on focus, while multiple-choice buttons used a clear `focus:ring`. This inconsistency makes keyboard navigation confusing and harder for users with low vision.
+**Action:** Standardize on `focus:ring-2 focus:ring-blue-200 focus:border-blue-500` for all text-based inputs to provide a clear, glowing focus indicator that matches the design system's interactive elements.

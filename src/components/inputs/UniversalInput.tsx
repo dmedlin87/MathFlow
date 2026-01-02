@@ -43,7 +43,7 @@ export const UniversalInput = React.memo<UniversalInputProps>(
         type="text"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        className="w-full text-lg p-3 border-2 border-gray-200 rounded-lg outline-none focus:border-blue-500 transition-colors"
+        className="w-full text-lg p-3 border-2 border-gray-200 rounded-lg outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100 transition-colors"
         placeholder={item.answer_spec.ui?.placeholder || "Enter your answer"}
         aria-label={item.answer_spec.ui?.placeholder || "Enter your answer"}
         disabled={disabled}
@@ -88,7 +88,7 @@ const FractionInput = React.memo<{
         type="text"
         value={num}
         onChange={(e) => update(e.target.value, den)}
-        className="w-full text-center text-xl p-2 border-2 border-gray-200 rounded-lg outline-none focus:border-blue-500"
+        className="w-full text-center text-xl p-2 border-2 border-gray-200 rounded-lg outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
         placeholder="Num"
         aria-label="Numerator"
         disabled={disabled}
@@ -111,7 +111,7 @@ const FractionInput = React.memo<{
         type="text"
         value={den}
         onChange={(e) => update(num, e.target.value)}
-        className="w-full text-center text-xl p-2 border-2 border-gray-200 rounded-lg outline-none focus:border-blue-500"
+        className="w-full text-center text-xl p-2 border-2 border-gray-200 rounded-lg outline-none focus:border-blue-500 focus:ring-4 focus:ring-blue-100"
         placeholder="Den"
         aria-label="Denominator"
         disabled={disabled}
