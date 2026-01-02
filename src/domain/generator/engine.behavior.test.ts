@@ -23,6 +23,7 @@ describe("Engine Behavior", () => {
     vi.resetAllMocks();
     mockGenerator = {
         skillId: 'test-skill',
+        templateId: 'test-template', // Explicitly needed for TS Generator interface
         generate: vi.fn().mockReturnValue({
             meta: { id: 'local-item', skill_id: 'test-skill' },
             problem_content: { stem: 'Local Problem' },
@@ -136,5 +137,49 @@ describe("Engine Behavior", () => {
     expect(result.meta.id).toBe('factory-item');
     expect(fetchMock).toHaveBeenCalledTimes(2);
     expect(fetchMock).toHaveBeenNthCalledWith(2, expect.stringContaining("/factory/run"), expect.anything());
+  });
+
+  it("falls back to Local generator if bank is empty AND factory fails", async () => {
+    const config = { apiBaseUrl: "http://test-api.com" };
+    engine = new Engine(config);
+    engine.register(mockGenerator);
+
+    const fetchMock = vi.fn()
+        .mockResolvedValueOnce({ // /problems
+            ok: true,
+            json: async () => [] // Bank empty
+        })
+        .mockResolvedValueOnce({ // /factory/run
+            ok: false,
+            status: 500 // Factory failure
+        });
+    vi.stubGlobal('fetch', fetchMock);
+
+    const result = await engine.generate('test-skill', 0.5);
+
+    expect(result.meta.id).toBe('local-item'); // Fallback to local
+    expect(fetchMock).toHaveBeenCalledTimes(2); // Tried both
+  });
+
+  it("falls back to Local generator if bank is empty AND factory returns empty items", async () => {
+    const config = { apiBaseUrl: "http://test-api.com" };
+    engine = new Engine(config);
+    engine.register(mockGenerator);
+
+    const fetchMock = vi.fn()
+        .mockResolvedValueOnce({ // /problems
+            ok: true,
+            json: async () => [] // Bank empty
+        })
+        .mockResolvedValueOnce({ // /factory/run
+            ok: true,
+            json: async () => ({ items: [] }) // Factory empty
+        });
+    vi.stubGlobal('fetch', fetchMock);
+
+    const result = await engine.generate('test-skill', 0.5);
+
+    expect(result.meta.id).toBe('local-item'); // Fallback to local
+    expect(fetchMock).toHaveBeenCalledTimes(2);
   });
 });
