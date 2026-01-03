@@ -70,8 +70,8 @@ describe("ProblemBank", () => {
     // Reset the internal mock state of the mocked module
     // Since we mocked `fs/promises` default export, we can access it here
     let mockStore = "[]";
-    (fs.readFile as any).mockImplementation(async () => mockStore);
-    (fs.writeFile as any).mockImplementation(async (path: string, data: string) => {
+    vi.mocked(fs.readFile).mockImplementation(async () => mockStore);
+    vi.mocked(fs.writeFile).mockImplementation(async (_path: string, data: string) => {
       mockStore = data;
     });
   });
