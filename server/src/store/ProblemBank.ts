@@ -63,18 +63,30 @@ export class ProblemBank {
   }
 
   async save(item: MathProblemItem): Promise<void> {
+    await this.saveMany([item]);
+  }
+
+  async saveMany(items: MathProblemItem[]): Promise<void> {
     await this.ensureInitialized();
-    if (item.meta.status !== "VERIFIED") {
-      throw new Error("Cannot save unverified item to Problem Bank");
-    }
+    if (items.length === 0) return;
 
-    this.items.set(item.meta.id, item);
+    for (const item of items) {
+      if (item.meta.status !== "VERIFIED") {
+        throw new Error("Cannot save unverified item to Problem Bank");
+      }
 
-    const skillId = item.meta.skill_id;
-    if (!this.bySkill.has(skillId)) {
-      this.bySkill.set(skillId, []);
+      // Optimization: Check if item is new before pushing to index to avoid duplicates
+      const isNew = !this.items.has(item.meta.id);
+      this.items.set(item.meta.id, item);
+
+      if (isNew) {
+        const skillId = item.meta.skill_id;
+        if (!this.bySkill.has(skillId)) {
+          this.bySkill.set(skillId, []);
+        }
+        this.bySkill.get(skillId)?.push(item.meta.id);
+      }
     }
-    this.bySkill.get(skillId)?.push(item.meta.id);
 
     await this.persist();
   }

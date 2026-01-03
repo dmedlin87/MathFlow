@@ -70,9 +70,9 @@ describe("ProblemBank", () => {
     // Reset the internal mock state of the mocked module
     // Since we mocked `fs/promises` default export, we can access it here
     let mockStore = "[]";
-    (fs.readFile as any).mockImplementation(async () => mockStore);
-    (fs.writeFile as any).mockImplementation(async (path: string, data: string) => {
-      mockStore = data;
+    vi.mocked(fs.readFile).mockImplementation(async () => mockStore);
+    vi.mocked(fs.writeFile).mockImplementation(async (path, data) => {
+      mockStore = data as string;
     });
   });
 
@@ -178,5 +178,40 @@ describe("ProblemBank", () => {
       "id-1",
       "id-2",
     ]);
+  });
+
+  it("should support batch saving", async () => {
+    const bank = new ProblemBank();
+    const items = [
+      createItem("id-10", "skill-2"),
+      createItem("id-11", "skill-2"),
+    ];
+
+    await bank.saveMany(items);
+
+    const fetched = await bank.fetch("skill-2", 10);
+    expect(fetched.length).toBe(2);
+    expect(fetched.map((i) => i.meta.id).sort()).toEqual(["id-10", "id-11"]);
+  });
+
+  it("should only persist once for batch save", async () => {
+    const bank = new ProblemBank();
+    const items = [
+      createItem("id-20", "skill-3"),
+      createItem("id-21", "skill-3"),
+      createItem("id-22", "skill-3"),
+    ];
+
+    // Reset mocks to count calls
+    vi.clearAllMocks();
+
+    // We need to re-mock fs.writeFile to track calls *after* clearAllMocks
+    // However, the module factory is hoisted.
+    // Instead, we can inspect the mock calls of the imported fs.writeFile.
+
+    await bank.saveMany(items);
+
+    // We expect 1 read (ensureInitialized) and 1 write (persist)
+    expect(fs.writeFile).toHaveBeenCalledTimes(1);
   });
 });
