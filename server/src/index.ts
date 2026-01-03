@@ -121,9 +121,12 @@ export const runFactory = async (
     for (let i = 0; i < count; i++) {
       const item = await pipeline.run(difficulty);
       if (item) {
-        await problemBank.save(item);
         generated.push(item);
       }
+    }
+
+    if (generated.length > 0) {
+      await problemBank.saveMany(generated);
     }
 
     res.json({
