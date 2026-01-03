@@ -1,8 +1,9 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { Engine } from "./engine";
 import { Generator } from "../types";
+import { validateMathProblemItem } from "../validation";
 
-// Mock validation to pass through
+// Mock validation to pass through by default
 vi.mock("../validation", () => ({
   validateMathProblemItem: vi.fn((item) => item),
 }));
@@ -74,5 +75,78 @@ describe("Engine Strict Behavior", () => {
 
     expect(result.meta.id).toBe('local-item');
     expect(mockGenerator.generate).toHaveBeenCalled();
+  });
+
+  it("falls back to local generator if network fails (fetch throws)", async () => {
+    const config = { apiBaseUrl: "http://test-api.com" };
+    engine = new Engine(config);
+    engine.register(mockGenerator);
+
+    const fetchMock = vi.fn().mockRejectedValue(new Error("Network Error"));
+    vi.stubGlobal('fetch', fetchMock);
+
+    const result = await engine.generate('test-skill', 0.5);
+
+    expect(result.meta.id).toBe('local-item');
+    expect(mockGenerator.generate).toHaveBeenCalled();
+  });
+
+  it("falls back to local generator if API returns error status (404/500)", async () => {
+    const config = { apiBaseUrl: "http://test-api.com" };
+    engine = new Engine(config);
+    engine.register(mockGenerator);
+
+    const fetchMock = vi.fn()
+        .mockResolvedValueOnce({ ok: false, status: 500 }); // /problems
+
+    vi.stubGlobal('fetch', fetchMock);
+
+    const result = await engine.generate('test-skill', 0.5);
+
+    expect(result.meta.id).toBe('local-item');
+    expect(fetchMock).toHaveBeenCalledTimes(1);
+    expect(mockGenerator.generate).toHaveBeenCalled();
+  });
+
+  it("falls back to local generator if network returns valid JSON but invalid schema", async () => {
+    const config = { apiBaseUrl: "http://test-api.com" };
+    engine = new Engine(config);
+    engine.register(mockGenerator);
+
+    // Mock validation to throw
+    vi.mocked(validateMathProblemItem).mockImplementationOnce(() => {
+        throw new Error("Schema Validation Failed");
+    });
+
+    const fetchMock = vi.fn().mockResolvedValue({
+        ok: true,
+        json: async () => [{ invalid: "item" }] // Returns items so it tries to validate
+    });
+    vi.stubGlobal('fetch', fetchMock);
+
+    const result = await engine.generate('test-skill', 0.5);
+
+    expect(result.meta.id).toBe('local-item');
+    expect(mockGenerator.generate).toHaveBeenCalled();
+  });
+
+  it("throws Error if local generator produces invalid item", async () => {
+     const config = { apiBaseUrl: null };
+     engine = new Engine(config);
+     engine.register(mockGenerator);
+
+     vi.mocked(validateMathProblemItem).mockImplementation(() => {
+         throw new Error("Local Item Invalid");
+     });
+
+     await expect(engine.generate('test-skill', 0.5)).rejects.toThrow("Local Item Invalid");
+  });
+
+  it("throws Error if local generator is missing for the requested skill", async () => {
+    const config = { apiBaseUrl: null };
+    engine = new Engine(config);
+    // No generator registered
+
+    await expect(engine.generate('missing-skill', 0.5)).rejects.toThrow("No generator found for skill: missing-skill");
   });
 });
