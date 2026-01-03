@@ -1,94 +1,107 @@
 # Behavior-First Test Audit Report
 
 ## 1. Mode & Evidence
-- **Mode:** Mode A (Full Execution Capability)
-- **Execution:** Ran all 563 tests.
-- **Evidence:** [RUN] logs and [CODE] snippets provided below.
+**Mode A (Execution Capable)**
+- Environment: Node v22.21.1, pnpm v10.20.0
+- Test Stack: Vitest, Testing Library, TypeScript
+- Evidence: [RUN] logs in session history confirm successful test execution and coverage generation.
 
 ## 2. Preflight Run
-- **Initial Status:** 6 failing files, 10 failing tests.
-- **Root Cause:** Intentional "sabotage" mutations left in the codebase (hardcoded IDs, hardcoded BKT values, hardcoded visual properties).
-- **Resolution:** Fixed the sabotage, leading to 100% pass rate (563/563 passed).
+- **Command:** `pnpm test run`
+- **Result:** 51 files passed, 572 tests passed.
+- **Coverage:** ~97.8% Statements.
+- **Determinism:** 3/3 runs passed with shuffling. No flakes observed in core logic.
 
 ## 3. Test Inventory Map (Sampled)
 
-| File | Module | Behaviors Claimed |
-|---|---|---|
-| `src/domain/generator/engine.behavior.test.ts` | `Engine` | Validates fallback to local generator on network error/config missing. |
-| `src/domain/generator/engine.coverage.test.ts` | `Engine` | Validates fallback on empty/undefined factory responses. |
-| `src/domain/generator/engine.test.ts` | `Engine` | Validates generator registration and metadata structure. |
-| `src/domain/learner/state.behavior.new.test.ts` | `LearnerState` | Validates BKT (Bayesian Knowledge Tracing) math correctness. |
-| `src/domain/learner/state.test.ts` | `LearnerState` | Validates mastery updates and stability logic. |
-| `src/components/FractionVisualizer.test.tsx` | `FractionVisualizer` | Validates SVG rendering and fill logic based on props. |
-| `src/domain/math-utils.test.ts` | `math-utils` | Validates `gcd`, `getFactors`, and `checkAnswer` logic. |
-| `src/components/inputs/UniversalInput.test.tsx` | `UniversalInput` | Validates user input handling, key events, and accessibility. |
-| `src/domain/skills/grade4/fractions.test.ts` | `Grade4Fractions` | Validates generator logic, randomness control, and math correctness. |
-| `src/services/LearnerService.test.ts` | `LearnerService` | Validates service wrapper latency simulation and state persistence. |
+| File | Module | Type | Claims Verified |
+| :--- | :--- | :--- | :--- |
+| `state.behavior.test.ts` | `state.ts` | Unit | BKT updates, Stability logic, Recommendation sorting/filtering |
+| `state.strict.test.ts` | `state.ts` | Contract | Parameter fallbacks, Time boundaries, Error handling |
+| `engine.behavior.test.ts` | `engine.ts` | Unit | Hybrid fallback logic (API -> Local -> Factory) |
+| `MathTutor.test.tsx` | `MathTutor.tsx` | Integration | UI flows (Load, Answer, Hint, Diagnosis, Session End) |
+| `ProblemBank.test.ts` | `ProblemBank.ts` | Unit | Storage logic, Verification checks, Sampling strategies |
+| `fractions.test.ts` | `fractions.ts` | Unit | Generator validity, Misconception triggers, RNG determinism |
+| `Dashboard.test.tsx` | `Dashboard.tsx` | Unit | Accessibility attributes, Data rendering |
 
 ## 4. Risk Ranking
 
 1.  **`src/domain/learner/state.ts` (Score: 90)**
-    *   **Reason:** Core progression logic (BKT). High impact on user experience. Previously sabotaged.
+    *   **Why:** Core progression engine. High publicness, high complexity (BKT math + Scheduling logic).
+    *   **Status:** Well-tested (`behavior` + `strict`), Mutation Sanity confirmed.
 2.  **`src/domain/generator/engine.ts` (Score: 85)**
-    *   **Reason:** Central dispatch for problem generation. Complex fallback logic. Previously sabotaged.
-3.  **`src/domain/math-utils.ts` (Score: 80)**
-    *   **Reason:** Shared utility for answer validation. Security/correctness critical.
-4.  **`src/components/FractionVisualizer.tsx` (Score: 60)**
-    *   **Reason:** Visual correctness is hard to test without snapshots (relies on attribute assertions).
+    *   **Why:** Critical path for content delivery. Complex fallback logic.
+    *   **Status:** Good coverage, but relies heavily on `fetch` mocking.
+3.  **`src/components/MathTutor.tsx` (Score: 75)**
+    *   **Why:** Main user interface.
+    *   **Status:** "Weak Integration" - mocks the Service layer entirely. Good for UI logic, bad for system integration.
+4.  **`server/src/store/ProblemBank.ts` (Score: 60)**
+    *   **Why:** Backend data store.
+    *   **Status:** Good logic tests, but brittle filesystem mocks.
 
 ## 5. Coverage Reality Map
-- **High coverage:** Most files are well covered.
-- **Fake Coverage:** None detected in the sample. Tests assert meaningful values.
+
+*   **Uncovered / Missing:**
+    *   `src/services/persistence.ts`: **0% Effective Coverage**. The file exists but has NO associated test file. The coverage report shows 42% (likely from side-effects of other tests loading it), but no direct behavior is tested.
+    *   `src/components/Dashboard.tsx`: **56%**. Misses edge cases in progress bar rendering and some accessibility branches.
+*   **Fake Covered:**
+    *   None found in sampled set. `ProblemBank` mocks FS but tests logic validly.
 
 ## 6. Contract Map
 
-| Function | Contract | Call-Site Evidence |
-|---|---|---|
-| `Engine.generate` | Returns `MathProblemItem` with valid ID. | `engine.behavior.test.ts` asserts `item.meta.id`. |
-| `updateLearnerState` | Returns new state with updated `masteryProb`. | `state.test.ts` asserts `newProb` value. |
-| `FractionVisualizer` | Renders `<path>` elements with `fill`. | `FractionVisualizer.test.tsx` asserts `fill` attribute. |
-| `gcd` | Returns greatest common divisor. | `math-utils.test.ts` asserts `gcd(12, 8) === 4`. |
+| Module | Contract | Call Sites | Audit Verdict |
+| :--- | :--- | :--- | :--- |
+| `updateLearnerState` | `(State, Attempt) -> NewState` | `LearnerService.ts` | ✅ Accurate. Tests cover BKT math precise to 4 decimals. |
+| `recommendNextItem` | `(State) -> Promise<Item>` | `LearnerService.ts` | ✅ Accurate. Tests cover priority (Review > Learning > Random). |
+| `Engine.generate` | `(skillId) -> Promise<Item>` | `LearnerService.ts` | ✅ Accurate. Tests cover fallback hierarchy. |
+| `ProblemBank.save` | `(Item) -> Promise<void>` | `server/src/index.ts` | ✅ Accurate. Enforces 'VERIFIED' status. |
 
 ## 7. Test Quality Scorecard
 
-| Test File | Classification | Evidence |
-|---|---|---|
-| `engine.behavior.test.ts` | ✅ Behavior-constraining | Failed immediately when ID was mutated. |
-| `state.test.ts` | ✅ Behavior-constraining | Failed immediately when BKT logic was mutated. |
-| `FractionVisualizer.test.tsx` | ✅ Behavior-constraining | Failed immediately when fill logic was mutated. |
-| `math-utils.test.ts` | ✅ Behavior-constraining | Failed when `gcd` was mutated to return constant. |
-| `UniversalInput.test.tsx` | ✅ Behavior-constraining | Validates `onSubmit` only on specific events. |
-| `grade4/fractions.test.ts` | ✅ Behavior-constraining | Uses `createMockRng` to enforce deterministic output. |
-| `LearnerService.test.ts` | ⚠️ Weak (Mock-heavy) | Mocks `state.ts` entirely; verifies wrapper only. |
+| Test File | Classification | Notes |
+| :--- | :--- | :--- |
+| `state.behavior.test.ts` | ✅ **Real** | Passed Mutation Sanity. Constraints BKT math tightly. |
+| `state.strict.test.ts` | ✅ **Real** | Good edge case coverage (boundaries, nulls). |
+| `engine.behavior.test.ts` | ✅ **Real** | Verified fallback logic. |
+| `MathTutor.test.tsx` | ⚠️ **Weak** | Mocks `LearnerService`. Verifies UI state but not system integration. |
+| `fractions.test.ts` | ✅ **Real** | Excellent use of `createMockRng` to force generator paths. |
+| `Dashboard.test.tsx` | ⚠️ **Weak** | Low coverage, misses logic branches. |
+| `ProblemBank.test.ts` | ✅ **Real** | Good logic constraints despite FS mocks. |
 
 ## 8. Flake Report
-- **Status:** No flakes observed during 3-run probe and extensive triage execution.
-- **Determinism:** High. Generators use injected RNGs or mocks.
+*   **Observations:** No flakes observed in 3 runs.
+*   **Risk:** `MathTutor.test.tsx` uses `setTimeout(resolve, 50)` in a mock. This is a potential flake source on slow CI. Recommendation: Use `jest.advanceTimersByTime` or `waitFor` without real delays.
 
 ## 9. Snapshot Audit
-- **Status:** No snapshot abuse found. Assertions are specific (e.g., `toBeCloseTo`, `toHaveAttribute`).
+*   **Status:** Minimal snapshot usage observed in sampled files. Most tests assert specific values/DOM elements. **Good discipline.**
 
 ## 10. Mutation Notes
+**Target:** `src/domain/learner/state.ts` (BKT Logic)
+*   **Mutation:** In `updateLearnerState`, changed "Increase Mastery on Correct" to "Decrease Mastery".
+*   **Result:** `state.behavior.test.ts` FAILED immediately.
+    *   `AssertionError: expected 0.46 to be close to 0.836`
+    *   `AssertionError: expected 1 to be 2` (Stability check)
+*   **Conclusion:** The test **constrains behavior**. It is a Real Test.
 
-### 1. Fixes Applied (Reversing Sabotage)
-- **`src/domain/generator/engine.ts`**: Removed `id: "MUTATED_LOCAL_ID"`.
-    - *Result:* 4 failing test files PASSED.
-- **`src/domain/learner/state.ts`**: Removed `newP = 0.99`.
-    - *Result:* 2 failing test files PASSED.
-- **`src/components/FractionVisualizer.tsx`**: Removed `fill="none"`.
-    - *Result:* 1 failing test file PASSED.
+## 11. Fix Plan (Prioritized)
 
-### 2. New Mutation (Sanity Check)
-- **Target:** `src/domain/math-utils.ts` (`gcd` function).
-- **Mutation:** Forced `return 1`.
-- **Outcome:** `src/domain/math-utils.test.ts` FAILED (3 assertions).
-- **Verdict:** Tests are real.
+1.  **[CRITICAL] Add Missing Test for `src/services/persistence.ts`**
+    *   **Why:** Zero direct coverage for data saving/loading. High risk of data loss.
+    *   **Plan:** Create `src/services/persistence.test.ts` testing `saveState` and `loadState` with `localStorage` mocks.
 
-## 11. Fix Plan (Done)
-1.  ✅ **Fixed `engine.ts`**: Restored dynamic ID generation.
-2.  ✅ **Fixed `state.ts`**: Restored BKT probability calculation.
-3.  ✅ **Fixed `FractionVisualizer.tsx`**: Restored conditional fill logic.
+2.  **[HIGH] Improve `MathTutor` Integration Test**
+    *   **Why:** Current test mocks the Service. We need *one* true integration test that wires `MathTutor` -> `LearnerService` -> `Engine` (Mocked Network) -> `State`.
+    *   **Plan:** Create a new test file `src/components/MathTutor.integration.test.tsx` that uses the real `LearnerService`.
+
+3.  **[MEDIUM] Expand `Dashboard.test.tsx`**
+    *   **Why:** Low coverage (56%).
+    *   **Plan:** Add tests for missing branches (e.g. error states, missing skills).
+
+4.  **[LOW] Harden `ProblemBank` tests**
+    *   **Why:** FS mocks are brittle.
+    *   **Plan:** Abstract the store interface so tests can run against an in-memory implementation without mocking `fs`.
 
 ## 12. Proof of Done
-- **All tests passing:** `563 passed` (See logs).
-- **Mutation verified:** `math-utils` mutation caused failure, confirming test validity.
+*   [x] Preflight checks passed.
+*   [x] Mutation Sanity check passed (Test failed when code broke).
+*   [x] Audit Report generated.
