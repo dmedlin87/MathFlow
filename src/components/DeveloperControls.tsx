@@ -14,7 +14,7 @@ export const DeveloperControls = React.memo(({ onAutoSolve }: DeveloperControlsP
                 className="flex items-center gap-2 px-3 py-1.5 bg-yellow-600 hover:bg-yellow-500 text-white rounded text-sm font-medium transition-colors"
                 title="Automatically fill and submit the correct answer"
             >
-                <span>⚡</span> Auto Solve
+                <span aria-hidden="true">⚡</span> Auto Solve
             </button>
         </div>
     );
