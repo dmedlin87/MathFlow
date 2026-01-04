@@ -59,38 +59,74 @@ export const MathRenderer = React.memo(({ text }: { text: string }) => {
   );
 });
 
-const ParsedMath: React.FC<{ text: string }> = ({ text }) => {
-  // Split by spaces to handle operators
-  const tokens = useMemo(() => text.split(' '), [text]);
+// Optimization: Memoize and group text nodes to reduce DOM size
+const ParsedMath = React.memo(({ text }: { text: string }) => {
+  const parts = useMemo(() => {
+    // We split by space to detect fractions but re-group regular text
+    // to avoid creating a span for every single word.
+    const tokens = text.split(' ');
+    const result: Array<{ type: 'text', content: string } | { type: 'fraction', num: string, den: string }> = [];
+    let currentText: string[] = [];
+
+    tokens.forEach((token) => {
+      // Fraction detection logic (must match original behavior)
+      let isFraction = false;
+      let num = '';
+      let den = '';
+
+      if (token.includes('/') && !token.includes('=') && token.split('/').length === 2) {
+         const split = token.split('/');
+         num = split[0];
+         den = split[1];
+         // Basic validation
+         if (num.length > 0 && den.length > 0) {
+           isFraction = true;
+         }
+      }
+
+      if (isFraction) {
+        // Flush accumulated text if any
+        if (currentText.length > 0) {
+           result.push({ type: 'text', content: currentText.join(' ') });
+           currentText = [];
+        }
+        result.push({ type: 'fraction', num, den });
+      } else {
+        currentText.push(token);
+      }
+    });
+
+    if (currentText.length > 0) {
+      result.push({ type: 'text', content: currentText.join(' ') });
+    }
+    return result;
+  }, [text]);
   
   return (
     <>
-      {tokens.map((token, i) => {
-        // Check for fraction pattern: something/something
-        // Allowing '?' as a valid part
-        if (token.includes('/') && !token.includes('=') && token.split('/').length === 2) {
-          const [num, den] = token.split('/');
-          // Basic validation to avoid false positives (like dates or paths)
-          if (num.length > 0 && den.length > 0) {
-            return (
-              <React.Fragment key={i}>
-                <span className="inline-flex flex-col items-center align-middle mx-1" style={{ verticalAlign: 'middle' }}>
-                  <span className="border-b-2 border-current px-1 min-w-[1em] text-center">{num}</span>
-                  <span className="px-1 min-w-[1em] text-center">{den}</span>
-                </span>
-                {i < tokens.length - 1 && ' '}
-              </React.Fragment>
-            );
-          }
+      {parts.map((part, i) => {
+        if (part.type === 'fraction') {
+          return (
+            <React.Fragment key={i}>
+              <span className="inline-flex flex-col items-center align-middle mx-1" style={{ verticalAlign: 'middle' }}>
+                <span className="border-b-2 border-current px-1 min-w-[1em] text-center">{part.num}</span>
+                <span className="px-1 min-w-[1em] text-center">{part.den}</span>
+              </span>
+              {/* Maintain space if not last */}
+              {i < parts.length - 1 && ' '}
+            </React.Fragment>
+          );
+        } else {
+          return (
+            <React.Fragment key={i}>
+              {/* Render grouped text in a single span */}
+              <span className="mx-1">{part.content}</span>
+              {/* Maintain space if not last */}
+              {i < parts.length - 1 && ' '}
+            </React.Fragment>
+          );
         }
-        // Operators or regular text
-        return (
-          <React.Fragment key={i}>
-            <span className="mx-1">{token}</span>
-            {i < tokens.length - 1 && ' '}
-          </React.Fragment>
-        );
       })}
     </>
   );
-};
+});

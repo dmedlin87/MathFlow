@@ -59,7 +59,8 @@ describe('MathRenderer', () => {
         const srOnly = container.querySelector('.sr-only');
         expect(srOnly).toBeInTheDocument();
         expect(srOnly?.textContent).toBe("1 + 1 equals 2.");
-        expect(screen.getAllByText("equals").length).toBeGreaterThan(0);
+        // Use regex because text might be grouped in a single span
+        expect(screen.getAllByText(/equals/).length).toBeGreaterThan(0);
     });
 
     describe('KaTeX Support', () => {
